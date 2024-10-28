@@ -20,16 +20,16 @@ I've lightly utilized FreshRSS to keep up with video creators and wanted to fina
 1. Install and enable [these official FresshRSS extensions](https://github.com/FreshRSS/Extensions): "CustomCSS", "YouTube", and "CustomJS" (optional).
 
 2. Go to "Settings > Configuration: Display" and use these settings:
-   - Theme: "Mapco — By: Thomas Guesnon".
-   - Thumbnail: "Landscape".
-   - Website: "Icon". To display fav-icon as avatar in the feed.
+   - **Theme**: "Mapco — By: Thomas Guesnon".
+   - **Thumbnail**: "Landscape".
+   - **Website**: "Icon". To display fav-icon as avatar in the feed.
 
 ### Installing the theme
 
 1. Go to "Settings > Extensions" and adjust these extensions by clicking the respective gear (⚙️) icon:
 
-   - "Custom CSS": Copy the content from theme.css`, paste it into the text field, and click "Submit".
-   - "Custom JS": Copy the content from `script.js` paste it into the text field, and click "Submit". This will allow videos to stop when exiting out from a video page, opposed to playing in the background.
+   - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
+   - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit". This will allow videos to stop when exiting out from a video page, opposed to playing in the background.
 
 ## Additional tools
 
