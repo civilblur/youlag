@@ -5,7 +5,7 @@
 </h1>
 
 ## About
-"Youlag Theme for FreshRSS" provides a video-focused browsing experience for your RSS subscriptions.
+"Youlag Theme for [FreshRSS](https://freshrss.org/)" provides a video-focused browsing experience for your RSS subscriptions.
 
 This is an opinionated theme and is recommended primarily for video feeds but may still work with regular content feeds. Feel free and setup a separate instance of FreshRSS if needed.
 
