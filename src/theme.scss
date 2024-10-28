@@ -1,0 +1,2117 @@
+/*****************************************
+ *
+ * Youlag Theme for FreshRSS
+ *
+ * Version: 1.0.0
+ * License: GNU General Public License v3.0
+ * Author: civilblur @ github
+ * 
+ ****************************************/
+
+
+
+/*****************************************
+ *
+ * INDEX
+ * - Variables and keyframes
+ * - Feed grid layout
+ * - Common layout elements
+ * - Card
+ * - Mapco theme dark mode (1)
+ *  - Dark mode: Global styles
+ *  - Dark mode: Dropdown, dialog, box
+ *  - Dark mode: Feed side navigation
+ *  - Dark mode: Settings side navigation
+ *  - Dark mode: Card
+ * - Card expanded - Inline view mode (2)
+ * - Card expanded - Theater mode
+ * - Favorites page
+ * - Reader view page
+ * 
+ * 
+ * NOTE
+ * (1)
+ * To revert Mapco theme to light mode,
+ * comment out the CSS in the 
+ * "Mapco theme dark mode" section.
+ * 
+ * (2)
+ * For "Inline view mode" instead of 
+ * "Theater mode", comment out the CSS on
+ * the "Theater mode" section.
+ *
+ * 
+ * TODO
+ * - Refactor values to CSS variable, such as
+ * colors, border-radius, margin, padding, 
+ * spacing, etc.
+ * 
+ * - Improve legibility for dark mode.
+ * 
+ ****************************************/
+
+
+
+/*****************************************
+ * BEGIN "VARIABLES AND KEYFRAMES"
+ ****************************************/
+
+:root {
+  --favicon-avatar-size: 34px;
+  --favicon-avatar-size-margin: 6px;
+  --feed-day-title-font-size: 2.3rem;
+
+  /* Theater mode variables */
+  --elm-iframe-height: 56.25vw; /* Maintains 16:9 aspect ratio by setting height to 56.25% of the viewport width. */
+  --elm-card-header-height: 120px;
+  --elm-card-footer-height: 40px;
+  --elm-card-expanded-content-padding: 2rem;
+}
+
+@media (max-width: 840px) {
+  :root {
+    --favicon-avatar-size: 42px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(0.6);
+  }
+}
+
+
+/*****************************************
+ * END "VARIABLES AND KEYFRAMES"
+ ****************************************/
+
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "FEED GRID LAYOUT"
+ *
+ * Turn the feed table view to grid view.
+ *
+ ****************************************/
+
+body:not(.reader) main#stream {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  gap: 4px;
+  padding: 1.5rem;
+
+  @media (max-width: 840px) {
+    grid-template-columns: minmax(200px, 1fr);
+  }
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
+  @media (max-width: 600px) {
+    grid-row-gap: 2rem;
+  }
+
+  @media (min-width: 1144px) {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
+  @media (min-width: 1360px) {
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+  }
+
+  @media (min-width: 1800px) {
+    grid-template-columns: repeat(4, minmax(200px, 1fr));
+  }
+}
+
+
+/*****************************************
+ * END "FEED GRID LAYOUT"
+ ****************************************/
+
+
+
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "COMMON LAYOUT ELEMENTS"
+ *
+ * For misc. elements such as navigation
+ * structural titles, etc.
+ *
+ ****************************************/
+
+nav.aside.aside_feed {
+  /* Position and adjust behavior of "Subscriptions management" button */
+  text-align: unset;
+
+  /* Manage feeds ("Subscriptions management") button */
+  .stick.configure-feeds {
+    position: relative;
+
+    &:before {
+      content: "Manage feeds";
+      position: absolute;
+      top: 50%;
+      left: 69px;
+      transform: translateY(-50%);
+      z-index: 1;
+      font-weight: normal;
+      pointer-events: none;
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 21px;
+      transform: translateY(-50%);
+      z-index: 1;
+      filter: invert(1);
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      background-repeat: no-repeat;
+      /* RSS icon */
+      background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0OTAgNDkwIj48cGF0aCBkPSJNNDY4LjIgNDg5LjVIMjAuOEM5LjQgNDg5LjUgMCA0ODAuMSAwIDQ2OC43VjIxLjNDMCA5LjkgOS40LjUgMjAuOC41aDQ0OC40QzQ4MC42LjUgNDkwIDkuOSA0OTAgMjEuM3Y0NDguNGMtMSAxMC40LTEwLjQgMTkuOC0yMS44IDE5Ljh6TTQwLjYgNDQ4LjloNDA3LjhWNDEuMUg0MC42djQwNy44eiIvPjxwYXRoIGQ9Ik0yNjAuMSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTc3LTYyLjQtMTM5LjQtMTM5LjQtMTM5LjQtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOFM4OC41IDIxOCA5OS45IDIxOGM5OS45IDAgMTgxIDgxLjEgMTgxIDE4MSAwIDExLjQtOS40IDIwLjgtMjAuOCAyMC44eiIvPjxwYXRoIGQ9Ik0zNDcuNSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTEyNC44LTEwMi0yMjcuOC0yMjcuOC0yMjcuOC0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44czkuNC0yMC44IDIwLjgtMjAuOGMxNDcuNyAwIDI2OC40IDEyMC43IDI2OC40IDI2OC40IDEgMTIuNC04LjQgMjEuOC0xOS44IDIxLjh6TTE3My43IDQxOS44Yy0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44IDAtMjkuMS0yMy45LTUzLjEtNTMuMS01My4xLTExLjQgMC0yMC44LTkuNC0yMC44LTIwLjhzOS40LTIwLjggMjAuOC0yMC44YzUyIDAgOTQuNyA0Mi43IDk0LjcgOTQuNyAwIDExLjQtOS4zIDIwLjgtMjAuOCAyMC44eiIvPjwvc3ZnPg==);
+    }
+
+    #btn-subscription,
+    #btn-add {
+      transition: 0s;
+    }
+
+    #btn-subscription:hover,
+    #btn-subscription:hover ~ #btn-add,
+    #btn-add:hover {
+      background-color: #303136;
+    }
+
+    #btn-add {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+
+      &:before {
+        /* Hack: When hovering #btn-add, also highlight #btn-subscription */
+        content: "";
+        width: calc(100% - 68px);
+        height: 100%;
+        background: #303136;
+        left: 8px;
+        position: absolute;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        pointer-events: none;
+        opacity: 0;
+        transition: 0s;
+      }
+
+      &:hover {
+        background-color: #424348;
+
+        &:before {
+          opacity: 1;
+        }
+      }
+    }
+
+    #btn-subscription {
+      /* Hide text, later repalce with psuedo element :before text */
+      font-size: 0;
+      flex: 1;
+      height: 52px;
+      margin-left: 8px;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+
+    #btn-subscription,
+    #btn-add {
+      text-transform: capitalize;
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      background: none;
+      box-sizing: border-box;
+    }
+
+    #btn-add {
+      font-size: 1rem;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      background: none;
+      border: none;
+      width: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .icon {
+        filter: brightness(3);
+        height: 1.5rem;
+      }
+
+      &:hover {
+        background-color: #424348;
+      }
+    }
+  }
+
+  #mark-read-aside ul#sidebar {
+
+    .tree-folder.category {
+      .tree-folder-title .title {
+        font-weight: normal;
+      }
+    }
+
+    & > li.tree-folder ul.tree-folder-items li.item.feed > .dropdown {
+      margin-right: 0;
+    }
+
+    /* Subscriptions ("Main stream") button */
+    .tree-folder.category.all {
+      .tree-folder-title .title {
+        font-size: 0;
+
+        &:before {
+          content: "Subscriptions";
+        }
+      }
+
+      .icon {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .tree-folder-title:before {
+        /* Video icon */
+        content:"";
+        width:20px;
+        height:20px;
+        position: absolute;
+        filter: invert(1);
+        pointer-events: none;
+        background-repeat: no-repeat;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgODAwIj48cGF0aCBkPSJNNzY2LjE5Ni43MzVIMzMuOTY2QzE1LjM1LjczNSAwIDE2LjA4NSAwIDM0Ljd2NjAxLjQyN2MwIDE4LjYxNiAxNS4zNSAzMy45NjcgMzMuOTY2IDMzLjk2N2g3MzAuNDMzYzE4LjYxNiAwIDMzLjk2Ni0xNS4zNTEgMzUuNTk5LTMyLjMzNFYzNC43MDFDODAwLjE2MiAxNi4wODUgNzg0LjgxMi43MzUgNzY2LjE5Ni43MzVabS0zMy45NjYgNjAzLjA2SDY2LjNWNjcuMDM0aDY2NS45M3Y1MzYuNzYxWk03NjYuMTk2IDczMS4zMzJIMzMuOTY2QzE1LjM1IDczMS4zMzIgMCA3NDYuNjgyIDAgNzY1LjI5OHMxNS4zNSAzMy45NjYgMzMuOTY2IDMzLjk2Nmg3MzAuNDMzYzE4LjYxNiAwIDM1LjU5OS0xNS4zNSAzNS41OTktMzMuOTY2LjE2NC0xOC43OC0xNS4xODYtMzMuOTY2LTMzLjgwMi0zMy45NjZaIi8+PHBhdGggZD0iTTUxNi40MDggMzA4LjIwOCAzNDYuNjEyIDE5NC40MTJjLTIyLjIwNC0xNC41My01MC45MzkgMi4xMjMtNTAuOTM5IDI3LjEwMnYyMjcuNTkyYzAgMjYuMjg2IDI4LjczNSA0MS40NjkgNTAuOTM5IDI3LjEwMmwxNjkuNzk2LTExMy43OTZjMTUuMTg0LTguMTYzIDI0LjY1My0zNi4yNDUgMC01NC4yMDRabS0xNTQuNjEyIDc4LjA0MVYyODQuMzcxbDc2LjQwOCA1MC45MzktNzYuNDA4IDUwLjkzOVoiLz48L3N2Zz4=);
+      }
+    }
+
+
+    /* Important feeds button */
+    .tree-folder.category.important {
+      .tree-folder-title .title {
+        font-size: 0;
+
+        &:before {
+          content: "Important";
+        }
+      }
+
+      .icon {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .tree-folder-title:before {
+        /* Bell icon */
+        content:"";
+        width:20px;
+        height:20px;
+        position: absolute;
+        filter: invert(1);
+        background-repeat: no-repeat;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0ODcuNzcgNDg3Ljc3Ij48cGF0aCBkPSJNNDg2LjIgMjEwLjI2Yy02LjMtMTguOC0yNi4xLTIxLjktNDQuOC0yNS0xOS44LTMuMS00Mi43LTYuMy01OS40LTI0LTc2LjEtODMuNC0xNDEuOC0xMDEuMS0xODMuNS0xMDIuMS0xNy43LS41LTM0LjYgMi4yLTUwLjMgNy44LTMuOC0zNy40LTM1LjUtNjYuOC03My45LTY2LjhDMzMuMy4xNiAwIDMzLjQ2IDAgNzQuNDZjMCAzOC44IDI5LjggNzAuNyA2Ny43IDc0LTUuNiAxNS44LTguMyAzMi42LTcuOCA1MC40IDEgNDEuNyAxOS44IDEwNi4zIDEwMi4yIDE4My41IDE3LjcgMTYuNyAyMC45IDM5LjYgMjQgNTkuNCAzLjEgMTguOCA2IDM5LjUgMjUgNDQuOCAyMC4xIDUuNiA0Ny0xMSA5NC01NC41IDE3LjEgMTYuMyA0MC4yIDI1LjkgNjQuMyAyNS45IDUxLjIgMCA5Mi45LTQxLjcgOTIuOS05Mi45IDAtMjQuNi05LjgtNDgtMjYuOC02NS4zIDQ5LjUtNTQgNTYuMS03MS43IDUwLjctODkuNXpNNDAuOSA3NC40NmMwLTE4LjQgMTQuOS0zMy4zIDMzLjMtMzMuM3MzMy4zIDE0LjkgMzMuMyAzMy4zLTE0LjkgMzMuMy0zMy4zIDMzLjMtMzMuMy0xNC45LTMzLjMtMzMuM3ptMzI4LjQgMzQyLjVjLTEzIDAtMjUuMi00LjgtMzQuNi0xMy4xIDExLjEtMTEuMSA2My02NS4xIDcyLjQtNzQuMyA4LjkgOS41IDE0LjEgMjIuMiAxNC4xIDM1LjUgMCAyOC42LTIzLjMgNTEuOS01MS45IDUxLjl6bS0xNDIuNyAyNy45YzAtMy4xLTkuNC02NS43LTM3LjUtOTEuNy01Ny4zLTUzLjItODcuNi0xMDYuMy04OC42LTE1NC4zIDAtMjguMSAxOC42LTEwMC4yIDk4LTk5IDQ4IC43IDEwMS4xIDMxLjMgMTU0LjMgODguNiAyNi4xIDI4LjEgODguNiAzNy41IDkxLjcgMzcuNS0xNC43IDI2LjgtMTkyIDIwNC42LTIxNy45IDIxOC45eiIvPjwvc3ZnPg==);
+      }
+    }
+
+
+    /* Favorites button */
+    .tree-folder.category.favorites {
+      .icon {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .tree-folder-title:before {
+        /* Star icon */
+        content:"";
+        width:20px;
+        height:20px;
+        position: absolute;
+        filter: invert(1);
+        pointer-events: none;
+        background-repeat: no-repeat;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGcgY2xpcC1wYXRoPSJ1cmwoI2EpIj48cGF0aCBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIiBkPSJNMTEuMDkxIDIuNjM1Yy4yODgtLjY0Ny40MzItLjk3LjYzMy0xLjA3YS42MjEuNjIxIDAgMCAxIC41NTIgMGMuMjAxLjEuMzQ1LjQyMy42MzMgMS4wN2wyLjI5NCA1LjE1Yy4wODUuMTkyLjEyOC4yODcuMTk0LjM2LjA1OC4wNjUuMTMuMTE3LjIwOS4xNTMuMDkuMDQuMTk0LjA1LjQwMi4wNzNsNS42MDMuNTkyYy43MDMuMDc0IDEuMDU1LjExMSAxLjIxMi4yNzEuMTM2LjE0LjE5OS4zMzQuMTcuNTI3LS4wMzIuMjIxLS4yOTUuNDU4LS44Mi45MzJsLTQuMTg2IDMuNzc2Yy0uMTU1LjE0LS4yMzMuMjEtLjI4Mi4yOTVhLjYyNC42MjQgMCAwIDAtLjA4LjI0NmMtLjAxLjA5OC4wMTEuMi4wNTUuNDA1bDEuMTY5IDUuNTE3Yy4xNDcuNjkzLjIyIDEuMDQuMTE2IDEuMjM4YS42MjIuNjIyIDAgMCAxLS40NDcuMzI1Yy0uMjIuMDM3LS41MjctLjE0LTEuMTQtLjQ5M2wtNC44OC0yLjgxOGMtLjE4Mi0uMTA1LS4yNzItLjE1Ny0uMzY5LS4xNzdhLjYyMi42MjIgMCAwIDAtLjI1OCAwYy0uMDk3LjAyLS4xODcuMDcyLS4zNjguMTc3bC00Ljg4MSAyLjgxOGMtLjYxMy4zNTQtLjkyLjUzLTEuMTQuNDkzYS42MjIuNjIyIDAgMCAxLS40NDctLjMyNWMtLjEwNC0uMTk5LS4wMy0uNTQ1LjExNi0xLjIzOGwxLjE3LTUuNTE3Yy4wNDMtLjIwNC4wNjQtLjMwNy4wNTQtLjQwNWEuNjI0LjYyNCAwIDAgMC0uMDgtLjI0NmMtLjA0OS0uMDg1LS4xMjctLjE1NS0uMjgyLS4yOTVsLTQuMTg1LTMuNzc2Yy0uNTI2LS40NzQtLjc4OS0uNzEtLjgyMS0uOTMyYS42MjMuNjIzIDAgMCAxIC4xNy0uNTI3Yy4xNTctLjE2LjUwOS0uMTk3IDEuMjEyLS4yNzFsNS42MDQtLjU5MmMuMjA4LS4wMjIuMzEyLS4wMzMuNDAxLS4wNzNhLjYyMi42MjIgMCAwIDAgLjIxLS4xNTJjLjA2NS0uMDc0LjEwOC0uMTcuMTkzLS4zNmwyLjI5NC01LjE1MVoiLz48L2c+PGRlZnM+PGNsaXBQYXRoIGlkPSJhIj48cGF0aCBkPSJNMCAwaDI0djI0SDB6Ii8+PC9jbGlwUGF0aD48L2RlZnM+PC9zdmc+);
+      }
+    }
+
+    /* Playlists ("My labels") button */
+    #tags {
+      /* Always display Playlist ("My Labels") button */
+      display: list-item !important;
+
+      .tree-folder-title .title {
+        font-size: 0;
+
+        &:before {
+          content: "Playlists";
+        }
+      }
+
+      button.dropdown-toggle .icon {
+        /* Hide playlist ("My Labels") dropdown toggle icon while keeping its functionality */
+        opacity: 0;
+      }
+
+      & > .tree-folder-items .item.feed .item-title .icon {
+        /* Remove tag item icons */
+        display: none;
+      }
+
+      .tree-folder-title:before {
+        /* Playlist icon */
+        content:"";
+        width:20px;
+        height:20px;
+        position: absolute;
+        filter: invert(1);
+        background-repeat: no-repeat;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA4MDAgODAwIj48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMCA5MC41QTM3LjUgMzcuNSAwIDAgMSAzNy41IDUzaDcyNUEzNy40OTcgMzcuNDk3IDAgMCAxIDgwMCA5MC41YTM3LjUgMzcuNSAwIDAgMS0zNy41IDM3LjVoLTcyNUEzNy40OTggMzcuNDk4IDAgMCAxIDAgOTAuNVpNMzcuNSAzMjhoNzI1YTM3LjQ5NiAzNy40OTYgMCAwIDAgMjYuNTE2LTEwLjk4NCAzNy40OTYgMzcuNDk2IDAgMCAwIDAtNTMuMDMzQTM3LjUgMzcuNSAwIDAgMCA3NjIuNSAyNTNoLTcyNUEzNy41MDIgMzcuNTAyIDAgMCAwIDAgMjkwLjUgMzcuNDk3IDM3LjQ5NyAwIDAgMCAzNy41IDMyOFptMjQ0IDEyNWgtMjQ0QTM3LjUwMiAzNy41MDIgMCAwIDAgMCA0OTAuNSAzNy40OTcgMzcuNDk3IDAgMCAwIDM3LjUgNTI4aDI0NGEzNy41IDM3LjUgMCAwIDAgMC03NVpNMzcuNSA2NTNoMjQ0YTM3LjUgMzcuNSAwIDAgMSAwIDc1aC0yNDRhMzcuNDk5IDM3LjQ5OSAwIDAgMSAwLTc1WiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSI2NSIgZD0iTTYzNi44MzMgNDY5Ljg4YzgwLjExOCA0Ni4zNTggMTIwLjE4MSA2OS41MzQgMTI2LjA2MiAxMDIuOTc0YTcyLjkzNyA3Mi45MzcgMCAwIDEgMCAyNS4yOTNjLTUuODgxIDMzLjQzOS00NS45NDQgNTYuNjE1LTEyNi4wNjIgMTAyLjk3My04MC4xMTcgNDYuMzUzLTEyMC4xODEgNjkuNTI5LTE1Mi4wMTggNTcuOTE2YTcyLjU2NiA3Mi41NjYgMCAwIDEtMjEuODU4LTEyLjY0NkM0MzcgNzI0LjU2MyA0MzcgNjc4LjIxIDQzNyA1ODUuNWMwLTkyLjcxIDAtMTM5LjA2MyAyNS45NTctMTYwLjg5YTcyLjY3IDcyLjY3IDAgMCAxIDIxLjg1OC0xMi42NDZjMzEuODM3LTExLjYxMyA3MS45MDEgMTEuNTY0IDE1Mi4wMTggNTcuOTE2WiIvPjwvc3ZnPg==);
+      }
+    }
+
+  }
+
+  /**
+   * Side navigation button label font adjustment:
+   * - Manage feed ("Subscriptions management")
+   * - Subscriptions ("Main stream")
+   * - Important
+   * - Favorites
+   * - Playlists ("My labels")
+   * - User's category
+   */
+  .stick.configure-feeds:before,
+  .tree-folder.category.all .tree-folder-title .title:before,
+  .tree-folder.category.important .tree-folder-title .title:before,
+  .tree-folder.category.favorites .tree-folder-title .title:before,
+  #tags .tree-folder-title .title:before,
+  .tree-folder.category .tree-folder-title .title {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    font-weight: normal;
+  }
+
+
+  /* Keep "Subscriptions management" button sticky on scroll */
+  .stick.configure-feeds {
+    position: sticky;
+    top: 20px;
+    z-index: 10;
+    width: 292px;
+  }
+
+  #mark-read-aside {
+    top: calc(20px + 52px); /* Padding-top of container + height of "Subscriptions management" button */
+  }
+}
+
+
+/* Settings page buttons */
+#aside_feed .item.nav-section a[href="./?c=tag"] {
+  font-size: 0;
+
+    &:before {
+    content: "Playlist management";
+    font-size: 1.2rem;
+  }
+}
+
+/* Change text in settings page containing "Label" to "Playlist" */
+main.post:has(#add_tag) {
+  > h1:first-of-type {
+    font-size: 0;
+
+    &:before {
+      content: "Playlist management";
+      font-size: 2rem;
+    }
+  }
+
+  > h2:first-of-type {
+    font-size: 0;
+
+    &:before {
+      content: "Create a playlist";
+      font-size: 1.5rem;
+    }
+  }
+}
+
+
+
+.header {
+
+  /* Page logo */
+  .item.title {
+    text-align: unset;
+    padding-left: 5px;
+  }
+
+  /* Header search bar */
+  .item.search {
+    input {
+      width: 600px;
+      padding: 0.8rem 1.6rem;
+      border-top-left-radius: 99px;
+      border-bottom-left-radius: 99px;
+
+      &:focus,
+      &:hover {
+        background-color: #26272a;
+        color: white;
+
+        & ~ .btn {
+          background-color: #57575a;
+        }
+      }
+    }
+
+    .btn {
+      border-top-right-radius: 99px;
+      border-bottom-right-radius: 99px;
+      width: 75px;
+
+      &:hover {
+        background-color: #57575a;
+      }
+    }
+  }
+
+  /* Header settings button */
+  .item.configure .btn {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #26272a;
+    border-radius: 50%;
+    padding: 0;
+    box-sizing: border-box;
+
+    &:hover {
+      background-color: #57575a;
+    }
+
+    > img {
+      /* Sizing for default settings button */
+      width: 18px;
+      height: 18px;
+    }
+
+    /*
+    > img {
+      // Hide default settings icon
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    // Issue with loading base64 image in settings page due to "Content Security Policy directive: "default-src 'self'".
+    &:before {
+      // User icon
+      content:"";
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      filter: invert(1);
+      background-repeat: no-repeat;
+      background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTIgMy4yYy0xLjg2NCAwLTMuMzc1IDEuNDc3LTMuMzc1IDMuMyAwIDEuODIzIDEuNTExIDMuMyAzLjM3NSAzLjNzMy4zNzUtMS40NzcgMy4zNzUtMy4zYzAtMS44MjMtMS41MTEtMy4zLTMuMzc1LTMuM1pNNi4zNzUgNi41QzYuMzc1IDMuNDYyIDguODkzIDEgMTIgMXM1LjYyNSAyLjQ2MiA1LjYyNSA1LjVTMTUuMTA3IDEyIDEyIDEyIDYuMzc1IDkuNTM4IDYuMzc1IDYuNVpNMTIgMTUuM2MtMy43MjggMC02Ljc1IDIuOTU1LTYuNzUgNi42IDAgLjYwOC0uNTA0IDEuMS0xLjEyNSAxLjFBMS4xMTMgMS4xMTMgMCAwIDEgMyAyMS45YzAtNC44NiA0LjAzLTguOCA5LTguOHM5IDMuOTQgOSA4LjhjMCAuNjA4LS41MDQgMS4xLTEuMTI1IDEuMWExLjExMyAxLjExMyAwIDAgMS0xLjEyNS0xLjFjMC0zLjY0NS0zLjAyMi02LjYtNi43NS02LjZaIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=);
+    }
+    */
+  }
+
+  @media (max-width: 840px) {
+    .item.configure .btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+
+
+
+/* End of feed footer */
+main#stream #stream-footer,
+#overlay #panel #stream-footer {
+  grid-column: 1 / -1;
+  border-top: none;
+  margin-top: 3rem;
+
+  .stream-footer-inner {
+    /* Hide text, then, apply new text using psuedo element :before/:after */
+    font-size: 0; 
+    display: flex;
+    flex-direction: column;
+
+    &:before {
+      content: "(╯°□°)╯︵ ┻━┻";
+      font-size: 2.4rem;
+      margin-bottom: 2rem;
+      opacity: 0.75;
+    }
+
+    &:after {
+      content: "You've reached the end";
+      font-size: 1.4rem;
+      order: -1;
+      margin-bottom: 0.5rem;
+      opacity: 0.75;
+    }
+  }
+
+  button#bigMarkAsRead {
+    /* Mark as read button */
+    border-radius: 12px;
+    margin-top: 4rem;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    margin-bottom: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+#load_more.loading,
+#load_more.loading:hover {
+  /* Infinite scroll loading spinner  */
+  border-radius: 8px;
+}
+
+/* Feed menu */
+.nav_menu {
+  padding: 2rem 1rem 0 1rem;
+  box-sizing: border-box;
+
+  #nav_menu_actions {
+    flex-wrap: wrap;
+  }
+
+  #mark-read-menu {
+    align-items: center;
+
+    .read_all.btn {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+}
+
+/* Card day section title */
+main#stream .day {
+  grid-column: 1 / -1;
+  font-size: var(--feed-day-title-font-size);
+  opacity: 0.8;
+  padding: 0 8px;
+  line-height: 1.2;
+  margin-top: 8rem;
+  margin-bottom: 2rem;
+
+
+  .date,
+  .name {
+    display: none;
+  }
+
+  &#day_before_yesterday {
+    /* Hide text, then, apply new text using psuedo element :before */
+    font-size: 0 !important;
+
+    &:before {
+      content: "Past";
+      font-size: var(--feed-day-title-font-size);
+    }
+  }
+}
+
+main#stream {
+  /* Reduce margin-top on the first day that appears at the top of the feed */
+  #new-article + .day  {
+    margin-top: 2rem;
+  }
+
+  /* Hide title "Past" if it is the only day-title on the feed */
+  #new-article + #day_before_yesterday {
+    visibility: hidden;
+    margin-bottom: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+a.signout img.icon {
+  display: none;
+}
+
+
+/*****************************************
+ *
+ * BEGIN "CARD"
+ *
+ * Feed items are referred to as cards,
+ * as they're styled as grid cells opposed
+ * to FreshRSS' table view.
+ *
+ ****************************************/
+
+/* Cards default state in feed */
+body:not(.reader) main#stream div.flux {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  margin-bottom: auto; /* Prevents card from becoming incredibly tall affected by other grid cells, e.g. #bigMarkAsRead. */
+
+  /* Card hover effect */
+  &:not(.active):hover {
+    background-color: hsl(0deg 0% 0% / 6%);
+  }
+
+  &:not(.not_read),
+  &.favorite:not(.current),
+  &:not(.current):hover .item .title {
+    background: unset;
+    background-color: unset;
+  }
+  
+  /* Card container */
+  .flux_header {
+    /* In card default state, the header is the card container itself, unlike in card expended view where it is used as a header/toolbar. */
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 100%;
+    max-width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: none;
+    background: unset;
+
+    &:hover,
+    &:hover:not(.current):hover .item .title {
+      /* Prevent background change on hover. */
+      background-color: unset;
+      background: unset;
+    }
+
+    .item.titleAuthorSummaryDate {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin: 4px 0;
+
+
+      @media (min-width: 600px) {
+        & {
+          /* Hack: On desktop, keep position consistent while allowing 100% vertical stretch of .flux and .flux-header */
+          height: 105px;
+        }
+      }
+
+
+      a.item-element.title.multiline {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        position: static;
+        padding-left: 2px;
+        padding-right: 2px;
+        min-width: unset;
+        font-size: 1.2rem;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+
+        .author {
+          padding: 0;
+          display: block;
+          margin-top: 4px;
+          font-size: 1rem;
+          line-height: 1.2;
+          color: hsla(0, 0%, 100%, 0.59);
+        }
+      }
+
+      span.item-element.date {
+        padding: 0;
+        position: static;
+        text-align: left;
+        margin-top: 4px;
+        padding-left: 2px;
+        padding-right: 2px;
+        display: flex;
+        width: 100%;
+        font-size: 1rem;
+      }
+    }
+
+    .item.thumbnail {
+      /* Card thumbnail */
+      
+      order: -1; /* Position thumbnail first within card, at the top */
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      flex: 0 0 100%;
+      box-sizing: border-box;
+      margin-bottom: 4px;
+      padding: 0;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        background: #303136;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        object-position: center;
+      }
+    }
+
+  }
+
+}
+
+/* Card expanded state in feed */
+body:not(.reader) main#stream div.flux.active.current {
+
+  /* Card expanded header, serves as a top panel. */
+  .flux_header {
+    position: sticky;
+    top: -4px;
+    left: 0;
+    background-color: var(--frss-background-color, white);
+    z-index: 1;
+    padding: 12px;
+    margin-top: -4px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+
+    .item.titleAuthorSummaryDate {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      order: -1;
+      min-width: unset;
+      flex: 0 0 100%;
+      margin-bottom: 6px;
+      z-index: 10;
+      height: auto;
+      
+      /* Card close button */
+      &:after {
+        content: "×";
+        position: absolute;
+        top: 0px;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.8rem;
+        line-height: 1;
+        padding: 4px;
+        box-sizing: border-box;
+        width: 34px;
+        height: 34px;
+        text-align: center;
+        border-radius: 999px;
+        transition: background-color 0.1s;
+        background-color: hsl(0deg 0% 0% / 6%);
+      }
+
+      /* Card close button hover effect */
+      &:hover:after {
+        background-color: hsla(0, 0%, 100%, 0.08);
+      }
+
+      /* Card title */
+      a {
+        /* Shorten width to prevent overlap with close button. */
+        max-width: calc(100% - 50px);
+      }
+
+      .item-element.date {
+        /* Hide date in theater mode to save vertical space */
+        display: none;
+      }
+    }
+
+
+    li.item.website {
+      /* Hide website icon in theater mode expanded view */
+      display: none;
+    }
+
+    li.item.thumbnail {
+      /* Hide thumbnail in theater mode expanded view */
+      display: none;
+    }
+    
+  }
+
+  /* Card content container */
+  article {
+    display: flex;
+    flex-direction: column;
+    background-color: hsl(0deg 0% 9%);
+  }
+}
+
+/* Card icons and button behavior */
+body:not(.reader) main#stream {
+  div.flux {
+
+    .flux_header {
+      .summary {
+        /* No support for summary */
+        display: none;
+      }
+
+      li.item.manage a,
+      li.item.website.icon a,
+      li.item.link a,
+      li.item.share > a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      li.item.website.full,
+      li.item.website.name {
+        /* For user's who set website setting to "icon and name" or "name" */
+        a {
+          color: white;
+          padding: 0;
+        }
+      }
+
+      li.item.manage,
+      li.item.website.icon,
+      li.item.website.full,
+      li.item.link,
+      li.item.share {
+        flex: 1;
+        background-color: unset;
+        display: inline-flex;
+        height: auto;
+        justify-content: center;
+        border-radius: 999px;
+        margin: 0 2px;
+        padding: 0;
+        z-index: 10;
+        transition: background-color 0.1s;
+        order: 2;
+        min-height: 34px;
+
+        a {
+          padding: 4px 6px;
+          text-align: center;
+          width: 100%;
+        }
+
+        &:nth-child(2) {
+          /* Place favorite button to the far left */
+          order: 1;
+        }
+
+        &:hover {
+          background-color: hsla(0, 0%, 100%, 0.08)
+        }
+      }
+
+      li.item.manage:hover,
+      li.item.website.icon:hover,
+      li.item.link:hover,
+      li.item.share:hover {
+        background-color: hsla(0, 0%, 100%, 0.08)
+      }
+
+      &:not(.active) {
+        li.item.manage a,
+        li.item.website.icon a,
+        li.item.link a,
+        li.item.share a {
+          /* Hide card actions by default */
+          visibility: hidden;
+          background-color: unset;
+        }
+
+        &:hover {
+          /* Display card actions on hover */
+          li.item.manage a,
+          li.item.website.icon a,
+          li.item.link a,
+          li.item.share a {
+            visibility: visible;
+          }
+        }
+
+        @media (max-width: 600px) {
+          /* Always display card actions on mobile */
+          li.item.manage a,
+          li.item.website.icon a,
+          li.item.link a,
+          li.item.share a {
+            visibility: visible !important;
+          }
+        }
+      }
+
+      .website a:hover .favicon,
+      a.website:hover .favicon {
+        /* Disable greyscale effect on website icon hover */
+        filter: unset;
+      }
+
+      li.item.share {
+        order: 3;
+      }
+    }
+    
+    &.active.current .flux_header {
+      li.item.manage a,
+      li.item.website.icon a,
+      li.item.link a,
+      li.item.share a {
+        visibility: visible;
+      }
+    }
+
+    /* Favorites (bookmark) button */
+    &.favorite {
+      .flux_header li.item.manage a.bookmark {
+        visibility: visible;
+        filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
+      }
+
+      .flux_header li.item.manage:nth-child(2) {
+        background-color: hsl(33.65deg 100% 54.9% / 13%);
+
+        &:hover {
+          background-color: hsl(33.65deg 100% 54.9% / 20%);
+        }
+      }
+    }
+
+    /* Favicon as avatar */
+    .flux_header {
+      position: relative;
+
+      li.item.website.icon,
+      li.item.website.full {
+        /* If user set "Website: Icon" in Display settings */
+        display: flex;
+        width: 100%;
+        flex: 0 0 100%;
+        max-width: unset;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        justify-content: flex-start;
+        border-radius: 0;
+        pointer-events: none;
+
+        .websiteName {
+          /* No support for favicon website name. Instead, use display setting "Article icons: Author" */
+          display: none;
+        }
+
+        & ~ .item.titleAuthorSummaryDate {
+          /* If website favicon exist, add padding to make space for it. */
+          padding-left: calc(var(--favicon-avatar-size) + var(--favicon-avatar-size-margin));
+        }
+
+        &:hover {
+          background-color: unset;
+        }
+
+        &:before {
+          /* Position favicon responsively. knowing that the thumbnail will always be 16:9 */
+          content: "";
+          width: 100%;
+          height: auto;
+          aspect-ratio: 16 / 9;
+          z-index: -1;
+          position: relative;
+          visibility: hidden;
+          pointer-events: none;
+        }
+
+        a.item-element {
+          display: flex;
+          width: calc(var(--favicon-avatar-size) + var(--favicon-avatar-size-margin));
+          visibility: visible;
+          pointer-events: all;
+          box-sizing: unset;
+        }
+
+        img.favicon {
+          height: var(--favicon-avatar-size);
+          width: var(--favicon-avatar-size);
+          background-color: hsl(0deg 0% 100% / 18%);
+          padding: 8px;
+          box-sizing: border-box;
+          border-radius: 50%;
+          margin-top: 2px;
+        }
+
+      }
+    }
+
+    /* Change card footer from "My labels" to "+ Add to playlist" */
+    &.active.current article.flux_content {
+      footer ul.horizontal-list.bottom .item.labels .item-element.dropdown a[href^="#dropdown-labels-"] {
+        font-size: 0;
+        white-space: nowrap;
+        color: white;
+
+        &:after {
+          content: "+ Add to playlist";
+          font-weight: bold;
+          font-size: 14px;
+        }
+
+        & + .dropdown-menu .dropdown-header {
+          font-size: 0;
+
+          &:before {
+            content: "Playlists";
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 1rem;
+          }
+
+          a[href="./?c=tag"] {
+            margin-left: 8px;
+            font-size: 1rem;
+          }
+        }
+
+        .icon {
+          display: none;
+        }
+      }
+
+    }
+  }
+}
+
+/*****************************************
+ * END "CARD"
+ ****************************************/
+
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "MAPCO THEME DARK MODE"
+ *
+ * Applies dark mode to the "Mapco" theme.
+ * Content within `<main />` is usually 
+ * light mode; this styling switches it to 
+ * dark mode, along with the left side 
+ * navigation.
+ *
+ ****************************************/
+
+
+/* ====================================
+ * BEGIN "Dark mode: Global styles"
+ * ==================================== */
+
+html {
+/* Note: Wrapping in an `html` selector is for IDE toggling only; it has no impact on the actual styles. */
+
+  /* Global background and text color */
+  body,
+  #slider,
+  .aside.aside_feed,
+  .nav.nav-list.aside,
+  .nav.nav-list.aside ul,
+  .nav-list .item,
+  .tree .tree-folder .tree-folder-title {
+    background-color: #0f0f0f;
+    --frss-font-color-dark: white;
+    color: white;
+  }
+
+  /* Text and link colors */
+  label,
+  .content h1.title a,
+  .content h1 a,
+  .content.thin h1.title a,
+  .content.thin h1 a,
+  .flux .website a,
+  .day,
+  .day .name,
+  .post h1,
+  .post h2,
+  .dropdown-menu .item > a,
+  .dropdown-menu .item > span,
+  .dropdown-menu .item > .as-link,
+  .dropdown-menu .dropdown-header,
+  .dropdown-menu .dropdown-section .dropdown-section-title,
+  .tree .tree-folder .tree-folder-items .dropdown-menu .item a,
+  .tree .tree-folder .tree-folder-items .dropdown-menu .item button {
+    --frss-font-color-dark: white;
+    color: white;
+  }
+
+  article .content figure figcaption {
+    font-style: normal;
+  }
+
+  /* Input, button, and focus */
+  input,
+  select,
+  textarea,
+  button,
+  .btn,
+  kbd,
+  input:focus,
+  select:focus,
+  textarea:focus,
+  .nav_menu,
+  .pagination .item,
+  .nav_menu .btn {
+    background-color: #303136;
+    border-color: #303136;
+    border-top-color: #303136;
+    color: white;
+
+    & .stick .btn,
+    & .group .btn,
+    & .stick .btn.read_all,
+    & .group .btn.read_all,
+    & .btn + .btn:not(.btn-important),
+    & .btn + input,
+    & .btn + .dropdown > .btn,
+    & input + .btn,
+    & input + input,
+    & input + .dropdown > .btn,
+    & .dropdown + .btn,
+    & .dropdown + input,
+    & .dropdown + .dropdown > .btn {
+      background-color: #303136;
+      border-color: #303136;
+      border-top-color: #303136;
+      color: white;
+    }
+
+    .icon {
+      filter: brightness(1.6);
+    }
+  }
+
+
+  /* Button hover */
+  .btn:hover,
+  .nav_menu .stick .btn:not(.active):hover,
+  .nav_menu .group .btn:not(.active):hover,
+  .nav_menu .stick .btn.read_all:hover,
+  .nav_menu .group .btn.read_all:hover,
+  .pagination .item:hover,
+  .nav_menu .btn:hover,
+  .nav-list .item a:hover {
+    background-color: #424348;
+  }
+
+  .nav_menu {
+    background-color: unset;
+    border-color: unset;
+
+    .stick .btn.active,
+    .group .btn.active {
+      background-color: #36c;
+
+      .icon {
+        filter: brightness(3);
+      }
+    }
+  }
+
+  /* Kbd Styles */
+  kbd a {
+    filter: brightness(1.6) saturate(0.8);
+  }
+
+  /* Disabled input */
+  input:disabled,
+  select:disabled {
+    background-color: #303136;
+    border-color: #303136;
+    border-style: solid;
+    background-image: repeating-linear-gradient(
+      45deg,
+      #303136,
+      #303136 10px,
+      #424348 10px,
+      #424348 20px
+    );
+  }
+
+
+  table th {
+    background: hsl(0deg 0% 100% / 12%);
+  }
+}
+
+/* ====================================
+ * END "Dark mode: Global styles"
+ * ==================================== */
+
+
+
+
+
+/* ====================================
+ * BEGIN "Dark mode: Dropdown, dialog, box"
+ * ==================================== */
+
+@media (max-width: 840px) {
+  /* Mobile dropdown, with media query increase selector specificity */
+  .dropdown-target:target ~ .dropdown-toggle::after {
+    /* Mobile dropdown triangle */  
+    background-color: #303136;
+    border-color: #303136;
+  }
+
+  .dropdown .dropdown-menu,
+  .dropdown-target:target ~ .dropdown-menu {
+    border-radius: 12px;
+  }
+
+  #dropdown-configure ~ .dropdown-menu {
+    border-radius: unset;
+
+    .toggle_aside {
+      border: none;
+    }
+  }
+
+  #overlay a.close {
+    border: none;
+  }
+
+
+  .extension_smartmenu ul {
+    list-style-position: inside;
+    list-style-type: none;
+  }
+
+  #nav_menu_views_dropdown ul.dropdown-menu,
+  #nav_menu_actions_dropdown ul.dropdown-menu {
+    .item a {
+      width: 100%;
+    }
+  }
+}
+
+.dropdown {
+  position: relative;
+}
+
+.tree .tree-folder .tree-folder-items .item.active .dropdown li a,
+.dropdown .dropdown-menu .item a {
+  color: white;
+}
+
+.dropdown-menu,
+.box {
+  background-color: #303136;
+  color: white;
+  border-radius: 12px;
+
+  .box-content .item {
+    background-color: #303136;
+  }
+
+  .box-content .item,
+  .box-content .item a {
+    background-color: #303136;
+    color: white;
+  }
+
+  .item.dropdown-section ~ .dropdown-section,
+  .item.separator {
+    border-top-color: #646464;
+    border-bottom-color: #646464;
+    border-color: #646464;
+  }
+}
+
+.box .box-title {
+  background-color: #424348;
+  color: white;
+
+  .configure {
+    border-radius: 8px;
+  }
+}
+
+.box .box-content {
+  .configure {
+    border-radius: 8px;
+  }
+}
+
+
+main#stream .box.category {
+  .box-content {
+    padding: 1rem;
+
+    li.item.feed {
+      border: none;
+
+      a,
+      a:hover {
+        color: white;
+      }
+    }
+  }
+
+  .box-title a.title,
+  .box-title a.title:hover {
+    color: white;
+
+    &:not([data-unread="0"]):after {
+      background-color: rgba(137, 137, 137, 0.4392156863);
+    }
+  }
+}
+
+
+.box .box-title .icon,
+.manage-list .icon,
+.dropdown-header .icon,
+.tree-folder-items .dropdown-toggle .icon,
+.tree-folder-items .item.feed .dropdown-toggle .icon {
+  filter: brightness(2);
+}
+
+.dropdown-menu input,
+.dropdown-menu .btn,
+.stick input + .btn {
+  background-color: #424348;
+  border-color: #424348;
+}
+
+
+
+main.post {
+  /* Subscription management page boxes */
+  .box {
+    border-radius: 12px;
+    overflow: hidden;
+
+    ul {
+      list-style-position: inside;
+    }
+
+    .box-title {
+      padding: 1rem;
+    }
+
+    .box-content {
+      padding: 1rem;
+
+      .item,
+      .item.feed {
+        border: none;
+      }
+    }
+
+  }
+}
+
+
+
+#global #overlay {
+
+  #panel {
+    background: #0f0f0f;
+
+    .flux.not_read:not(.current) {
+      background: #0f0f0f;
+
+      a {
+        color: white;
+      }
+    }
+
+    .flux .flux_header {
+      border-color: #6464646b;
+      padding: 1rem;
+      box-sizing: border-box;
+
+      &:hover {
+        background: #252525;
+      }
+    }
+
+    .flux .flux_header:hover:not(.current):hover .item .title {
+        background: unset;
+    }
+  }
+}
+
+
+
+
+/* ====================================
+ * END "Dark mode: Dropdown, dialog, box"
+ * ==================================== */
+
+
+
+
+
+/* ====================================
+ * BEGIN "Dark mode: Feed side navigation"
+ * ==================================== */
+
+.tree {
+  .tree-folder {
+    border: none;
+    margin: 0 8px;
+
+    .tree-folder-title {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-radius: 8px;
+      text-transform: unset;
+      font-size: 1rem;
+      font-weight: normal;
+
+      &:hover {
+        text-decoration: none;
+        background-color: #303136; // Hover effect
+      }
+
+      img.icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 2rem;
+        filter: brightness(3) !important; /* Prevent chevron icon from having its filter removed on hover */
+      }
+
+      button.dropdown-toggle {
+        margin-right: 0;
+
+        img.icon {
+          /* Resize chevron icon utilizing padding, to keep global sidebar icon size untouched. */
+          padding: 2px;
+          box-sizing: border-box;
+
+          &[src*="down.svg"] {
+            /* Rotate chevron to point right when collapsed */
+            transform: rotate(270deg);
+          }
+
+          &[src*="up.svg"] {
+            /* Rotate chevron to point down when expanded */
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+
+    &.active .tree-folder-title {
+      background-color: #303136; // Active state
+    }
+
+
+    ul.tree-folder-items {
+      background-color: unset;
+
+      li.item {
+        border-radius: 6px;
+        background-color: unset;
+        display: list-item !important; /* Always display all labels on side navigation expand */
+
+        &:hover {
+          background-color: #303136;
+        }
+
+        a.dropdown-toggle {
+          width: 20px;
+          padding-right: 10px;
+          padding-left: 15px;
+        }
+
+        a.item-title {
+          padding-left: 15px;
+          width: calc(100% - 65px);
+
+          img.favicon {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+          }
+
+          &:not([data-unread="0"]) {
+            width: calc(100% - 110px);
+            font-size: 1rem;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+          }
+        }
+
+        &.active {
+          background-color: #303136;
+        }
+
+        &.active a:after {
+          border: none;
+        }
+      }
+    }
+  }
+}
+
+
+.flux {
+  .flux_header {
+    .date {
+      color: hsl(0deg 0% 100% / 59%);
+    }
+  }
+
+  .flux_content {
+    .bottom {
+      .date {
+        color: hsl(0deg 0% 100% / 59%);
+      }
+    }
+  }
+
+  &.not_read {
+    .item {
+      .date {
+        color: hsl(0deg 0% 100% / 59%);
+      }
+    }
+  }
+}
+
+.aside.aside_feed {
+
+  @media (min-width: 840px) {
+    /* Desktop, add padding-top on feed sidenav */
+    padding-top: 2rem;
+
+    & > * {
+      /* On desktop, prevent side navigation to stretch when main content isn't loaded, caused by the layout relying on "display: table" */
+      max-width: 300px;
+    }
+  }
+
+
+  a.toggle_aside {
+    border: none;
+  }
+
+
+  .category .title:not([data-unread="0"])::after {
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    background-color: #89898970;
+    font-weight: bold;
+  }
+}
+
+.tree#sidebar {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+/** 
+ * Highlight only current page in the side navigation, remove highlight from folder if item is active:
+ * - Playlists ("My labels")
+ * - User's category
+ */
+#tags:has(> ul.tree-folder-items.active .item.feed.active) > .tree-folder-title,
+[id^="c_"].tree-folder.category.active:has(> ul.tree-folder-items.active .item.feed.active) > .tree-folder-title {
+  background-color: unset;
+}
+
+
+/* ====================================
+ * END "Dark mode: Side navigation"
+ * ==================================== */
+
+
+
+
+
+/* ====================================
+ * BEGIN "Dark mode: Settings side navigation"
+ * ==================================== */
+
+/* Settings page side nav */
+body:not(.normal) {
+  .nav.nav-list.aside {
+    padding-top: 2rem;
+
+    .item.nav-section {
+
+      li.item {
+        margin: 0 8px;
+        border-radius: 12px;
+        min-height: 1rem;
+        line-height: 1;
+
+        &.active,
+        &.active a {
+          background: #303136;
+          background-color: #303136;
+        }
+
+        &:hover,
+        &:hover a {
+          background: #303136;
+          background-color: #303136;
+        }
+      }
+
+      li.item a {
+        padding: 16px;
+        line-height: 1;
+        font-size: 1.2rem;
+      }
+
+    }
+
+  }
+}
+
+
+/* Settings page back button */ 
+.post a[href="./"] {
+  background-color: #303136;
+  border-color: #303136;
+  color: white;
+}
+
+/* ====================================
+ * END "Dark mode: Settings side navigation"
+ * ==================================== */
+
+
+
+
+
+
+/* ====================================
+ * BEGIN "Dark mode: Card"
+ * ==================================== */
+
+body:not(.reader) main#stream {
+  div.flux {
+    &.not_read {
+      position: relative;
+      background-color: unset;
+
+      &:after {
+        content: "New";
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        padding: 2px 6px;
+        background-color: rgb(255, 0, 0, 0.76);
+        box-shadow: 0 2px 8px 3px hsl(0deg 0% 0% / 13%);
+        border-radius: 6px;
+        font-weight: bold;
+        pointer-events: none;
+      }
+    }
+
+    &:not(.active):hover {
+      /* Card hover effect/background */
+      background-color: hsl(0deg 0% 100% / 6%);
+    }
+
+    @media (max-width: 600px) {
+      &:not(.active),
+      &:not(.active).favorite:not(.current) {
+        /* Mobile, always display hover effect/background */
+        background-color: hsl(0deg 0% 100% / 6%);
+      }
+    }
+
+
+    &.active.current .flux_header {
+      background-color: hsl(0deg 2.56% 15.29%); // Card opened state
+    }
+
+    .flux_header {
+      li.item.manage,
+      li.item.website.icon,
+      li.item.link,
+      li.item.share {
+        background-color: unset;
+      }
+    }
+  }
+
+  div.flux:not(.favorite) .flux_header li.item.manage .item-element.bookmark img,
+  div.flux:not(.not_read) .flux_header li.item.manage .item-element.read img,
+  div.flux .flux_header li.item.link img,
+  div.flux .flux_header li.item.share img,
+   {
+    filter: brightness(1.6);
+  }
+
+  div.flux.not_read .flux_header li.item.manage .item-element.read img {
+    filter: grayscale(1) brightness(1.4);
+  }
+
+}
+
+
+main#stream,
+#overlay #panel {
+  button#bigMarkAsRead {
+    background: #303136;
+    color: #ffffffa3;
+    margin-bottom: 0;
+
+    .bigTick {
+      filter: brightness(5);
+      opacity: 0.6;
+    }
+
+    &:hover {
+      background: #424348;
+      color: #ffffff;
+
+      .bigTick {
+        filter: brightness(5);
+        opacity: 1;
+      }
+    }
+  }
+}
+
+
+#new-article {
+  /* Feed updated notification banner */
+  grid-column: 1 / -1;
+  border-radius: 8px;
+  margin: 1rem 4px;
+  overflow: hidden;
+}
+
+/* ====================================
+ * END "Dark mode: Card"
+ * ==================================== */
+
+
+/*****************************************
+ * END "MAPCO THEME DARK MODE"
+ ****************************************/
+
+
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "CARD EXPANDED - INLINE VIEW MODE"
+ *
+ * Expand cards inline without covering
+ * the entire screen. Used as a fallback 
+ * when "Theater mode" is removed.
+ *
+ ****************************************/
+
+main#stream div.flux.active.current {
+  /* Card content on expanded inline view */
+  grid-column: 1 / -1;
+  max-height: calc(100vh - 275px);
+  overflow: auto;
+
+  @media (max-height: 900px) {
+    /* When viewport height is small, card expands to full height on inline view. */
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  @media (max-width: 840px) {
+    /* Card expands to full height on mobile by default for inline view */
+    height: 100vh;
+    max-height: 100vh;
+  }
+}
+
+/*****************************************
+ * END "CARD EXPANDED - INLINE VIEW MODE"
+ ****************************************/
+
+
+
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "CARD EXPANDED - THEATER MODE"
+ *
+ * When card is expanded, view in fullscreen
+ * with iframe (video) in focus.
+ * 
+ * Note:
+ * To enable the "Inline view" mode,
+ * remove this section of CSS.
+ *
+ ****************************************/
+
+
+body:has(main#stream div.flux.active.current) {
+  /* Disable scroll on body when viewing card in fullscreen */
+  overflow: hidden;
+}
+
+/* Theather mode: card expanded */
+body:not(.reader) main#stream div.flux.active.current {
+
+  .flux_header .item.titleAuthorSummaryDate {
+    /* Remove padding-left initially added by var(--favicon-avatar-size) in card default state */
+    --favicon-avatar-size: 0;
+    --favicon-avatar-size-margin: 0;
+  }
+
+  /* Card content */
+  article {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 500;
+
+    .content {
+      position: relative;
+      overflow: auto;
+      z-index: 500;
+      width: 100%;
+      height: 100vh;
+      margin-top: var(--elm-card-header-height);
+      padding: 0;
+      max-width: 100% !important; /* Override limitation of user's set content width */
+
+      > header {
+        display: none; /* Hide card content header, in favor of using flux_header as card navigation */
+      }
+
+      .text {
+        padding: 0 var(--elm-card-expanded-content-padding);
+
+        & > *:not(iframe) {
+          /* Limit card's general elements' width, and center align */
+          max-width: 900px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        & > img {
+          /* Margin auto centering won't apply unless it's a block element */
+          display: block;
+        }
+      }
+    }
+
+    .enclosure {
+      img.enclosure-thumbnail {
+        /* Thumbnail is put in the iframe (video) position and pulses until the iframe loads. */
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: calc(var(--elm-iframe-height) - 1px); // Hack: Reduce with 1px to avoid half pixel protruding on some browsers
+        width: 100%;
+        max-height: calc(100vh - 169px);
+        min-height: 219;
+        z-index: 300;
+        object-fit: cover;
+        animation: pulse 3s infinite;
+      }
+
+
+    }
+
+    iframe {
+      /* Assumes extension installed: "YouTube Video Feed" or "Invidious Video Feed" */
+      position: relative;
+      z-index: 500;
+      margin-bottom: 2rem;
+      margin-left: calc(var(--elm-card-expanded-content-padding) * -1); /* Compensate for adding x-padding to .text */
+      width: calc(100% + (var(--elm-card-expanded-content-padding) * 2)) !important;  /* Compensate for adding x-padding to .text */
+      max-width: unset;
+      height: var(--elm-iframe-height) !important; /* Override inline height */
+      max-height: calc(100vh - 169px) !important; /* Override inline height */
+      min-height: 219;
+      overflow-x: clip;
+
+    }
+  }
+
+  .flux_header {
+    position: fixed;
+    z-index: 700;
+    top: 0;
+    height: var(--elm-card-header-height);
+    background-color: #0f0f0f;
+    border-radius: 0;
+    border: none;
+    margin: 0;
+
+    li.item.manage,
+    li.item.website.icon,
+    li.item.link,
+    li.item.share {
+      background-color: unset;
+      max-width: 100px;
+    }
+
+    .item.titleAuthorSummaryDate .title.multiline {
+      /* Limit card header to 2 lines, to prevent overlowing var(--elm-card-header-height), especially on mobile. */
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+  }
+
+  footer .item.labels ul.dropdown-menu {
+    bottom: var(--elm-card-footer-height);
+  }
+}
+
+/*****************************************
+ * END "CARD EXPANDED - THEATER MODE"
+ ****************************************/
+
+
+
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "FAVORITES PAGE"
+ *
+ * Applies dark mode to the "Mapco" theme.
+ * Content within `<main />` is usually 
+ * light mode; this styling switches it to 
+ * dark mode, along with the left side 
+ * navigation.
+ *
+ ****************************************/
+
+body:has(.tree-folder.category.favorites.active) {
+  main#stream div.flux.favorite:not(.active) {
+    .flux_header {
+      li.item.manage:nth-child(2) {
+        /* In "Favorites", do not use special highlight effect. */
+        background-color: inherit;
+
+        /* In "Favorites", use regular special hover color. */
+        &:hover {
+          background-color: hsl(0deg 0% 100% / 8%);
+        }
+      }
+    }
+    .flux_header:not(:hover)  {
+      li.item.manage:nth-child(2) {
+        /* In "Favorites", do not constantly highlight favorites button. */
+        visibility: hidden;
+      }
+
+      a.bookmark {
+        /* In "Favorites", hide by favorites icon by default; behave like other icons. */
+        visibility: hidden;
+      }
+    }
+  }
+}
+
+/*****************************************
+ * END "FAVORITES PAGE"
+ ****************************************/
+
+
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "READER VIEW PAGE"
+ *
+ ****************************************/
+
+#stream.reader .flux {
+  border-bottom: 1px solid #646464;
+
+  &,
+  .content {
+    background: #0f0f0f;
+  }
+
+  &,
+  .text {
+    color: white;
+  }
+}
+
+/*****************************************
+ * END "READER VIEW PAGE"
+ ****************************************/
