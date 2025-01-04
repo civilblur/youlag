@@ -11,7 +11,7 @@ This is an opinionated theme and is recommended primarily for video feeds but ma
 
 ## Why
 
-You can subscribe to YouTube creators without signing up for the platform by using via RSS feed and FreshRSS. Combine this with YouLag theme, it recreate a familiar and more comfortable video browsing experience.
+You can subscribe to YouTube creators without signing up for the platform by using their official RSS feeds and FreshRSS. Combine this with the YouLag theme, it recreate a familiar video browsing and viewing experience.
 
 ## Install
 
