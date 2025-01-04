@@ -11,7 +11,7 @@ This is an opinionated theme and is recommended primarily for video feeds but ma
 
 ## Why
 
-I've lightly utilized FreshRSS to keep up with video creators and wanted to finally commit to it, unfortunately, under the circumstances with third-party services struggling. I needed a browsing experience tailored for video content, and since I couldn't find a RSS client or theme that fit the bill, I created the Youlag theme to bridge the gap.
+You can subscribe to YouTube creators without signing up for the platform by using via RSS feed and FreshRSS. Combine this with YouLag theme, it recreate a familiar and more comfortable video browsing experience.
 
 ## Install
 
