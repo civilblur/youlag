@@ -478,11 +478,21 @@ main.post:has(#add_tag) {
 
 
 .header {
+  min-height: 61px;
+  box-sizing: border-box;
 
   /* Page logo */
   .item.title {
+    position: relative;
     text-align: unset;
     padding-left: 5px;
+    min-height: 61px;
+    box-sizing: border-box;
+
+    & > a {
+      align-content: center;
+    }
+    
 
     @media (max-width: 840px) {
       /* Center logo as sidenav toggle button is on the left side for mobile view */
@@ -576,6 +586,8 @@ main.post:has(#add_tag) {
       position: absolute;
       top: 0;
       left: 0;
+      min-height: 61px;
+      box-sizing: border-box;
   
       .icon {
         /* Hide existing sidenav toggle icon */
@@ -587,7 +599,7 @@ main.post:has(#add_tag) {
         content: "";
         display: block;
         width: 14px;
-        height: 24px; // For centering the icon vertically, actual icon size is determined by the width.
+        height: 36px; // For centering the icon vertically, actual icon size is determined by the width.
         background-image: url('../themes/Mapco/icons/view-normal.svg'); // Existing image from FreshRSS theme "Mapco"
         background-size: contain;
         background-position: center;
