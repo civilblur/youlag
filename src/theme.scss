@@ -2067,13 +2067,8 @@ body:not(.reader) main#stream div.flux.active.current {
   }
 
   footer {
-    /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 600;
     background-color: #0f0f0f;
-  
+
     .item.labels ul.dropdown-menu {
       bottom: var(--elm-card-footer-height);
     }
@@ -2092,19 +2087,37 @@ body:not(.reader) main#stream div.flux.active.current {
       }
     }
 
+  }
+
     
-    @media (max-width: 600px) {
+  @media (max-width: 600px) {
+    footer {
+      /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 600;
+
+      @supports (-webkit-hyphens:none) {
+        /* HACK 2025-01-04: Safari does anchor fixed position correctly. */
+        bottom: 42px;
+      }
+
       .dropdown-menu {
         /* Span the dropdown menu horizontally on mobile */
         position: fixed;
       }
     }
 
-
   }
+
+
 }
 
-/* HACK: Theather mode WebKit (Safari, iOS) browser */
+/* 
+ * HACK 2025-01-04: Theather mode WebKit (Safari, iOS) browser 
+ * Feature query ref.: https://browserstrangeness.bitbucket.io/css_hacks.html#safari
+ */
 @supports (-webkit-hyphens:none) { 
     /**
     * Webkit doesn't always respect `position: fixed` for breaking out
