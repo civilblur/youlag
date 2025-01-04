@@ -492,6 +492,7 @@ main.post:has(#add_tag) > h2:first-of-type:before {
     left: 0;
     min-height: 61px;
     box-sizing: border-box;
+    border-radius: 0;
   }
   #global .nav_menu a.btn[href="#aside_feed"] .icon {
     /* Hide existing sidenav toggle icon */
@@ -828,15 +829,8 @@ body:not(.reader) main#stream div.flux li.item.labels {
 }
 body:not(.reader) main#stream div.flux li.item.share:has(.dropdown-target:target),
 body:not(.reader) main#stream div.flux li.item.labels:has(.dropdown-target:target) {
-  /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+  /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
   z-index: 15;
-}
-@media (max-width: 840px) {
-  body:not(.reader) main#stream div.flux li.item.share:has(.dropdown-target:target),
-  body:not(.reader) main#stream div.flux li.item.labels:has(.dropdown-target:target) {
-    /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
-    z-index: 15;
-  }
 }
 body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown,
 body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown {
@@ -857,42 +851,6 @@ body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown a.d
   justify-content: center;
   align-items: center;
   gap: 4px;
-}
-@media (max-width: 840px) {
-  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-toggle:after,
-  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-toggle:after {
-    /* Hide dropdown triangle on mobile */
-    display: none;
-  }
-  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown li.item,
-  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown li.item {
-    width: 100%;
-  }
-  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-menu,
-  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-menu {
-    /* Card dropdown menu on mobile */
-    position: fixed;
-    bottom: 0;
-    height: calc(100vh - 40%);
-    left: 0 !important;
-    right: 0 !important;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-menu > ul,
-  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-menu > ul {
-    overflow: auto;
-  }
-  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-menu > ul .item.addItem,
-  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-menu > ul .item.addItem {
-    /* Sticky "add new" playlist (label) */
-    position: sticky;
-    top: 0;
-    margin-right: 0;
-    padding-right: 0;
-    width: unset;
-    background-color: #303136;
-  }
 }
 body:not(.reader) main#stream div.flux .flux_header .summary {
   /* No support for summary */
@@ -1426,6 +1384,62 @@ html table th {
     /* Mobile dropdown triangle */
     background-color: #303136;
     border-color: #303136;
+  }
+  body:not(.reader) main#stream div.flux li.item.share,
+  body:not(.reader) main#stream div.flux li.item.labels,
+  .nav_menu #mark-read-menu,
+  .nav_menu #nav_menu_actions {
+    /** 
+     * Turn dropdowns into bottom sheets on mobile
+     * - Share button
+     * - Playlists button (labels)
+     * - Mark read butto group within feed nav menu
+     * - Feed actions button group within feed nav menu
+     */
+  }
+  body:not(.reader) main#stream div.flux li.item.share .dropdown-toggle:after,
+  body:not(.reader) main#stream div.flux li.item.labels .dropdown-toggle:after,
+  .nav_menu #mark-read-menu .dropdown-toggle:after,
+  .nav_menu #nav_menu_actions .dropdown-toggle:after {
+    /* Hide dropdown triangle on mobile */
+    display: none;
+  }
+  body:not(.reader) main#stream div.flux li.item.share li.item,
+  body:not(.reader) main#stream div.flux li.item.labels li.item,
+  .nav_menu #mark-read-menu li.item,
+  .nav_menu #nav_menu_actions li.item {
+    width: 100%;
+  }
+  body:not(.reader) main#stream div.flux li.item.share .dropdown-menu,
+  body:not(.reader) main#stream div.flux li.item.labels .dropdown-menu,
+  .nav_menu #mark-read-menu .dropdown-menu,
+  .nav_menu #nav_menu_actions .dropdown-menu {
+    /* Card dropdown menu on mobile */
+    position: fixed;
+    bottom: 0;
+    height: calc(100vh - 40%);
+    left: 0 !important;
+    right: 0 !important;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  body:not(.reader) main#stream div.flux li.item.share .dropdown-menu > ul,
+  body:not(.reader) main#stream div.flux li.item.labels .dropdown-menu > ul,
+  .nav_menu #mark-read-menu .dropdown-menu > ul,
+  .nav_menu #nav_menu_actions .dropdown-menu > ul {
+    overflow: auto;
+  }
+  body:not(.reader) main#stream div.flux li.item.share .dropdown-menu > ul .item.addItem,
+  body:not(.reader) main#stream div.flux li.item.labels .dropdown-menu > ul .item.addItem,
+  .nav_menu #mark-read-menu .dropdown-menu > ul .item.addItem,
+  .nav_menu #nav_menu_actions .dropdown-menu > ul .item.addItem {
+    /* Sticky "add new" playlist (label) */
+    position: sticky;
+    top: 0;
+    margin-right: 0;
+    padding-right: 0;
+    width: unset;
+    background-color: #303136;
   }
   .dropdown .dropdown-menu,
   .dropdown-target:target ~ .dropdown-menu {

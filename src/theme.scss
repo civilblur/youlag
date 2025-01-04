@@ -588,6 +588,7 @@ main.post:has(#add_tag) {
       left: 0;
       min-height: 61px;
       box-sizing: border-box;
+      border-radius: 0;
   
       .icon {
         /* Hide existing sidenav toggle icon */
@@ -980,15 +981,8 @@ body:not(.reader) main#stream {
       */
 
       &:has(.dropdown-target:target) {
-        /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+        /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
         z-index: 15;
-      }
-
-      @media (max-width: 840px) {
-        &:has(.dropdown-target:target) {
-          /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
-          z-index: 15;
-        }
       }
 
       .item-element.dropdown {
@@ -1008,42 +1002,6 @@ body:not(.reader) main#stream {
           justify-content: center;
           align-items: center;
           gap: 4px;
-        }
-
-        @media (max-width: 840px) {
-          .dropdown-toggle:after {
-            /* Hide dropdown triangle on mobile */
-            display: none;
-          }
-
-          li.item {
-            width: 100%;
-          }
-
-          .dropdown-menu {
-            /* Card dropdown menu on mobile */
-            position: fixed;
-            bottom: 0;
-            height: calc(100vh - 40%);
-            left: 0 !important;
-            right: 0 !important;
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-
-            & > ul {
-              overflow: auto;
-
-              .item.addItem {
-                /* Sticky "add new" playlist (label) */
-                position: sticky;
-                top: 0;
-                margin-right: 0;
-                padding-right: 0;
-                width: unset;
-                background-color: #303136;
-              }
-            }
-          }
         }
       }
     }
@@ -1507,6 +1465,54 @@ html {
     background-color: #303136;
     border-color: #303136;
   }
+
+  body:not(.reader) main#stream div.flux li.item.share,
+  body:not(.reader) main#stream div.flux li.item.labels,
+  .nav_menu #mark-read-menu,
+  .nav_menu #nav_menu_actions {
+     /** 
+      * Turn dropdowns into bottom sheets on mobile
+      * - Share button
+      * - Playlists button (labels)
+      * - Mark read butto group within feed nav menu
+      * - Feed actions button group within feed nav menu
+      */
+
+    .dropdown-toggle:after {
+      /* Hide dropdown triangle on mobile */
+      display: none;
+    }
+
+    li.item {
+      width: 100%;
+    }
+
+    .dropdown-menu {
+      /* Card dropdown menu on mobile */
+      position: fixed;
+      bottom: 0;
+      height: calc(100vh - 40%);
+      left: 0 !important;
+      right: 0 !important;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+
+      & > ul {
+        overflow: auto;
+
+        .item.addItem {
+          /* Sticky "add new" playlist (label) */
+          position: sticky;
+          top: 0;
+          margin-right: 0;
+          padding-right: 0;
+          width: unset;
+          background-color: #303136;
+        }
+      }
+    }
+  }
+
 
   .dropdown .dropdown-menu,
   .dropdown-target:target ~ .dropdown-menu {
