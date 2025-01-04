@@ -776,6 +776,81 @@ body:not(.reader) main#stream div.flux {
   /* Favicon as avatar */
   /* Change card footer from "My labels" to "+ Add to playlist" */
 }
+body:not(.reader) main#stream div.flux li.item.share,
+body:not(.reader) main#stream div.flux li.item.labels {
+  /** 
+  * Specific adjustment due to these card buttons containing dropdown menu 
+  * - Share button
+  * - Playlists button (labels)
+  */
+}
+body:not(.reader) main#stream div.flux li.item.share:has(.dropdown-target:target),
+body:not(.reader) main#stream div.flux li.item.labels:has(.dropdown-target:target) {
+  /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+  z-index: 15;
+}
+@media (max-width: 600px) {
+  body:not(.reader) main#stream div.flux li.item.share:has(.dropdown-target:target),
+  body:not(.reader) main#stream div.flux li.item.labels:has(.dropdown-target:target) {
+    /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+    z-index: 15;
+  }
+}
+body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown,
+body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown a.dropdown-toggle,
+body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown a.dropdown-toggle {
+  /* Make button clickable across the entire button area, opposed to only the icon. */
+  width: 100%;
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  border-radius: 999px;
+  justify-content: center;
+  align-items: center;
+}
+@media (max-width: 600px) {
+  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-toggle:after,
+  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-toggle:after {
+    /* Hide dropdown triangle on mobile */
+    display: none;
+  }
+  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown li.item,
+  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown li.item {
+    width: 100%;
+  }
+  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-menu,
+  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-menu {
+    /* Card dropdown menu on mobile */
+    position: fixed;
+    bottom: 0;
+    height: calc(100vh - 40%);
+    left: 0 !important;
+    right: 0 !important;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-menu > ul,
+  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-menu > ul {
+    overflow: auto;
+  }
+  body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-menu > ul .item.addItem,
+  body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-menu > ul .item.addItem {
+    /* Sticky "add new" playlist (label) */
+    position: sticky;
+    top: 0;
+    margin-right: 0;
+    padding-right: 0;
+    width: unset;
+    background-color: #303136;
+  }
+}
 body:not(.reader) main#stream div.flux .flux_header .summary {
   /* No support for summary */
   display: none;
@@ -845,78 +920,6 @@ body:not(.reader) main#stream div.flux .flux_header li.item.link:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.labels:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.share:hover {
   background-color: hsla(0, 0%, 100%, 0.08);
-}
-body:not(.reader) main#stream div.flux .flux_header li.item.share:has(.dropdown-target:target),
-body:not(.reader) main#stream div.flux .flux_header li.item.labels:has(.dropdown-target:target) {
-  /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
-  z-index: 15;
-}
-body:not(.reader) main#stream div.flux .flux_header li.item.share,
-body:not(.reader) main#stream div.flux .flux_header li.item.labels {
-  /** 
-  * Specific adjustment due to these card buttons containing dropdown menu 
-  * - Share button
-  * - Playlists button (labels)
-  */
-}
-@media (max-width: 600px) {
-  body:not(.reader) main#stream div.flux .flux_header li.item.share:has(.dropdown-target:target),
-  body:not(.reader) main#stream div.flux .flux_header li.item.labels:has(.dropdown-target:target) {
-    /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
-    z-index: 15;
-  }
-}
-body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown,
-body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-}
-body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown a.dropdown-toggle,
-body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown a.dropdown-toggle {
-  /* Make button clickable across the entire button area, opposed to only the icon. */
-  width: 100%;
-  display: inline-flex;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  border-radius: 999px;
-  justify-content: center;
-  align-items: center;
-}
-@media (max-width: 600px) {
-  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-toggle:after,
-  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-toggle:after {
-    /* Hide dropdown triangle on mobile */
-    display: none;
-  }
-  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown li.item,
-  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown li.item {
-    width: 100%;
-  }
-  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-menu,
-  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-menu {
-    /* Card dropdown menu on mobile */
-    position: fixed;
-    bottom: 0;
-    height: calc(100vh - 40%);
-    left: 0 !important;
-    right: 0 !important;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-menu > ul,
-  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-menu > ul {
-    overflow: auto;
-  }
-  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-menu > ul .item.addItem,
-  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-menu > ul .item.addItem {
-    /* Sticky "add new" playlist (label) */
-    position: sticky;
-    top: 0;
-    margin-right: 0.5rem !important;
-    background-color: #303136;
-  }
 }
 body:not(.reader) main#stream div.flux .flux_header li.item.labels .dropdown-header {
   display: flex;
@@ -1953,7 +1956,10 @@ body:not(.reader) main#stream div.flux.active.current .flux_header .item.titleAu
   display: block;
 }
 body:not(.reader) main#stream div.flux.active.current footer {
+  display: flex;
+  padding: 0 8px;
   background-color: #0f0f0f;
+  min-height: var(--elm-card-footer-height);
 }
 body:not(.reader) main#stream div.flux.active.current footer .item.labels ul.dropdown-menu {
   bottom: var(--elm-card-footer-height);
@@ -1972,6 +1978,7 @@ body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu:afte
 @media (max-width: 600px) {
   body:not(.reader) main#stream div.flux.active.current footer {
     /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
+    display: flex;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -1983,9 +1990,19 @@ body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu:afte
       bottom: 42px;
     }
   }
-  body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu {
-    /* Span the dropdown menu horizontally on mobile */
-    position: fixed;
+  body:not(.reader) main#stream div.flux.active.current footer .item.date {
+    display: flex;
+    place-items: center;
+    height: var(--elm-card-footer-height);
+  }
+  body:not(.reader) main#stream div.flux.active.current footer .item.date time {
+    max-width: 100%;
+    overflow: hidden;
+    display: inline-block;
+    line-height: 1.2;
+    padding: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

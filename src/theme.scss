@@ -917,6 +917,82 @@ body:not(.reader) main#stream div.flux.active.current {
 body:not(.reader) main#stream {
   div.flux {
 
+    li.item.share,
+    li.item.labels {
+      /** 
+      * Specific adjustment due to these card buttons containing dropdown menu 
+      * - Share button
+      * - Playlists button (labels)
+      */
+
+      &:has(.dropdown-target:target) {
+        /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+        z-index: 15;
+      }
+
+      @media (max-width: 600px) {
+        &:has(.dropdown-target:target) {
+          /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+          z-index: 15;
+        }
+      }
+
+      .item-element.dropdown {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+
+        a.dropdown-toggle {
+          /* Make button clickable across the entire button area, opposed to only the icon. */
+          width: 100%;
+          display: inline-flex;
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          border-radius: 999px;
+          justify-content: center;
+          align-items: center;
+        }
+
+        @media (max-width: 600px) {
+          .dropdown-toggle:after {
+            /* Hide dropdown triangle on mobile */
+            display: none;
+          }
+
+          li.item {
+            width: 100%;
+          }
+
+          .dropdown-menu {
+            /* Card dropdown menu on mobile */
+            position: fixed;
+            bottom: 0;
+            height: calc(100vh - 40%);
+            left: 0 !important;
+            right: 0 !important;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+
+            & > ul {
+              overflow: auto;
+
+              .item.addItem {
+                /* Sticky "add new" playlist (label) */
+                position: sticky;
+                top: 0;
+                margin-right: 0;
+                padding-right: 0;
+                width: unset;
+                background-color: #303136;
+              }
+            }
+          }
+        }
+      }
+    }
+
     .flux_header {
       .summary {
         /* No support for summary */
@@ -979,84 +1055,6 @@ body:not(.reader) main#stream {
         }
       }
 
-
-
-
-      li.item.share,
-      li.item.labels {
-        &:has(.dropdown-target:target) {
-          /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
-          z-index: 15;
-        }
-      }
-
-      li.item.share,
-      li.item.labels {
-        /** 
-        * Specific adjustment due to these card buttons containing dropdown menu 
-        * - Share button
-        * - Playlists button (labels)
-        */
-
-        @media (max-width: 600px) {
-          &:has(.dropdown-target:target) {
-            /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
-            z-index: 15;
-          }
-        }
-
-        .item-element.dropdown {
-          width: 100%;
-          height: 100%;
-          padding: 0;
-
-          a.dropdown-toggle {
-            /* Make button clickable across the entire button area, opposed to only the icon. */
-            width: 100%;
-            display: inline-flex;
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            border-radius: 999px;
-            justify-content: center;
-            align-items: center;
-          }
-
-          @media (max-width: 600px) {
-            .dropdown-toggle:after {
-              /* Hide dropdown triangle on mobile */
-              display: none;
-            }
-
-            li.item {
-              width: 100%;
-            }
-
-            .dropdown-menu {
-              /* Card dropdown menu on mobile */
-              position: fixed;
-              bottom: 0;
-              height: calc(100vh - 40%);
-              left: 0 !important;
-              right: 0 !important;
-              border-bottom-left-radius: 0;
-              border-bottom-right-radius: 0;
-
-              & > ul {
-                overflow: auto;
-
-                .item.addItem {
-                  /* Sticky "add new" playlist (label) */
-                  position: sticky;
-                  top: 0;
-                  margin-right: 0.5rem !important;
-                  background-color: #303136;
-                }
-              }
-            }
-          }
-        }
-      }
 
       li.item.labels {
         
@@ -2205,7 +2203,10 @@ body:not(.reader) main#stream div.flux.active.current {
   }
 
   footer {
+    display: flex;
+    padding: 0 8px;
     background-color: #0f0f0f;
+    min-height: var(--elm-card-footer-height);
 
     .item.labels ul.dropdown-menu {
       bottom: var(--elm-card-footer-height);
@@ -2231,6 +2232,7 @@ body:not(.reader) main#stream div.flux.active.current {
   @media (max-width: 600px) {
     footer {
       /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
+      display: flex;
       position: fixed;
       bottom: 0;
       left: 0;
@@ -2241,10 +2243,23 @@ body:not(.reader) main#stream div.flux.active.current {
         bottom: 42px;
       }
 
-      .dropdown-menu {
-        /* Span the dropdown menu horizontally on mobile */
-        position: fixed;
+      .item.date {
+        display: flex;
+        place-items: center;
+        height: var(--elm-card-footer-height);
+
+        time {
+          max-width: 100%;
+          overflow: hidden;
+          display: inline-block;
+          line-height: 1.2;
+          padding: 0;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
+
+      
     }
 
   }
