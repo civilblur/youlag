@@ -575,6 +575,10 @@ main#stream #new-article + #day_before_yesterday {
   pointer-events: none;
   user-select: none;
 }
+main#stream .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
+  /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
+  z-index: 20;
+}
 
 a.signout img.icon {
   display: none;
@@ -779,6 +783,7 @@ body:not(.reader) main#stream div.flux .flux_header .summary {
 body:not(.reader) main#stream div.flux .flux_header li.item.manage a,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.icon a,
 body:not(.reader) main#stream div.flux .flux_header li.item.link a,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels a,
 body:not(.reader) main#stream div.flux .flux_header li.item.share > a {
   display: flex;
   align-items: center;
@@ -799,6 +804,7 @@ body:not(.reader) main#stream div.flux .flux_header li.item.manage,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.icon,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.full,
 body:not(.reader) main#stream div.flux .flux_header li.item.link,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels,
 body:not(.reader) main#stream div.flux .flux_header li.item.share {
   flex: 1;
   background-color: unset;
@@ -817,6 +823,7 @@ body:not(.reader) main#stream div.flux .flux_header li.item.manage a,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.icon a,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.full a,
 body:not(.reader) main#stream div.flux .flux_header li.item.link a,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels a,
 body:not(.reader) main#stream div.flux .flux_header li.item.share a {
   padding: 4px 6px;
   text-align: center;
@@ -826,6 +833,7 @@ body:not(.reader) main#stream div.flux .flux_header li.item.manage:nth-child(2),
 body:not(.reader) main#stream div.flux .flux_header li.item.website.icon:nth-child(2),
 body:not(.reader) main#stream div.flux .flux_header li.item.website.full:nth-child(2),
 body:not(.reader) main#stream div.flux .flux_header li.item.link:nth-child(2),
+body:not(.reader) main#stream div.flux .flux_header li.item.labels:nth-child(2),
 body:not(.reader) main#stream div.flux .flux_header li.item.share:nth-child(2) {
   /* Place favorite button to the far left */
   order: 1;
@@ -834,16 +842,39 @@ body:not(.reader) main#stream div.flux .flux_header li.item.manage:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.icon:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.full:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.link:hover,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.share:hover {
   background-color: hsla(0, 0%, 100%, 0.08);
 }
-body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown {
-  /* Share button on card: Specific adjustment due to element containing dropdown menu */
+body:not(.reader) main#stream div.flux .flux_header li.item.share:has(.dropdown-target:target),
+body:not(.reader) main#stream div.flux .flux_header li.item.labels:has(.dropdown-target:target) {
+  /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+  z-index: 15;
+}
+body:not(.reader) main#stream div.flux .flux_header li.item.share,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels {
+  /** 
+  * Specific adjustment due to these card buttons containing dropdown menu 
+  * - Share button
+  * - Playlists button (labels)
+  */
+}
+@media (max-width: 600px) {
+  body:not(.reader) main#stream div.flux .flux_header li.item.share:has(.dropdown-target:target),
+  body:not(.reader) main#stream div.flux .flux_header li.item.labels:has(.dropdown-target:target) {
+    /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+    z-index: 15;
+  }
+}
+body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown {
   width: 100%;
   height: 100%;
   padding: 0;
 }
-body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown a.dropdown-toggle {
+body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown a.dropdown-toggle,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown a.dropdown-toggle {
+  /* Make button clickable across the entire button area, opposed to only the icon. */
   width: 100%;
   display: inline-flex;
   margin: 0;
@@ -853,15 +884,73 @@ body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.
   justify-content: center;
   align-items: center;
 }
+@media (max-width: 600px) {
+  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-toggle:after,
+  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-toggle:after {
+    /* Hide dropdown triangle on mobile */
+    display: none;
+  }
+  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown li.item,
+  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown li.item {
+    width: 100%;
+  }
+  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-menu,
+  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-menu {
+    /* Card dropdown menu on mobile */
+    position: fixed;
+    bottom: 0;
+    height: calc(100vh - 40%);
+    left: 0 !important;
+    right: 0 !important;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-menu > ul,
+  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-menu > ul {
+    overflow: auto;
+  }
+  body:not(.reader) main#stream div.flux .flux_header li.item.share .item-element.dropdown .dropdown-menu > ul .item.addItem,
+  body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown .dropdown-menu > ul .item.addItem {
+    /* Sticky "add new" playlist (label) */
+    position: sticky;
+    top: 0;
+    margin-right: 0.5rem !important;
+    background-color: #303136;
+  }
+}
+body:not(.reader) main#stream div.flux .flux_header li.item.labels .dropdown-header {
+  display: flex;
+  font-size: 0;
+}
+body:not(.reader) main#stream div.flux .flux_header li.item.labels .dropdown-header:before {
+  content: "Playlists";
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+body:not(.reader) main#stream div.flux .flux_header li.item.labels .dropdown-header a[href="./?c=tag"] {
+  margin-left: 8px;
+  font-size: 1rem;
+  visibility: visible;
+  width: unset;
+}
+body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown:not(:has(.dropdown-target:target)) {
+  /* Playlists button (labels) on card: Hide close button as it displays even after onblur. */
+}
+body:not(.reader) main#stream div.flux .flux_header li.item.labels .item-element.dropdown:not(:has(.dropdown-target:target)) a.dropdown-close {
+  display: none;
+}
 body:not(.reader) main#stream div.flux .flux_header li.item.manage:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.icon:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.link:hover,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels:hover,
 body:not(.reader) main#stream div.flux .flux_header li.item.share:hover {
   background-color: hsla(0, 0%, 100%, 0.08);
 }
 body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.manage a,
 body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.website.icon a,
 body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.link a,
+body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.labels a,
 body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.share a {
   /* Hide card actions by default */
   visibility: hidden;
@@ -873,6 +962,7 @@ body:not(.reader) main#stream div.flux .flux_header:not(.active):hover {
 body:not(.reader) main#stream div.flux .flux_header:not(.active):hover li.item.manage a,
 body:not(.reader) main#stream div.flux .flux_header:not(.active):hover li.item.website.icon a,
 body:not(.reader) main#stream div.flux .flux_header:not(.active):hover li.item.link a,
+body:not(.reader) main#stream div.flux .flux_header:not(.active):hover li.item.labels a,
 body:not(.reader) main#stream div.flux .flux_header:not(.active):hover li.item.share a {
   visibility: visible;
 }
@@ -883,6 +973,7 @@ body:not(.reader) main#stream div.flux .flux_header:not(.active):hover li.item.s
   body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.manage a,
   body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.website.icon a,
   body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.link a,
+  body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.labels a,
   body:not(.reader) main#stream div.flux .flux_header:not(.active) li.item.share a {
     visibility: visible !important;
   }
@@ -898,6 +989,7 @@ body:not(.reader) main#stream div.flux .flux_header li.item.share {
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.manage a,
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.website.icon a,
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.link a,
+body:not(.reader) main#stream div.flux.active.current .flux_header li.item.labels a,
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.share a {
   visibility: visible;
 }
@@ -1647,12 +1739,14 @@ body:not(.reader) main#stream div.flux.active.current .flux_header {
 body:not(.reader) main#stream div.flux .flux_header li.item.manage,
 body:not(.reader) main#stream div.flux .flux_header li.item.website.icon,
 body:not(.reader) main#stream div.flux .flux_header li.item.link,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels,
 body:not(.reader) main#stream div.flux .flux_header li.item.share {
   background-color: unset;
 }
 body:not(.reader) main#stream div.flux:not(.favorite) .flux_header li.item.manage .item-element.bookmark img,
 body:not(.reader) main#stream div.flux:not(.not_read) .flux_header li.item.manage .item-element.read img,
 body:not(.reader) main#stream div.flux .flux_header li.item.link img,
+body:not(.reader) main#stream div.flux .flux_header li.item.labels img,
 body:not(.reader) main#stream div.flux .flux_header li.item.share img {
   filter: brightness(1.6);
 }
@@ -1846,6 +1940,7 @@ body:not(.reader) main#stream div.flux.active.current .flux_header {
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.manage,
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.website.icon,
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.link,
+body:not(.reader) main#stream div.flux.active.current .flux_header li.item.labels,
 body:not(.reader) main#stream div.flux.active.current .flux_header li.item.share {
   background-color: unset;
   max-width: 100px;

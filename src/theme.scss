@@ -679,7 +679,17 @@ main#stream {
     pointer-events: none;
     user-select: none;
   }
+
+  .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
+    /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
+    z-index: 20;
+  }
+
 }
+
+
+
+
 
 a.signout img.icon {
   display: none;
@@ -916,6 +926,7 @@ body:not(.reader) main#stream {
       li.item.manage a,
       li.item.website.icon a,
       li.item.link a,
+      li.item.labels a,
       li.item.share > a {
         display: flex;
         align-items: center;
@@ -937,6 +948,7 @@ body:not(.reader) main#stream {
       li.item.website.icon,
       li.item.website.full,
       li.item.link,
+      li.item.labels,
       li.item.share {
         flex: 1;
         background-color: unset;
@@ -968,27 +980,119 @@ body:not(.reader) main#stream {
       }
 
 
-      li.item.share .item-element.dropdown {
-        /* Share button on card: Specific adjustment due to element containing dropdown menu */
-        width: 100%;
-        height: 100%;
-        padding: 0;
 
-        a.dropdown-toggle {
-          width: 100%;
-          display: inline-flex;
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          border-radius: 999px;
-          justify-content: center;
-          align-items: center;
+
+      li.item.share,
+      li.item.labels {
+        &:has(.dropdown-target:target) {
+          /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+          z-index: 15;
         }
       }
+
+      li.item.share,
+      li.item.labels {
+        /** 
+        * Specific adjustment due to these card buttons containing dropdown menu 
+        * - Share button
+        * - Playlists button (labels)
+        */
+
+        @media (max-width: 600px) {
+          &:has(.dropdown-target:target) {
+            /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+            z-index: 15;
+          }
+        }
+
+        .item-element.dropdown {
+          width: 100%;
+          height: 100%;
+          padding: 0;
+
+          a.dropdown-toggle {
+            /* Make button clickable across the entire button area, opposed to only the icon. */
+            width: 100%;
+            display: inline-flex;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            border-radius: 999px;
+            justify-content: center;
+            align-items: center;
+          }
+
+          @media (max-width: 600px) {
+            .dropdown-toggle:after {
+              /* Hide dropdown triangle on mobile */
+              display: none;
+            }
+
+            li.item {
+              width: 100%;
+            }
+
+            .dropdown-menu {
+              /* Card dropdown menu on mobile */
+              position: fixed;
+              bottom: 0;
+              height: calc(100vh - 40%);
+              left: 0 !important;
+              right: 0 !important;
+              border-bottom-left-radius: 0;
+              border-bottom-right-radius: 0;
+
+              & > ul {
+                overflow: auto;
+
+                .item.addItem {
+                  /* Sticky "add new" playlist (label) */
+                  position: sticky;
+                  top: 0;
+                  margin-right: 0.5rem !important;
+                  background-color: #303136;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      li.item.labels {
+        
+        .dropdown-header {
+          display: flex;
+          font-size: 0;
+
+          &:before {
+            content: "Playlists";
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 1rem;
+          }
+
+          a[href="./?c=tag"] {
+            margin-left: 8px;
+            font-size: 1rem;
+            visibility: visible;
+            width: unset;
+          }
+        }
+
+        .item-element.dropdown:not(:has(.dropdown-target:target)) {
+          /* Playlists button (labels) on card: Hide close button as it displays even after onblur. */
+          a.dropdown-close {
+            display: none;
+          }
+        }
+
+      }
+      
 
       li.item.manage:hover,
       li.item.website.icon:hover,
       li.item.link:hover,
+      li.item.labels:hover,
       li.item.share:hover {
         background-color: hsla(0, 0%, 100%, 0.08)
       }
@@ -997,6 +1101,7 @@ body:not(.reader) main#stream {
         li.item.manage a,
         li.item.website.icon a,
         li.item.link a,
+        li.item.labels a,
         li.item.share a {
           /* Hide card actions by default */
           visibility: hidden;
@@ -1008,6 +1113,7 @@ body:not(.reader) main#stream {
           li.item.manage a,
           li.item.website.icon a,
           li.item.link a,
+          li.item.labels a,
           li.item.share a {
             visibility: visible;
           }
@@ -1018,6 +1124,7 @@ body:not(.reader) main#stream {
           li.item.manage a,
           li.item.website.icon a,
           li.item.link a,
+          li.item.labels a,
           li.item.share a {
             visibility: visible !important;
           }
@@ -1039,6 +1146,7 @@ body:not(.reader) main#stream {
       li.item.manage a,
       li.item.website.icon a,
       li.item.link a,
+      li.item.labels a,
       li.item.share a {
         visibility: visible;
       }
@@ -1830,6 +1938,7 @@ body:not(.reader) main#stream {
       li.item.manage,
       li.item.website.icon,
       li.item.link,
+      li.item.labels,
       li.item.share {
         background-color: unset;
       }
@@ -1839,6 +1948,7 @@ body:not(.reader) main#stream {
   div.flux:not(.favorite) .flux_header li.item.manage .item-element.bookmark img,
   div.flux:not(.not_read) .flux_header li.item.manage .item-element.read img,
   div.flux .flux_header li.item.link img,
+  div.flux .flux_header li.item.labels img,
   div.flux .flux_header li.item.share img
    {
     filter: brightness(1.6);
@@ -2079,6 +2189,7 @@ body:not(.reader) main#stream div.flux.active.current {
     li.item.manage,
     li.item.website.icon,
     li.item.link,
+    li.item.labels,
     li.item.share {
       background-color: unset;
       max-width: 100px;
