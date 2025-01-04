@@ -432,7 +432,7 @@ nav.aside.aside_feed {
     width: 292px;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 840px) {
     .stick.configure-feeds {
       width: calc(100% - 8px);
     }
@@ -483,6 +483,14 @@ main.post:has(#add_tag) {
   .item.title {
     text-align: unset;
     padding-left: 5px;
+
+    @media (max-width: 840px) {
+      /* Center logo as sidenav toggle button is on the left side for mobile view */
+      display: flex;
+      justify-content: center;
+      position: absolute;
+      width: 100%;
+    }
   }
 
   /* Header search bar */
@@ -557,13 +565,47 @@ main.post:has(#add_tag) {
     }
     */
   }
+}
 
-  @media (max-width: 840px) {
+@media (max-width: 840px) {
+
+  #global .nav_menu {
+
+    a.btn[href="#aside_feed"] {
+      /* Place mobile sidenav expand button toggle on header, for  */
+      position: absolute;
+      top: 0;
+      left: 0;
+  
+      .icon {
+        /* Hide existing sidenav toggle icon */
+        display: none;
+      }
+  
+      &:after {
+        /* Add new sidenav toggle icon */
+        content: "";
+        display: block;
+        width: 14px;
+        height: 24px; // For centering the icon vertically, actual icon size is determined by the width.
+        background-image: url('../themes/Mapco/icons/view-normal.svg'); // Existing image from FreshRSS theme "Mapco"
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: brightness(3);    
+      }
+    }
+  
     .item.configure .btn {
+      /* Settings button size */
       width: 40px;
       height: 40px;
     }
+
   }
+
+
+
 }
 
 
@@ -930,7 +972,7 @@ body:not(.reader) main#stream {
         z-index: 15;
       }
 
-      @media (max-width: 600px) {
+      @media (max-width: 840px) {
         &:has(.dropdown-target:target) {
           /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
           z-index: 15;
@@ -956,7 +998,7 @@ body:not(.reader) main#stream {
           gap: 4px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 840px) {
           .dropdown-toggle:after {
             /* Hide dropdown triangle on mobile */
             display: none;
@@ -2230,7 +2272,7 @@ body:not(.reader) main#stream div.flux.active.current {
   }
 
     
-  @media (max-width: 600px) {
+  @media (max-width: 840px) {
     footer {
       /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
       display: flex;

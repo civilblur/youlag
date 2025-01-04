@@ -364,7 +364,7 @@ nav.aside.aside_feed .stick.configure-feeds {
   z-index: 10;
   width: 292px;
 }
-@media (max-width: 600px) {
+@media (max-width: 840px) {
   nav.aside.aside_feed .stick.configure-feeds {
     width: calc(100% - 8px);
   }
@@ -406,6 +406,15 @@ main.post:has(#add_tag) > h2:first-of-type:before {
 .header .item.title {
   text-align: unset;
   padding-left: 5px;
+}
+@media (max-width: 840px) {
+  .header .item.title {
+    /* Center logo as sidenav toggle button is on the left side for mobile view */
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+  }
 }
 .header .item.search input {
   width: 600px;
@@ -466,13 +475,36 @@ main.post:has(#add_tag) > h2:first-of-type:before {
   width: 18px;
   height: 18px;
 }
+
 @media (max-width: 840px) {
-  .header .item.configure .btn {
+  #global .nav_menu a.btn[href="#aside_feed"] {
+    /* Place mobile sidenav expand button toggle on header, for  */
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  #global .nav_menu a.btn[href="#aside_feed"] .icon {
+    /* Hide existing sidenav toggle icon */
+    display: none;
+  }
+  #global .nav_menu a.btn[href="#aside_feed"]:after {
+    /* Add new sidenav toggle icon */
+    content: "";
+    display: block;
+    width: 14px;
+    height: 24px;
+    background-image: url("../themes/Mapco/icons/view-normal.svg");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(3);
+  }
+  #global .nav_menu .item.configure .btn {
+    /* Settings button size */
     width: 40px;
     height: 40px;
   }
 }
-
 /* End of feed footer */
 main#stream #stream-footer,
 #overlay #panel #stream-footer {
@@ -789,7 +821,7 @@ body:not(.reader) main#stream div.flux li.item.labels:has(.dropdown-target:targe
   /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
   z-index: 15;
 }
-@media (max-width: 600px) {
+@media (max-width: 840px) {
   body:not(.reader) main#stream div.flux li.item.share:has(.dropdown-target:target),
   body:not(.reader) main#stream div.flux li.item.labels:has(.dropdown-target:target) {
     /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
@@ -816,7 +848,7 @@ body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown a.d
   align-items: center;
   gap: 4px;
 }
-@media (max-width: 600px) {
+@media (max-width: 840px) {
   body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-toggle:after,
   body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown .dropdown-toggle:after {
     /* Hide dropdown triangle on mobile */
@@ -1976,7 +2008,7 @@ body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu:afte
   /* Hide the dropdown triangle */
   display: none;
 }
-@media (max-width: 600px) {
+@media (max-width: 840px) {
   body:not(.reader) main#stream div.flux.active.current footer {
     /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
     display: flex;
