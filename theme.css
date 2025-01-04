@@ -356,6 +356,11 @@ nav.aside.aside_feed .stick.configure-feeds {
   z-index: 10;
   width: 292px;
 }
+@media (max-width: 600px) {
+  nav.aside.aside_feed .stick.configure-feeds {
+    width: calc(100% - 8px);
+  }
+}
 nav.aside.aside_feed #mark-read-aside {
   top: 72px; /* Padding-top of container + height of "Subscriptions management" button */
 }
@@ -1471,12 +1476,18 @@ main.post .box .box-content .item.feed {
 }
 .tree .tree-folder ul.tree-folder-items li.item a.item-title {
   padding-left: 15px;
-  width: calc(100% - 65px);
+  width: calc(100% - 70px);
+}
+.tree .tree-folder ul.tree-folder-items li.item a.item-title:not(.active) {
+  padding-left: 62px;
 }
 .tree .tree-folder ul.tree-folder-items li.item a.item-title img.favicon {
   width: 18px;
   height: 18px;
   margin-right: 8px;
+}
+.tree .tree-folder ul.tree-folder-items li.item a.item-title:has(img.favicon) {
+  padding-left: 15px;
 }
 .tree .tree-folder ul.tree-folder-items li.item a.item-title:not([data-unread="0"]) {
   width: calc(100% - 110px);

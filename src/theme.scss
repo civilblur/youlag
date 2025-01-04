@@ -56,7 +56,7 @@
  * BEGIN "VARIABLES AND KEYFRAMES"
  ****************************************/
 
-:root {
+ :root {
   --favicon-avatar-size: 34px;
   --favicon-avatar-size-margin: 6px;
   --feed-day-title-font-size: 2.3rem;
@@ -422,6 +422,12 @@ nav.aside.aside_feed {
     top: 20px;
     z-index: 10;
     width: 292px;
+  }
+
+  @media (max-width: 600px) {
+    .stick.configure-feeds {
+      width: calc(100% - 8px);
+    }
   }
 
   #mark-read-aside {
@@ -1580,12 +1586,20 @@ main.post {
 
         a.item-title {
           padding-left: 15px;
-          width: calc(100% - 65px);
+          width: calc(100% - 70px);
+
+          &:not(.active) {
+            padding-left: 62px;
+          }
 
           img.favicon {
             width: 18px;
             height: 18px;
             margin-right: 8px;
+          }
+
+          &:has(img.favicon) {
+            padding-left: 15px;
           }
 
           &:not([data-unread="0"]) {
@@ -1594,6 +1608,7 @@ main.post {
             font-weight: normal;
             letter-spacing: 0.5px;
           }
+
         }
 
         &.active {
@@ -1797,7 +1812,7 @@ body:not(.reader) main#stream {
   div.flux:not(.favorite) .flux_header li.item.manage .item-element.bookmark img,
   div.flux:not(.not_read) .flux_header li.item.manage .item-element.read img,
   div.flux .flux_header li.item.link img,
-  div.flux .flux_header li.item.share img,
+  div.flux .flux_header li.item.share img
    {
     filter: brightness(1.6);
   }
