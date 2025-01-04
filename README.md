@@ -42,7 +42,10 @@ I've lightly utilized FreshRSS to keep up with video creators and wanted to fina
 
 ## Contribution
 
-Please make changes to the SASS file at `src/theme.scss` opposed to the compiled `.css` file.
+1. Fork and make changes to the `dev` branch.
+1. Install dependencies: `npm i`.
+1. Make changes to the SASS file at `src/theme.scss` opposed to the compiled `theme.css` file.
+1. Run `watch-css` to compile `src/theme.scss` to `theme.css`.
 
 [Learn more about SASS here](https://sass-lang.com/install/).
 
