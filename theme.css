@@ -954,7 +954,7 @@ body:not(.reader) main#stream div.flux.active.current article.flux_content foote
   white-space: nowrap;
   color: white;
 }
-body:not(.reader) main#stream div.flux.active.current article.flux_content footer ul.horizontal-list.bottom .item.labels .item-element.dropdown a[href^="#dropdown-labels-"]:after {
+body:not(.reader) main#stream div.flux.active.current article.flux_content footer ul.horizontal-list.bottom .item.labels .item-element.dropdown a[href^="#dropdown-labels-"]:before {
   content: "+ Add to playlist";
   font-weight: bold;
   font-size: 14px;
@@ -1778,6 +1778,24 @@ body:not(.reader) main#stream div.flux.active.current article .enclosure img.enc
   object-fit: cover;
   animation: pulse 3s infinite;
 }
+body:not(.reader) main#stream div.flux.active.current article .enclosure p.enclosure-content a[download=""] {
+  /* View on YouTube button (💾), hide default label. */
+  font-size: 0px !important;
+}
+body:not(.reader) main#stream div.flux.active.current article .enclosure p.enclosure-content a[download=""]:after {
+  /* Replace default label "💾" with "Watch on YouTube"-button. */
+  content: "Watch on YouTube";
+  font-size: 1rem;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  background: #303136;
+  border-radius: 5px;
+  min-height: 39px;
+  line-height: 25px;
+  display: inline-flex;
+  place-items: center;
+  margin-bottom: 1rem;
+}
 body:not(.reader) main#stream div.flux.active.current article iframe {
   /* Assumes extension installed: "YouTube Video Feed" or "Invidious Video Feed" */
   position: relative;
@@ -1809,15 +1827,39 @@ body:not(.reader) main#stream div.flux.active.current .flux_header li.item.share
   max-width: 100px;
 }
 body:not(.reader) main#stream div.flux.active.current .flux_header .item.titleAuthorSummaryDate .title.multiline {
-  /* Limit card header to 2 lines, to prevent overlowing var(--elm-card-header-height), especially on mobile. */
-  white-space: normal;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  /* Limit card header to 1 lines, to prevent overlowing var(--elm-card-header-height), especially on mobile. */
+  white-space: nowrap;
+  text-overflow: ellipsis;
   overflow: hidden;
+  display: block;
+}
+body:not(.reader) main#stream div.flux.active.current footer {
+  /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 600;
+  background-color: #0f0f0f;
 }
 body:not(.reader) main#stream div.flux.active.current footer .item.labels ul.dropdown-menu {
   bottom: var(--elm-card-footer-height);
+}
+body:not(.reader) main#stream div.flux.active.current footer .dropdown-label {
+  color: #fff;
+}
+body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu {
+  /* Prevent "Add to playlist" (My Labels) button to reveal outside viewport */
+  bottom: 50px;
+}
+body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu:after {
+  /* Hide the dropdown triangle */
+  display: none;
+}
+@media (max-width: 600px) {
+  body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu {
+    /* Span the dropdown menu horizontally on mobile */
+    position: fixed;
+  }
 }
 
 /* HACK: Theather mode WebKit (Safari, iOS) browser */
