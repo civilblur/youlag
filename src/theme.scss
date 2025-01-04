@@ -679,7 +679,17 @@ main#stream {
     pointer-events: none;
     user-select: none;
   }
+
+  .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
+    /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
+    z-index: 20;
+  }
+
 }
+
+
+
+
 
 a.signout img.icon {
   display: none;
@@ -907,6 +917,83 @@ body:not(.reader) main#stream div.flux.active.current {
 body:not(.reader) main#stream {
   div.flux {
 
+    li.item.share,
+    li.item.labels {
+      /** 
+      * Specific adjustment due to these card buttons containing dropdown menu 
+      * - Share button
+      * - Playlists button (labels)
+      */
+
+      &:has(.dropdown-target:target) {
+        /* Playlists button (labels) on card: Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+        z-index: 15;
+      }
+
+      @media (max-width: 600px) {
+        &:has(.dropdown-target:target) {
+          /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+          z-index: 15;
+        }
+      }
+
+      .item-element.dropdown {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+
+        a.dropdown-toggle {
+          /* Make button clickable across the entire button area, opposed to only the icon. */
+          width: 100%;
+          display: inline-flex;
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          border-radius: 999px;
+          justify-content: center;
+          align-items: center;
+          gap: 4px;
+        }
+
+        @media (max-width: 600px) {
+          .dropdown-toggle:after {
+            /* Hide dropdown triangle on mobile */
+            display: none;
+          }
+
+          li.item {
+            width: 100%;
+          }
+
+          .dropdown-menu {
+            /* Card dropdown menu on mobile */
+            position: fixed;
+            bottom: 0;
+            height: calc(100vh - 40%);
+            left: 0 !important;
+            right: 0 !important;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+
+            & > ul {
+              overflow: auto;
+
+              .item.addItem {
+                /* Sticky "add new" playlist (label) */
+                position: sticky;
+                top: 0;
+                margin-right: 0;
+                padding-right: 0;
+                width: unset;
+                background-color: #303136;
+              }
+            }
+          }
+        }
+      }
+    }
+
     .flux_header {
       .summary {
         /* No support for summary */
@@ -916,6 +1003,7 @@ body:not(.reader) main#stream {
       li.item.manage a,
       li.item.website.icon a,
       li.item.link a,
+      li.item.labels a,
       li.item.share > a {
         display: flex;
         align-items: center;
@@ -937,6 +1025,7 @@ body:not(.reader) main#stream {
       li.item.website.icon,
       li.item.website.full,
       li.item.link,
+      li.item.labels,
       li.item.share {
         flex: 1;
         background-color: unset;
@@ -968,27 +1057,41 @@ body:not(.reader) main#stream {
       }
 
 
-      li.item.share .item-element.dropdown {
-        /* Share button on card: Specific adjustment due to element containing dropdown menu */
-        width: 100%;
-        height: 100%;
-        padding: 0;
+      li.item.labels {
+        
+        .dropdown-header {
+          display: flex;
+          font-size: 0;
 
-        a.dropdown-toggle {
-          width: 100%;
-          display: inline-flex;
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          border-radius: 999px;
-          justify-content: center;
-          align-items: center;
+          &:before {
+            content: "Playlists";
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 1rem;
+          }
+
+          a[href="./?c=tag"] {
+            margin-left: 8px;
+            font-size: 1rem;
+            visibility: visible;
+            width: unset;
+          }
         }
+
+        .item-element.dropdown:not(:has(.dropdown-target:target)) {
+          /* Playlists button (labels) on card: Hide close button as it displays even after onblur. */
+          a.dropdown-close {
+            display: none;
+          }
+        }
+
       }
+      
 
       li.item.manage:hover,
       li.item.website.icon:hover,
       li.item.link:hover,
+      li.item.labels:hover,
       li.item.share:hover {
         background-color: hsla(0, 0%, 100%, 0.08)
       }
@@ -997,6 +1100,7 @@ body:not(.reader) main#stream {
         li.item.manage a,
         li.item.website.icon a,
         li.item.link a,
+        li.item.labels a,
         li.item.share a {
           /* Hide card actions by default */
           visibility: hidden;
@@ -1008,6 +1112,7 @@ body:not(.reader) main#stream {
           li.item.manage a,
           li.item.website.icon a,
           li.item.link a,
+          li.item.labels a,
           li.item.share a {
             visibility: visible;
           }
@@ -1018,6 +1123,7 @@ body:not(.reader) main#stream {
           li.item.manage a,
           li.item.website.icon a,
           li.item.link a,
+          li.item.labels a,
           li.item.share a {
             visibility: visible !important;
           }
@@ -1039,6 +1145,7 @@ body:not(.reader) main#stream {
       li.item.manage a,
       li.item.website.icon a,
       li.item.link a,
+      li.item.labels a,
       li.item.share a {
         visibility: visible;
       }
@@ -1830,6 +1937,7 @@ body:not(.reader) main#stream {
       li.item.manage,
       li.item.website.icon,
       li.item.link,
+      li.item.labels,
       li.item.share {
         background-color: unset;
       }
@@ -1839,6 +1947,7 @@ body:not(.reader) main#stream {
   div.flux:not(.favorite) .flux_header li.item.manage .item-element.bookmark img,
   div.flux:not(.not_read) .flux_header li.item.manage .item-element.read img,
   div.flux .flux_header li.item.link img,
+  div.flux .flux_header li.item.labels img,
   div.flux .flux_header li.item.share img
    {
     filter: brightness(1.6);
@@ -2079,6 +2188,7 @@ body:not(.reader) main#stream div.flux.active.current {
     li.item.manage,
     li.item.website.icon,
     li.item.link,
+    li.item.labels,
     li.item.share {
       background-color: unset;
       max-width: 100px;
@@ -2094,7 +2204,10 @@ body:not(.reader) main#stream div.flux.active.current {
   }
 
   footer {
+    display: flex;
+    padding: 0 8px;
     background-color: #0f0f0f;
+    min-height: var(--elm-card-footer-height);
 
     .item.labels ul.dropdown-menu {
       bottom: var(--elm-card-footer-height);
@@ -2120,6 +2233,7 @@ body:not(.reader) main#stream div.flux.active.current {
   @media (max-width: 600px) {
     footer {
       /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
+      display: flex;
       position: fixed;
       bottom: 0;
       left: 0;
@@ -2130,10 +2244,23 @@ body:not(.reader) main#stream div.flux.active.current {
         bottom: 42px;
       }
 
-      .dropdown-menu {
-        /* Span the dropdown menu horizontally on mobile */
-        position: fixed;
+      .item.date {
+        display: flex;
+        place-items: center;
+        height: var(--elm-card-footer-height);
+
+        time {
+          max-width: 100%;
+          overflow: hidden;
+          display: inline-block;
+          line-height: 1.2;
+          padding: 0;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
+
+      
     }
 
   }
