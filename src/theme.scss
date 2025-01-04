@@ -2048,32 +2048,33 @@ body:not(.reader) main#stream div.flux.active.current {
 }
 
 /* HACK: Theather mode WebKit (Safari, iOS) browser */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  /**
-   * Webkit doesn't always respect `position: fixed` for breaking out
-   * content. This is a specific workaround for positioning theather 
-   * mode RSS items visually the same as other non-Webkit browsers.
-   */
-   body:not(.reader) main#stream:has(div.flux.active.current) {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 500;
-  }
+@supports (-webkit-hyphens:none) { 
+    /**
+    * Webkit doesn't always respect `position: fixed` for breaking out
+    * content. This is a specific workaround for positioning theather 
+    * mode RSS items visually the same as other non-Webkit browsers.
+    */
+    body:not(.reader) main#stream:has(div.flux.active.current) {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 500;
+    }
 
-  body:not(.reader) main#stream div.flux.active.current {
-    .flux_header {      
-      li.item.titleAuthorSummaryDate:after {
-        /* Close button: move it back towards viewport, otherwise it goes outside. */
-        right: 40px;
+    body:not(.reader) main#stream div.flux.active.current {
+      .flux_header {      
+        li.item.titleAuthorSummaryDate:after {
+          /* Close button: move it back towards viewport, otherwise it goes outside. */
+          right: 40px;
+        }
       }
     }
-  }
-  
-  
-}
+
+ }
+
+
 
 
 /*****************************************

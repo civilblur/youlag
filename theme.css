@@ -1821,12 +1821,12 @@ body:not(.reader) main#stream div.flux.active.current footer .item.labels ul.dro
 }
 
 /* HACK: Theather mode WebKit (Safari, iOS) browser */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
+@supports (-webkit-hyphens: none) {
   /**
-   * Webkit doesn't always respect `position: fixed` for breaking out
-   * content. This is a specific workaround for positioning theather 
-   * mode RSS items visually the same as other non-Webkit browsers.
-   */
+  * Webkit doesn't always respect `position: fixed` for breaking out
+  * content. This is a specific workaround for positioning theather 
+  * mode RSS items visually the same as other non-Webkit browsers.
+  */
   body:not(.reader) main#stream:has(div.flux.active.current) {
     position: fixed;
     top: 0;
