@@ -1834,11 +1834,6 @@ body:not(.reader) main#stream div.flux.active.current .flux_header .item.titleAu
   display: block;
 }
 body:not(.reader) main#stream div.flux.active.current footer {
-  /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 600;
   background-color: #0f0f0f;
 }
 body:not(.reader) main#stream div.flux.active.current footer .item.labels ul.dropdown-menu {
@@ -1856,13 +1851,29 @@ body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu:afte
   display: none;
 }
 @media (max-width: 600px) {
+  body:not(.reader) main#stream div.flux.active.current footer {
+    /* Prevent mobile browsers with elements (e.g. omnibar) to be placed on top. */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 600;
+  }
+  @supports (-webkit-hyphens: none) {
+    body:not(.reader) main#stream div.flux.active.current footer {
+      /* HACK 2025-01-04: Safari does anchor fixed position correctly. */
+      bottom: 42px;
+    }
+  }
   body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu {
     /* Span the dropdown menu horizontally on mobile */
     position: fixed;
   }
 }
 
-/* HACK: Theather mode WebKit (Safari, iOS) browser */
+/* 
+ * HACK 2025-01-04: Theather mode WebKit (Safari, iOS) browser 
+ * Feature query ref.: https://browserstrangeness.bitbucket.io/css_hacks.html#safari
+ */
 @supports (-webkit-hyphens: none) {
   /**
   * Webkit doesn't always respect `position: fixed` for breaking out
