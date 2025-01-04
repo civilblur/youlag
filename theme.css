@@ -814,6 +814,7 @@ body:not(.reader) main#stream div.flux li.item.labels .item-element.dropdown a.d
   border-radius: 999px;
   justify-content: center;
   align-items: center;
+  gap: 4px;
 }
 @media (max-width: 600px) {
   body:not(.reader) main#stream div.flux li.item.share .item-element.dropdown .dropdown-toggle:after,

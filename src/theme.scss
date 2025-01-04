@@ -953,6 +953,7 @@ body:not(.reader) main#stream {
           border-radius: 999px;
           justify-content: center;
           align-items: center;
+          gap: 4px;
         }
 
         @media (max-width: 600px) {
