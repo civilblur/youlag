@@ -33,6 +33,7 @@
  * - Card expanded - Theater mode
  * - Favorites page
  * - Reader view page
+ * - Animation keyframes
  * 
  * 
  * NOTE
@@ -485,6 +486,17 @@ main.post:has(#add_tag) > h2:first-of-type:before {
 }
 
 @media (max-width: 840px) {
+  header.header .item.configure {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    justify-content: flex-end;
+    padding-right: 14px;
+  }
+  header.header .item.configure .btn {
+    width: 40px;
+    height: 40px;
+  }
   #global .nav_menu a.btn[href="#aside_feed"] {
     /* Place mobile sidenav expand button toggle on header, for  */
     position: absolute;
@@ -511,7 +523,6 @@ main.post:has(#add_tag) > h2:first-of-type:before {
     filter: brightness(3);
   }
   #global .nav_menu .item.configure .btn {
-    /* Settings button size */
     width: 40px;
     height: 40px;
   }
@@ -1422,6 +1433,7 @@ html table th {
     right: 0 !important;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+    animation: slideUp 0.15s ease-in-out forwards;
   }
   body:not(.reader) main#stream div.flux li.item.share .dropdown-menu > ul,
   body:not(.reader) main#stream div.flux li.item.labels .dropdown-menu > ul,
@@ -2025,8 +2037,7 @@ body:not(.reader) main#stream div.flux.active.current footer .dropdown-label {
   color: #fff;
 }
 body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu {
-  /* Prevent "Add to playlist" (My Labels) button to reveal outside viewport */
-  bottom: 50px;
+  bottom: 0;
 }
 body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu:after {
   /* Hide the dropdown triangle */
@@ -2044,6 +2055,10 @@ body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu:afte
   @supports (-webkit-hyphens: none) {
     body:not(.reader) main#stream div.flux.active.current footer {
       /* HACK 2025-01-04: Safari does anchor fixed position correctly. */
+      bottom: 42px;
+    }
+    body:not(.reader) main#stream div.flux.active.current footer .dropdown-menu {
+      /* On mobile, prevent "Add to playlist" (My Labels) button to reveal outside viewport */
       bottom: 42px;
     }
   }
@@ -2139,4 +2154,20 @@ body:has(.tree-folder.category.favorites.active) main#stream div.flux.favorite:n
 
 /*****************************************
  * END "READER VIEW PAGE"
+ ****************************************/
+/*****************************************
+ *
+ * BEGIN "ANIMATION KEYFRAMES"
+ *
+ ****************************************/
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+/*****************************************
+ * END "ANIMATION KEYFRAMES"
  ****************************************/

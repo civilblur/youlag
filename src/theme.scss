@@ -35,6 +35,7 @@
  * - Card expanded - Theater mode
  * - Favorites page
  * - Reader view page
+ * - Animation keyframes
  * 
  * 
  * NOTE
@@ -579,6 +580,21 @@ main.post:has(#add_tag) {
 
 @media (max-width: 840px) {
 
+  header.header {
+    .item.configure {
+      display: flex;
+      align-items: center;
+      height: 50px;
+      justify-content: flex-end;
+      padding-right: 14px;
+  
+      .btn {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  }
+
   #global .nav_menu {
 
     a.btn[href="#aside_feed"] {
@@ -609,11 +625,14 @@ main.post:has(#add_tag) {
       }
     }
   
-    .item.configure .btn {
-      /* Settings button size */
-      width: 40px;
-      height: 40px;
+    .item.configure {
+
+      .btn {
+        width: 40px;
+        height: 40px;
+      }
     }
+    
 
   }
 
@@ -1496,6 +1515,7 @@ html {
       right: 0 !important;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+      animation: slideUp 0.15s ease-in-out forwards; // Animate bottom sheet from bottom to up
 
       & > ul {
         overflow: auto;
@@ -2278,8 +2298,7 @@ body:not(.reader) main#stream div.flux.active.current {
     }
 
     .dropdown-menu {
-      /* Prevent "Add to playlist" (My Labels) button to reveal outside viewport */
-      bottom: 50px;
+      bottom: 0;
 
       &:after {
         /* Hide the dropdown triangle */
@@ -2302,6 +2321,11 @@ body:not(.reader) main#stream div.flux.active.current {
       @supports (-webkit-hyphens:none) {
         /* HACK 2025-01-04: Safari does anchor fixed position correctly. */
         bottom: 42px;
+
+        .dropdown-menu {
+          /* On mobile, prevent "Add to playlist" (My Labels) button to reveal outside viewport */
+          bottom: 42px;
+        }
       }
 
       .item.date {
@@ -2443,4 +2467,27 @@ body:has(.tree-folder.category.favorites.active) {
 
 /*****************************************
  * END "READER VIEW PAGE"
+ ****************************************/
+
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "ANIMATION KEYFRAMES"
+ *
+ ****************************************/
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+/*****************************************
+ * END "ANIMATION KEYFRAMES"
  ****************************************/
