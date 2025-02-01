@@ -7,7 +7,7 @@
 ## About
 "Youlag Theme for [FreshRSS](https://freshrss.org/)" provides a video-focused browsing experience for your RSS subscriptions.
 
-This is an opinionated theme and is recommended primarily for video feeds but may still work with regular content feeds. Feel free and setup a separate instance of FreshRSS if needed.
+This opinionated theme is best for video feeds but may still work with regular content. Set up a separate FreshRSS instance if needed.
 
 ## Features
 
@@ -35,7 +35,7 @@ This is an opinionated theme and is recommended primarily for video feeds but ma
 
 ### Installing the theme
 
-1. Go to "Settings > Extensions" and adjust these extensions by clicking the respective gear (⚙️) icon:
+1. Go to "Settings > Extensions" and click the gear (⚙️) icon for each extension:
 
    - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
    - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
