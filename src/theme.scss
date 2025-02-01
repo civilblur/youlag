@@ -944,31 +944,6 @@ body:not(.reader) main#stream div.flux.active.current {
       z-index: 10;
       height: auto;
       
-      /* Card close button */
-      &:after {
-        content: "×";
-        position: absolute;
-        top: 0px;
-        right: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.8rem;
-        line-height: 1;
-        padding: 4px;
-        box-sizing: border-box;
-        width: 34px;
-        height: 34px;
-        text-align: center;
-        border-radius: 999px;
-        transition: background-color 0.1s;
-        background-color: hsl(0deg 0% 0% / 6%);
-      }
-
-      /* Card close button hover effect */
-      &:hover:after {
-        background-color: hsla(0, 0%, 100%, 0.08);
-      }
 
       /* Card title */
       a {
