@@ -1871,6 +1871,19 @@ main.post {
       }
     }
   }
+
+  li.tree-folder.category {
+    &.tags {
+      .item.feed a.item-title {
+
+        @media (min-width: 840px) {
+          &:not(.active) {
+            padding-left: 15px;
+          }
+        }
+      }
+    }
+  }
 }
 
 
