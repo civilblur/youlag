@@ -26,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     handleActiveRssItem(initialTargetElement);
     observer.disconnect();
   }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeRssItem();
+    }
+  });
+
+
 });
 
 function handleActiveRssItem(targetElement) {
