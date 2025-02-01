@@ -11,7 +11,7 @@ This is an opinionated theme and is recommended primarily for video feeds but ma
 
 ## Features
 
-- 🎥 **Video Browsing & Viewing**
+- ⭐ **Video Browsing & Viewing**
   - Familiar video platform layout.
   - Expands to theater view when viewing feed items.
   - Auto-stops video when closing (prevents background play in FreshRSS).
