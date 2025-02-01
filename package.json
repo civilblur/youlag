@@ -9,8 +9,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-css": "sass src/theme.scss theme.css --no-source-map",
-    "watch-css": "sass --watch src/theme.scss theme.css --no-source-map"
+    "build-css": "sass src/theme.scss theme.css --no-source-map --style=compressed",
+    "watch-css": "sass --watch src/theme.scss theme.css --no-source-map --style=compressed"
   },
   "repository": {
     "type": "git",

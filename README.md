@@ -9,15 +9,24 @@
 
 This is an opinionated theme and is recommended primarily for video feeds but may still work with regular content feeds. Feel free and setup a separate instance of FreshRSS if needed.
 
-## Why
+## Features
 
-The YouLag theme allows you to recreate a familiar video browsing and viewing experience. By using YouTube's official RSS feeds with FreshRSS, you can subscribe to creators without needing to sign up for the platform.
+- 🎥 **Video Browsing & Viewing**
+  - Familiar video platform layout.
+  - Expands to theater view when viewing feed items.
+  - Auto-stops video when closing (prevents background play in FreshRSS).
+  - Dark mode.
+- 🖥️ **Optimized for Desktop & Mobile**
+  - Redesigned menus for better mobile usability.
+  - Improved legibility.
+- 📺 **FreshRSS features:**
+  - Subscribe to YouTube creators without an account.
 
 ## Install
 
-### Prerequisite
+### Prerequisites
 
-1. Install and enable [these official FresshRSS extensions](https://github.com/FreshRSS/Extensions): "CustomCSS", "YouTube", and "CustomJS" (optional).
+1. Install and enable [these official FresshRSS extensions](https://github.com/FreshRSS/Extensions): "CustomCSS", "CustomJS", "YouTube", and "YouTubeChannel2RssFeed" (optional).
 
 2. Go to "Settings > Configuration: Display" and use these settings:
    - **Theme**: "Mapco — By: Thomas Guesnon".
@@ -29,7 +38,7 @@ The YouLag theme allows you to recreate a familiar video browsing and viewing ex
 1. Go to "Settings > Extensions" and adjust these extensions by clicking the respective gear (⚙️) icon:
 
    - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
-   - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit". This will allow videos to stop when exiting out from a video page, opposed to playing in the background.
+   - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
 
 ## Additional tools
 

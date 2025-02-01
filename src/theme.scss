@@ -2,7 +2,7 @@
  *
  * Youlag Theme for FreshRSS
  *
- * Version: 1.0.1
+ * Version: 1.0.2
  * License: GNU General Public License v3.0
  * Author: civilblur @ github
  * 
@@ -916,6 +916,24 @@ body:not(.reader) main#stream div.flux.active.current {
     margin-top: -4px;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
+    pointer-events: none; /* Prevents card header clicks from closing the rss item. */
+
+
+    .item a,
+    .item .dropdown-close,
+    .item .dropdown-menu {
+      /* Reenable action buttons within card header */
+      pointer-events: all;
+    }
+
+    .item .dropdown-menu {
+      z-index: 1100;
+
+      li.item.share {
+        min-width: 100%;
+        margin: 0;
+      }
+    }
 
     .item.titleAuthorSummaryDate {
       display: flex;
@@ -958,6 +976,7 @@ body:not(.reader) main#stream div.flux.active.current {
       a {
         /* Shorten width to prevent overlap with close button. */
         max-width: calc(100% - 50px);
+        pointer-events: none;
       }
 
       .item-element.date {
@@ -1070,6 +1089,10 @@ body:not(.reader) main#stream {
         transition: background-color 0.1s;
         order: 2;
         min-height: 34px;
+
+      li.item.share {
+        width: 100%;
+      } 
 
         a {
           padding: 4px 6px;
@@ -1502,8 +1525,21 @@ html {
       display: none;
     }
 
-    li.item {
-      width: 100%;
+    li.item,
+    li.item button {
+      margin: 0;
+      font-size: 1.4rem;
+
+      label {
+        padding: 10px;
+        text-indent: 0;
+      }
+
+      input[type="checkbox"] {
+        width: 1.4rem !important;
+        height: 1.4rem !important;
+        margin-right: 1rem;
+      }
     }
 
     .dropdown-menu {
@@ -1528,6 +1564,23 @@ html {
           padding-right: 0;
           width: unset;
           background-color: #303136;
+        }
+
+      }
+
+      p.help {
+        display: flex;
+        flex-wrap: wrap;
+        word-break: break-all;
+        line-height: 1.4;
+        justify-content: center;
+
+        .btn {
+          background-color: #424348;
+        }
+
+        .icon {
+          display: none;
         }
       }
     }
@@ -1579,6 +1632,12 @@ html {
   background-color: #303136;
   color: white;
   border-radius: 12px;
+
+  li.item {
+    &:hover {
+      background-color: hsla(0,0%,100%,.06);
+    }
+  }
 
   .box-content .item {
     background-color: #303136;
