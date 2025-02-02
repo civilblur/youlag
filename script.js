@@ -1,14 +1,44 @@
-document.addEventListener('DOMContentLoaded', () => {
+let isScriptLoaded = false;
+let activeRssItem = null; 
+
+document.addEventListener('DOMContentLoaded', initialize);
+
+// HACK: Safari workaround for script loading issue
+const checkScriptLoadedInterval = setInterval(() => {
+  if (!isScriptLoaded) {
+    initialize();
+  } else {
+    clearInterval(checkScriptLoadedInterval);
+  }
+}, 1000);
+
+setTimeout(() => {
+  clearInterval(checkScriptLoadedInterval);
+}, 20000);
+
+
+function initialize() {
+  if (isScriptLoaded) return;
+  isScriptLoaded = true;
+  setupClickListener();
+  observeActiveRssItem();
+  checkInitialActiveRssItem();
+  setupEscapeKeyListener();
+}
+
+function setupClickListener() {
   const streamContainer = document.querySelector('#stream');
   
   if (streamContainer) {
     streamContainer.addEventListener('click', handleActiveRssItem);
   }
+}
 
-  // Check if the document has been loaded with an active RSS item
+function observeActiveRssItem() {
   const observer = new MutationObserver((mutationsList, observer) => {
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList' || mutation.type === 'attributes') {
+        activeRssItem = document.querySelector('.flux.current.active');
         const targetElement = document.querySelector('.flux.current.active .flux_header');
         if (targetElement) {
           handleActiveRssItem(targetElement);
@@ -19,22 +49,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+}
 
-  // Initial check to see if an RSS item is opened before the script is loaded
+function checkInitialActiveRssItem() {
+  activeRssItem = document.querySelector('.flux.current.active');
   const initialTargetElement = document.querySelector('.flux.current.active .flux_header');
   if (initialTargetElement) {
     handleActiveRssItem(initialTargetElement);
-    observer.disconnect();
   }
+}
 
+function setupEscapeKeyListener() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeRssItem();
     }
   });
-
-
-});
+}
 
 function handleActiveRssItem(targetElement) {
   if (targetElement instanceof Event) {
@@ -45,6 +76,7 @@ function handleActiveRssItem(targetElement) {
     preventBrowserBackNav();
   }
 }
+
 
 function createCloseButton() {
   // Create a close button for opened RSS item, to add custom logic for closing the item.
@@ -107,29 +139,27 @@ function handleRssModalPopState(e) {
 }
 
 function closeRssItem() {
-  const activeRssItem = document.querySelector('.flux.current.active');
-  const mediaElements = document.querySelectorAll('.flux.current.active article audio, .flux.current.active article video, .flux.current.active article iframe');
-  const rssItemCloseButton = document.querySelectorAll('#rssItemCloseButton'); // Using querySelectorAll for ensuring the button(s) is removed
-
-  mediaElements.forEach(media => {
-    // Pause audio and video elements on close
-    if ((media.tagName === 'AUDIO' || media.tagName === 'VIDEO') && !media.paused) {
-      media.pause();
-    }
-    
-    // Unload inactive iframes.
-    // FreshRSS will by default replace 'data-original' with 'src', when the rss item is active again. 
-    if (media.tagName === 'IFRAME' && media.src) {
-      media.setAttribute('data-original', media.src);
-      media.removeAttribute('src');
-    }
-  });
-
-  rssItemCloseButton.forEach(button => button.remove());
-
   if (activeRssItem) {
-    activeRssItem.classList.remove('active', 'current');
-  }
+    const mediaElements = activeRssItem.querySelectorAll('article audio, article video, article iframe');
+    const rssItemCloseButton = document.querySelectorAll('#rssItemCloseButton'); // Using querySelectorAll for ensuring the button(s) is removed
+    mediaElements.forEach(media => {
+      // Pause audio and video elements on close
+      if ((media.tagName === 'AUDIO' || media.tagName === 'VIDEO') && !media.paused) {
+        media.pause();
+      }
+      
+      // Unload inactive iframes.
+      // FreshRSS will by default replace 'data-original' with 'src', when the rss item is active again. 
+      if (media.tagName === 'IFRAME' && media.src) {
+        media.setAttribute('data-original', media.src);
+        media.removeAttribute('src');
+      }
+    });
 
-  window.removeEventListener('popstate', handleRssModalPopState);
+    rssItemCloseButton.forEach(button => button.remove());
+
+    activeRssItem.classList.remove('active', 'current');
+
+    window.removeEventListener('popstate', handleRssModalPopState);
+  }
 }

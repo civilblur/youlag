@@ -2404,6 +2404,8 @@ body:not(.reader) main#stream div.flux.active.current {
 /* 
  * HACK 2025-01-04: Theather mode WebKit (Safari, iOS) browser 
  * Feature query ref.: https://browserstrangeness.bitbucket.io/css_hacks.html#safari
+ *
+ * TODO 2025-02-02: This will cause the scroll position to be lost, due to the fixed positioning.
  */
 @supports (-webkit-hyphens:none) { 
     /**
