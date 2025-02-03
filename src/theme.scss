@@ -1514,11 +1514,12 @@ html {
       /* Card dropdown menu on mobile */
       position: fixed;
       bottom: 0;
-      height: calc(100vh - 60%);
+      height: calc(100vh - 50%);
       left: 0 !important;
       right: 0 !important;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+      overflow: auto;
       animation: slideUp 0.15s ease-in-out forwards; // Animate bottom sheet from bottom to up
 
       & > ul {
