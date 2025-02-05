@@ -13,7 +13,7 @@ This opinionated theme is best for video feeds but may still work with regular c
 
 - ⭐ **Video Browsing & Viewing**
   - Familiar video platform layout.
-  - Expands to theater view when viewing feed items.
+  - View feed items in fullscreen "theater view".
   - Auto-stops video when closing (prevents background play in FreshRSS).
   - Dark mode.
 - 🖥️ **Optimized for Desktop & Mobile**
@@ -21,6 +21,11 @@ This opinionated theme is best for video feeds but may still work with regular c
   - Improved legibility.
 - 📺 **FreshRSS features:**
   - Subscribe to YouTube creators without an account.
+
+### Planned
+- Minimize video, to allow background playback while browsing feed.
+- Local video queue (without autoplay, due to CORS limitation).
+- Major refactoring to improve stability and browser compatability.
 
 ## Install
 
