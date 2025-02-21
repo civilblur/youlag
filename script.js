@@ -1,165 +1,129 @@
-let isScriptLoaded = false;
-let activeRssItem = null; 
+const modalContainerClassName = `youlag-theater-modal-container`;
+const modalContentClassName = `youlag-theater-modal-container`;
+const modalCloseIdName = `youlagCloseModal`;
+const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 
-document.addEventListener('DOMContentLoaded', initialize);
-
-// HACK: Safari workaround for script loading issue
-const checkScriptLoadedInterval = setInterval(() => {
-  if (!isScriptLoaded) {
-    initialize();
+function handleActiveRssItem(targetOrEvent) {
+  // Coordinates the event for extracting the data triggering.
+  let feedItem;
+  if (targetOrEvent instanceof Event) {
+    feedItem = targetOrEvent.target.closest('div[data-feed]');
   } else {
-    clearInterval(checkScriptLoadedInterval);
+    feedItem = targetOrEvent.closest('div[data-feed]');
   }
-}, 1000);
+  if (!feedItem) return;
+  const data = extractFeedItemData(feedItem);
+  createModalWithData(data);
+}
 
-setTimeout(() => {
-  clearInterval(checkScriptLoadedInterval);
-}, 20000);
+function extractFeedItemData(feedItem) {
+  // Extract data from the provided target element.
+  return {
+    author: feedItem.querySelector('.flux_header')?.getAttribute('data-article-authors') || '',
+    favorite_toggle_url: feedItem.querySelector('a.item-element.bookmark')?.href || '',
+    favorited: !feedItem.querySelector('.bookmark img[src*="non-starred"]'),
+    thumbnail: feedItem.querySelector('.thumbnail img')?.src || '',
+    title: feedItem.querySelector('.item-element.title')?.textContent.trim() || '',
+    external_link: feedItem.querySelector('.item-element.title')?.href || '',
+    date: feedItem.querySelector('.flux_content .date')?.textContent.trim() || '',
+    video_embed_url: feedItem.querySelector('article.flux_content .text > iframe')?.getAttribute('data-original') || feedItem.querySelector('article iframe')?.getAttribute('src'),
+    video_description:
+      '<div>' +
+        (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || '') +
+      '</div>'
+  };
+}
 
+function createModalWithData(data) {
+  // Create custom modal
+  let modal = document.getElementById('youlagTheaterModal');
 
-function initialize() {
-  if (isScriptLoaded) return;
-  isScriptLoaded = true;
-  setupClickListener();
-  observeActiveRssItem();
-  checkInitialActiveRssItem();
-  setupEscapeKeyListener();
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'youlagTheaterModal';
+    modal.style.cssText = `
+      z-index: 99999;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+    `;
+    modal.innerHTML = `<div class="${modalContainerClassName}" style="background: #fff; padding: 20px; max-width: 90%; box-sizing: border-box;"></div>`;
+    document.body.appendChild(modal);
+  }
+
+  // Add content to modal
+  const container = modal.querySelector(modalContainerClassName);
+  container.innerHTML = `
+    <div class="${modalContentClassName}">
+      <h2>${data.title}</h2>
+      <div>Author: ${data.author}</div>
+      <div>Date: ${data.date}</div>
+      <div>
+        <a href="#" id="${modalToggleFavoriteIdName}">Toggle Favorite (Currently: ${data.favorited})</a>
+      </div>
+      <img src="${data.thumbnail}" style="max-width: 100%" />
+      <div>
+        <iframe style="height: 337px; width: 600px;" width="600" height="337" 
+                src="${data.video_embed_url}" frameborder="0" allowfullscreen></iframe>
+      </div>
+
+      <a href="${data.external_link}" target="_blank">View on original site</a>
+      <a href="${data.video_embed_url}" target="_blank">Embed URL</a>
+
+      
+      ${data.video_description}
+      <button id="${modalCloseIdName}">Close</button>
+    </div>
+  `;
+  container.querySelector(modalCloseIdName)?.addEventListener('click', closeModal);
+  container.querySelector(modalToggleFavoriteIdName)?.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleFavorite(data.favorite_toggle_url, container);
+  });
+}
+
+function toggleFavorite(url, container) {
+  fetch(url, { method: 'GET' })
+    .then(response => {
+      if (response.ok) {
+        const favorited = container.querySelector(modalToggleFavoriteIdName).textContent.includes('true');
+        container.querySelector(modalToggleFavoriteIdName).textContent = `Toggle Favorite (Currently: ${!favorited})`;
+      } else {
+        console.error('Failed to toggle favorite status');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function closeModal() {
+  const modal = document.getElementById('youlagTheaterModal');
+  if (modal) modal.remove();
 }
 
 function setupClickListener() {
   const streamContainer = document.querySelector('#stream');
   
   if (streamContainer) {
-    streamContainer.addEventListener('click', handleActiveRssItem);
-  }
-}
-
-function observeActiveRssItem() {
-  const observer = new MutationObserver((mutationsList, observer) => {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList' || mutation.type === 'attributes') {
-        activeRssItem = document.querySelector('.flux.current.active');
-        const targetElement = document.querySelector('.flux.current.active .flux_header');
-        if (targetElement) {
-          handleActiveRssItem(targetElement);
-          observer.disconnect(); // Stop observing once the targetElement is found
-          break;
-        }
-      }
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-}
-
-function checkInitialActiveRssItem() {
-  activeRssItem = document.querySelector('.flux.current.active');
-  const initialTargetElement = document.querySelector('.flux.current.active .flux_header');
-  if (initialTargetElement) {
-    handleActiveRssItem(initialTargetElement);
-  }
-}
-
-function setupEscapeKeyListener() {
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeRssItem();
-    }
-  });
-}
-
-function handleActiveRssItem(targetElement) {
-  if (targetElement instanceof Event) {
-    targetElement = targetElement.target.closest('.flux.current.active .flux_header');
-  }
-  if (targetElement) {
-    createCloseButton();
-    preventBrowserBackNav();
-  }
-}
-
-
-function createCloseButton() {
-  // Create a close button for opened RSS item, to add custom logic for closing the item.
-  const closeButton = document.createElement('div');
-  closeButton.id = "rssItemCloseButton";
-  closeButton.textContent = "×";
-  closeButton.style.cssText = `
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    line-height: 1;
-    padding: 4px;
-    box-sizing: border-box;
-    width: 40px;
-    height: 40px;
-    color: white;
-    border-radius: 50%;
-    z-index: 999999;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  `;
-
-  closeButton.addEventListener('mouseenter', () => {
-    closeButton.style.backgroundColor = '#222222';
-  });
-  closeButton.addEventListener('mouseleave', () => {
-    closeButton.style.backgroundColor = '';
-  });
-
-  closeButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeRssItem();
-    closeButton.remove();
-  });
-
-  document.body.appendChild(closeButton);
-}
-
-function preventBrowserBackNav() {
-  /**
-   * Push an "empty" state to history stack with popstate listener, which prevents going back
-   * to the previous page when closing the rss item, as it's just a modal opposed to a new page.
-   * 
-   * Limitation: Back button navigates iframe history first if iframe is in focus.
-   **/ 
-  history.pushState({ rssModalState: true }, '', location.href);
-  window.addEventListener('popstate', handleRssModalPopState);
-}
-
-function handleRssModalPopState(e) {
-  // Only handle the popstate event if it is our custom state
-  if (e.state && e.state.rssModalState) {
-    closeRssItem();
-    history.pushState({ rssModalState: true }, '', location.href);
-  }
-}
-
-function closeRssItem() {
-  if (activeRssItem) {
-    const mediaElements = activeRssItem.querySelectorAll('article audio, article video, article iframe');
-    const rssItemCloseButton = document.querySelectorAll('#rssItemCloseButton'); // Using querySelectorAll for ensuring the button(s) is removed
-    mediaElements.forEach(media => {
-      // Pause audio and video elements on close
-      if ((media.tagName === 'AUDIO' || media.tagName === 'VIDEO') && !media.paused) {
-        media.pause();
-      }
-      
-      // Unload inactive iframes.
-      // FreshRSS will by default replace 'data-original' with 'src', when the rss item is active again. 
-      if (media.tagName === 'IFRAME' && media.src) {
-        media.setAttribute('data-original', media.src);
-        media.removeAttribute('src');
+    streamContainer.addEventListener('click', (event) => {
+      const target = event.target.closest('div[data-feed]');
+      if (target) {
+        handleActiveRssItem(event);
       }
     });
-
-    rssItemCloseButton.forEach(button => button.remove());
-
-    activeRssItem.classList.remove('active', 'current');
-
-    window.removeEventListener('popstate', handleRssModalPopState);
   }
 }
+
+function init() {
+  setupClickListener();
+  console.log('Custom Feed Script Loaded');
+}
+
+
+document.addEventListener('DOMContentLoaded', init);

@@ -2534,3 +2534,23 @@ body:has(.tree-folder.category.favorites.active) {
 /*****************************************
  * END "ANIMATION KEYFRAMES"
  ****************************************/
+
+
+
+
+/*****************************************
+ *
+ * BEGIN "DEV TEST"
+ *
+ ****************************************/
+
+// Note 2025-02-21: For now, disable the 
+// default click event for feed items,
+// to prioritize the custom youlag modal.
+ul.flux_header {
+  pointer-events: none;
+}
+
+/*****************************************
+ * END "DEV TEST"
+ ****************************************/
