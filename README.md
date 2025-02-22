@@ -7,7 +7,7 @@
 ## About
 "Youlag: Theme and Video Extension for [FreshRSS](https://freshrss.org/)" provides a video-focused browsing experience for your RSS subscriptions.
 
-This opinionated theme and extension is best for video feeds but may still work with regular content. Set up a separate FreshRSS instance if needed.
+This opinionated theme and extension is best for video feeds but may still work with regular content. Feel free and set up a separate FreshRSS instance if needed.
 
 ## Features
 
