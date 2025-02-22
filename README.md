@@ -44,7 +44,7 @@ This opinionated theme and extension is best for video feeds but may still work 
    - **Theme**: "Mapco — By: Thomas Guesnon".
    - **Website**: "Icon". To display fav-icon as avatar in the feed.
 
-### Installing Youlag extension
+### Installing Youlag
 
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
 
