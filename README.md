@@ -1,46 +1,52 @@
 <h1 align="center">
-   Youlag Theme for FreshRSS
+   Youlag: Theme and Video Extension for FreshRSS
 
    <img src="https://github.com/civilblur/youlag/blob/main/src/capture.png" alt="youlag screencapture" width="1000"></a>
 </h1>
 
 ## About
-"Youlag Theme for [FreshRSS](https://freshrss.org/)" provides a video-focused browsing experience for your RSS subscriptions.
+"Youlag: Theme and Video Extension for [FreshRSS](https://freshrss.org/)" provides a video-focused browsing experience for your RSS subscriptions.
 
-This opinionated theme is best for video feeds but may still work with regular content. Set up a separate FreshRSS instance if needed.
+This opinionated theme and extension is best for video feeds but may still work with regular content. Set up a separate FreshRSS instance if needed.
 
 ## Features
 
-- ⭐ **Video Browsing & Viewing**
-  - Familiar video platform layout.
-  - View feed items in fullscreen "theater view".
-  - Auto-stops video when closing (prevents background play in FreshRSS).
+- ⭐ **Optimized for Video Viewing**
+  - Browse your YouTube RSS subscriptions with ease.
+  - Clean, familiar video platform layout.
+  - Fullscreen viewing for videos and feed items.
+  - Quickly exit videos with `Esc` key.
+  - Shortcuts for external viewing: "YouTube Website", or "YouTube Embed" for distraction-free playback.
   - Dark mode.
-- 🖥️ **Optimized for Desktop & Mobile**
-  - Redesigned menus for better mobile usability.
-  - Improved legibility.
+- 🖥️ **Desktop & Mobile**
+  - Reponsive design.
+  - Redesigned menus for better one-handed navigation.
+  - Improved readability and legibility across devices.
 - 📺 **FreshRSS features:**
   - Subscribe to YouTube creators without an account.
 
 ### Planned
-- Minimize video, to allow background playback while browsing feed.
-- Local video queue (without autoplay, due to CORS limitation).
-- Major refactoring to improve stability and browser compatability.
+- Minimize video, for background playback while browsing.
+- Local video queue, but without autoplay due to CORS limitation.
+- Clickable links in video descriptions.
+- Convert to an actual FreshRSS extension, with options for customizing the view and features.
 
 ## Install
 
 ### Prerequisites
 
-1. Install and enable [these official FresshRSS extensions](https://github.com/FreshRSS/Extensions): "CustomCSS", "CustomJS", "YouTube", and "YouTubeChannel2RssFeed" (optional).
+1. Install and enable these extensions:
 
-2. Go to "Settings > Configuration: Display" and use these settings:
+   - **"[YouTube](https://github.com/FreshRSS/Extensions)"** extension: embeds videos from YouTube RSS feeds.
+   - **"[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)"** (optional): converts YouTube channel links to RSS links when adding new feeds. 
+
+2. Go to `Settings > Configuration: Display` and use these settings:
    - **Theme**: "Mapco — By: Thomas Guesnon".
-   - **Thumbnail**: "Landscape".
    - **Website**: "Icon". To display fav-icon as avatar in the feed.
 
-### Installing the theme
+### Installing Youlag extension
 
-1. Go to "Settings > Extensions" and click the gear (⚙️) icon for each extension:
+1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
 
    - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
    - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
