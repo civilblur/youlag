@@ -2,7 +2,7 @@
  *
  * Youlag Theme for FreshRSS
  *
- * Version: 2.0.3
+ * Version: 3.0.0
  * License: GNU General Public License v3.0
  * Author: civilblur @ github
  * 
@@ -2354,7 +2354,7 @@ body:has(.tree-folder.category.favorites.active) {
  * the view and functionality.
  *
  ****************************************/
-body:not(.youlag-loaded):before {
+body:before {
   // Loading spinner, before the youlag script has fully loaded.
   position: fixed;
   top: 0;
@@ -2370,7 +2370,12 @@ body:not(.youlag-loaded):before {
   background-color: #ffffffd4;
   opacity: 0.8;
   z-index: 9999;
+  transition: opacity 0.2s;
+}
+
+body.youlag-loaded:before {
   pointer-events: none;
+  opacity: 0;
 }
 
 main#stream > .flux {
