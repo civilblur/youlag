@@ -67,7 +67,6 @@ function createModalWithData(data) {
     <div class="${modalContentClassName}">
 
       <div class="youlag-video-header">
-        <a href="#aside_feed">Menu</a>
         <button id="${modalCloseIdName}">×</button>
       </div>
 

@@ -226,6 +226,10 @@ body:not(.reader) main#stream {
  *
  ****************************************/
 
+body {
+  padding-top: 61px; // Encompass fixed header
+}
+
 nav.aside.aside_feed {
   /* Position and adjust behavior of "Subscriptions management" button */
   text-align: unset;
@@ -545,6 +549,10 @@ main.post:has(#add_tag) {
 .header {
   min-height: 61px;
   box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
 
   /* Page logo */
   .item.title {
@@ -663,12 +671,13 @@ main.post:has(#add_tag) {
 
     a.btn[href="#aside_feed"] {
       /* Place mobile sidenav expand button toggle on header, for  */
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       min-height: 61px;
       box-sizing: border-box;
       border-radius: 0;
+      z-index: 60;
   
       .icon {
         /* Hide existing sidenav toggle icon */
