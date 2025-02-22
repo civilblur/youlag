@@ -37,7 +37,7 @@ function extractFeedItemData(feedItem) {
     favorite_toggle_url: feedItem.querySelector('a.item-element.bookmark')?.href || '',
     favorited: !feedItem.querySelector('.bookmark img[src*="non-starred"]'),
     thumbnail: feedItem.querySelector('.thumbnail img')?.src || '',
-    title: feedItem.querySelector('.item-element.title')?.textContent.trim() || '',
+    title: feedItem.querySelector('.item-element.title')?.childNodes[0].textContent.trim() || '',
     external_link: feedItem.querySelector('.item-element.title')?.href || '',
     date: feedItem.querySelector('.flux_content .date')?.textContent.trim() || '',
     video_embed_url: feedItem.querySelector('article.flux_content .text > iframe')?.getAttribute('data-original') || feedItem.querySelector('article iframe')?.getAttribute('src'),
