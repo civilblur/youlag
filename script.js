@@ -1,3 +1,4 @@
+let youlagScriptLoaded = false;
 const modalContainerClassName = `youlag-theater-modal-container`;
 const modalContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
@@ -221,6 +222,7 @@ function disableBodyScroll(scroll) {
 function init() {
   setupClickListener();
   removeYoulagLoadingState();
+  youlagScriptLoaded = true;
 }
 
 function removeYoulagLoadingState() {
@@ -230,7 +232,7 @@ function removeYoulagLoadingState() {
 }
 
 function initFallback() {
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  if (document.readyState === 'complete' || document.readyState === 'interactive' || youlagScriptLoaded === true) {
     init();
   } else {
     document.addEventListener('DOMContentLoaded', init);
@@ -240,7 +242,7 @@ function initFallback() {
 
 // Fallback interval check
 const checkInitInterval = setInterval(() => {
-  if (document.readyState === 'complete') {
+  if (document.readyState === 'complete' || youlagScriptLoaded === true) {
     init();
     clearInterval(checkInitInterval);
   }
