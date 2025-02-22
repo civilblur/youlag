@@ -132,6 +132,19 @@ function createModalWithData(data) {
     e.preventDefault();
     toggleFavorite(data.favorite_toggle_url, container, data.feedItemEl);
   });
+
+  // Push a new state to the history.
+  // TODO 2025-02-22: Currently requires two back presses to close the modal.
+  history.pushState({ modalOpen: true }, '', '');
+
+  // Close theater modal on Esc key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeModal();
+    }
+  });
+
+  window.addEventListener('popstate', closeModal);
 }
 
 function toggleFavorite(url, container, feedItemEl) {
@@ -169,6 +182,9 @@ function closeModal() {
   disableBodyScroll(false);
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
+  if (history.state && history.state.modalOpen) {
+    history.back();
+  }
 }
 
 function setupClickListener() {

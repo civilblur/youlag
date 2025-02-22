@@ -2385,8 +2385,11 @@ main#stream > .flux {
   height: 100vh;
   width: 100vw;
   background: #060606;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
+  // For browsers with subpixel rendering issues, hide background content peeking through.
+  box-shadow: 0 0 0 10px #060606;
 }
 
 .youlag-theater-modal-container {
@@ -2409,49 +2412,72 @@ main#stream > .flux {
 
 .youlag-video-container {
   position: relative;
+
+  .youlag-iframe-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  
+    .youlag-iframe {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+    }  
+  }
+  
+  .youlag-thumbnail-container {
+    width: 100%;
+    height: 0;
+    // Use this method of setting 16:9 aspect ratio, due to a subpixel peaking below the iframe that sits on top.
+    padding-bottom: calc(56.25% - 1px); 
+    position: relative;
+    overflow: hidden;
+    animation: pulse 4s infinite ease-in-out;
+  
+  
+    .youlag-video-thumbnail {
+      position: absolute;
+      left: 0;
+      top: -50%;
+      transform: translateY(+25%);
+      width: 100%;
+    }
+  }
 }
 
-.youlag-iframe {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-}
-
-.youlag-iframe-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-.youlag-thumbnail-container {
-  position: relative;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  animation: pulse 4s infinite ease-in-out;
-}
-
-.youlag-video-thumbnail {
-  position: absolute;
-  left: 0;
-  top: -50%;
-  transform: translateY(+25%);
-  width: 100%;
-}
 
 .youlag-video-details {
   padding-top: var(--yl-p-xs);
   padding-left: var(--yl-p-md);
   padding-right: var(--yl-p-md);
+
+  .youlag-video-metadata-container {
+    margin-bottom: var(--yl-m-lg);
+
+    .youlag-video-metadata-title {
+      font-size: 1.4rem;
+      line-height: 1.4;
+      margin-bottom: var(--yl-m-sm);
+    }
+
+    .youlag-video-metadata-favicon {
+      width: 42px;
+      height: 42px;
+      background-color: hsla(0, 0%, 100%, .18);
+      padding: 8px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      margin-top: 2px;
+
+      &[src=""] {
+        display: none;
+      }
+    }
+  }
 }
 
-.youlag-video-details .youlag-video-metadata-container .youlag-video-metadata-title {
-  font-size: 1.4rem;
-  line-height: 1.4;
-  margin-bottom: var(--yl-m-sm);
-}
 
 .youlag-video-metadata-panel {
   display: flex;
@@ -2459,89 +2485,80 @@ main#stream > .flux {
   align-items: center;
   gap: var(--yl-m-sm);
   margin-bottom: var(--yl-m-md);
-}
 
-.youlag-video-author-section {
-  display: flex;
-  flex: 1;
-  gap: var(--yl-m-2xs);
-  align-items: center;
-  min-width: 400px;
-
-}
-
-.youlag-video-details .youlag-video-metadata-author a {
-  font-size: var(--yl-text-sm);
-  ;
-  line-height: 1.66;
-  font-weight: 600;
-  color: #fff;
-}
+  .youlag-video-author-section {
+    display: flex;
+    flex: 1;
+    gap: var(--yl-m-2xs);
+    align-items: center;
+    min-width: 400px;
 
 
-.youlag-video-details .youlag-video-metadata-date {
-  font-size: var(--yl-text-xs);
-  line-height: 1;
-  opacity: 0.8;
-}
+    .youlag-video-metadata-author a {
+      font-size: var(--yl-text-sm);
+      ;
+      line-height: 1.66;
+      font-weight: 600;
+      color: #fff;
+    }
+  
+    .youlag-video-metadata-date {
+      font-size: var(--yl-text-xs);
+      line-height: 1;
+      opacity: 0.8;
+    }
+  }      
 
-.youlag-video-actions-container {
-  display: flex;
-  gap: var(--yl-m-2xs);
-  flex-wrap: wrap;
-}
-
-.youlag-video-details .youlag-video-metadata-container .youlag-video-metadata-favicon {
-  width: 42px;
-  height: 42px;
-  background-color: hsla(0, 0%, 100%, .18);
-  padding: 8px;
-  box-sizing: border-box;
-  border-radius: 50%;
-  margin-top: 2px;
-}
-
-
-.youlag-video-details .youlag-video-metadata-container .youlag-video-metadata-favicon[src=""] {
-  display: none;
+  .youlag-video-actions-container {
+    display: flex;
+    gap: var(--yl-m-2xs);
+    flex-wrap: wrap;
+  }  
 }
 
 .youlag-favorited {
   min-width: 60px;
+
+  &.youlag-favorited--false .youlag-favorited-icon {
+    background-image: url('../themes/Mapco/icons/non-starred.svg');
+    filter: brightness(1.6);
+  }
+  
+  &.youlag-favorited--true .youlag-favorited-icon {
+    background-image: url('../themes/Mapco/icons/starred.svg');
+    filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
+  }
+
+  .youlag-favorited-icon {
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+  }  
 }
 
-.youlag-favorited-icon {
-  width: 20px;
-  height: 20px;
-  filter: invert(1);
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 100%;
-}
 
-.youlag-favorited--false .youlag-favorited-icon {
-  background-image: url('../themes/Mapco/icons/non-starred.svg');
-  filter: brightness(1.6);
-}
-
-.youlag-favorited--true .youlag-favorited-icon {
-  background-image: url('../themes/Mapco/icons/starred.svg');
-  filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
-}
 
 .youlag-video-description-container {
   background-color: rgb(255 255 255 / 10%);
-  margin-top: var(--yl-m-md);
-  margin-bottom: var(--yl-m-md);
+  margin-bottom: var(--yl-m-lg);
   padding: var(--yl-p-sm);
   border-radius: 1rem;
+
+  .youlag-video-description-content {
+    font-size: var(--yl-text-sm);
+    word-break: break-word;
+    max-width: 700px;
+  }
+
+  &:has(.youlag-video-description-content:empty) {
+    // Hide description container if no description within content.
+    display: none;
+  }
 }
 
-.youlag-video-description-content {
-  font-size: var(--yl-text-sm);
-  word-break: break-word;
-  max-width: 700px;
-}
 
 .yl-video-action-button {
   background-color: #303136;
@@ -2558,12 +2575,10 @@ main#stream > .flux {
     text-decoration: none;
     background-color: #424348;
   }
-}
 
-
-
-.yl-video-action-button span:first-child {
-  margin-right: var(--yl-m-2xs);
+  span:first-child {
+    margin-right: var(--yl-m-2xs);
+  }
 }
 
 
@@ -2580,6 +2595,7 @@ main#stream > .flux {
   height: 40px;
   font-size: var(--yl-text-lg);
   background-color: #303136;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.4);
   transition: background-color 0.2s;
 
   &:hover {
