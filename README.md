@@ -16,7 +16,7 @@ This opinionated theme and extension is best for video feeds but may still work 
   - Clean, familiar video platform layout.
   - Fullscreen viewing for videos and feed items.
   - Quickly exit videos with `Esc` key.
-  - Shortcuts for external viewing: "YouTube Website", or "YouTube Embed" for distraction-free playback.
+  - Shortcuts for external viewing: "Invidious", "YouTube", or "YouTube embed view" (for less distraction).
   - Dark mode.
 - 🖥️ **Desktop & Mobile**
   - Reponsive design.

@@ -25,6 +25,7 @@ function extractFeedItemData(feedItem) {
   const extractedYoutubeUrl = feedItem.querySelector('.enclosure-content a[href*="youtube"]')?.href || '';
   const youtubeUrl = extractedYoutubeUrl.replace('/v/', '/watch?v=').replace('?version=3', '');
   const youtubeEmbedUrl = youtubeUrl.replace('/watch?v=', '/embed/');
+  const youtubeId = youtubeUrl.split('watch?v=')[1].split('&')[0];
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
 
@@ -45,6 +46,7 @@ function extractFeedItemData(feedItem) {
       '</div>',
     video_youtube_url: youtubeUrl,
     video_youtube_url_embed: youtubeEmbedUrl,
+    video_invidious_redirect_url: `https://redirect.invidious.io/watch?v=${youtubeId}`
   };
 }
 
@@ -65,6 +67,7 @@ function createModalWithData(data) {
     <div class="${modalContentClassName}">
 
       <div class="youlag-video-header">
+        <a href="#aside_feed">Menu</a>
         <button id="${modalCloseIdName}">×</button>
       </div>
 
@@ -103,14 +106,22 @@ function createModalWithData(data) {
                 <div class="youlag-favorited-icon"></div>
               </a>
               <a class="yl-video-action-button" href="${data.external_link}" target="_blank">
-                <span>🌐</span><span>Source</span>
+                <span class="yl-video-action-button__icon">🌐</span><span>Source</span>
               </a>
-              <a class="yl-video-action-button" href="${data.video_youtube_url}" target="_blank">
-                <span>▶️</span><span>YouTube</span>
+
+              <a class="yl-video-action-button" href="${data.video_invidious_redirect_url}" target="_blank">
+                <span class="yl-video-action-button__icon">📺</span><span>Invidious</span>
               </a>
-              <a class="yl-video-action-button" href="${data.video_youtube_url_embed}" target="_blank">
-                <span>📺</span><span>YouTube Embed</span>
-              </a>
+
+              <div class="yl-video-action-button-group">
+                <a class="yl-video-action-button" href="${data.video_youtube_url}" target="_blank">
+                  <span class="yl-video-action-button__icon">▶️</span><span>YouTube</span>
+                </a>
+                <a class="yl-video-action-button" href="${data.video_youtube_url_embed}" target="_blank">
+                  <span>View embed</span>
+                </a>
+              </div>
+
             </section>
 
           </div>

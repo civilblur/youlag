@@ -2566,7 +2566,8 @@ main#stream > .flux {
 }
 
 
-.yl-video-action-button {
+
+a.yl-video-action-button {
   background-color: #303136;
   color: #fff;
   font-weight: 600;
@@ -2582,9 +2583,49 @@ main#stream > .flux {
     background-color: #424348;
   }
 
-  span:first-child {
+  span.yl-video-action-button__icon {
     margin-right: var(--yl-m-2xs);
   }
+}
+
+
+.yl-video-action-button-group {
+  // For placing related buttons into one group
+  display: flex;
+  border-radius: 999px;
+  overflow: hidden;
+
+  a.yl-video-action-button {
+    // Reset rounded corners of buttons in group
+    border-radius: 0;
+  }
+
+  .yl-video-action-button:first-child {
+    border-top-left-radius: 999px;
+    border-bottom-left-radius: 999px;
+  }
+
+  .yl-video-action-button:last-child {
+    border-top-right-radius: 999px;
+    border-bottom-right-radius: 999px;
+  }
+
+  .yl-video-action-button:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.26);
+  }
+
+  .yl-video-action-button:only-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border: none;
+  }
+}
+
+a.yl-video-action-button[href=""] {
+  // Hide button if no link was able to be fetched
+  display: none;
 }
 
 
