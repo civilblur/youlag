@@ -5,9 +5,9 @@
 </h1>
 
 ## About
-Youlag for FreshRSS delivers a video-focused browsing experience for your YouTube RSS feed, featuring a sleek theme and enhanced features.
+Youlag delivers a video-focused browsing experience for your YouTube RSS feeds in FreshRSS, with a sleek theme and extra features.
 
-This an opinionated way of browsing FreshRSS. Feel free and set up a separate instance for your video feeds if needed.
+This a highly opinionated way of browsing FreshRSS. Feel free and set up a separate instance for your video feeds if needed.
 
 ## Features
 
