@@ -2412,6 +2412,33 @@ main#stream > .flux {
   box-sizing: border-box;
   // For browsers with subpixel rendering issues, hide background content peeking through.
   box-shadow: 0 0 0 10px #060606;
+
+  &.youlag-modal-feed-item--text {
+    // For feed items that are not video feeds.
+    .youlag-iframe-container {
+      display: none;
+    }
+
+    .youlag-thumbnail-container {
+      animation: none !important;
+      width: 100% !important;
+      height: auto !important;
+      padding-bottom: 0 !important;
+      
+      .youlag-video-thumbnail {
+        position: static !important;
+        transform: none !important;
+      }
+    }
+
+    .youlag-video-description-content {
+      margin: 0 auto;
+
+      img {
+        border-radius: 8px;
+      }
+    }
+  }
 }
 
 .youlag-theater-modal-container {

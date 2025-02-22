@@ -25,9 +25,10 @@ function extractFeedItemData(feedItem) {
   const extractedYoutubeUrl = feedItem.querySelector('.enclosure-content a[href*="youtube"]')?.href || '';
   const youtubeUrl = extractedYoutubeUrl.replace('/v/', '/watch?v=').replace('?version=3', '');
   const youtubeEmbedUrl = youtubeUrl.replace('/watch?v=', '/embed/');
-  const youtubeId = youtubeUrl.split('watch?v=')[1].split('&')[0];
+  const youtubeId = youtubeUrl ? youtubeUrl.split('watch?v=')[1].split('&')[0] : '';
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
+  const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
 
   return {
     author: authorElement?.getAttribute('data-article-authors') || '',
@@ -42,11 +43,13 @@ function extractFeedItemData(feedItem) {
     video_embed_url: feedItem.querySelector('article.flux_content .text > iframe')?.getAttribute('data-original') || feedItem.querySelector('article iframe')?.getAttribute('src'),
     video_description:
       '<div class="youlag-video-description-content">' +
-        (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || '') +
+        // If video description is found us it, otherwise fallback to generic description element.
+        (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || 
+        feedItem.querySelector('article div.text')?.innerHTML.trim() || '') +
       '</div>',
     video_youtube_url: youtubeUrl,
     video_youtube_url_embed: youtubeEmbedUrl,
-    video_invidious_redirect_url: `https://redirect.invidious.io/watch?v=${youtubeId}`
+    video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };
 }
 
@@ -76,7 +79,7 @@ function createModalWithData(data) {
         </div>
         <div class="youlag-iframe-container">
           <iframe class="youlag-iframe"
-                  src="${data.video_embed_url}" frameborder="0" allowfullscreen></iframe>
+                  src="${data.video_embed_url ? data.video_embed_url : ''}" frameborder="0" allowfullscreen></iframe>
         </div>
       </div>
 
@@ -139,6 +142,18 @@ function createModalWithData(data) {
 
     </div>
   `;
+
+
+  if (!data.video_embed_url) {
+    // Not a video feed item
+    modal.classList.add('youlag-modal-feed-item--text');
+    let iframeContainer = document.querySelector('.youlag-iframe-container');
+    if (iframeContainer) {
+      document.querySelector('.youlag-iframe-container').remove();
+    }
+  }
+
+
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModal);
   container.querySelector(`#${modalToggleFavoriteIdName}`)?.addEventListener('click', (e) => {
     e.preventDefault();
