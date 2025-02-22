@@ -2434,6 +2434,8 @@ main#stream > .flux {
 
 .youlag-video-container {
   position: relative;
+  max-height: 80vh;
+  overflow: hidden;
 
   .youlag-iframe-container {
     position: absolute;
@@ -2444,6 +2446,7 @@ main#stream > .flux {
     .youlag-iframe {
       width: 100%;
       height: auto;
+      max-height: 80vh;
       aspect-ratio: 16 / 9;
       overflow: hidden;
     }  
@@ -2529,13 +2532,17 @@ main#stream > .flux {
       line-height: 1;
       opacity: 0.8;
     }
-  }      
+  }
 
   .youlag-video-actions-container {
     display: flex;
     gap: var(--yl-m-2xs);
     flex-wrap: wrap;
-  }  
+  }
+}
+
+.youlag-video-metadata-favicon-link:has(.youlag-video-metadata-favicon[src=""]) {
+  display: none;
 }
 
 .youlag-favorited {

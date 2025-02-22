@@ -88,7 +88,9 @@ function createModalWithData(data) {
           <div class="youlag-video-metadata-panel">
 
             <section class="youlag-video-author-section">
-              <img src="${data.favicon}" class="youlag-video-metadata-favicon" />
+              <a class="youlag-video-metadata-favicon-link" href="${data.author_filter_url}">
+                <img src="${data.favicon}" class="youlag-video-metadata-favicon" />
+              </a>
 
               <div class="yl-flex yl-flex-col">
                 <div class="youlag-video-metadata-author">
