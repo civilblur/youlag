@@ -50,9 +50,12 @@ This opinionated theme and extension is best for video feeds but may still work 
 
    - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
    - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
+   - If these extensions are not installed, get them via the [official extension repository](https://github.com/FreshRSS/Extensions)
 
-## Additional tools
+1. Enable the extensions.
 
+## Additional resources
+- "Custom CSS" and "Custom JS" extensions should be included by default, if not, get them via the . 
 - FreshRSS extension "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" by tunbridgep.
   - If you prefer to use Invidious instead.
 - FreshRSS official extension "[Image Proxy](https://github.com/FreshRSS/Extensions)" by Frans de Jonge.
