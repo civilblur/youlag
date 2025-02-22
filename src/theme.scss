@@ -913,6 +913,7 @@ body:not(.reader) main#stream div.flux {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 4;
+        line-clamp: 4;
         overflow: hidden;
 
         .author {
