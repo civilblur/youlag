@@ -226,9 +226,12 @@ body:not(.reader) main#stream {
  *
  ****************************************/
 
-body {
-  padding-top: 61px; // Encompass fixed header
+ @media (max-width: 840px) {
+  body {
+    padding-top: 61px; // Encompass mobile fixed header
+  }
 }
+
 
 nav.aside.aside_feed {
   /* Position and adjust behavior of "Subscriptions management" button */
@@ -544,15 +547,19 @@ main.post:has(#add_tag) {
   }
 }
 
-
+@media (max-width: 840px) {
+  .header {
+    // Header on mobile
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+  }
+}
 
 .header {
   min-height: 61px;
   box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 50;
 
   /* Page logo */
   .item.title {
