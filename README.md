@@ -64,7 +64,8 @@ This opinionated theme and extension is best for video feeds but may still work 
 
 1. Fork and make changes to the `dev` branch.
 1. Install dependencies: `npm i`.
-1. Make changes to the SASS file at `src/theme.scss` opposed to the compiled `theme.css` file.
+1. Make styling changes to the SASS file at `src/theme.scss` opposed to the compiled `theme.css` file.
+1. For structural and functional changes to the Youlag video modal, edit `script.js` in plain JavaScript.
 1. Run `npm run watch-css` to compile `src/theme.scss` to `theme.css`.
 
 [Learn more about SASS here](https://sass-lang.com/install/).
