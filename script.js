@@ -151,7 +151,7 @@ function createModalWithData(data) {
                 <a class="yl-video-action-button" href="${data.video_youtube_url}" target="_blank">
                   <span class="yl-video-action-button__icon">▶️</span><span>YouTube</span>
                 </a>
-                <a class="yl-video-action-button" href="${data.video_embed_url}" target="_blank">
+                <a class="yl-video-action-button" href="${data.youtube_embed_url}" target="_blank">
                   <span>View embed</span>
                 </a>
               </div>
