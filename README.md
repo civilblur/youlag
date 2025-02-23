@@ -9,6 +9,13 @@ Youlag delivers a video-focused browsing experience for your YouTube RSS feeds i
 
 While it also supports regular feeds, this setup is tailored specifically for video content. Feel free and set up a separate instance for your video feeds if needed.
 
+## Table of content
+- [Features](#features)
+- [Install](#install)
+- [Additional resources](#additional-resources)
+- [Contribution](#contribution)
+- [Attributions](#attributions)
+
 ## Features
 
 - ⭐ **Optimized for Video Viewing**
@@ -39,19 +46,16 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
    - **User JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
    - **User CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
-   - User CSS and User JS extensions now come with FreshRSS by default. If missing, get them from the [official extensions repository](https://github.com/FreshRSS/Extensions). 
+   - User JS and User CSS extensions now come with FreshRSS by default. If missing, get them from the [official extensions repository](https://github.com/FreshRSS/Extensions). 
 
-1. ⚠️ Enable the User JS first, then User CSS.
-   - This order requirement will be fixed in the next update.
+1. Enable the extensions.
 
 ## Additional resources
 
-- FreshRSS extension "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" by tunbridgep.
+- "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" FreshRSS extension by tunbridgep.
   - If you prefer to use Invidious instead.
-- FreshRSS extension "[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)" by cn-tools.
+- "[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)" FreshRSS extension by cn-tools.
   - Converts YouTube channel links to RSS links when adding new feeds.
-- FreshRSS official extension "[Image Proxy](https://github.com/FreshRSS/Extensions)" by Frans de Jonge.
-  - Proxies images when a feed item is opened. It doesn't however proxy the thumbnails in the feed.
 
 ## Contribution
 
