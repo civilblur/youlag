@@ -2419,17 +2419,24 @@ main#stream > .flux {
       display: none;
     }
 
-    .youlag-thumbnail-container {
-      animation: none !important;
-      width: 100% !important;
-      height: auto !important;
-      padding-bottom: 0 !important;
-      
-      .youlag-video-thumbnail {
-        position: static !important;
-        transform: none !important;
+    .youlag-video-container {
+      // For text feeds, the thumbnail is displayed in the video area instead.
+      max-height: 50vh;
+
+      .youlag-thumbnail-container {
+        animation: none !important;
+        width: 100% !important;
+        height: auto !important;
+        padding-bottom: 0 !important;
+        
+        .youlag-video-thumbnail {
+          position: static !important;
+          transform: none !important;
+        }
       }
     }
+
+
 
     .youlag-video-description-content {
       margin: 0 auto;

@@ -50,18 +50,16 @@ While it also supports regular feeds, this setup is tailored specifically for vi
   - Converts YouTube channel links to RSS links when adding new feeds.
 - FreshRSS official extension "[Image Proxy](https://github.com/FreshRSS/Extensions)" by Frans de Jonge.
   - Proxies images when a feed item is opened. It doesn't however proxy the thumbnails in the feed.
-- Firefox extension: "[RSSPreview](https://github.com/aureliendavid/rsspreview)" by Aurelien David.
-  - Easily extract the RSS feed of a page.
 
 ## Contribution
 
 1. Fork and make changes to the `dev` branch.
 1. Install dependencies: `npm i`.
 1. Make styling changes to the SASS file at `src/theme.scss` opposed to the compiled `theme.css` file.
+   - Run `npm run watch-css` to compile `src/theme.scss` to `theme.css`.
+   - [Learn more about SASS here](https://sass-lang.com/install/). 
 1. For structural and functional changes to the Youlag video modal, edit `script.js` in plain JavaScript.
-1. Run `npm run watch-css` to compile `src/theme.scss` to `theme.css`.
 
-[Learn more about SASS here](https://sass-lang.com/install/).
 
 ## Attributions
 
