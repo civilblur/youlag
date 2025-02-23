@@ -2380,8 +2380,8 @@ body:has(.tree-folder.category.favorites.active) {
  * the view and functionality.
  *
  ****************************************/
-body:before {
-  // Loading spinner, before the youlag script has fully loaded.
+body:has(#global main#stream):before {
+  // Loading spinner, before the youlag script has fully loaded. Only on feed stream pages.
   content: "Loading Youlag features";
   position: fixed;
   top: 89px;
