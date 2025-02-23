@@ -2,7 +2,7 @@
  *
  * Youlag Theme for FreshRSS
  *
- * Version: 3.0.3
+ * Version: 3.0.4
  * License: GNU General Public License v3.0
  * Author: civilblur @ github
  * 
@@ -2411,7 +2411,7 @@ body:has(#global main#stream):before {
 }
 
 body.youlag-loaded:before {
-  display: none;
+  display: none !important;
 }
 
 main#stream > .flux {
