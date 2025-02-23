@@ -45,12 +45,10 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 ## Additional resources
 
-- FreshRSS extension "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" by tunbridgep.
+- "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" FreshRSS extension by tunbridgep.
   - If you prefer to use Invidious instead.
-- FreshRSS extension "[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)" by cn-tools.
+- "[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)" FreshRSS extension by cn-tools.
   - Converts YouTube channel links to RSS links when adding new feeds.
-- FreshRSS official extension "[Image Proxy](https://github.com/FreshRSS/Extensions)" by Frans de Jonge.
-  - Proxies images when a feed item is opened. It doesn't however proxy the thumbnails in the feed.
 
 ## Contribution
 
