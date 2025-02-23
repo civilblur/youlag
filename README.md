@@ -33,31 +33,21 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 ## Install
 
-### Prerequisites
-
-1. Install and enable these extensions:
-
-   - **"[YouTube](https://github.com/FreshRSS/Extensions)"** extension: embeds videos from YouTube RSS feeds.
-   - **"[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)"** (optional): converts YouTube channel links to RSS links when adding new feeds. 
-
-2. Go to `Settings > Configuration: Display` and use these settings:
+1. Go to `Settings > Configuration: Display` and use these settings:
    - **Theme**: "Mapco — By: Thomas Guesnon".
-   - **Website**: "Icon". To display fav-icon as avatar in the feed.
-
-### Installing Youlag
 
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
-
    - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
    - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
-   - If these extensions are not installed, get them via the [official extension repository](https://github.com/FreshRSS/Extensions)
 
-1. Enable the extensions.
+1. Enable the two extensions.
 
 ## Additional resources
-- "Custom CSS" and "Custom JS" extensions should be included by default, if not, get them via the . 
+- "Custom CSS" and "Custom JS" extensions should be included by default, if not, get them via the [extensions repository](https://github.com/FreshRSS/Extensions). 
 - FreshRSS extension "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" by tunbridgep.
   - If you prefer to use Invidious instead.
+- FreshRSS extension "[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)" by cn-tools.
+  - Converts YouTube channel links to RSS links when adding new feeds.
 - FreshRSS official extension "[Image Proxy](https://github.com/FreshRSS/Extensions)" by Frans de Jonge.
   - Proxies images when a feed item is opened. It doesn't however proxy the thumbnails in the feed.
 - Firefox extension: "[RSSPreview](https://github.com/aureliendavid/rsspreview)" by Aurelien David.

@@ -1,9 +1,12 @@
 let youlagScriptLoaded = false;
+let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
+let youtubeId;
 const modalContainerClassName = `youlag-theater-modal-container`;
 const modalContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
 const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
+
 
 function handleActiveRssItem(targetOrEvent) {
   // Coordinates the event for extracting the data triggering.
@@ -20,12 +23,39 @@ function handleActiveRssItem(targetOrEvent) {
   createModalWithData(data);
 }
 
+function getVideoIdFromUrl(url) {
+  // Match video ID without relying on base domain being "youtube"-specific, in order to support invidious and piped links.
+  const regex = /(?:\/|^)(?:v\/|e(?:mbed)?\/|\S*?[?&]v=|\S*?[?&]id=|v=)([a-zA-Z0-9_-]{11})(?:[\/\?]|$)/;
+  const match = url.match(regex);
+  return match ? match[1] : '';
+}
+
+function getBaseUrl(url) {
+  try {
+    const parsedUrl = new URL(url);
+    return `${parsedUrl.protocol}//${parsedUrl.host}`;
+  } catch (error) {
+    console.error('Invalid URL:', error);
+    return '';
+  }
+}
+
+
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
-  const extractedYoutubeUrl = feedItem.querySelector('.enclosure-content a[href*="youtube"]')?.href || '';
-  const youtubeUrl = extractedYoutubeUrl.replace('/v/', '/watch?v=').replace('?version=3', '');
-  const youtubeEmbedUrl = youtubeUrl.replace('/watch?v=', '/embed/');
-  const youtubeId = youtubeUrl ? youtubeUrl.split('watch?v=')[1].split('&')[0] : '';
+  let extractedVideoUrl = feedItem.querySelector('.item.titleAuthorSummaryDate a[href*="youtube"], .item.titleAuthorSummaryDate a[href*="/watch?v="]')?.href || '';
+  const videoBaseUrl = getBaseUrl(extractedVideoUrl);
+  console.log('extractedYoutubeUrl #1: ', extractedVideoUrl);
+  if (!extractedVideoUrl) {
+    // Fallback to see if user has installed the YouTube video feed/Invidious video feed extension, as they create different DOM structure.
+    extractedVideoUrl = feedItem.querySelector('.enclosure-content a[href*="youtube"], .enclosure-content a[href*="/watch?v="]');
+    if (extractedVideoUrl) { youtubeExtensionInstalled = true };
+    console.log('extractedYoutubeUrl #2: ', extractedVideoUrl)
+  }
+  youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
+  const videoUrl = youtubeId ? `${videoBaseUrl}/watch?v=${youtubeId}` : '';
+  const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
+  const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';  
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
   const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
@@ -40,15 +70,15 @@ function extractFeedItemData(feedItem) {
     title: feedItem.querySelector('.item-element.title')?.childNodes[0].textContent.trim() || '',
     external_link: feedItem.querySelector('.item-element.title')?.href || '',
     date: feedItem.querySelector('.flux_content .date')?.textContent.trim() || '',
-    video_embed_url: feedItem.querySelector('article.flux_content .text > iframe')?.getAttribute('data-original') || feedItem.querySelector('article iframe')?.getAttribute('src'),
+    youtube_embed_url: youtubeEmbedUrl,
+    video_embed_url: videoEmbedUrl,
     video_description:
       '<div class="youlag-video-description-content">' +
         // If video description is found us it, otherwise fallback to generic description element.
         (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || 
         feedItem.querySelector('article div.text')?.innerHTML.trim() || '') +
       '</div>',
-    video_youtube_url: youtubeUrl,
-    video_youtube_url_embed: youtubeEmbedUrl,
+    video_youtube_url: videoUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };
 }
@@ -121,7 +151,7 @@ function createModalWithData(data) {
                 <a class="yl-video-action-button" href="${data.video_youtube_url}" target="_blank">
                   <span class="yl-video-action-button__icon">▶️</span><span>YouTube</span>
                 </a>
-                <a class="yl-video-action-button" href="${data.video_youtube_url_embed}" target="_blank">
+                <a class="yl-video-action-button" href="${data.video_embed_url}" target="_blank">
                   <span>View embed</span>
                 </a>
               </div>
@@ -144,7 +174,7 @@ function createModalWithData(data) {
   `;
 
 
-  if (!data.video_embed_url) {
+  if (!youtubeId) {
     // Not a video feed item
     modal.classList.add('youlag-modal-feed-item--text');
     let iframeContainer = document.querySelector('.youlag-iframe-container');
@@ -236,20 +266,23 @@ function setupClickListener() {
 }
 
 function collapseBackgroundFeedItem(target) {
-  // Workaround: Closes down the original feed item that activates by FreshRSS clickevent.
+  // Workaround: If user has YouTube Video Feed extension installed, prevent it from showing the default embedded 
+  // in favor of Youlag theater view modal. This collapses down the original feed item that activates by FreshRSS clickevent.
+  
   const feedItem = target;
   let isActive = feedItem.classList.contains('active') && feedItem.classList.contains('current');
   const iframes = feedItem.querySelectorAll('iframe');
 
-  iframes.forEach(iframe => {
-    // Disable iframes to prevent autoplay
-    const src = iframe.getAttribute('src');
-    if (src) {
-      console.log('iframe replace:', src);
-      iframe.setAttribute('data-original', src);
-      iframe.setAttribute('src', '');
-    }
-  });
+  if (iframes || youtubeExtensionInstalled) {
+    iframes.forEach(iframe => {
+      // Disable iframes to prevent autoplay
+      const src = iframe.getAttribute('src');
+      if (src) {
+        iframe.setAttribute('data-original', src);
+        iframe.setAttribute('src', '');
+      }
+    });
+  }
 
   if (isActive) {
     // Collapse the feed item
