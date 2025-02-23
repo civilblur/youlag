@@ -37,14 +37,15 @@ While it also supports regular feeds, this setup is tailored specifically for vi
    - **Theme**: "Mapco — By: Thomas Guesnon".
 
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
-   - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
-   - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
+   - **User CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
+   - **User JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
+   - "User CSS" and "User JS" extensions now come with FreshRSS by default. If missing, get them from the [official extensions repository](https://github.com/FreshRSS/Extensions). 
 
-1. ⚠️ Enable the Custom JS first, then Custom CSS.
+1. ⚠️ Enable the User JS first, then User CSS.
    - This order requirement will be fixed in the next update.
 
 ## Additional resources
-- "Custom CSS" and "Custom JS" extensions should be included by default, if not, get them via the [extensions repository](https://github.com/FreshRSS/Extensions). 
+
 - FreshRSS extension "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" by tunbridgep.
   - If you prefer to use Invidious instead.
 - FreshRSS extension "[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)" by cn-tools.
