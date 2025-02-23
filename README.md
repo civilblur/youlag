@@ -12,7 +12,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 ## Features
 
 - ⭐ **Optimized for Video Viewing**
-  - Browse your YouTube RSS subscriptions with ease.
+  - Browse your YouTube or Invidious RSS subscriptions with ease.
   - Clean, familiar video platform layout.
   - Fullscreen viewing for videos and feed items.
   - Quickly exit videos with `Esc` key.

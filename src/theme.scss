@@ -2498,10 +2498,10 @@ main#stream > .flux {
   
     .youlag-video-thumbnail {
       position: absolute;
+      top: 50%;
       left: 0;
-      top: -50%;
-      transform: translateY(+25%);
       width: 100%;
+      transform: translateY(-50%);
     }
   }
 }
