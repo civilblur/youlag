@@ -40,7 +40,8 @@ While it also supports regular feeds, this setup is tailored specifically for vi
    - **Custom CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
    - **Custom JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
 
-1. Enable the two extensions.
+1. ⚠️ Enable the Custom JS first, then Custom CSS.
+   - This order requirement will be fixed in the next update.
 
 ## Additional resources
 - "Custom CSS" and "Custom JS" extensions should be included by default, if not, get them via the [extensions repository](https://github.com/FreshRSS/Extensions). 
