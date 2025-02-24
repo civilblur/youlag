@@ -2,12 +2,9 @@
   <img src="https://github.com/civilblur/youlag/blob/main/src/icon.png" alt="youlag icon" width="180">
 
    Youlag
+   <br>
+   Video extension for FreshRSS
 </h1>
-
-<h3 align="center">
-   Video Extension for FreshRSS
-</h3>
-
 
 <center>
    <img src="https://github.com/civilblur/youlag/blob/main/src/capture.png" alt="youlag screencapture" width="1000">
@@ -19,10 +16,10 @@ Youlag delivers a video-focused browsing experience for your YouTube RSS feeds i
 
 While it also supports regular feeds, this setup is tailored specifically for video content. Feel free and set up a separate instance for your video feeds if needed.
 
-## Table of content
+## Table of Content
 - [Features](#features)
 - [Install](#install)
-- [Additional resources](#additional-resources)
+- [Additional Resources](#additional-resources)
 - [Contribution](#contribution)
 - [Attributions](#attributions)
 
@@ -61,7 +58,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 1. Enable the extensions.
 
-## Additional resources
+## Additional Resources
 
 - "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" FreshRSS extension by tunbridgep.
   - If you prefer to use Invidious instead.
@@ -81,7 +78,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 ## Attributions
 
 - **Icons used/remixed**: [SVG Repo](https://www.svgrepo.com/collection/design-and-development-elements/), [krystonschwarze](https://www.svgrepo.com/author/krystonschwarze/), [phosphor](https://www.svgrepo.com/author/phosphor/), [Solar Icons](https://www.svgrepo.com/svg/529779/playlist), [Dazzle UI](https://www.svgrepo.com/author/Dazzle%20UI/), [n3r4zzurr0/svg-spinners](https://github.com/n3r4zzurr0/svg-spinners).
-- **Additional resources**: [SVGOptimizer](https://jakearchibald.github.io/svgomg/), [b64.io](https://b64.io/).
+- **Tools**: [SVGOptimizer](https://jakearchibald.github.io/svgomg/), [b64.io](https://b64.io/).
 - **Featured channels on top image:** [Novaspirit Tech](https://www.youtube.com/channel/UCrjKdwxaQMSV_NDywgKXVmw), [Hardware Haven](https://www.youtube.com/channel/UCgdTVe88YVSrOZ9qKumhULQ).
    - Edit 2025-02-05: Rest in peace Don (Novaspirit Tech), thank you for your contribution to the community.
 
