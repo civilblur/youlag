@@ -96,19 +96,10 @@
   --yl-text-xl: clamp(1.944rem, 1.771rem + 0.8651vw, 2.4414rem);
   --yl-text-2xl: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
   --yl-text-3xl: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
-}
 
-
-:root {
   --favicon-avatar-size: 34px;
   --favicon-avatar-size-margin: 6px;
   --feed-day-title-font-size: 2.3rem;
-
-  /* Theater mode variables */
-  --elm-iframe-height: 56.25vw; /* Maintains 16:9 aspect ratio by setting height to 56.25% of the viewport width. */
-  --elm-card-header-height: 120px;
-  --elm-card-footer-height: 40px;
-  --elm-card-expanded-content-padding: 2rem;
 }
 
 @media (max-width: 840px) {
@@ -2511,7 +2502,7 @@ main#stream > .flux {
     width: 100%;
     height: 0;
     // Use this method of setting 16:9 aspect ratio, due to a subpixel peaking below the iframe that sits on top.
-    padding-bottom: calc(56.25% - 1px); 
+    padding-bottom: calc(% - 1px); 
     position: relative;
     overflow: hidden;
     animation: pulse 4s infinite ease-in-out;
