@@ -36,7 +36,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
   - Reponsive design.
   - Redesigned menus for better one-handed navigation.
   - Improved readability and legibility across devices.
-- 📺 **FreshRSS features:**
+- 📺 **Features Offered by FreshRSS:**
   - Subscribe to YouTube creators without an account.
 
 ### Planned
