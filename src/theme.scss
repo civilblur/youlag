@@ -26,6 +26,7 @@
  * - Favorites page
  * - Reader view page
  * - Animation keyframes
+ * - Youlag theater view modal
  * 
  * 
  * NOTE
@@ -35,9 +36,9 @@
  * "Mapco theme dark mode" section.
  * 
  * (2)
- * For "Inline view mode" instead of 
- * "Theater mode", comment out the CSS on
- * the "Theater mode" section.
+ * This is a fallback view of displaying
+ * feed items, if the Youlag script is not
+ * utilized or fails to load.
  *
  * 
  * TODO
@@ -221,12 +222,12 @@ body:not(.reader) main#stream {
  *
  * BEGIN "COMMON LAYOUT ELEMENTS"
  *
- * For misc. elements such as navigation
+ * For misc. elements such as navigation,
  * structural titles, etc.
  *
  ****************************************/
 
- @media (max-width: 840px) {
+@media (max-width: 840px) {
   body {
     padding-top: 61px; // Encompass mobile fixed header
   }
@@ -308,7 +309,7 @@ nav.aside.aside_feed {
     }
 
     #btn-subscription {
-      /* Hide text, later repalce with psuedo element :before text */
+      /* Hide text, later replace with psuedo element :before text */
       font-size: 0;
       flex: 1;
       height: 52px;
@@ -677,7 +678,7 @@ main.post:has(#add_tag) {
   #global .nav_menu {
 
     a.btn[href="#aside_feed"] {
-      /* Place mobile sidenav expand button toggle on header, for  */
+      /* Place mobile sidenav expand button toggle on header */
       position: fixed;
       top: 0;
       left: 0;
@@ -2350,7 +2351,8 @@ body:has(.tree-folder.category.favorites.active) {
 
 /*****************************************
  *
- * BEGIN "ANIMATION KEYFRAMES"
+ * BEGIN "
+ * - YOULAG THEATER VIEW MODAL"
  *
  ****************************************/
 
@@ -2372,7 +2374,7 @@ body:has(.tree-folder.category.favorites.active) {
 
 /*****************************************
  *
- * BEGIN "DEV TEST"
+ * BEGIN "YOULAG THEATER VIEW MODAL"
  * 
  * 2025-02-22: Big refactor to move away
  * from relying on CSS to display theater
@@ -2727,5 +2729,5 @@ a.yl-video-action-button[href=""] {
 }
 
 /*****************************************
- * END "DEV TEST"
+ * END "YOULAG THEATER VIEW MODAL"
  ****************************************/

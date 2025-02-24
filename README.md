@@ -37,6 +37,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 - Local video queue, but without autoplay due to CORS limitation.
 - Clickable links in video descriptions.
 - Convert to an actual FreshRSS extension, with options for customizing the view and features.
+  - Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
 
 ## Install
 

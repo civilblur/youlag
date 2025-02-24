@@ -189,8 +189,7 @@ function createModalWithData(data) {
     toggleFavorite(data.favorite_toggle_url, container, data.feedItemEl);
   });
 
-  // Push a new state to the history.
-  // TODO 2025-02-24: Works well on mobile/tablet OSes. Desktop requires two back presses to close the modal.
+  // Push a new state to the history, to allow modal close when routing back.
   history.pushState({ modalOpen: true }, '', '');
 
   // Close theater modal on Esc key
