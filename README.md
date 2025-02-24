@@ -48,15 +48,19 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 ## Install
 
-1. Go to `Settings > Configuration: Display` and use these settings:
+1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
+
+1. In FreshRSS, go to `Settings > Configuration: Display` and use these settings:
    - **Theme**: "Mapco — By: Thomas Guesnon".
 
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
    - **User JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
    - **User CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
-   - User JS and User CSS extensions now come with FreshRSS by default. If missing, get them from the [official extensions repository](https://github.com/FreshRSS/Extensions). 
+   - Enable the extensions.
 
-1. Enable the extensions.
+> [!NOTE]
+> User JS and User CSS extensions now come with FreshRSS by default.
+> If missing, get them from the [official extensions repository](https://github.com/FreshRSS/Extensions). 
 
 ## Additional Resources
 
