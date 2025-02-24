@@ -2502,7 +2502,7 @@ main#stream > .flux {
     width: 100%;
     height: 0;
     // Use this method of setting 16:9 aspect ratio, due to a subpixel peaking below the iframe that sits on top.
-    padding-bottom: calc(% - 1px); 
+    padding-bottom: calc(56.25% - 1px); 
     position: relative;
     overflow: hidden;
     animation: pulse 4s infinite ease-in-out;
