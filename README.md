@@ -7,7 +7,7 @@
 </h1>
 
 <center>
-   <img src="https://github.com/civilblur/youlag/blob/main/src/capture.png" alt="youlag screencapture" width="1000">
+   <img src="https://raw.githubusercontent.com/civilblur/youlag/refs/heads/main/src/capture.png" alt="youlag screencapture" width="1000">
 </center>
 
 
