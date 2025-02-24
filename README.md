@@ -1,8 +1,13 @@
 <h1 align="center">
-   Youlag: Theme and Video Extension for FreshRSS
+  <img src="https://github.com/civilblur/youlag/blob/main/src/capture.png" alt="youlag icon" width="180">
 
-   <img src="https://github.com/civilblur/youlag/blob/main/src/capture.png" alt="youlag screencapture" width="1000"></a>
+   Youlag: Video Extension for FreshRSS
 </h1>
+
+<center>
+   <img src="https://github.com/civilblur/youlag/blob/main/src/capture.png" alt="youlag screencapture" width="1000">
+</center>
+
 
 ## About
 Youlag delivers a video-focused browsing experience for your YouTube RSS feeds in FreshRSS, with a sleek theme and extra features.
