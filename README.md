@@ -2,9 +2,12 @@
   <img src="https://github.com/civilblur/youlag/blob/main/src/icon.png" alt="youlag icon" width="180">
 
    Youlag
-   <br>
-   Video Extension for FreshRSS
 </h1>
+
+<h3 align="center">
+   Video Extension for FreshRSS
+</h3>
+
 
 <center>
    <img src="https://github.com/civilblur/youlag/blob/main/src/capture.png" alt="youlag screencapture" width="1000">
