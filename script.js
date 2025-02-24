@@ -44,14 +44,12 @@ function getBaseUrl(url) {
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
   let extractedVideoUrl = feedItem.querySelector('.item.titleAuthorSummaryDate a[href*="youtube"], .item.titleAuthorSummaryDate a[href*="/watch?v="]')?.href || '';
-  const videoBaseUrl = getBaseUrl(extractedVideoUrl);
-  console.log('extractedYoutubeUrl #1: ', extractedVideoUrl);
   if (!extractedVideoUrl) {
-    // Fallback to see if user has installed the YouTube video feed/Invidious video feed extension, as they create different DOM structure.
+    // Fallback to see if user has installed the YouTube video feed/Invidious video feed extension, as they create a different DOM structure.
     extractedVideoUrl = feedItem.querySelector('.enclosure-content a[href*="youtube"], .enclosure-content a[href*="/watch?v="]');
-    if (extractedVideoUrl) { youtubeExtensionInstalled = true };
-    console.log('extractedYoutubeUrl #2: ', extractedVideoUrl)
+    youtubeExtensionInstalled = extractedVideoUrl ? true : false;
   }
+  const videoBaseUrl = getBaseUrl(extractedVideoUrl);
   youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
   const videoUrl = youtubeId ? `${videoBaseUrl}/watch?v=${youtubeId}` : '';
   const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
@@ -74,7 +72,7 @@ function extractFeedItemData(feedItem) {
     video_embed_url: videoEmbedUrl,
     video_description:
       '<div class="youlag-video-description-content">' +
-        // If video description is found us it, otherwise fallback to generic description element.
+        // If video description is found, use it, otherwise fallback to generic description element.
         (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || 
         feedItem.querySelector('article div.text')?.innerHTML.trim() || '') +
       '</div>',
@@ -186,12 +184,13 @@ function createModalWithData(data) {
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModal);
   container.querySelector(`#${modalToggleFavoriteIdName}`)?.addEventListener('click', (e) => {
+    // Toggle favorites state in background
     e.preventDefault();
     toggleFavorite(data.favorite_toggle_url, container, data.feedItemEl);
   });
 
   // Push a new state to the history.
-  // TODO 2025-02-22: Currently requires two back presses to close the modal.
+  // TODO 2025-02-24: Works well on mobile/tablet OSes. Desktop requires two back presses to close the modal.
   history.pushState({ modalOpen: true }, '', '');
 
   // Close theater modal on Esc key
@@ -302,7 +301,7 @@ function init() {
 }
 
 function removeYoulagLoadingState() {
-  // By default, the youlag css is set to a loading state.
+  // By default, the youlag CSS is set to a loading state.
   // This will remove the loading state when the script is ready.
   document.body.classList.add('youlag-loaded');
 }
