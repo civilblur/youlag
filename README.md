@@ -60,6 +60,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 > [!NOTE]
 > User JS and User CSS extensions now come with FreshRSS by default.
+>
 > If missing, get them from the [official extensions repository](https://github.com/FreshRSS/Extensions). 
 
 ## Additional Resources
