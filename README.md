@@ -1,7 +1,9 @@
 <h1 align="center">
   <img src="https://github.com/civilblur/youlag/blob/main/src/icon.png" alt="youlag icon" width="180">
 
-   Youlag: Video Extension for FreshRSS
+   Youlag
+   <br>
+   Video Extension for FreshRSS
 </h1>
 
 <center>
