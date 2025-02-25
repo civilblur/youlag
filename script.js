@@ -252,7 +252,7 @@ function setupClickListener() {
       if (event.target.closest('div[data-feed] .flux_header li.manage')) return;
       if (event.target.closest('div[data-feed] .flux_header li.labels')) return;
       if (event.target.closest('div[data-feed] .flux_header li.share')) return;
-      if (event.target.closest('div[data-feed] .flux_header li.link')) return;
+      if (event.target.closest('div[data-feed] .flux_header .website a[href^="./?get=f_"]')) return;
       const target = event.target.closest('div[data-feed]');
 
       if (target) {
