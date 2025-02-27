@@ -52,6 +52,7 @@ function extractFeedItemData(feedItem) {
   const videoBaseUrl = getBaseUrl(extractedVideoUrl);
   youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
   const videoUrl = youtubeId ? `${videoBaseUrl}/watch?v=${youtubeId}` : '';
+  const youubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
   const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
   const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';  
   const authorElement = feedItem.querySelector('.flux_header');
@@ -76,7 +77,7 @@ function extractFeedItemData(feedItem) {
         (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || 
         feedItem.querySelector('article div.text')?.innerHTML.trim() || '') +
       '</div>',
-    video_youtube_url: videoUrl,
+    video_youtube_url: youubeUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };
 }
