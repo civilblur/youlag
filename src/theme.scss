@@ -898,7 +898,6 @@ body:not(.reader) main#stream div.flux {
       // Decorative attr(data-article-authors) text on thumbnail placeholder, visible for feeds without images
       // Alternative: content:  attr(data-website-name);
       content: attr(data-article-authors);
-      white-space: pre;
       position: absolute;
       top: 0;
       left: 0;
@@ -2495,6 +2494,15 @@ main#stream > .flux {
 
     .youlag-video-description-content {
       margin: 0 auto;
+
+      a {
+        color: #fff;
+        box-shadow: #fff 0 -1px 0 inset;
+      }
+
+      ul {
+        list-style-position: inside;
+      }
 
       img {
         border-radius: 8px;
