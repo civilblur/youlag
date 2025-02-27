@@ -28,7 +28,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 - ⭐ **Optimized for Video Viewing**
   - Browse your YouTube, Invidious, Piped RSS subscriptions with ease.
   - Clean, familiar video platform layout.
-  - Fullscreen viewing for videos and feed items.
+  - Fullscreen viewing for videos and articles.
   - Quickly exit videos with `Esc` key.
   - Shortcuts for external viewing: "Invidious", "YouTube", or "YouTube embed view" (for less distraction).
   - Dark mode.
@@ -50,10 +50,11 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
 
-1. In FreshRSS, go to `Settings > Configuration: Display` and use these settings:
+1. In FreshRSS, go to `Settings > Configuration > Display` and use these settings:
    - **Theme**: "Mapco — By: Thomas Guesnon".
-   - **Website**: "Icon and name" (optional).
+   - **Website**: "Icon and name". (Optional)
    - **Thumbnail**: "Landscape".
+   - **Article icons > Top line**: "[X] Summary".
 
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
    - **User JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
