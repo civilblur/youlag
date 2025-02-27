@@ -55,6 +55,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
    - **Website**: "Icon and name". (Optional)
    - **Thumbnail**: "Landscape".
    - **Article icons > Top line**: "[X] Summary".
+     - The rest of the "Top line" settings are optional. 
 
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
    - **User JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
