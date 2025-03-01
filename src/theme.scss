@@ -548,10 +548,56 @@ main.post:has(#add_tag) {
     z-index: 50;
 
     &:has(.configure .dropdown-target:target) {
-      // On mobile, prevent the fixed hamburger menu `nav_menu .toggle_aside` to sit on top of the settings menu 
-      z-index: 65;
-    }  
+      // On mobile, prevent the fixed hamburger menu `nav_menu .toggle_aside` 
+      // to sit on top of the settings menu. Applies for feed and non-feed pages.
+      z-index: 110;
+    }
+
+    .configure .dropdown .dropdown-menu {
+      // Remove gap on left side.
+      left: 0 !important;
+    }
   }
+
+  #slider {
+
+    .btn.toggle_aside {
+      // Reset fixed navigation for non-feed pages.
+      max-width: 49px;
+      margin: 0;
+      padding: 0.85rem 1.25rem;
+      background: #303136;
+      border: none;
+  
+      &:hover {
+        background-color: #424348;
+      }
+    }
+  }
+
+  .aside {
+    &:target ~ aside#slider a.toggle_aside {
+      // Hide the fixed hamburger menu on non-feed page when its `aside_feed` menu is opened,
+      // to prevent overlapping.
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0s;
+    }
+
+    & ~ aside#slider a.toggle_aside {
+      // Fade in the hamburger menu on non-feed page, 
+      // to prevent abrupt display of the button while `aside_feed` is being collapse animated.
+      transition: opacity 0.3s;
+    }
+
+  }
+
+
+
+  body:not(.normal) #aside_feed.nav.nav-list.aside {
+    padding-top: 0;
+  }
+
 }
 
 .header {
