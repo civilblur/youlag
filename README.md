@@ -70,9 +70,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 - "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" FreshRSS extension by tunbridgep.
   - If you prefer to use Invidious instead.
-- "[YouTubeChannel2RssFeed](https://github.com/cn-tools/cntools_FreshRssExtensions)" FreshRSS extension by cn-tools.
-  - Converts YouTube channel links ending with  `@channelName` into valid RSS links when adding new feeds.
-
+  
 ## Contribution
 
 1. Fork and make changes to the `dev` branch.
