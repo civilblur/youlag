@@ -546,12 +546,18 @@ main.post:has(#add_tag) {
     top: 0;
     left: 0;
     z-index: 50;
+
+    &:has(.configure .dropdown-target:target) {
+      // On mobile, prevent the fixed hamburger menu `nav_menu .toggle_aside` to sit on top of the settings menu 
+      z-index: 65;
+    }  
   }
 }
 
 .header {
   min-height: 61px;
   box-sizing: border-box;
+
 
   /* Page logo */
   .item.title {
