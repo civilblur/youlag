@@ -51,7 +51,6 @@ function extractFeedItemData(feedItem) {
   }
   const videoBaseUrl = getBaseUrl(extractedVideoUrl);
   youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
-  const videoUrl = youtubeId ? `${videoBaseUrl}/watch?v=${youtubeId}` : '';
   const youubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
   const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
   const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';  
