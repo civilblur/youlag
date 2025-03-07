@@ -54,8 +54,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
    - **Theme**: "Mapco — By: Thomas Guesnon".
    - **Website**: "Icon and name". (Optional)
    - **Thumbnail**: "Landscape".
-   - **Article icons > Top line**: "[X] Summary".
-     - The rest of the "Top line" settings are optional. 
+   - **Article icons > Top line**: "[X] Summary". (Other "Top line" options are optional)
 
 1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
    - **User JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
@@ -71,7 +70,6 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 - "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" FreshRSS extension by tunbridgep.
   - If you prefer to use Invidious instead.
-  
 ## Contribution
 
 1. Fork and make changes to the `dev` branch.
