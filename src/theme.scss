@@ -174,8 +174,6 @@ body:not(.reader) main#stream {
   height: calc(100vh - (15rem + 2 * var(--frss-padding-top-bottom)));
   overflow-y: scroll;
 
-
-
   @media (max-width: 840px) {
     grid-template-columns: minmax(200px, 1fr);
   }
