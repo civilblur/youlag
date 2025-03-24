@@ -5,7 +5,7 @@
  * Version: 3.0.5
  * License: GNU General Public License v3.0
  * Author: civilblur @ github
- * 
+ *
  ****************************************/
 
 
@@ -27,25 +27,25 @@
  * - Reader view page
  * - Animation keyframes
  * - Youlag theater view modal
- * 
- * 
+ *
+ *
  * NOTE
  * (1)
  * To revert Mapco theme to light mode,
- * comment out the CSS in the 
+ * comment out the CSS in the
  * "Mapco theme dark mode" section.
- * 
+ *
  * (2)
  * This is a fallback view of displaying
  * feed items, if the Youlag script is not
  * utilized or fails to load.
  *
- * 
+ *
  * TODO
  * - Refactor values to CSS variable, such as
- * colors, border-radius, margin, padding, 
+ * colors, border-radius, margin, padding,
  * spacing, etc.
- * 
+ *
  ****************************************/
 
 
@@ -146,7 +146,7 @@
 .w-100 {
   width: 100%;
 }
-  
+
 
 
 /*****************************************
@@ -171,6 +171,8 @@ body:not(.reader) main#stream {
   grid-template-columns: repeat(3, minmax(150px, 1fr));
   gap: 4px;
   padding: 1.5rem;
+  height: calc(100vh - (15rem + 2 * var(--frss-padding-top-bottom)));
+  overflow-y: scroll;
 
   @media (max-width: 840px) {
     grid-template-columns: minmax(200px, 1fr);
@@ -548,7 +550,7 @@ main.post:has(#add_tag) {
     z-index: 50;
 
     &:has(.configure .dropdown-target:target) {
-      // On mobile, prevent the fixed hamburger menu `nav_menu .toggle_aside` 
+      // On mobile, prevent the fixed hamburger menu `nav_menu .toggle_aside`
       // to sit on top of the settings menu. Applies for feed and non-feed pages.
       z-index: 110;
     }
@@ -568,7 +570,7 @@ main.post:has(#add_tag) {
       padding: 0.85rem 1.25rem;
       background: #303136;
       border: none;
-  
+
       &:hover {
         background-color: #424348;
       }
@@ -585,7 +587,7 @@ main.post:has(#add_tag) {
     }
 
     & ~ aside#slider a.toggle_aside {
-      // Fade in the hamburger menu on non-feed page, 
+      // Fade in the hamburger menu on non-feed page,
       // to prevent abrupt display of the button while `aside_feed` is being collapse animated.
       transition: opacity 0.3s;
     }
@@ -616,7 +618,7 @@ main.post:has(#add_tag) {
     & > a {
       align-content: center;
     }
-    
+
 
     @media (max-width: 840px) {
       /* Center logo as sidenav toggle button is on the left side for mobile view */
@@ -685,7 +687,7 @@ main.post:has(#add_tag) {
       opacity: 0;
       pointer-events: none;
     }
-    
+
     // Issue with loading base64 image in settings page due to "Content Security Policy directive: "default-src 'self'".
     &:before {
       // User icon
@@ -710,7 +712,7 @@ main.post:has(#add_tag) {
       height: 50px;
       justify-content: flex-end;
       padding-right: 14px;
-  
+
       .btn {
         width: 40px;
         height: 40px;
@@ -729,12 +731,12 @@ main.post:has(#add_tag) {
       box-sizing: border-box;
       border-radius: 0;
       z-index: 60;
-  
+
       .icon {
         /* Hide existing sidenav toggle icon */
         display: none;
       }
-  
+
       &:after {
         /* Add new sidenav toggle icon */
         content: "";
@@ -745,10 +747,10 @@ main.post:has(#add_tag) {
         background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
-        filter: brightness(3);    
+        filter: brightness(3);
       }
     }
-  
+
     .item.configure {
 
       .btn {
@@ -756,7 +758,7 @@ main.post:has(#add_tag) {
         height: 40px;
       }
     }
-    
+
 
   }
 
@@ -776,7 +778,7 @@ main#stream #stream-footer,
 
   .stream-footer-inner {
     /* Hide text, then, apply new text using psuedo element :before/:after */
-    font-size: 0; 
+    font-size: 0;
     display: flex;
     flex-direction: column;
 
@@ -819,7 +821,7 @@ main#stream #stream-footer,
 
 /* Feed menu */
 .nav_menu {
-  padding: 2rem 1rem 0 1rem;
+  padding: 2rem 1rem 2rem 1rem;
   box-sizing: border-box;
 
   #nav_menu_actions {
@@ -844,7 +846,7 @@ main#stream .day {
   opacity: 0.8;
   padding: 0 8px;
   line-height: 1.2;
-  margin-top: 8rem;
+  margin-top: 2rem;
   margin-bottom: 2rem;
 
 
@@ -923,7 +925,7 @@ body:not(.reader) main#stream div.flux {
     background: unset;
     background-color: unset;
   }
-  
+
   /* Card container */
   .flux_header {
     /* In card default state, the header is the card container itself, unlike in card expended view where it is used as a header/toolbar. */
@@ -1027,7 +1029,7 @@ body:not(.reader) main#stream div.flux {
     .item.thumbnail {
       /* Card thumbnail */
       position: relative;
-      
+
       order: -1; /* Position thumbnail first within card, at the top */
       width: 100%;
       height: auto;
@@ -1049,7 +1051,7 @@ body:not(.reader) main#stream div.flux {
         object-position: center;
         z-index: 1;
       }
-      
+
       &:before {
         // Placeholder for empty thumbnails
         content: "";
@@ -1112,7 +1114,7 @@ body:not(.reader) main#stream div.flux.active.current {
       margin-bottom: 6px;
       z-index: 10;
       height: auto;
-      
+
 
       /* Card title */
       a {
@@ -1137,7 +1139,7 @@ body:not(.reader) main#stream div.flux.active.current {
       /* Hide thumbnail in theater mode expanded view */
       display: none;
     }
-    
+
   }
 
   /* Card content container */
@@ -1154,8 +1156,8 @@ body:not(.reader) main#stream {
 
     li.item.share,
     li.item.labels {
-      /** 
-      * Specific adjustment due to these card buttons containing dropdown menu 
+      /**
+      * Specific adjustment due to these card buttons containing dropdown menu
       * - Share button
       * - Playlists button (labels)
       */
@@ -1234,7 +1236,7 @@ body:not(.reader) main#stream {
 
       li.item.share {
         width: 100%;
-      } 
+      }
 
         a {
           padding: 4px 6px;
@@ -1254,7 +1256,7 @@ body:not(.reader) main#stream {
 
 
       li.item.labels {
-        
+
         .dropdown-header {
           display: flex;
           font-size: 0;
@@ -1282,7 +1284,7 @@ body:not(.reader) main#stream {
         }
 
       }
-      
+
 
       li.item.manage:hover,
       li.item.website.icon:hover,
@@ -1336,7 +1338,7 @@ body:not(.reader) main#stream {
         order: 3;
       }
     }
-    
+
     &.active.current .flux_header {
       li.item.manage a,
       li.item.website.icon a,
@@ -1485,9 +1487,9 @@ body:not(.reader) main#stream {
  * BEGIN "MAPCO THEME DARK MODE"
  *
  * Applies dark mode to the "Mapco" theme.
- * Content within `<main />` is usually 
- * light mode; this styling switches it to 
- * dark mode, along with the left side 
+ * Content within `<main />` is usually
+ * light mode; this styling switches it to
+ * dark mode, along with the left side
  * navigation.
  *
  ****************************************/
@@ -1649,7 +1651,7 @@ html {
 @media (max-width: 840px) {
   /* Mobile dropdown, with media query increase selector specificity */
   .dropdown-target:target ~ .dropdown-toggle::after {
-    /* Mobile dropdown triangle */  
+    /* Mobile dropdown triangle */
     background-color: #303136;
     border-color: #303136;
   }
@@ -1658,7 +1660,7 @@ html {
   body:not(.reader) main#stream div.flux li.item.labels,
   .nav_menu #mark-read-menu,
   .nav_menu #nav_menu_actions {
-     /** 
+     /**
       * Turn dropdowns into bottom sheets on mobile
       * - Share button
       * - Playlists button (labels)
@@ -2113,7 +2115,7 @@ main.post {
   margin-top: 0;
 }
 
-/** 
+/**
  * Highlight only current page in the side navigation, remove highlight from folder if item is active:
  * - Playlists ("My labels")
  * - User's category
@@ -2174,7 +2176,7 @@ body:not(.normal) {
 }
 
 
-/* Settings page back button */ 
+/* Settings page back button */
 .post a[href="./"] {
   background-color: #303136;
   border-color: #303136;
@@ -2312,7 +2314,7 @@ main#stream,
  * BEGIN "CARD EXPANDED - INLINE VIEW MODE"
  *
  * Expand cards inline without covering
- * the entire screen. Used as a fallback 
+ * the entire screen. Used as a fallback
  * when "Theater mode" is removed.
  *
  ****************************************/
@@ -2353,9 +2355,9 @@ main#stream div.flux.active.current {
  * BEGIN "FAVORITES PAGE"
  *
  * Applies dark mode to the "Mapco" theme.
- * Content within `<main />` is usually 
- * light mode; this styling switches it to 
- * dark mode, along with the left side 
+ * Content within `<main />` is usually
+ * light mode; this styling switches it to
+ * dark mode, along with the left side
  * navigation.
  *
  ****************************************/
@@ -2460,7 +2462,7 @@ body:has(.tree-folder.category.favorites.active) {
 /*****************************************
  *
  * BEGIN "YOULAG THEATER VIEW MODAL"
- * 
+ *
  * 2025-02-22: Big refactor to move away
  * from relying on CSS to display theater
  * mode. Instead, use the script to handle
@@ -2534,7 +2536,7 @@ main#stream > .flux {
         width: 100% !important;
         height: auto !important;
         padding-bottom: 0 !important;
-        
+
         .youlag-video-thumbnail {
           position: static !important;
           transform: none !important;
@@ -2598,26 +2600,26 @@ main#stream > .flux {
     top: 0;
     left: 0;
     width: 100%;
-  
+
     .youlag-iframe {
       width: 100%;
       height: auto;
       max-height: 80vh;
       aspect-ratio: 16 / 9;
       overflow: hidden;
-    }  
+    }
   }
-  
+
   .youlag-thumbnail-container {
     width: 100%;
     height: 0;
     // Use this method of setting 16:9 aspect ratio, due to a subpixel peaking below the iframe that sits on top.
-    padding-bottom: calc(56.25% - 1px); 
+    padding-bottom: calc(56.25% - 1px);
     position: relative;
     overflow: hidden;
     animation: pulse 4s infinite ease-in-out;
-  
-  
+
+
     .youlag-video-thumbnail {
       position: absolute;
       top: 50%;
@@ -2682,7 +2684,7 @@ main#stream > .flux {
       font-weight: 600;
       color: #fff;
     }
-  
+
     .youlag-video-metadata-date {
       font-size: var(--yl-text-xs);
       line-height: 1;
@@ -2708,7 +2710,7 @@ main#stream > .flux {
     background-image: url('../themes/Mapco/icons/non-starred.svg');
     filter: brightness(1.6);
   }
-  
+
   &.youlag-favorited--true .youlag-favorited-icon {
     background-image: url('../themes/Mapco/icons/starred.svg');
     filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
@@ -2721,7 +2723,7 @@ main#stream > .flux {
     background-repeat: no-repeat;
     background-position: center;
     width: 100%;
-  }  
+  }
 }
 
 
