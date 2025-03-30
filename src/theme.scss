@@ -171,7 +171,7 @@ body:not(.reader) main#stream {
   grid-template-columns: repeat(3, minmax(150px, 1fr));
   gap: 4px;
   padding: 1.5rem;
-  height: calc(100vh - (15rem + 2 * var(--frss-padding-top-bottom)));
+  max-height: calc(100vh - (15rem + 2 * var(--frss-padding-top-bottom)));
   overflow-y: scroll;
 
   @media (max-width: 840px) {
