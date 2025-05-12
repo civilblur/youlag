@@ -166,36 +166,40 @@
  *
  ****************************************/
 
-body:not(.reader) main#stream {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(150px, 1fr));
-  gap: 4px;
-  padding: 1.5rem;
-  max-height: calc(100vh - (15rem + 2 * var(--frss-padding-top-bottom)));
-  overflow-y: scroll;
+body:not(.reader) {
+  overflow-y: hidden;
 
-  @media (max-width: 840px) {
-    grid-template-columns: minmax(200px, 1fr);
-  }
+  main#stream {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+    gap: 4px;
+    padding: 1.5rem;
+    height: calc(100vh - (15rem + 2 * var(--frss-padding-top-bottom)));
+    overflow-y: scroll;
 
-  @media (min-width: 600px) {
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
-  }
+    @media (max-width: 840px) {
+      grid-template-columns: minmax(200px, 1fr);
+    }
 
-  @media (max-width: 600px) {
-    grid-row-gap: 2rem;
-  }
+    @media (min-width: 600px) {
+      grid-template-columns: repeat(2, minmax(200px, 1fr));
+    }
 
-  @media (min-width: 1144px) {
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
-  }
+    @media (max-width: 600px) {
+      grid-row-gap: 2rem;
+    }
 
-  @media (min-width: 1360px) {
-    grid-template-columns: repeat(3, minmax(240px, 1fr));
-  }
+    @media (min-width: 1144px) {
+      grid-template-columns: repeat(2, minmax(200px, 1fr));
+    }
 
-  @media (min-width: 1800px) {
-    grid-template-columns: repeat(4, minmax(200px, 1fr));
+    @media (min-width: 1360px) {
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+    }
+
+    @media (min-width: 1800px) {
+      grid-template-columns: repeat(4, minmax(200px, 1fr));
+    }
   }
 }
 
