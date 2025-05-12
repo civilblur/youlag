@@ -52,8 +52,8 @@ function extractFeedItemData(feedItem) {
   const videoBaseUrl = getBaseUrl(extractedVideoUrl);
   youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
   const youubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
-  const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
-  const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';  
+  const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';
+  const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
   const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
@@ -73,7 +73,7 @@ function extractFeedItemData(feedItem) {
     video_description:
       '<div class="youlag-video-description-content">' +
         // If video description is found, use it, otherwise fallback to generic description element.
-        (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || 
+        (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() ||
         feedItem.querySelector('article div.text')?.innerHTML.trim() || '') +
       '</div>',
     video_youtube_url: youubeUrl,
@@ -244,7 +244,7 @@ function closeModal() {
 
 function setupClickListener() {
   const streamContainer = document.querySelector('#stream');
-  
+
   if (streamContainer) {
     streamContainer.addEventListener('click', (event) => {
       // Prevent activation if clicked element is inside .flux_header li.
@@ -265,9 +265,9 @@ function setupClickListener() {
 }
 
 function collapseBackgroundFeedItem(target) {
-  // Workaround: If user has YouTube Video Feed extension installed, prevent it from showing the default embedded 
+  // Workaround: If user has YouTube Video Feed extension installed, prevent it from showing the default embedded
   // in favor of Youlag theater view modal. This collapses down the original feed item that activates by FreshRSS clickevent.
-  
+
   const feedItem = target;
   let isActive = feedItem.classList.contains('active') && feedItem.classList.contains('current');
   const iframes = feedItem.querySelectorAll('iframe');
@@ -297,6 +297,7 @@ function disableBodyScroll(scroll) {
 function init() {
   setupClickListener();
   removeYoulagLoadingState();
+  initLoadMoreLazyLoading();
   youlagScriptLoaded = true;
 }
 
@@ -304,6 +305,57 @@ function removeYoulagLoadingState() {
   // By default, the youlag CSS is set to a loading state.
   // This will remove the loading state when the script is ready.
   document.body.classList.add('youlag-loaded');
+}
+
+function initLoadMoreLazyLoading() {
+  if (!('IntersectionObserver' in window)) return;
+
+  // If load_more_posts function isn't defined log an error and return.
+  if (typeof load_more_posts !== 'function') {
+    console.error('load_more_posts function is not defined');
+    return;
+  }
+
+  // 1) If we observe the actual "load more" button
+  const loadMoreEl = document.getElementById('load_more');
+  if (loadMoreEl) {
+    const loadObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadObserver.unobserve(entry.target);
+          load_more_posts();
+        }
+      });
+    }, {
+      rootMargin: '0px 0px 300px 0px', // trigger when it's within 300px of viewport
+      threshold: 0
+    });
+    loadObserver.observe(loadMoreEl);
+  }
+
+  // 2) If we observe the "sentinel" — the 5th-from-last feed item
+  const articleObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        articleObserver.unobserve(entry.target);
+        load_more_posts();
+      }
+    });
+  }, {
+    rootMargin: '0px',
+    threshold: 0
+  });
+
+  const updateSentinel = () => {
+    const items = document.querySelectorAll('div[data-feed]');
+    if (items.length <= 5) return;
+    const sentinel = items[items.length - 5];
+    articleObserver.observe(sentinel);
+  };
+
+  updateSentinel();
+  // FreshRSS fires this event after `load_more_posts()` injects new articles
+  document.body.addEventListener('freshrss:load-more', updateSentinel);
 }
 
 function initFallback() {
