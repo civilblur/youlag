@@ -68,7 +68,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 ## Additional Resources
 
-- "[Invidious Video Feed](https://github.com/Korbak/freshrss-invidious)" FreshRSS extension by tunbridgep.
+- "[Invidious Video Feed](https://github.com/Korbak/freshrss-invidious)" FreshRSS extension by Korbak.
   - If you prefer to use Invidious instead.
 ## Contribution
 
