@@ -1,7 +1,8 @@
 let youlagScriptLoaded = false;
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
-let pipMode = false;
+let modePip = false;
+let modeFullscreen = true;
 const modalContainerClassName = `youlag-theater-modal-container`;
 const modalContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
@@ -19,12 +20,12 @@ function handleActiveRssItem(targetOrEvent) {
     feedItem = targetOrEvent.closest('div[data-feed]');
   }
   if (!feedItem) return;
-  if (!pipMode) {
-    disableBodyScroll(true);
-  }
   const data = extractFeedItemData(feedItem);
   data.feedItemEl = feedItem;
   createModalWithData(data);
+  if (!modePip) {
+    setModeFullscreen(true);
+  }
 }
 
 function getVideoIdFromUrl(url) {
@@ -240,34 +241,48 @@ function toggleFavorite(url, container, feedItemEl) {
 }
 
 function closeModal() {
-  disableBodyScroll(false);
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
   if (history.state && history.state.modalOpen) {
     history.back();
   }
-  setPipMode(false);
+  setModePip(false);
+  setModeFullscreen(false);
 }
 
 function togglePipMode() {
-  if (pipMode) {
-    setPipMode(false);
+  if (modePip) {
+    setModePip(false);
+    setModeFullscreen(true);
   }
   else {
-    setPipMode(true);
+    setModePip(true);
+    setModeFullscreen(false);
   }
 }
 
-function setPipMode(state) {
+function setModePip(state) {
   if (state === true) {
-    disableBodyScroll(false);
     document.body.classList.add('youlag-mode--pip');
-    pipMode = true;
+    modePip = true;
+    modeFullscreen = false;
   }
   else if (state === false) {
-    disableBodyScroll(true);
     document.body.classList.remove('youlag-mode--pip');
-    pipMode = false;
+    modePip = false;
+  }
+}
+
+function setModeFullscreen(state) {
+  if (state === true) {
+    document.body.classList.add('youlag-mode--fullscreen');
+    document.body.classList.remove('youlag-mode--pip');
+    modeFullscreen = true;
+    modePip = false;
+  }
+  else if (state === false) {
+    document.body.classList.remove('youlag-mode--fullscreen');
+    modeFullscreen = false;
   }
 }
 
@@ -317,10 +332,6 @@ function collapseBackgroundFeedItem(target) {
     feedItem.classList.remove('active');
     feedItem.classList.remove('current');
   }
-}
-
-function disableBodyScroll(scroll) {
-  document.body.style.overflow = scroll ? 'hidden' : 'auto';
 }
 
 function init() {

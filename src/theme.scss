@@ -2,7 +2,7 @@
  *
  * Youlag Theme for FreshRSS
  *
- * Version: 3.0.6
+ * Version: 3.0.7
  * License: GNU General Public License v3.0
  * Author: civilblur @ github
  * 
@@ -2471,6 +2471,15 @@ body:has(.tree-folder.category.favorites.active) {
  * the view and functionality.
  *
  ****************************************/
+
+.youlag-mode--fullscreen {
+  overflow: hidden;
+}
+
+.youlag-mode--pip {
+  overflow: auto;
+}
+ 
 body:has(#global main#stream):before {
   // Loading spinner, before the youlag script has fully loaded. Only on feed stream pages.
   content: "Loading Youlag features";
