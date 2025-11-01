@@ -2,7 +2,7 @@
  *
  * Youlag Theme for FreshRSS
  *
- * Version: 3.0.5
+ * Version: 3.0.6
  * License: GNU General Public License v3.0
  * Author: civilblur @ github
  * 
@@ -27,6 +27,7 @@
  * - Reader view page
  * - Animation keyframes
  * - Youlag theater view modal
+ * - Youlag theater pip view
  * 
  * 
  * NOTE
@@ -100,7 +101,7 @@
   --favicon-avatar-size: 34px;
   --favicon-avatar-size-margin: 6px;
   --feed-day-title-font-size: 2.3rem;
-  --video-pip-width: min(300px, 60%); 
+  --video-pip-width: min(500px, 60%); 
 }
 
 @media (max-width: 840px) {
@@ -2890,6 +2891,8 @@ a.yl-video-action-button[href=""] {
     display: none;
   }
 
-  
-
 }
+
+/*****************************************
+ * END "YOULAG THEATER PIP VIEW"
+ ****************************************/
