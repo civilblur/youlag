@@ -100,7 +100,7 @@
   --favicon-avatar-size: 34px;
   --favicon-avatar-size-margin: 6px;
   --feed-day-title-font-size: 2.3rem;
-  --video-header-height: 66px;
+  --video-pip-width: min(300px, 60%); 
 }
 
 @media (max-width: 840px) {
@@ -2511,8 +2511,8 @@ main#stream > .flux {
 #youlagTheaterModal {
   position: fixed;
   z-index: 99999;
-  top: 0px;
-  left: 0px;
+  bottom: 0px;
+  right: 0px;
   height: 100vh;
   width: 100vw;
   background: #060606;
@@ -2592,7 +2592,6 @@ main#stream > .flux {
   display: flex;
   justify-content: flex-end;
   padding: var(--yl-p-xs);
-  height: var(--video-header-height);
 }
 
 .youlag-video-container {
@@ -2852,21 +2851,30 @@ a.yl-video-action-button[href=""] {
  * Picture-in-picture mode
  ****************************************/
 
-.youlag-mode--pip #youlagTheaterModal {
-  --video-header-height: 40px;
+@media (max-width: 840px) {
+  .youlag-mode--pip #youlagTheaterModal {
+    & {
+      
+    }
+  }
+}
 
+.youlag-mode--pip #youlagTheaterModal {
   & {
-    width: min(300px, 100vw);
-    height: calc((min(300px, 100vw) / 16 * 9) + var(--video-header-height));
-    top: calc(100vh - calc(min(300px,100vw)/16*9 + var(--video-header-height)) - 1rem);
-    left: calc(100vw - min(300px,100vw) - 2rem);
+    width: var(--video-pip-width);
+    bottom: 1rem;
+    right: 2rem;
+    aspect-ratio: 16 / 9;
+    height: auto;
     border-radius: 12px;
     background: #303136;
     box-shadow: 0 0 0 6px #303136;
-    overflow: hidden;
   }
 
   .youlag-video-header {
+    position: absolute;
+    left: auto;
+    right: 0;
     padding: 3px;
   }
 

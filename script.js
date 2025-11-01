@@ -1,6 +1,7 @@
 let youlagScriptLoaded = false;
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
+let pipMode = false;
 const modalContainerClassName = `youlag-theater-modal-container`;
 const modalContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
@@ -18,7 +19,9 @@ function handleActiveRssItem(targetOrEvent) {
     feedItem = targetOrEvent.closest('div[data-feed]');
   }
   if (!feedItem) return;
-  disableBodyScroll(true);
+  if (!pipMode) {
+    disableBodyScroll(true);
+  }
   const data = extractFeedItemData(feedItem);
   data.feedItemEl = feedItem;
   createModalWithData(data);
@@ -185,7 +188,7 @@ function createModalWithData(data) {
 
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModal);
-  container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', minimizeModal);
+  container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
   container.querySelector(`#${modalToggleFavoriteIdName}`)?.addEventListener('click', (e) => {
     // Toggle favorites state in background
     e.preventDefault();
@@ -243,17 +246,28 @@ function closeModal() {
   if (history.state && history.state.modalOpen) {
     history.back();
   }
+  setPipMode(false);
 }
 
-function minimizeModal() {
-  const isModalMinimized = document.body.classList.contains('youlag-mode--pip');
-  if (isModalMinimized === true) {
-    disableBodyScroll(true);
-    document.body.classList.remove('youlag-mode--pip');
+function togglePipMode() {
+  if (pipMode) {
+    setPipMode(false);
   }
   else {
+    setPipMode(true);
+  }
+}
+
+function setPipMode(state) {
+  if (state === true) {
     disableBodyScroll(false);
     document.body.classList.add('youlag-mode--pip');
+    pipMode = true;
+  }
+  else if (state === false) {
+    disableBodyScroll(true);
+    document.body.classList.remove('youlag-mode--pip');
+    pipMode = false;
   }
 }
 
