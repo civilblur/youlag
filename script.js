@@ -26,6 +26,7 @@ function handleActiveRssItem(targetOrEvent) {
 
 function getVideoIdFromUrl(url) {
   // Match video ID without relying on base domain being "youtube"-specific, in order to support invidious and piped links.
+  const regex = /(?:\/|^)(?:shorts\/|v\/|e(?:mbed)?\/|\S*?[?&]v=|\S*?[?&]id=|v=)([a-zA-Z0-9_-]{11})(?:[\/\?]|$)/;
   const match = url.match(regex);
   return match ? match[1] : '';
 }

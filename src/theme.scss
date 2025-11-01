@@ -2519,6 +2519,7 @@ main#stream > .flux {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+  transition: 0.2s;
   // For browsers with subpixel rendering issues, hide background content peeking through.
   box-shadow: 0 0 0 10px #060606;
 
@@ -2859,7 +2860,6 @@ a.yl-video-action-button[href=""] {
     height: calc((min(300px, 100vw) / 16 * 9) + var(--video-header-height));
     top: calc(100vh - calc(min(300px,100vw)/16*9 + var(--video-header-height)) - 1rem);
     left: calc(100vw - min(300px,100vw) - 2rem);
-    transition: 0.3s;
     border-radius: 12px;
     background: #303136;
     box-shadow: 0 0 0 6px #303136;
