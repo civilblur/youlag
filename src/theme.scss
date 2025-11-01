@@ -2852,14 +2852,6 @@ a.yl-video-action-button[href=""] {
  * Picture-in-picture mode
  ****************************************/
 
-@media (max-width: 840px) {
-  .youlag-mode--pip #youlagTheaterModal {
-    & {
-      
-    }
-  }
-}
-
 .youlag-mode--pip #youlagTheaterModal {
   & {
     width: var(--video-pip-width);
