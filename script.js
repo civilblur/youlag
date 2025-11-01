@@ -4,6 +4,7 @@ let youtubeId;
 const modalContainerClassName = `youlag-theater-modal-container`;
 const modalContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
+const modalMinimizeIdName = `youlagMinimizeModal`;
 const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
 
@@ -25,7 +26,6 @@ function handleActiveRssItem(targetOrEvent) {
 
 function getVideoIdFromUrl(url) {
   // Match video ID without relying on base domain being "youtube"-specific, in order to support invidious and piped links.
-  const regex = /(?:\/|^)(?:v\/|e(?:mbed)?\/|\S*?[?&]v=|\S*?[?&]id=|v=)([a-zA-Z0-9_-]{11})(?:[\/\?]|$)/;
   const match = url.match(regex);
   return match ? match[1] : '';
 }
@@ -98,6 +98,7 @@ function createModalWithData(data) {
     <div class="${modalContentClassName}">
 
       <div class="youlag-video-header">
+        <button id="${modalMinimizeIdName}">⧉</button>
         <button id="${modalCloseIdName}">×</button>
       </div>
 
@@ -183,6 +184,7 @@ function createModalWithData(data) {
 
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModal);
+  container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', minimizeModal);
   container.querySelector(`#${modalToggleFavoriteIdName}`)?.addEventListener('click', (e) => {
     // Toggle favorites state in background
     e.preventDefault();
@@ -239,6 +241,18 @@ function closeModal() {
   if (modal) modal.remove();
   if (history.state && history.state.modalOpen) {
     history.back();
+  }
+}
+
+function minimizeModal() {
+  const isModalMinimized = document.body.classList.contains('youlag-mode--pip');
+  if (isModalMinimized === true) {
+    disableBodyScroll(true);
+    document.body.classList.remove('youlag-mode--pip');
+  }
+  else {
+    disableBodyScroll(false);
+    document.body.classList.add('youlag-mode--pip');
   }
 }
 

@@ -100,6 +100,7 @@
   --favicon-avatar-size: 34px;
   --favicon-avatar-size-margin: 6px;
   --feed-day-title-font-size: 2.3rem;
+  --video-header-height: 66px;
 }
 
 @media (max-width: 840px) {
@@ -2581,6 +2582,8 @@ main#stream > .flux {
 }
 
 .youlag-video-header {
+  display: flex;
+  gap: var(--yl-m-3xs);
   position: sticky;
   top: 0;
   left: 0;
@@ -2588,6 +2591,7 @@ main#stream > .flux {
   display: flex;
   justify-content: flex-end;
   padding: var(--yl-p-xs);
+  height: var(--video-header-height);
 }
 
 .youlag-video-container {
@@ -2810,7 +2814,8 @@ a.yl-video-action-button[href=""] {
 }
 
 
-#youlagCloseModal {
+#youlagCloseModal,
+#youlagMinimizeModal {
   cursor: pointer;
   padding: var(--yl-p-sm);
   display: flex;
@@ -2831,6 +2836,52 @@ a.yl-video-action-button[href=""] {
   }
 }
 
+#youlagMinimizeModal {
+  font-size: var(--yl-text-md);
+}
+
 /*****************************************
  * END "YOULAG THEATER VIEW MODAL"
  ****************************************/
+
+
+
+/*****************************************
+ * BEGIN "YOULAG THEATER PIP VIEW"
+ * Picture-in-picture mode
+ ****************************************/
+
+.youlag-mode--pip #youlagTheaterModal {
+  --video-header-height: 40px;
+
+  & {
+    width: min(300px, 100vw);
+    height: calc((min(300px, 100vw) / 16 * 9) + var(--video-header-height));
+    top: calc(100vh - calc(min(300px,100vw)/16*9 + var(--video-header-height)) - 1rem);
+    left: calc(100vw - min(300px,100vw) - 2rem);
+    transition: 0.3s;
+    border-radius: 12px;
+    background: #303136;
+    box-shadow: 0 0 0 6px #303136;
+    overflow: hidden;
+  }
+
+  .youlag-video-header {
+    padding: 3px;
+  }
+
+  #youlagCloseModal,
+  #youlagMinimizeModal {
+    padding: var(--yl-p-xs);
+    width: 20px;
+    height: 20px;
+    font-size: var(--yl-text-sm);
+  }
+
+  .youlag-video-details {
+    display: none;
+  }
+
+  
+
+}
