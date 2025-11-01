@@ -107,7 +107,7 @@ function createModalWithData(data) {
         </div>
         <div class="youlag-iframe-container">
           <iframe class="youlag-iframe"
-                  src="${data.video_embed_url ? data.video_embed_url : ''}" frameborder="0" allowfullscreen></iframe>
+                  src="${data.video_embed_url ? data.video_embed_url : ''}" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
       </div>
 
