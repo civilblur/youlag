@@ -43,28 +43,16 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 - [x] Minimize video, for background playback while browsing.
 - [ ] Local video queue, but without autoplay due to CORS limitation.
 - [ ] Clickable links in video descriptions.
-- [ ] Convert to an actual FreshRSS extension, with options for customizing the view and features.
+- [x] Convert to an actual FreshRSS extension, with options for customizing the view and features.
   - [ ] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
 
 ## Install
 
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
 
-1. In FreshRSS, go to `Settings > Configuration > Display` and use these settings:
-   - **Theme**: "Mapco — By: Thomas Guesnon".
-   - **Website**: "Icon and name". (Optional)
-   - **Thumbnail**: "Landscape".
-   - **Article icons > Top line**: "[X] Summary". (Other "Top line" options are optional)
+2. Extract the extension into `FreshRSS/extensions`.
 
-1. Go to `Settings > Extensions` and click the gear (⚙️) icon for each extension:
-   - **User JS**: Copy the content from `script.js` paste it into the text field, and click "Submit".
-   - **User CSS**: Copy the content from `theme.css`, paste it into the text field, and click "Submit".
-   - Enable the extensions.
-
-> [!NOTE]
-> User JS and User CSS extensions now come with FreshRSS by default.
->
-> If missing, get them from the [official extensions repository](https://github.com/FreshRSS/Extensions). 
+3. Go to `Settings > Extensions` and enable the `Youlag` extension.
 
 ## Additional Resources
 
