@@ -62,10 +62,10 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 1. Fork and make changes to the `dev` branch.
 1. Install dependencies: `npm i`.
-1. Make styling changes to the SASS file at `src/theme.scss` opposed to the compiled `theme.css` file.
-   - Run `npm run watch-css` to compile `src/theme.scss` to `theme.css`.
+1. Make styling changes to the SASS file at `src/theme.scss` opposed to the compiled `static/theme.css` file.
+   - Run `npm run watch` to compile `src/theme.scss` to `static/theme.css`.
    - [Learn more about SASS here](https://sass-lang.com/install/). 
-1. For structural and functional changes to the Youlag video modal, edit `script.js` in plain JavaScript.
+1. For structural and functional changes to the Youlag video modal, edit `static/script.js` in plain JavaScript.
 
 
 ## Attributions

@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "<h1 align=\"center\">    Youlag Theme for FreshRSS",
   "main": "script.js",
-  "dependencies": {},
+  "dependencies": {
+    "archiver": "^7.0.1"
+  },
   "devDependencies": {
     "sass": "^1.83.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-css": "sass src/theme.scss theme.css --no-source-map --style=compressed",
-    "watch-css": "sass --watch src/theme.scss theme.css --no-source-map --style=compressed"
+    "watch": "node scripts/watch.js && sass --watch src/theme.scss theme.css --no-source-map --style=compressed",
+    "package": "node scripts/package.js"
   },
   "repository": {
     "type": "git",

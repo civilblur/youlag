@@ -10,8 +10,12 @@ npm-debug.log*
 
 # .env files
 .env
-.env.*.local
+.env.*
+!.env.example
 
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Ignore zip files in dist
+/dist/*.zip

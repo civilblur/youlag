@@ -45,6 +45,25 @@ function getBaseUrl(url) {
   }
 }
 
+function matchURL(text) {
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  return text.match(urlPattern);
+}
+
+function appendURL(text) {
+  const urls = matchURL(text);
+  if (urls) {
+    urls.forEach(url => {
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.textContent = url;
+      anchor.target = '_blank';
+      text = text.replace(url, anchor.outerHTML);
+    });
+  }
+  return text;
+}
+
 
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
