@@ -1,0 +1,8 @@
+{
+  "name": "Youlag",
+  "author": "civilblur",
+  "description": "Youlag delivers a video-focused browsing experience for your YouTube RSS feeds in FreshRSS, with a sleek theme and extra features.",
+  "version": "3.0.7",
+  "entrypoint": "Youlag",
+  "type": "user"
+}
