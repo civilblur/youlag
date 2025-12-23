@@ -46,7 +46,7 @@ function getBaseUrl(url) {
 }
 
 function matchURL(text) {
-  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  const urlPattern = /https?:\/\/[\w\-._~:/?#\[\]@!$&'()*+,;=%]+[\w\-_/~#@?=&%]/g;
   return text.match(urlPattern);
 }
 
@@ -96,9 +96,11 @@ function extractFeedItemData(feedItem) {
     video_embed_url: videoEmbedUrl,
     video_description:
       '<div class="youlag-video-description-content">' +
-        // If video description is found, use it, otherwise fallback to generic description element.
-        (feedItem.querySelector('.enclosure-description')?.innerHTML.trim() || 
-        feedItem.querySelector('article div.text')?.innerHTML.trim() || '') +
+      appendURL(
+          // If video description is found, use it, otherwise fallback to generic description element.
+          feedItem.querySelector('.enclosure-description')?.innerHTML.trim() ||
+          feedItem.querySelector('article div.text')?.innerHTML.trim() || ''
+        ) +
       '</div>',
     video_youtube_url: youubeUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
