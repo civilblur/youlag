@@ -10,7 +10,9 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const extensionFiles = [
   { src: '../static/theme.css', dest: 'static/theme.css' },
   { src: '../static/script.js', dest: 'static/script.js' },
-  { src: '../extension.php', dest: 'extension.php' }
+  { src: '../extension.php', dest: 'extension.php' },
+  { src: '../configure.phtml', dest: 'configure.phtml' },
+  { src: '../metadata.json', dest: 'metadata.json' }
 ];
 
 const freshrssDevFolder = process.env.FRESHRSS_DEV_FOLDER;

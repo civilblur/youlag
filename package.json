@@ -15,7 +15,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-css": "sass src/theme.scss static/theme.css --no-source-map --style=compressed",
     "watch": "node scripts/watch.js && sass --watch src/theme.scss static/theme.css --no-source-map --style=compressed",
-    "package": "node scripts/package.js"
+    "build": "node scripts/build.js"
   },
   "repository": {
     "type": "git",

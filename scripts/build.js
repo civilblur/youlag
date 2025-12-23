@@ -10,7 +10,9 @@ const distDir = path.resolve(__dirname, '../dist');
 const extensionFiles = [
   { src: '../static/script.js', dest: 'static/script.js' },
   { src: '../static/theme.css', dest: 'static/theme.css' },
-  { src: '../extension.php', dest: 'extension.php' }
+  { src: '../extension.php', dest: 'extension.php' },
+  { src: '../configure.phtml', dest: 'configure.phtml' },
+  { src: '../metadata.json', dest: 'metadata.json' }
 ];
 
 fs.mkdirSync(path.join(distDir, 'static'), { recursive: true });
@@ -36,7 +38,7 @@ archive.on('error', err => { throw err; });
 archive.pipe(output);
 
 extensionFiles.forEach(({ dest }) => {
-  archive.file(path.join(distDir, dest), { name: dest });
+  archive.file(path.join(distDir, dest), { name: path.join('xExtension-Youlag', dest) });
 });
 
 archive.finalize();
