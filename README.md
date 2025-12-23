@@ -40,11 +40,11 @@ While it also supports regular feeds, this setup is tailored specifically for vi
   - Subscribe to YouTube creators without an account.
 
 ### Planned
-- Minimize video, for background playback while browsing.
-- Local video queue, but without autoplay due to CORS limitation.
-- Clickable links in video descriptions.
-- Convert to an actual FreshRSS extension, with options for customizing the view and features.
-  - Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
+- [x] Minimize video, for background playback while browsing.
+- [ ] Local video queue, but without autoplay due to CORS limitation.
+- [ ] Clickable links in video descriptions.
+- [ ] Convert to an actual FreshRSS extension, with options for customizing the view and features.
+  - [ ] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
 
 ## Install
 
@@ -68,7 +68,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 ## Additional Resources
 
-- "[Invidious Video Feed](https://github.com/tunbridgep/freshrss-invidious)" FreshRSS extension by tunbridgep.
+- "[Invidious Video Feed](https://github.com/Korbak/freshrss-invidious)" FreshRSS extension by Korbak.
   - If you prefer to use Invidious instead.
 ## Contribution
 

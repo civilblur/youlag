@@ -2,7 +2,7 @@
  *
  * Youlag Theme for FreshRSS
  *
- * Version: 3.0.5
+ * Version: 3.0.7
  * License: GNU General Public License v3.0
  * Author: civilblur @ github
  * 
@@ -27,6 +27,7 @@
  * - Reader view page
  * - Animation keyframes
  * - Youlag theater view modal
+ * - Youlag theater pip view
  * 
  * 
  * NOTE
@@ -100,6 +101,7 @@
   --favicon-avatar-size: 34px;
   --favicon-avatar-size-margin: 6px;
   --feed-day-title-font-size: 2.3rem;
+  --video-pip-width: min(500px, 60%); 
 }
 
 @media (max-width: 840px) {
@@ -1860,7 +1862,9 @@ main#stream .box.category {
   border-color: #424348;
 }
 
-
+main.prompt {
+	background: #303136;
+}
 
 main.post {
   /* Subscription management page boxes */
@@ -2467,6 +2471,15 @@ body:has(.tree-folder.category.favorites.active) {
  * the view and functionality.
  *
  ****************************************/
+
+.youlag-mode--fullscreen {
+  overflow: hidden;
+}
+
+.youlag-mode--pip {
+  overflow: auto;
+}
+ 
 body:has(#global main#stream):before {
   // Loading spinner, before the youlag script has fully loaded. Only on feed stream pages.
   content: "Loading Youlag features";
@@ -2508,14 +2521,15 @@ main#stream > .flux {
 #youlagTheaterModal {
   position: fixed;
   z-index: 99999;
-  top: 0px;
-  left: 0px;
+  bottom: 0px;
+  right: 0px;
   height: 100vh;
   width: 100vw;
   background: #060606;
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+  transition: 0.2s;
   // For browsers with subpixel rendering issues, hide background content peeking through.
   box-shadow: 0 0 0 10px #060606;
 
@@ -2579,6 +2593,8 @@ main#stream > .flux {
 }
 
 .youlag-video-header {
+  display: flex;
+  gap: var(--yl-m-3xs);
   position: sticky;
   top: 0;
   left: 0;
@@ -2808,7 +2824,8 @@ a.yl-video-action-button[href=""] {
 }
 
 
-#youlagCloseModal {
+#youlagCloseModal,
+#youlagMinimizeModal {
   cursor: pointer;
   padding: var(--yl-p-sm);
   display: flex;
@@ -2829,6 +2846,54 @@ a.yl-video-action-button[href=""] {
   }
 }
 
+#youlagMinimizeModal {
+  font-size: var(--yl-text-md);
+}
+
 /*****************************************
  * END "YOULAG THEATER VIEW MODAL"
+ ****************************************/
+
+
+
+/*****************************************
+ * BEGIN "YOULAG THEATER PIP VIEW"
+ * Picture-in-picture mode
+ ****************************************/
+
+.youlag-mode--pip #youlagTheaterModal {
+  & {
+    width: var(--video-pip-width);
+    bottom: 1rem;
+    right: 2rem;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border-radius: 12px;
+    background: #303136;
+    box-shadow: 0 0 0 6px #303136;
+  }
+
+  .youlag-video-header {
+    position: absolute;
+    left: auto;
+    right: 0;
+    padding: 3px;
+  }
+
+  #youlagCloseModal,
+  #youlagMinimizeModal {
+    padding: var(--yl-p-xs);
+    width: 20px;
+    height: 20px;
+    font-size: var(--yl-text-sm);
+  }
+
+  .youlag-video-details {
+    display: none;
+  }
+
+}
+
+/*****************************************
+ * END "YOULAG THEATER PIP VIEW"
  ****************************************/

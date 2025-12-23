@@ -1,9 +1,12 @@
 let youlagScriptLoaded = false;
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
+let modePip = false;
+let modeFullscreen = true;
 const modalContainerClassName = `youlag-theater-modal-container`;
 const modalContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
+const modalMinimizeIdName = `youlagMinimizeModal`;
 const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
 
@@ -17,15 +20,17 @@ function handleActiveRssItem(targetOrEvent) {
     feedItem = targetOrEvent.closest('div[data-feed]');
   }
   if (!feedItem) return;
-  disableBodyScroll(true);
   const data = extractFeedItemData(feedItem);
   data.feedItemEl = feedItem;
   createModalWithData(data);
+  if (!modePip) {
+    setModeFullscreen(true);
+  }
 }
 
 function getVideoIdFromUrl(url) {
   // Match video ID without relying on base domain being "youtube"-specific, in order to support invidious and piped links.
-  const regex = /(?:\/|^)(?:v\/|e(?:mbed)?\/|\S*?[?&]v=|\S*?[?&]id=|v=)([a-zA-Z0-9_-]{11})(?:[\/\?]|$)/;
+  const regex = /(?:\/|^)(?:shorts\/|v\/|e(?:mbed)?\/|\S*?[?&]v=|\S*?[?&]id=|v=)([a-zA-Z0-9_-]{11})(?:[\/\?]|$)/;
   const match = url.match(regex);
   return match ? match[1] : '';
 }
@@ -98,6 +103,7 @@ function createModalWithData(data) {
     <div class="${modalContentClassName}">
 
       <div class="youlag-video-header">
+        <button id="${modalMinimizeIdName}">⧉</button>
         <button id="${modalCloseIdName}">×</button>
       </div>
 
@@ -107,7 +113,7 @@ function createModalWithData(data) {
         </div>
         <div class="youlag-iframe-container">
           <iframe class="youlag-iframe"
-                  src="${data.video_embed_url ? data.video_embed_url : ''}" frameborder="0" allowfullscreen></iframe>
+                  src="${data.video_embed_url ? data.video_embed_url : ''}" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
       </div>
 
@@ -183,6 +189,7 @@ function createModalWithData(data) {
 
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModal);
+  container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
   container.querySelector(`#${modalToggleFavoriteIdName}`)?.addEventListener('click', (e) => {
     // Toggle favorites state in background
     e.preventDefault();
@@ -234,11 +241,48 @@ function toggleFavorite(url, container, feedItemEl) {
 }
 
 function closeModal() {
-  disableBodyScroll(false);
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
   if (history.state && history.state.modalOpen) {
     history.back();
+  }
+  setModePip(false);
+  setModeFullscreen(false);
+}
+
+function togglePipMode() {
+  if (modePip) {
+    setModePip(false);
+    setModeFullscreen(true);
+  }
+  else {
+    setModePip(true);
+    setModeFullscreen(false);
+  }
+}
+
+function setModePip(state) {
+  if (state === true) {
+    document.body.classList.add('youlag-mode--pip');
+    modePip = true;
+    modeFullscreen = false;
+  }
+  else if (state === false) {
+    document.body.classList.remove('youlag-mode--pip');
+    modePip = false;
+  }
+}
+
+function setModeFullscreen(state) {
+  if (state === true) {
+    document.body.classList.add('youlag-mode--fullscreen');
+    document.body.classList.remove('youlag-mode--pip');
+    modeFullscreen = true;
+    modePip = false;
+  }
+  else if (state === false) {
+    document.body.classList.remove('youlag-mode--fullscreen');
+    modeFullscreen = false;
   }
 }
 
@@ -288,10 +332,6 @@ function collapseBackgroundFeedItem(target) {
     feedItem.classList.remove('active');
     feedItem.classList.remove('current');
   }
-}
-
-function disableBodyScroll(scroll) {
-  document.body.style.overflow = scroll ? 'hidden' : 'auto';
 }
 
 function init() {
