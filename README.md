@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://github.com/civilblur/youlag/blob/main/src/icon.png" alt="youlag icon" width="180">
+  <img src=".github/icon.png" alt="youlag icon" width="180">
 
    Youlag
    <br>
@@ -7,7 +7,7 @@
 </h1>
 
 <center>
-   <img src="https://raw.githubusercontent.com/civilblur/youlag/refs/heads/main/src/capture.png" alt="youlag screencapture" width="1000">
+   <img src=".github/capture.png" alt="youlag screencapture" width="1000">
 </center>
 
 
