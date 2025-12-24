@@ -2604,10 +2604,14 @@ main#stream > .flux {
   display: flex;
   justify-content: flex-end;
   padding: var(--yl-p-xs);
+  background: linear-gradient(to bottom, black 0%, transparent 100%);
 }
 
 #youlagVideoSource {
   margin-right: auto;
+  border-radius: 8px;
+  padding-right: 1rem;
+  padding-left: 1rem;
 }
 
 .youlag-video-container {

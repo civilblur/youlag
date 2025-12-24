@@ -12,7 +12,7 @@
 
 
 ## About
-Youlag delivers a video-focused browsing experience for your YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS), with a sleek theme and extra features.
+Youlag delivers a video-focused browsing experience for your YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS), with a sleek theme and quality-of-life features.
 
 While it also supports regular feeds, this setup is tailored specifically for video content. Feel free and set up a separate instance for your video feeds if needed.
 
@@ -50,19 +50,18 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
 
-2. Extract the extension into `FreshRSS/extensions`.
+2. Unzip the file and you'll find a folder named `xExtension-Youlag` inside.
 
-3. Go to `Settings > Extensions` and enable the `Youlag` extension.
+3. Move the `xExtension-Youlag` folder into your FreshRSS installation folder: `www/freshrss/extensions/`.
+
+3. In FreshRSS, go to `Settings > Extensions` and enable the `Youlag` extension.
 
 ## Contribution
 
 1. Fork and make changes to the `dev` branch.
 1. Install dependencies: `npm i`.
-1. Make styling changes to the SASS file at `src/theme.scss` opposed to the compiled `static/theme.css` file.
-   - Run `npm run watch` to compile `src/theme.scss` to `static/theme.css`.
-   - [Learn more about SASS here](https://sass-lang.com/install/). 
-1. For structural and functional changes to the Youlag video modal, edit `static/script.js` in plain JavaScript.
-
+1. Make changes to `src/script.js` or `src/theme.scss`.
+   - Run `npm run watch` to compile `static/script.min.css` to `static/theme.min.css`.
 
 ## Attributions
 
