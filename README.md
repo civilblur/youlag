@@ -12,9 +12,9 @@
 
 
 ## About
-Youlag delivers a video-focused browsing experience for your YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS), with a sleek theme and quality-of-life features.
+Browse YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modern video interface that incorporates quality-of-life features.
 
-While it also supports regular feeds, this setup is tailored specifically for video content. Feel free and set up a separate instance for your video feeds if needed.
+Supports both text-based and video feeds, while tailored primarily for video content.
 
 ## Table of Content
 - [Features](#features)
