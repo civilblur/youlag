@@ -30,7 +30,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
   - Clean, familiar video platform layout.
   - Fullscreen viewing for videos and articles.
   - Quickly exit videos with `Esc` key.
-  - Shortcuts for external viewing: "Invidious" and "YouTube".
+  - Switch video source between "YouTube" and "Invidious".
   - Dark mode.
 - 🖥️ **Desktop & Mobile**
   - Reponsive design.
