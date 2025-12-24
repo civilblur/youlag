@@ -50,11 +50,13 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
 
-2. Unzip the file and you'll find a folder named `xExtension-Youlag` inside.
+1. Unzip the file and you'll find a folder named `xExtension-Youlag` inside.
 
-3. Move the `xExtension-Youlag` folder into your FreshRSS installation folder: `www/freshrss/extensions/`.
+1. Move the `xExtension-Youlag` folder into your FreshRSS installation folder: `www/freshrss/extensions/`.
 
-3. In FreshRSS, go to `Settings > Extensions` and enable the `Youlag` extension.
+1. In FreshRSS, go to `Settings > Extensions` and enable the `Youlag` extension.
+  - If you use [Invidious](https://invidious.io/), you can set your instance in the Youlag settings. This will allow you to choose which video source to play from when watching videos.
+
 
 ## Contribution
 
