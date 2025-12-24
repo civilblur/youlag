@@ -54,10 +54,6 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 3. Go to `Settings > Extensions` and enable the `Youlag` extension.
 
-## Additional Resources
-
-- "[Invidious Video Feed](https://github.com/Korbak/freshrss-invidious)" FreshRSS extension by Korbak.
-  - If you prefer to use Invidious instead.
 ## Contribution
 
 1. Fork and make changes to the `dev` branch.
@@ -70,6 +66,8 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 ## Attributions
 
+- **Integration**:
+  - [Korbak/freshrss-invidious](https://github.com/Korbak/freshrss-invidious)
 - **Icons used/remixed**: [SVG Repo](https://www.svgrepo.com/collection/design-and-development-elements/), [krystonschwarze](https://www.svgrepo.com/author/krystonschwarze/), [phosphor](https://www.svgrepo.com/author/phosphor/), [Solar Icons](https://www.svgrepo.com/svg/529779/playlist), [Dazzle UI](https://www.svgrepo.com/author/Dazzle%20UI/), [n3r4zzurr0/svg-spinners](https://github.com/n3r4zzurr0/svg-spinners).
 - **Tools**: [SVGOptimizer](https://jakearchibald.github.io/svgomg/), [b64.io](https://b64.io/).
 - **Featured channels on top image:** [Novaspirit Tech](https://www.youtube.com/channel/UCrjKdwxaQMSV_NDywgKXVmw), [Hardware Haven](https://www.youtube.com/channel/UCgdTVe88YVSrOZ9qKumhULQ).
