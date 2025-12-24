@@ -88,10 +88,13 @@ function getBaseUrl(url) {
 
 function matchURL(text) {
   const urlPattern = /https?:\/\/[\w\-._~:/?#\[\]@!$&'()*+,;=%]+[\w\-_/~#@?=&%]/g;
-  return text.match(urlPattern);
+  if (!text || typeof text !== 'string') return [];
+  const matches = text.match(urlPattern);
+  return matches ? matches : [];
 }
 
-function appendURL(text) {
+function appendUrl(text) {
+  console.log( 'appendUrl input:', text);
   const urls = matchURL(text);
   if (urls) {
     urls.forEach(url => {
@@ -134,7 +137,9 @@ function extractFeedItemData(feedItem) {
     extractedVideoUrl = sanitizeExtractedVideoUrl(extractedVideoUrl);
     youtubeExtensionInstalled = extractedVideoUrl ? true : false;
   }
-  const videoBaseUrl = getBaseUrl(extractedVideoUrl);
+  const isVideoFeedItem = extractedVideoUrl !== '';
+  const videoDescriptionExists = feedItem.querySelector('.enclosure-description') !== null;
+  const videoBaseUrl = isVideoFeedItem ? getBaseUrl(extractedVideoUrl) : '';
   youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
   const youtubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
   const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
@@ -160,13 +165,13 @@ function extractFeedItemData(feedItem) {
     video_invidious_instance_1: invidiousInstance1 || '',
     video_source_default: videoSourceDefault || 'youtube',
     video_description:
-      '<div class="youlag-video-description-content">' +
-      appendURL(
-          // If video description is found, use it, otherwise fallback to generic description element.
-          feedItem.querySelector('.enclosure-description')?.innerHTML.trim() ||
+      // If video description is found, use it, otherwise fallback to generic description element.
+      `<div class="youlag-video-description-content">
+        ${
+          isVideoFeedItem && videoDescriptionExists ? appendUrl(feedItem.querySelector('.enclosure-description')?.innerHTML.trim()) :
           feedItem.querySelector('article div.text')?.innerHTML.trim() || ''
-        ) +
-      '</div>',
+        }
+      </div>`,
     video_youtube_url: youtubeUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };

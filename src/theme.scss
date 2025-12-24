@@ -3043,3 +3043,13 @@ a.yl-video-action-button[href=""] {
    */
   display: none;
 }
+
+a[data-type="application/x-shockwave-flash"],
+figure.enclosure img.enclosure-thumbnail {
+  // Hide videos description with empty content
+  display: none;
+}
+
+/*****************************************
+ * END "YOULAG HELPER CLASSES"
+ ****************************************/
