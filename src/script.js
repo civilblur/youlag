@@ -105,6 +105,25 @@ function appendURL(text) {
   return text;
 }
 
+function sanitizeExtractedVideoUrl(content) {
+  // Sanitize the extracted video URL, which sometimes might end up being an actual HTML tag.
+  // Ensure that the content return is a valid URL string.
+
+  const str = String(content);
+  if (/^https?:\/\//.test(str.trim())) {
+    // If it's a valid URL string, return as is
+    return str.trim();
+  }
+
+  // Try to extract href attribute from HTML tag
+  const hrefMatch = str.match(/href=["']([^"'>]+)["']/);
+  if (hrefMatch && hrefMatch[1]) {
+    return hrefMatch[1];
+  }
+  
+  return '';
+}
+
 
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
@@ -112,6 +131,7 @@ function extractFeedItemData(feedItem) {
   if (!extractedVideoUrl) {
     // Fallback to see if user has installed the YouTube video feed/Invidious video feed extension, as they create a different DOM structure.
     extractedVideoUrl = feedItem.querySelector('.enclosure-content a[href*="youtube"], .enclosure-content a[href*="/watch?v="]');
+    extractedVideoUrl = sanitizeExtractedVideoUrl(extractedVideoUrl);
     youtubeExtensionInstalled = extractedVideoUrl ? true : false;
   }
   const videoBaseUrl = getBaseUrl(extractedVideoUrl);

@@ -8,8 +8,8 @@ const metadata = require('../metadata.json');
 const version = metadata.version;
 const distDir = path.resolve(__dirname, '../dist');
 const extensionFiles = [
-  { src: '../static/script.js', dest: 'static/script.js' },
-  { src: '../static/theme.css', dest: 'static/theme.css' },
+  { src: '../static/script.min.js', dest: 'static/script.min.js' },
+  { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
   { src: '../extension.php', dest: 'extension.php' },
   { src: '../configure.phtml', dest: 'configure.phtml' },
   { src: '../metadata.json', dest: 'metadata.json' }
