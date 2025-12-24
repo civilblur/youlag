@@ -434,6 +434,16 @@ nav.aside.aside_feed {
       }
     }
 
+    .favorites {
+      .tree-folder-title .title {
+        font-size: 0;
+
+        &:before {
+          content: "Watch later";
+        }
+      }
+    }
+
     /* Playlists ("My labels") button */
     #tags {
       /* Always display Playlist ("My Labels") button */
