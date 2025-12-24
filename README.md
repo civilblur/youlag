@@ -44,18 +44,18 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 - [ ] Local video queue, but without autoplay due to CORS limitation.
 - [x] Clickable links in video descriptions.
 - [x] Convert to an actual FreshRSS extension, with options for customizing the view and features.
-  - [ ] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
+- [ ] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
 
 ## Install
 
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
 
-1. Unzip the file and you'll find a folder named `xExtension-Youlag` inside.
+1. Unzip the file and you'll find a folder named `xExtension-Youlag`.
 
-1. Move the `xExtension-Youlag` folder into your FreshRSS installation folder: `www/freshrss/extensions/`.
+1. Move the `xExtension-Youlag` folder into your FreshRSS installation: `www/freshrss/extensions/`.
 
-1. In FreshRSS, go to `Settings > Extensions` and enable the `Youlag` extension.
-  - If you use [Invidious](https://invidious.io/), you can set your instance in the Youlag settings. This will allow you to choose which video source to play from when watching videos.
+1. In FreshRSS, go to `Settings → Extensions` and enable the `Youlag` extension.
+    - For [Invidious](https://invidious.io/) users, you can add your instance in the Youlag settings. This will allow you to choose which video source to play from when watching videos.
 
 
 ## Contribution
@@ -63,12 +63,11 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 1. Fork and make changes to the `dev` branch.
 1. Install dependencies: `npm i`.
 1. Make changes to `src/script.js` or `src/theme.scss`.
-   - Run `npm run watch` to compile `static/script.min.css` to `static/theme.min.css`.
+    - Run `npm run watch` to compile `static/script.min.css` to `static/theme.min.css`.
 
 ## Attributions
 
-- **Integration**:
-  - [Korbak/freshrss-invidious](https://github.com/Korbak/freshrss-invidious)
+- **Integration**: [Korbak/freshrss-invidious](https://github.com/Korbak/freshrss-invidious)
 - **Icons used/remixed**: [SVG Repo](https://www.svgrepo.com/collection/design-and-development-elements/), [krystonschwarze](https://www.svgrepo.com/author/krystonschwarze/), [phosphor](https://www.svgrepo.com/author/phosphor/), [Solar Icons](https://www.svgrepo.com/svg/529779/playlist), [Dazzle UI](https://www.svgrepo.com/author/Dazzle%20UI/), [n3r4zzurr0/svg-spinners](https://github.com/n3r4zzurr0/svg-spinners).
 - **Tools**: [SVGOptimizer](https://jakearchibald.github.io/svgomg/), [b64.io](https://b64.io/).
 - **Featured channels on top image:** [Novaspirit Tech](https://www.youtube.com/channel/UCrjKdwxaQMSV_NDywgKXVmw), [Hardware Haven](https://www.youtube.com/channel/UCgdTVe88YVSrOZ9qKumhULQ).

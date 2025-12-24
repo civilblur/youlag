@@ -2,7 +2,7 @@
   "name": "Youlag",
   "author": "civilblur",
   "description": "Youlag delivers a video-focused browsing experience with a sleek theme and quality-of-life features.",
-  "version": "3.0.7",
+  "version": "4.0.0",
   "entrypoint": "Youlag",
   "type": "user"
 }
