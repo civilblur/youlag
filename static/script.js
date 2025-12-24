@@ -11,6 +11,27 @@ const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
 
 
+/*****************************************
+ * BEGIN: "YOULAG EXTENSION SETTINGS PAGE"
+ * Functions used in the settings page.
+ ****************************************/
+
+function youlagSettingsPageEventListeners() {
+
+  const youlagCheckUpdatesBtn = document.getElementById('youlag_check_updates');
+  if (youlagCheckUpdatesBtn) {
+    // Open Youlag releases page on GitHub
+    youlagCheckUpdatesBtn.addEventListener('click', () => {
+      window.open('https://github.com/civilblur/youlag/releases');
+    });
+  }
+}
+
+/*****************************************
+ * END "YOULAG EXTENSION SETTINGS PAGE"
+ ****************************************/
+
+
 function handleActiveRssItem(targetOrEvent) {
   // Coordinates the event for extracting the data triggering.
   let feedItem;
@@ -357,6 +378,7 @@ function collapseBackgroundFeedItem(target) {
 
 function init() {
   setupClickListener();
+  youlagSettingsPageEventListeners();
   removeYoulagLoadingState();
   youlagScriptLoaded = true;
 }
