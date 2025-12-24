@@ -52,7 +52,7 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 1. Unzip the file and you'll find a folder named `xExtension-Youlag`.
 
-1. Move the `xExtension-Youlag` folder into your FreshRSS installation: `www/freshrss/extensions/`.
+1. Move the `xExtension-Youlag` folder into your FreshRSS installation: `freshrss/extensions/`.
 
 1. In FreshRSS, go to `Settings → Extensions` and enable the `Youlag` extension.
     - For [Invidious](https://invidious.io/) users, you can add your instance in the Youlag settings. This will allow you to choose which video source to play from when watching videos.
@@ -62,8 +62,8 @@ While it also supports regular feeds, this setup is tailored specifically for vi
 
 1. Fork and make changes to the `dev` branch.
 1. Install dependencies: `npm i`.
-1. Make changes to `src/script.js` or `src/theme.scss`.
-    - Run `npm run watch` to compile `static/script.min.css` to `static/theme.min.css`.
+1. Make changes to `src/script.js`, `src/theme.scss`.
+    - Run `npm run watch` to compile to `static/script.min.css` and `static/theme.min.css`.
 
 ## Attributions
 
