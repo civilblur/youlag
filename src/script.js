@@ -7,6 +7,8 @@ const modalContainerClassName = `youlag-theater-modal-container`;
 const modalContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
 const modalMinimizeIdName = `youlagMinimizeModal`;
+const modalVideoSourceIdName = `youlagVideoSource`;
+const modalVideoSourceDefaultIdName = `youlagVideoSourceDefault`;
 const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
 
@@ -18,12 +20,30 @@ const modalFavoriteClassName = `youlag-favorited`;
 
 function youlagSettingsPageEventListeners() {
 
-  const youlagCheckUpdatesBtn = document.getElementById('youlag_check_updates');
+  let youlagCheckUpdatesBtn = document.getElementById('youlag_check_updates');
   if (youlagCheckUpdatesBtn) {
-    // Open Youlag releases page on GitHub
+    // Open Youlag releases page on GitHub.
     youlagCheckUpdatesBtn.addEventListener('click', () => {
       window.open('https://github.com/civilblur/youlag/releases');
     });
+  }
+
+
+  // Set "required" to Invidious URL input field if it's selected.
+  const invidiousRadio = document.getElementById('youlag_playback_invidious');
+  const youtubeRadio = document.getElementById('youlag_playback_youtube');
+  const invidiousInput = document.getElementById('yl_invidious_url_1');
+  if (invidiousRadio && youtubeRadio && invidiousInput) {
+    function updateRequired() {
+      if (invidiousRadio.checked) {
+        invidiousInput.setAttribute('required', 'required');
+      } else {
+        invidiousInput.removeAttribute('required');
+      }
+    }
+    invidiousRadio.addEventListener('change', updateRequired);
+    youtubeRadio.addEventListener('change', updateRequired);
+    updateRequired();
   }
 }
 
@@ -96,11 +116,13 @@ function extractFeedItemData(feedItem) {
   }
   const videoBaseUrl = getBaseUrl(extractedVideoUrl);
   youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
-  const youubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
+  const youtubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
   const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
   const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';  
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
+  const invidiousInstance1 = feedItem.querySelector('.content div.text span[data-yl-invidious-instance]')?.getAttribute('data-yl-invidious-instance');
+  const videoSourceDefault = feedItem.querySelector('.content div.text span[data-yl-video-source-default]')?.getAttribute('data-yl-video-source-default');
   const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
 
   return {
@@ -115,6 +137,8 @@ function extractFeedItemData(feedItem) {
     date: feedItem.querySelector('.flux_content .date')?.textContent.trim() || '',
     youtube_embed_url: youtubeEmbedUrl,
     video_embed_url: videoEmbedUrl,
+    video_invidious_instance_1: invidiousInstance1 || '',
+    video_source_default: videoSourceDefault || 'youtube',
     video_description:
       '<div class="youlag-video-description-content">' +
       appendURL(
@@ -123,7 +147,7 @@ function extractFeedItemData(feedItem) {
           feedItem.querySelector('article div.text')?.innerHTML.trim() || ''
         ) +
       '</div>',
-    video_youtube_url: youubeUrl,
+    video_youtube_url: youtubeUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };
 }
@@ -131,6 +155,7 @@ function extractFeedItemData(feedItem) {
 function createModalWithData(data) {
   // Create custom modal
   let modal = document.getElementById('youlagTheaterModal');
+
 
   if (!modal) {
     modal = document.createElement('div');
@@ -141,10 +166,34 @@ function createModalWithData(data) {
 
   // Add content to modal
   const container = modal.querySelector(`.${modalContainerClassName}`);
+  const videoSourceDefault = data.video_source_default;
+  const youtubeSelected = videoSourceDefault === 'youtube' ? 'selected' : '';
+  const invidiousSelected = videoSourceDefault === 'invidious_1' ? 'selected' : '';
+  const invidiousBaseUrl = data.video_invidious_instance_1;
+
+  function getEmbedUrl(source) {
+    // Helper to get the correct embed URL for a given source
+    if (source === 'invidious_1' && data.video_invidious_instance_1) {
+      return `${data.video_invidious_instance_1.replace(/\/$/, '')}/embed/${youtubeId}`;
+    } else if (source === 'youtube') {
+      return data.youtube_embed_url;
+    }
+    return '';
+  }
+
+  // Determine the initial video source (default)
+  const videoSourceDefaultNormalized = videoSourceDefault === 'invidious_1' ? 'invidious_1' : 'youtube';
+  const defaultEmbedUrl = getEmbedUrl(videoSourceDefaultNormalized);
+
   container.innerHTML = `
     <div class="${modalContentClassName}">
 
       <div class="youlag-video-header">
+        <select id="${modalVideoSourceIdName}" class="${invidiousBaseUrl ? '' : 'display-none'}">
+          <option value="youtube" ${youtubeSelected}>YouTube</option>
+          <option value="invidious_1" ${invidiousSelected}>Invidious</option>
+        </select>
+
         <button id="${modalMinimizeIdName}">⧉</button>
         <button id="${modalCloseIdName}">×</button>
       </div>
@@ -155,7 +204,7 @@ function createModalWithData(data) {
         </div>
         <div class="youlag-iframe-container">
           <iframe class="youlag-iframe"
-                  src="${data.video_embed_url ? data.video_embed_url : ''}" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                  src="${defaultEmbedUrl}" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
       </div>
 
@@ -189,16 +238,14 @@ function createModalWithData(data) {
                 <span class="yl-video-action-button__icon">🌐</span><span>Source</span>
               </a>
 
-              <a class="yl-video-action-button" href="${data.video_invidious_redirect_url}" target="_blank">
-                <span class="yl-video-action-button__icon">📺</span><span>Invidious</span>
-              </a>
+
 
               <div class="yl-video-action-button-group">
                 <a class="yl-video-action-button" href="${data.video_youtube_url}" target="_blank">
                   <span class="yl-video-action-button__icon">▶️</span><span>YouTube</span>
                 </a>
-                <a class="yl-video-action-button" href="${data.youtube_embed_url}" target="_blank">
-                  <span>View embed</span>
+                <a class="yl-video-action-button" href="${data.video_invidious_redirect_url}" target="_blank">
+                  <span class="yl-video-action-button__icon">📺</span><span>Invidious</span>
                 </a>
               </div>
 
@@ -218,6 +265,15 @@ function createModalWithData(data) {
 
     </div>
   `;
+
+  // Only update iframe src if the user interacts with the select (not on initial render)
+  const videoSourceSelect = container.querySelector(`#${modalVideoSourceIdName}`);
+  const iframe = container.querySelector('.youlag-iframe');
+  if (videoSourceSelect && iframe) {
+    videoSourceSelect.addEventListener('change', function () {
+      iframe.src = getEmbedUrl(videoSourceSelect.value);
+    });
+  }
 
 
   if (!youtubeId) {
@@ -378,7 +434,10 @@ function collapseBackgroundFeedItem(target) {
 
 function init() {
   setupClickListener();
-  youlagSettingsPageEventListeners();
+  setTimeout(() => {
+    // HACK: Delay referencing the settings elements.
+    youlagSettingsPageEventListeners();
+  }, 1000);
   removeYoulagLoadingState();
   youlagScriptLoaded = true;
 }

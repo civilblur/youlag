@@ -29,6 +29,7 @@
  * - Youlag theater view modal
  * - Youlag theater pip view
  * - Youlag extension settings page
+ * - Youlag helper classes
  * 
  * 
  * NOTE
@@ -2605,6 +2606,10 @@ main#stream > .flux {
   padding: var(--yl-p-xs);
 }
 
+#youlagVideoSource {
+  margin-right: auto;
+}
+
 .youlag-video-container {
   position: relative;
   max-height: 80vh;
@@ -2881,6 +2886,10 @@ a.yl-video-action-button[href=""] {
     padding: 3px;
   }
 
+  #youlagVideoSource {
+    display: none;
+  }
+
   #youlagCloseModal,
   #youlagMinimizeModal {
     padding: var(--yl-p-xs);
@@ -2888,7 +2897,7 @@ a.yl-video-action-button[href=""] {
     height: 20px;
     font-size: var(--yl-text-sm);
   }
-
+  
   .youlag-video-details {
     display: none;
   }
@@ -3000,3 +3009,23 @@ a.yl-video-action-button[href=""] {
  /*****************************************
  * END "YOULAG EXTENSION SETTINGS PAGE"
  ****************************************/
+
+
+ /*****************************************
+ * BEGIN "YOULAG HELPER CLASSES"
+ * Reusable helper classes or adjustment
+ * for unique cases.
+ ****************************************/
+
+.display-none {
+  display: none !important;
+}
+
+[data-yl-invidious-instance] {
+  /**
+   * An element containing the Invidious instance URL, 
+   * rendered in the article content. This exposes the 
+   * Youlag extension settings to allow `script.js` to access it.
+   */
+  display: none;
+}

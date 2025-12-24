@@ -8,8 +8,8 @@ const chokidar = require('chokidar');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const extensionFiles = [
-  { src: '../static/theme.css', dest: 'static/theme.css' },
-  { src: '../static/script.js', dest: 'static/script.js' },
+  { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
+  { src: '../static/script.min.js', dest: 'static/script.min.js' },
   { src: '../extension.php', dest: 'extension.php' },
   { src: '../configure.phtml', dest: 'configure.phtml' },
   { src: '../metadata.json', dest: 'metadata.json' }

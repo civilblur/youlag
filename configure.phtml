@@ -3,7 +3,7 @@ declare(strict_types=1);
 /** @var YoulagExtension $this */
 ?>
 
-<div class="youlag-extension-settings-container">
+<div class="youlag-extension-settings-container" id="youlag-settings-root">
 
   <form class="youlag-extension-settings-form" action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
     <input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
@@ -23,7 +23,7 @@ declare(strict_types=1);
               <div class="yl-form-group--radio-input-container">
                 <label for="youlag_playback_youtube">YouTube</label>
                 <div class="yl-form-control-radio-input">
-                  <input type="radio" id="youlag_playback_youtube" name="yl_indivious_enabled" value="0" 
+                  <input type="radio" id="youlag_playback_youtube" name="yl_invidious_enabled" value="0" 
                     <?= !$this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
                   >
                   <div class="group-controls">
@@ -40,11 +40,11 @@ declare(strict_types=1);
                 <label for="youlag_playback_invidious">Invidious</label>
                 <div class="yl-form-group-help">The base URL of the Invidious instance.</div>
                 <div class="yl-form-control-radio-input">
-                  <input type="radio" id="youlag_playback_invidious" name="yl_indivious_enabled" value="1" 
+                  <input type="radio" id="youlag_playback_invidious" name="yl_invidious_enabled" value="1" 
                     <?= $this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
                   >
                   <div class="group-controls">
-                    <input type="text" id="yl_invidious_url_1" name="yl_invidious_url_1" placeholder="https://" value="<?php echo FreshRSS_Context::$user_conf->yl_invidious_url_1; ?>" data-leave-validation="1" <?= $this->isInvidiousEnabled() ? 'required' : '' ?>>
+                    <input type="text" id="yl_invidious_url_1" name="yl_invidious_url_1" placeholder="https://" value="<?php echo FreshRSS_Context::$user_conf->yl_invidious_url_1; ?>" data-leave-validation="1">
                   </div>
                 </div>
               </div>
@@ -54,10 +54,6 @@ declare(strict_types=1);
 
         </div>
       </div>
-
-
-
-
 
     </section>
 
