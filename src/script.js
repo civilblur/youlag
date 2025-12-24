@@ -160,6 +160,7 @@ function extractFeedItemData(feedItem) {
     title: feedItem.querySelector('.item-element.title')?.childNodes[0].textContent.trim() || '',
     external_link: feedItem.querySelector('.item-element.title')?.href || '',
     date: feedItem.querySelector('.flux_content .date')?.textContent.trim() || '',
+    isVideoFeedItem: isVideoFeedItem,
     youtube_embed_url: youtubeEmbedUrl,
     video_embed_url: videoEmbedUrl,
     video_invidious_instance_1: invidiousInstance1 || '',
@@ -209,12 +210,12 @@ function createModalWithData(data) {
   // Determine the initial video source (default)
   const videoSourceDefaultNormalized = videoSourceDefault === 'invidious_1' ? 'invidious_1' : 'youtube';
   const defaultEmbedUrl = getEmbedUrl(videoSourceDefaultNormalized);
-
+ 
   container.innerHTML = `
     <div class="${modalContentClassName}">
 
       <div class="youlag-video-header">
-        <select id="${modalVideoSourceIdName}" class="${invidiousBaseUrl ? '' : 'display-none'}">
+        <select id="${modalVideoSourceIdName}" class="${invidiousBaseUrl && data.isVideoFeedItem ? '' : 'display-none'}">
           <option value="youtube" ${youtubeSelected}>YouTube</option>
           <option value="invidious_1" ${invidiousSelected}>Invidious</option>
         </select>
