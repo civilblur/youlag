@@ -102,7 +102,7 @@
 
   --favicon-avatar-size: 34px;
   --favicon-avatar-size-margin: 6px;
-  --feed-day-title-font-size: 2.3rem;
+  --feed-day-title-font-size: 1.7rem;
   --video-pip-width: min(500px, 60%); 
 }
 
@@ -505,7 +505,7 @@ nav.aside.aside_feed {
   /* Keep "Subscriptions management" button sticky on scroll */
   .stick.configure-feeds {
     position: sticky;
-    top: 20px;
+    top: 50px;
     z-index: 10;
     width: 292px;
   }
@@ -517,7 +517,7 @@ nav.aside.aside_feed {
   }
 
   #mark-read-aside {
-    top: calc(20px + 52px); /* Padding-top of container + height of "Subscriptions management" button */
+    top: calc(50px + 52px); /* Padding-top of container + height of "Subscriptions management" button */
   }
 }
 
@@ -629,6 +629,13 @@ main.post:has(#add_tag) {
 
     & > a {
       align-content: center;
+
+      @media (min-width: 840px) {
+        img {
+          /* Logo, make room for sidenav toggle button */
+          margin-left: 46px;
+        }
+      }
     }
     
 
@@ -851,52 +858,75 @@ main#stream #stream-footer,
 
 }
 
-/* Card day section title */
-main#stream .day {
-  grid-column: 1 / -1;
-  font-size: var(--feed-day-title-font-size);
-  opacity: 0.8;
-  padding: 0 8px;
-  line-height: 1.2;
-  margin-top: 8rem;
-  margin-bottom: 2rem;
 
-
-  .date,
-  .name {
-    display: none;
-  }
-
-  &#day_before_yesterday {
-    /* Hide text, then, apply new text using psuedo element :before */
-    font-size: 0 !important;
-
-    &:before {
-      content: "Past";
-      font-size: var(--feed-day-title-font-size);
-    }
-  }
-}
 
 main#stream {
-  /* Reduce margin-top on the first day that appears at the top of the feed */
-  #new-article + .day  {
-    margin-top: 2rem;
+  /* Card day section title */
+  .transition {
+    grid-column: 1 / -1;
+    font-size: var(--feed-day-title-font-size);
+    opacity: 0.8;
+    padding: 0 8px;
+    line-height: 1.2;
+    margin-top: 8rem;
+    margin-bottom: 2rem;
+    color: #ffffff;
+
+    & > .name {
+      /* Category name */
+      display: block;
+      color: #ffffff;
+      padding: 0;
+      margin-top: 0.5rem;
+      opacity: 0.7;
+    }
   }
 
-  /* Hide title "Past" if it is the only day-title on the feed */
-  #new-article + #day_before_yesterday {
-    visibility: hidden;
-    margin-bottom: 0;
-    pointer-events: none;
-    user-select: none;
+  /* Reduce margin-top on the first day that appears at the top of the feed */
+  #new-article + .transition  {
+    margin-top: 2rem;
   }
 
   .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
     /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
     z-index: 20;
   }
+}
 
+
+nav.nav_menu #nav_menu_toggle_aside {
+  /* Button to show/hide sidenav */
+  & > button.btn {
+    position: fixed;
+    top: 12px;
+    left: 8px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    z-index: 15;
+
+    &:before {
+      content: "";
+      width: 16px;
+      height: 14px;
+      background-image: url("../themes/Mapco/icons/view-normal.svg");
+      background-size: contain;
+      display: inline-block;
+      filter: brightness(3);
+    }
+
+    .icon {
+      /* Hide existing sidenav toggle icon */
+      display: none;
+    }
+
+    &.active {
+      background-color: transparent;
+    }
+
+    &:hover {
+      background-color: #57575a;
+    }
+  }
 }
 
 
@@ -2536,6 +2566,7 @@ main#stream > .flux {
   bottom: 0px;
   right: 0px;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   background: #060606;
   overflow-y: auto;
