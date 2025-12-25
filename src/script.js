@@ -264,16 +264,12 @@ function createModalWithData(data) {
                 <span class="yl-video-action-button__icon">🌐</span><span>Source</span>
               </a>
 
-
-
-              <div class="yl-video-action-button-group">
-                <a class="yl-video-action-button" href="${data.video_youtube_url}" target="_blank">
-                  <span class="yl-video-action-button__icon">▶️</span><span>YouTube</span>
-                </a>
-                <a class="yl-video-action-button" href="${data.video_invidious_redirect_url}" target="_blank">
-                  <span class="yl-video-action-button__icon">📺</span><span>Invidious</span>
-                </a>
-              </div>
+              <a class="yl-video-action-button" href="${data.video_youtube_url}" target="_blank">
+                <span class="yl-video-action-button__icon">▶️</span><span>YouTube</span>
+              </a>
+              <a class="yl-video-action-button" href="${data.video_invidious_redirect_url}" target="_blank">
+                <span class="yl-video-action-button__icon">📺</span><span>Invidious</span>
+              </a>
 
             </section>
 
