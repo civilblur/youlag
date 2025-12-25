@@ -902,7 +902,7 @@ nav.nav_menu #nav_menu_toggle_aside {
     left: 8px;
     border-radius: 8px;
     transition: background-color 0.3s;
-    z-index: 15;
+    z-index: 50;
 
     &:before {
       content: "";
@@ -2931,6 +2931,7 @@ a.yl-video-action-button[href=""] {
     left: auto;
     right: 0;
     padding: 3px;
+    background: transparent;
   }
 
   #youlagVideoSource {
