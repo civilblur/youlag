@@ -14,7 +14,7 @@
 ## About
 Browse YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modern video interface that incorporates quality-of-life features.
 
-Supports both text-based and video feeds, while tailored primarily for video content.
+Youlag supports both text-based and video feeds, while tailored primarily for video content.
 
 ## Table of Content
 - [Features](#features)
