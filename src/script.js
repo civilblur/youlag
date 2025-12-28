@@ -20,7 +20,7 @@ const modalFavoriteClassName = `youlag-favorited`;
 
 function youlagSettingsPageEventListeners() {
 
-  let youlagCheckUpdatesBtn = document.getElementById('youlag_check_updates');
+  let youlagCheckUpdatesBtn = document.getElementById('yl_check_updates');
   if (youlagCheckUpdatesBtn) {
     // Open Youlag releases page on GitHub.
     youlagCheckUpdatesBtn.addEventListener('click', () => {
@@ -30,8 +30,8 @@ function youlagSettingsPageEventListeners() {
 
 
   // Set "required" to Invidious URL input field if it's selected.
-  const invidiousRadio = document.getElementById('youlag_playback_invidious');
-  const youtubeRadio = document.getElementById('youlag_playback_youtube');
+  const invidiousRadio = document.getElementById('yl_playback_invidious');
+  const youtubeRadio = document.getElementById('yl_playback_youtube');
   const invidiousInput = document.getElementById('yl_invidious_url_1');
   if (invidiousRadio && youtubeRadio && invidiousInput) {
     function updateRequired() {

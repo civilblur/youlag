@@ -3,14 +3,33 @@ declare(strict_types=1);
 /** @var YoulagExtension $this */
 ?>
 
-<div class="youlag-extension-settings-container" id="youlag-settings-root">
+<div class="yl-extension-settings-container" id="yl-settings-root">
 
-  <form class="youlag-extension-settings-form" action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
+  <form class="yl-extension-settings-form" action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
     <input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 
     <h2>Youlag settings</h2>
 
-    <section class="youlag-form-section">
+    <section class="yl-form-section">
+      <?php
+      $categories = isset($_SESSION['ext_categories']) ? $_SESSION['ext_categories'] : array();
+      ?>
+
+      <?php if (!empty($categories)): ?>
+        <div class="yl-category-checkbox-list">
+          <?php foreach ($categories as $cat): ?>
+            <label style="display:block; margin-bottom: 0.5em;">
+              <input type="checkbox" name="selected_categories[]" value="<?php echo htmlspecialchars((string)$cat->id()); ?>">
+              <?php echo htmlspecialchars((string)$cat->name()); ?>
+              <?php echo '(id: ' . htmlspecialchars((string)$cat->id()) . ')'; ?>
+            </label>
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <div class="yl-form-group-help">No categories found for your account.</div>
+      <?php endif; ?>
+    </section>
+    <section class="yl-form-section">
 
       <h3>Default video playback source</h3>
 
@@ -21,9 +40,9 @@ declare(strict_types=1);
           <div class="yl-form-group--radio">
             <div class="form-group">
               <div class="yl-form-group--radio-input-container">
-                <label for="youlag_playback_youtube">YouTube</label>
+                <label for="yl_playback_youtube">YouTube</label>
                 <div class="yl-form-control-radio-input">
-                  <input type="radio" id="youlag_playback_youtube" name="yl_invidious_enabled" value="0" 
+                  <input type="radio" id="yl_playback_youtube" name="yl_invidious_enabled" value="0" 
                     <?= !$this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
                   >
                   <div class="group-controls">
@@ -37,10 +56,10 @@ declare(strict_types=1);
           <div class="yl-form-group--radio">
             <div class="form-group">
               <div class="yl-form-group--radio-input-container">
-                <label for="youlag_playback_invidious">Invidious</label>
+                <label for="yl_playback_invidious">Invidious</label>
                 <div class="yl-form-group-help">The base URL of the Invidious instance.</div>
                 <div class="yl-form-control-radio-input">
-                  <input type="radio" id="youlag_playback_invidious" name="yl_invidious_enabled" value="1" 
+                  <input type="radio" id="yl_playback_invidious" name="yl_invidious_enabled" value="1" 
                     <?= $this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
                   >
                   <div class="group-controls">
@@ -62,7 +81,7 @@ declare(strict_types=1);
         <button type="submit" class="btn btn-important">Submit</button>
         <button type="reset" class="btn">Cancel</button>
 
-        <button id="youlag_check_updates" type="button" class="btn">Check for updates (Github)</button>
+        <button id="yl_check_updates" type="button" class="btn">Check for updates (Github)</button>
       </div>
     </div>
   </form>

@@ -49,6 +49,20 @@ class YoulagExtension extends Minz_Extension {
     }
 
     /**
+     * Get the current user's categories.
+     * @return array
+     */
+    protected function getUserCategories() {
+        if (class_exists('FreshRSS_Factory')) {
+            $dao = FreshRSS_Factory::createCategoryDao();
+            if (method_exists($dao, 'listCategories')) {
+                return $dao->listCategories();
+            }
+        }
+        return array();
+    }
+
+    /**
      * Returns whether Invidious is enabled or not.
      * Load $this->loadConfigValues(); before calling this method.
      * @return bool
@@ -131,8 +145,10 @@ class YoulagExtension extends Minz_Extension {
     public function handleConfigureAction() {
         $this->loadConfigValues();
 
-        if (Minz_Request::isPost()) {
+        // User categories
+        $_SESSION['ext_categories'] = $this->getUserCategories();
 
+        if (Minz_Request::isPost()) {
             FreshRSS_Context::userConf()->_attribute('yl_invidious_enabled', Minz_Request::paramBoolean('yl_invidious_enabled'));
             FreshRSS_Context::$user_conf->yl_invidious_url_1 = (string)Minz_Request::param('yl_invidious_url_1', '');
             FreshRSS_Context::$user_conf->save();
