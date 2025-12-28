@@ -904,6 +904,10 @@ nav.nav_menu #nav_menu_toggle_aside {
     transition: background-color 0.3s;
     z-index: 50;
 
+    @media (max-width: 840px) {
+      top: 6px;
+    }
+
     &:before {
       content: "";
       width: 16px;
@@ -3063,7 +3067,7 @@ a.yl-video-action-button[href=""] {
     }
 
     .yl-form-category-subitem-container {
-      
+
     }
   }
 }
