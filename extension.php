@@ -7,6 +7,11 @@ class YoulagExtension extends Minz_Extension {
      */
     protected $yl_category_whitelist = [];
     /**
+     * Use video platform labels (Favorite → Watch later, Tags → Playlists)
+     * @var bool
+     */
+    protected $yl_video_labels_enabled = true;
+    /**
      * Whether to use Invidious for playback
      * @var bool
      */
@@ -23,6 +28,7 @@ class YoulagExtension extends Minz_Extension {
     public function init() {
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
         $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
+        $this->registerHook('nav_entries', array($this, 'setVideoLabels'), 11);
 
         // Add Youlag theme and script to all extension pages
         Minz_View::appendStyle($this->getFileUrl('theme.min.css'));
@@ -55,7 +61,12 @@ class YoulagExtension extends Minz_Extension {
 
         $val = FreshRSS_Context::userConf()->attributeArray('yl_category_whitelist');
         $this->yl_category_whitelist = is_array($val) ? $val : [];
+
+        $labelsEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_labels_enabled');
+        $this->yl_video_labels_enabled = ($labelsEnabled === null) ? true : $labelsEnabled;
     }
+
+
 
     /**
      * Returns the stored category whitelist for UI (after loadConfigValues()).
@@ -77,6 +88,24 @@ class YoulagExtension extends Minz_Extension {
             $dataAttr = ' data-yl-category-whitelist="' . htmlspecialchars(implode(', ', $whitelist)) . '"';
         }
         return '<div id="yl_category_whitelist"' . $dataAttr . '></div>';
+    }
+
+    /**
+     * Returns whether video platform labels is enabled or not.
+     * @return bool
+     */
+    public function isVideoLabelsEnabled() {
+        return $this->yl_video_labels_enabled;
+    }
+
+    /**
+     * Pass the video platform labels state to be read in the DOM via nav_entries hook.
+     * The `script.js` handles the behavior based on this the value in `data-yl-video-labels`.
+     * @param bool $enabled
+     */
+    public function setVideoLabels() {
+        $enabled = $this->yl_video_labels_enabled ? 'true' : 'false';
+        return '<div id="yl_video_labels" data-yl-video-labels="' . $enabled . '"></div>';
     }
 
     /**
@@ -186,6 +215,9 @@ class YoulagExtension extends Minz_Extension {
                 $catWhitelist = [];
             }
             FreshRSS_Context::userConf()->_attribute('yl_category_whitelist', $catWhitelist);
+
+            $labelsEnabled = Minz_Request::paramBoolean('yl_video_labels_enabled', true);
+            FreshRSS_Context::userConf()->_attribute('yl_video_labels_enabled', $labelsEnabled);
 
             FreshRSS_Context::$user_conf->save();
         }

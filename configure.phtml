@@ -15,13 +15,14 @@ declare(strict_types=1);
       $categories = isset($_SESSION['ext_categories']) ? $_SESSION['ext_categories'] : array();
       ?>
 
-      <h3>
-        Video pages and categories
+      <h3>Appearance</h3>
+
+      <h4 class="mb-0">
+        Pages and categories
         <div class="yl-form-group-help">
           Select the pages and categories whose feeds will be displayed in Youlag's video interface.
         </div>
-      </h3>
-
+      </h4>
       <?php if (!empty($categories)): ?>
         <div class="yl-form-category-container">
           <?php $whitelist = $this->getCategoryWhitelist(); ?>
@@ -62,7 +63,6 @@ declare(strict_types=1);
                   value="<?php echo 'c_' . htmlspecialchars($catId); ?>"
                   <?php echo in_array('c_' . $catId, $whitelist) ? ' checked="checked"' : ''; ?>>
                 <?php echo htmlspecialchars((string)$cat->name()); ?>
-                <?php echo '(id: ' . htmlspecialchars($catId) . ')'; ?>
               </label>
             <?php endforeach; ?>
           </div>
@@ -70,6 +70,20 @@ declare(strict_types=1);
       <?php else: ?>
         <div class="yl-form-group-help">No categories found.</div>
       <?php endif; ?>
+
+      <h4 class="mb-0">
+        Labels
+      </h4>
+      <label for="yl_video_labels_enabled" class="flex">
+        <input type="checkbox" id="yl_video_labels_enabled" name="yl_video_labels_enabled" value="1" class="mb-auto"
+          <?php echo FreshRSS_Context::$user_conf->yl_video_labels_enabled ? ' checked="checked"' : ''; ?>>
+        <div class="inline-block">
+          Use video platform labels
+          <div class="yl-form-group-help">
+            Renames "Favorite → Watch later", "Tags → Playlists".
+          </div>
+        </div>
+      </label>
     </section>
     <section class="yl-form-section">
 

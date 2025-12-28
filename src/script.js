@@ -511,60 +511,98 @@ function getCategoryWhitelist() {
   // `setCategoryWhitelist()` in `extension.php` outputs the user data to the DOM.
   const el = document.querySelector('#yl_category_whitelist');
   if (!el) return [];
+
   const data = el.getAttribute('data-yl-category-whitelist');
   if (!data) return [];
-  return data.split(',').map(s => s.trim()).filter(Boolean);
+  const whitelist = data.split(',').map(s => s.trim()).filter(Boolean);
+
+  try {
+    localStorage.setItem('youlagCategoryWhitelist', JSON.stringify(whitelist));
+  } catch (e) {}
+
+  return whitelist;
 }
 
-function isCategoryWhitelist() {
-  // Set body class based on category whitelist.
-  const whitelist = getCategoryWhitelist();
-  const currentPageClass = getCurrentPage();
-  if (whitelist.includes('all')) {
-    // All pages allowed
-    return true;
-  }
+function isPageWhitelisted(whitelist, currentPageClass) {
+  if (whitelist.includes('all')) return true;
   if (currentPageClass.startsWith('yl-page-category')) {
-    // Category page
-    const categoryIdMatch = currentPageClass.match(/c_(\d+)/);
-    if (categoryIdMatch) {
-      const categoryId = categoryIdMatch[1];
-      if (whitelist.includes('c_' + categoryId)) {
-        return true;
-      }
-    }
-  } else {
-    // Non-category page
-    if (whitelist.includes('home') && currentPageClass === 'yl-page-home') {
-      return true;
-    }
-    if (whitelist.includes('important') && currentPageClass === 'yl-page-important') {
-      return true;
-    }
-    if (whitelist.includes('watch_later') && currentPageClass === 'yl-page-watch_later') {
-      return true;
-    }
+    const match = currentPageClass.match(/c_(\d+)/);
+    if (match) return whitelist.includes('c_' + match[1]);
+    return false;
   }
-  return false;
+  const pageTypes = ['home', 'important', 'watch_later'];
+  return pageTypes.some(type => whitelist.includes(type) && currentPageClass === `yl-page-${type}`);
 }
 
+function setCategoryWhitelistClass() {
+  // Quickly apply youlag-category-whitelist class based on localStorage to reduce layout shifts.
+  
+  let localStorageWhitelist = [];
+  try {
+    const stored = localStorage.getItem('youlagCategoryWhitelist');
+    if (stored) localStorageWhitelist = JSON.parse(stored);
+  } catch (e) {}
 
+  const currentPageClass = getCurrentPage();
+  const isWhitelisted = isPageWhitelisted(localStorageWhitelist, currentPageClass);
+  youlagActive = isWhitelisted;
+
+  // Apply class based on localStorage
+  document.body.classList.toggle('youlag-active', isWhitelisted);
+  document.body.classList.toggle('youlag-inactive', !isWhitelisted);
+
+  // Sync with actual whitelist from the user settings exposed in the DOM.
+  const whitelist = getCategoryWhitelist();
+  const isWhitelistedUserSetting = isPageWhitelisted(whitelist, currentPageClass);
+  youlagActive = isWhitelistedUserSetting;
+
+  // If the actual whitelist status differs from localStorage, update class and localStorage.
+  if (isWhitelistedUserSetting !== isWhitelisted) {
+    document.body.classList.toggle('youlag-active', isWhitelistedUserSetting);
+    document.body.classList.toggle('youlag-inactive', !isWhitelistedUserSetting);
+    try {
+      localStorage.setItem('youlagCategoryWhitelist', JSON.stringify(whitelist));
+    } catch (e) {}
+    return isWhitelistedUserSetting;
+  }
+  return isWhitelisted;
+}
+
+function setVideoLabelsClass() {
+  const localStorageSetting = localStorage.getItem('youlagVideoLabels') || false;
+  const userSettingElement = document.querySelector('#yl_video_labels');
+  let userSetting = undefined;
+
+  if (userSettingElement) {
+    userSetting = userSettingElement.getAttribute('data-yl-video-labels') === 'true';
+  }
+
+  // Apply youlag-video-labels class as quickly as possible to reduce layout shifts, based on localStorage.
+  if (localStorageSetting) {
+    document.body.classList.add('youlag-video-labels');
+  }
+  else {
+    document.body.classList.remove('youlag-video-labels');
+  }
+
+  // Sync user setting with localStorage and apply class accordingly.
+  if (userSetting === true) {
+    document.body.classList.add('youlag-video-labels');
+    localStorage.setItem('youlagVideoLabels', 'true');
+  }
+  else if (userSetting === false) {
+    document.body.classList.remove('youlag-video-labels');
+    localStorage.setItem('youlagVideoLabels', 'false');
+  }
+}
 
 
 function setBodyPageClass() {
-  const pageClass = getCurrentPage();
-  if (pageClass) {
-    document.body.className += ' ' + pageClass;
-  }
+  getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
 
-  if (isCategoryWhitelist()) {
-    // Testing whitelist
-    youlagActive = true;
-    document.body.classList.add('youlag-active');
-  } else {
-    youlagActive = false;
-    document.body.classList.add('youlag-inactive');
-  }
+  setVideoLabelsClass();
+
+  setCategoryWhitelistClass();
 }
 
 
@@ -588,7 +626,8 @@ function removeYoulagLoadingState() {
 function initFallback() {
   if (document.readyState === 'complete' || document.readyState === 'interactive' || youlagScriptLoaded === true) {
     init();
-  } else {
+  }
+  else {
     document.addEventListener('DOMContentLoaded', init);
     window.addEventListener('load', init);
   }

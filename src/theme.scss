@@ -228,6 +228,94 @@ body.youlag-active:not(.reader) main#stream {
   }
 }
 
+.youlag-video-labels {
+  /* Change the side navigation labels based on user settings. */
+
+  nav.aside.aside_feed {
+    #mark-read-aside ul#sidebar {
+
+      /* Playlists ("My labels") button */
+      #tags {
+        /* Always display Playlist ("My Labels") button */
+        display: list-item !important;
+
+        .tree-folder-title .title {
+          font-size: 0;
+
+          &:before {
+            content: "Playlists";
+          }
+        }
+
+        button.dropdown-toggle .icon {
+          /* Hide playlist ("My Labels") dropdown toggle icon while keeping its functionality */
+          opacity: 0;
+        }
+
+        & > .tree-folder-items .item.feed .item-title .icon {
+          /* Remove tag item icons */
+          display: none;
+        }
+
+        .tree-folder-title:before {
+          /* Playlist icon */
+          content:"";
+          width:20px;
+          height:20px;
+          position: absolute;
+          filter: invert(1);
+          background-repeat: no-repeat;
+          background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA4MDAgODAwIj48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMCA5MC41QTM3LjUgMzcuNSAwIDAgMSAzNy41IDUzaDcyNUEzNy40OTcgMzcuNDk3IDAgMCAxIDgwMCA5MC41YTM3LjUgMzcuNSAwIDAgMS0zNy41IDM3LjVoLTcyNUEzNy40OTggMzcuNDk4IDAgMCAxIDAgOTAuNVpNMzcuNSAzMjhoNzI1YTM3LjQ5NiAzNy40OTYgMCAwIDAgMjYuNTE2LTEwLjk4NCAzNy40OTYgMzcuNDk2IDAgMCAwIDAtNTMuMDMzQTM3LjUgMzcuNSAwIDAgMCA3NjIuNSAyNTNoLTcyNUEzNy41MDIgMzcuNTAyIDAgMCAwIDAgMjkwLjUgMzcuNDk3IDM3LjQ5NyAwIDAgMCAzNy41IDMyOFptMjQ0IDEyNWgtMjQ0QTM3LjUwMiAzNy41MDIgMCAwIDAgMCA0OTAuNSAzNy40OTcgMzcuNDk3IDAgMCAwIDM3LjUgNTI4aDI0NGEzNy41IDM3LjUgMCAwIDAgMC03NVpNMzcuNSA2NTNoMjQ0YTM3LjUgMzcuNSAwIDAgMSAwIDc1aC0yNDRhMzcuNDk5IDM3LjQ5OSAwIDAgMSAwLTc1WiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSI2NSIgZD0iTTYzNi44MzMgNDY5Ljg4YzgwLjExOCA0Ni4zNTggMTIwLjE4MSA2OS41MzQgMTI2LjA2MiAxMDIuOTc0YTcyLjkzNyA3Mi45MzcgMCAwIDEgMCAyNS4yOTNjLTUuODgxIDMzLjQzOS00NS45NDQgNTYuNjE1LTEyNi4wNjIgMTAyLjk3My04MC4xMTcgNDYuMzUzLTEyMC4xODEgNjkuNTI5LTE1Mi4wMTggNTcuOTE2YTcyLjU2NiA3Mi41NjYgMCAwIDEtMjEuODU4LTEyLjY0NkM0MzcgNzI0LjU2MyA0MzcgNjc4LjIxIDQzNyA1ODUuNWMwLTkyLjcxIDAtMTM5LjA2MyAyNS45NTctMTYwLjg5YTcyLjY3IDcyLjY3IDAgMCAxIDIxLjg1OC0xMi42NDZjMzEuODM3LTExLjYxMyA3MS45MDEgMTEuNTY0IDE1Mi4wMTggNTcuOTE2WiIvPjwvc3ZnPg==);
+        }
+      }
+
+      /* Watch later ("Favorites") button */
+      .tree-folder.category.favorites {
+        
+        .tree-folder-title .title {
+          font-size: 0;
+
+          &:before {
+            content: "Watch later";
+          }
+        }
+      }
+
+    }
+  }
+
+/* Settings page buttons */
+#aside_feed .item.nav-section a[href="./?c=tag"] {
+  font-size: 0;
+  transition: background-color 0.2s;
+
+    &:before {
+    content: "Playlist management";
+    font-size: 1.2rem;
+  }
+}
+
+  /* Change text in settings page containing "Label" to "Playlist" */
+  main.post:has(#add_tag) {
+    > h1:first-of-type {
+      font-size: 0;
+
+      &:before {
+        content: "Playlist management";
+        font-size: 2rem;
+      }
+    }
+
+    > h2:first-of-type {
+      font-size: 0;
+
+      &:before {
+        content: "Create a playlist";
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
 
 nav.aside.aside_feed {
   /* Position and adjust behavior of "Subscriptions management" button */
@@ -434,51 +522,6 @@ nav.aside.aside_feed {
       }
     }
 
-    .favorites {
-      .tree-folder-title .title {
-        font-size: 0;
-
-        &:before {
-          content: "Watch later";
-        }
-      }
-    }
-
-    /* Playlists ("My labels") button */
-    #tags {
-      /* Always display Playlist ("My Labels") button */
-      display: list-item !important;
-
-      .tree-folder-title .title {
-        font-size: 0;
-
-        &:before {
-          content: "Playlists";
-        }
-      }
-
-      button.dropdown-toggle .icon {
-        /* Hide playlist ("My Labels") dropdown toggle icon while keeping its functionality */
-        opacity: 0;
-      }
-
-      & > .tree-folder-items .item.feed .item-title .icon {
-        /* Remove tag item icons */
-        display: none;
-      }
-
-      .tree-folder-title:before {
-        /* Playlist icon */
-        content:"";
-        width:20px;
-        height:20px;
-        position: absolute;
-        filter: invert(1);
-        background-repeat: no-repeat;
-        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA4MDAgODAwIj48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMCA5MC41QTM3LjUgMzcuNSAwIDAgMSAzNy41IDUzaDcyNUEzNy40OTcgMzcuNDk3IDAgMCAxIDgwMCA5MC41YTM3LjUgMzcuNSAwIDAgMS0zNy41IDM3LjVoLTcyNUEzNy40OTggMzcuNDk4IDAgMCAxIDAgOTAuNVpNMzcuNSAzMjhoNzI1YTM3LjQ5NiAzNy40OTYgMCAwIDAgMjYuNTE2LTEwLjk4NCAzNy40OTYgMzcuNDk2IDAgMCAwIDAtNTMuMDMzQTM3LjUgMzcuNSAwIDAgMCA3NjIuNSAyNTNoLTcyNUEzNy41MDIgMzcuNTAyIDAgMCAwIDAgMjkwLjUgMzcuNDk3IDM3LjQ5NyAwIDAgMCAzNy41IDMyOFptMjQ0IDEyNWgtMjQ0QTM3LjUwMiAzNy41MDIgMCAwIDAgMCA0OTAuNSAzNy40OTcgMzcuNDk3IDAgMCAwIDM3LjUgNTI4aDI0NGEzNy41IDM3LjUgMCAwIDAgMC03NVpNMzcuNSA2NTNoMjQ0YTM3LjUgMzcuNSAwIDAgMSAwIDc1aC0yNDRhMzcuNDk5IDM3LjQ5OSAwIDAgMSAwLTc1WiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSI2NSIgZD0iTTYzNi44MzMgNDY5Ljg4YzgwLjExOCA0Ni4zNTggMTIwLjE4MSA2OS41MzQgMTI2LjA2MiAxMDIuOTc0YTcyLjkzNyA3Mi45MzcgMCAwIDEgMCAyNS4yOTNjLTUuODgxIDMzLjQzOS00NS45NDQgNTYuNjE1LTEyNi4wNjIgMTAyLjk3My04MC4xMTcgNDYuMzUzLTEyMC4xODEgNjkuNTI5LTE1Mi4wMTggNTcuOTE2YTcyLjU2NiA3Mi41NjYgMCAwIDEtMjEuODU4LTEyLjY0NkM0MzcgNzI0LjU2MyA0MzcgNjc4LjIxIDQzNyA1ODUuNWMwLTkyLjcxIDAtMTM5LjA2MyAyNS45NTctMTYwLjg5YTcyLjY3IDcyLjY3IDAgMCAxIDIxLjg1OC0xMi42NDZjMzEuODM3LTExLjYxMyA3MS45MDEgMTEuNTY0IDE1Mi4wMTggNTcuOTE2WiIvPjwvc3ZnPg==);
-      }
-    }
-
   }
 
   /**
@@ -522,36 +565,7 @@ nav.aside.aside_feed {
 }
 
 
-/* Settings page buttons */
-#aside_feed .item.nav-section a[href="./?c=tag"] {
-  font-size: 0;
 
-    &:before {
-    content: "Playlist management";
-    font-size: 1.2rem;
-  }
-}
-
-/* Change text in settings page containing "Label" to "Playlist" */
-main.post:has(#add_tag) {
-  > h1:first-of-type {
-    font-size: 0;
-
-    &:before {
-      content: "Playlist management";
-      font-size: 2rem;
-    }
-  }
-
-  > h2:first-of-type {
-    font-size: 0;
-
-    &:before {
-      content: "Create a playlist";
-      font-size: 1.5rem;
-    }
-  }
-}
 
 @media (max-width: 840px) {
   .header {
@@ -2286,10 +2300,45 @@ body.youlag-active:not(.reader) main#stream {
 }
 
 body.youlag-inactive:not(.reader) main#stream {
+  .transition {
+    .name {
+      color: #ffffff;
+      opacity: 0.7;
+    }
+  }
+
   div.flux {
+
+    ul.flux_header {
+      border-color: #59595d;
+
+      &:hover {
+        .item-element.date {
+          visibility: hidden;
+        }
+      }
+
+      .item {
+        .titleAuthorSummaryDate {
+          .summary {
+            --frss-font-color-grey-dark: #898989;
+          }
+        }
+      }
+
+      .item.manage {
+        a.item-element.bookmark {
+          // youlag-inactive: Remove ellipsis from being added on 'favorite' icon.  
+          text-overflow: unset;
+        }
+      }
+    }
+
     &.not_read {
       // youlag-inactive: Unread items background color.
       background-color: #26272a;
+      background: linear-gradient(135deg, #303030 0%, #181923 40%, #252121 100%);
+
 
       ul.flux_header {
 
@@ -2304,14 +2353,7 @@ body.youlag-inactive:not(.reader) main#stream {
 
       .flux_content {
         background-color: #26272a;
-      }
-    }
-
-    ul.flux_header {
-      border-color: #59595d;
-
-      .summary {
-        --frss-font-color-grey-dark: #898989;
+        background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
       }
     }
 
@@ -2324,6 +2366,7 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
   }
+
 }
 
 
@@ -2331,7 +2374,6 @@ body.youlag-inactive:not(.reader) main#stream {
 body:not(.reader) main#stream {
   div.flux {
     background: transparent;
-    // .flux .flux_header .item .title
     ul.horizontal-list.flux_header {
 
       &:hover {
@@ -3181,11 +3223,25 @@ a.yl-video-action-button[href=""] {
   display: inline-block !important;
 }
 
-[data-yl-invidious-instance] {
+.flex {
+  display: flex !important;
+}
+
+.mb-auto {
+  margin-bottom: auto !important;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+[data-yl-invidious-instance],
+[data-yl-category-whitelist],
+[data-yl-video-labels] {
   /**
-   * An element containing the Invidious instance URL, 
-   * rendered in the article content. This exposes the 
-   * Youlag extension settings to allow `script.js` to access it.
+   * Elements containing user extension settings rendered in frontend.
+   * This exposes the Youlag extension settings to allow `script.js`
+   * to access them. These elements are hidden from view.
    */
   display: none;
 }
