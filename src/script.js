@@ -20,15 +20,6 @@ const modalFavoriteClassName = `youlag-favorited`;
 
 function youlagSettingsPageEventListeners() {
 
-  let youlagCheckUpdatesBtn = document.getElementById('yl_check_updates');
-  if (youlagCheckUpdatesBtn) {
-    // Open Youlag releases page on GitHub.
-    youlagCheckUpdatesBtn.addEventListener('click', () => {
-      window.open('https://github.com/civilblur/youlag/releases');
-    });
-  }
-
-
   // Set "required" to Invidious URL input field if it's selected.
   const invidiousRadio = document.getElementById('yl_playback_invidious');
   const youtubeRadio = document.getElementById('yl_playback_youtube');
@@ -454,12 +445,87 @@ function collapseBackgroundFeedItem(target) {
   }
 }
 
+
+
+
+
+
+
+function getCurrentPage() {
+  // Notate the current page through css class on the body element.
+  // E.g. yl-page-home, yl-page-important, yl-page-category, etc.
+  const path = window.location.pathname;
+  const urlParams = new URLSearchParams(window.location.search);
+  const classPrefix = 'yl-page-';
+
+  function prefixClasses(classString) {
+    return classString.split(' ').map(cls => classPrefix + cls).join(' ');
+  }
+
+  const routes = [
+    {
+      path: '/i/',
+      match: () => (!urlParams.has('a') || urlParams.get('a') === 'normal') && !urlParams.has('get') && !urlParams.has('c'),
+      className: 'home',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('c') === 'extension',
+      className: 'extension',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') === 'i',
+      className: 'important',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') === 's',
+      className: 'watch-later',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && /^t_\d+$/.test(urlParams.get('get') || ''),
+      className: () => {
+        const n = (urlParams.get('get') || '').substring(2);
+        return `playlists playlist playlist--${n}`;
+      },
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') && urlParams.get('get').startsWith('c_'),
+      className: () => {
+        const n = urlParams.get('get').substring(2);
+        return `category category--${n}`;
+      },
+    },
+  ];
+
+  for (const route of routes) {
+    if (path === route.path && route.match()) {
+      const classString = typeof route.className === 'function' ? route.className() : route.className;
+      return prefixClasses(classString);
+    }
+  }
+  return '';
+}
+
+
+function setBodyPageClass() {
+  const pageClass = getCurrentPage();
+  if (pageClass) {
+    document.body.className += ' ' + pageClass;
+  }
+}
+
+
 function init() {
+  setBodyPageClass();
   setupClickListener();
   setTimeout(() => {
     // HACK: Delay referencing the settings elements.
     youlagSettingsPageEventListeners();
-  }, 1000);
+  }, 1500);
   removeYoulagLoadingState();
   youlagScriptLoaded = true;
 }
