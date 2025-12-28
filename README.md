@@ -33,7 +33,7 @@ Youlag supports article and video feeds, allowing you to select categories that 
   - Dark mode
 - ⚙️ Customization
   - Apply the video interface to selected categories, to exclude article feeds
-  - Option to rename "Favorites → Watch Later", "Tags → Playlists"
+  - Option to rename "Favorites → Watch Later", "My Tags → Playlists"
 - 🖥️ **Desktop & Mobile**
   - Mobile friendly, better one-handed navigation
   - Improved readability and legibility
