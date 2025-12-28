@@ -2331,11 +2331,15 @@ body.youlag-inactive:not(.reader) main#stream {
 body:not(.reader) main#stream {
   div.flux {
     background: transparent;
-
-    ul.horizontal-list {
+    // .flux .flux_header .item .title
+    ul.horizontal-list.flux_header {
 
       &:hover {
         --grey-lighter: #2f3136;
+
+        .item .title {
+            background: transparent !important;        
+        }
       }
     }
 
@@ -3146,6 +3150,16 @@ a.yl-video-action-button[href=""] {
     }
 
   }
+
+  #yl_category_all:checked {
+    // When "All pages and categories" is selected, disable other sub-options.
+    & ~ .yl-form-category-subitem-container {
+      opacity: 0.5;
+      pointer-events: none;
+      user-select: none;
+      filter: grayscale(1);
+    }
+  }
 }
 
  /*****************************************
@@ -3161,6 +3175,10 @@ a.yl-video-action-button[href=""] {
 
 .display-none {
   display: none !important;
+}
+
+.inline-block {
+  display: inline-block !important;
 }
 
 [data-yl-invidious-instance] {

@@ -25,9 +25,10 @@ declare(strict_types=1);
       <?php if (!empty($categories)): ?>
         <div class="yl-form-category-container">
           <?php $whitelist = $this->getCategoryWhitelist(); ?>
-          <label>
-            <input type="checkbox" name="yl_category_whitelist[]" value="all"
-              <?php echo in_array('all', $whitelist) ? ' checked="checked"' : ''; ?>>
+          <!-- Place checkbox outside of label to utilize the checked="checked" state for visual statemanagement via css. -->
+          <input id="yl_category_all" type="checkbox" name="yl_category_whitelist[]" value="all"
+            <?php echo in_array('all', $whitelist) ? ' checked="checked"' : ''; ?>>
+          <label for="yl_category_all" class="inline-block">
             All pages and categories
           </label>
           <div class="yl-form-category-subitem-container">
@@ -35,22 +36,22 @@ declare(strict_types=1);
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="home"
                 <?php echo in_array('home', $whitelist) ? ' checked="checked"' : ''; ?>>
-              Subscriptions page
+              Subscriptions
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="important"
                 <?php echo in_array('important', $whitelist) ? ' checked="checked"' : ''; ?>>
-              Important page
+              Important
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="watch_later"
                 <?php echo in_array('watch_later', $whitelist) ? ' checked="checked"' : ''; ?>>
-              Watch later page
+              Watch later
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="playlists"
                 <?php echo in_array('playlists', $whitelist) ? ' checked="checked"' : ''; ?>>
-              Playlists page
+              Playlists
             </label>
             <?php foreach ($categories as $cat): ?>
               <?php $catId = (string)$cat->id(); ?>
