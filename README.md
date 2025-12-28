@@ -61,7 +61,7 @@ Youlag supports article and video feeds, allowing you to select categories that 
 
 ## Contribution
 
-1. Fork and make changes to the `dev` branch.
+1. Fork the `dev` branch.
 1. Install dependencies: `npm i`.
 1. Run `npm run watch` to compile files to `/static`.
 1. Run `npm run build` to generate a production build to `/dist`.
