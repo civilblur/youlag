@@ -170,7 +170,7 @@
  *
  ****************************************/
 
-body:not(.reader) main#stream {
+body.youlag-active:not(.reader) main#stream {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
   gap: 4px;
@@ -859,40 +859,40 @@ main#stream #stream-footer,
 }
 
 
-
-main#stream {
-  /* Card day section title */
-  .transition {
-    grid-column: 1 / -1;
-    font-size: var(--feed-day-title-font-size);
-    opacity: 0.8;
-    padding: 0 8px;
-    line-height: 1.2;
-    margin-top: 8rem;
-    margin-bottom: 2rem;
-    color: #ffffff;
-
-    & > .name {
-      /* Category name */
-      display: block;
-      color: #ffffff;
-      padding: 0;
-      margin-top: 0.5rem;
-      opacity: 0.7;
+.youlag-active {
+  main#stream {
+    /* Card day section title */
+    .transition {
+      grid-column: 1 / -1;
+      font-size: var(--feed-day-title-font-size);
+      opacity: 0.8;
+      padding: 0 8px;
+      line-height: 1.2;
+      margin-top: 8rem;
+      margin-bottom: 2rem;
+  
+      & > .name {
+        /* Category name */
+        display: block;
+        color: #ffffff;
+        padding: 0;
+        margin-top: 0.5rem;
+        opacity: 0.7;
+      }
+    }
+  
+    /* Reduce margin-top on the first day that appears at the top of the feed */
+    #new-article + .transition  {
+      margin-top: 2rem;
+    }
+  
+    .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
+      /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
+      z-index: 20;
     }
   }
 
-  /* Reduce margin-top on the first day that appears at the top of the feed */
-  #new-article + .transition  {
-    margin-top: 2rem;
-  }
-
-  .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
-    /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
-    z-index: 20;
-  }
-}
-
+}  
 
 nav.nav_menu #nav_menu_toggle_aside {
   /* Button to show/hide sidenav */
@@ -953,7 +953,7 @@ a.signout img.icon {
  ****************************************/
 
 /* Cards default state in feed */
-body:not(.reader) main#stream div.flux {
+body.youlag-active:not(.reader) main#stream div.flux {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1118,7 +1118,7 @@ body:not(.reader) main#stream div.flux {
 }
 
 /* Card expanded state in feed */
-body:not(.reader) main#stream div.flux.active.current {
+body.youlag-active:not(.reader) main#stream div.flux.active.current {
 
   /* Card expanded header, serves as a top panel. */
   .flux_header {
@@ -1197,7 +1197,7 @@ body:not(.reader) main#stream div.flux.active.current {
 }
 
 /* Card icons and button behavior */
-body:not(.reader) main#stream {
+body.youlag-active:not(.reader) main#stream {
   div.flux {
 
     li.item.share,
@@ -1578,9 +1578,11 @@ html {
   .dropdown-menu .dropdown-header,
   .dropdown-menu .dropdown-section .dropdown-section-title,
   .tree .tree-folder .tree-folder-items .dropdown-menu .item a,
-  .tree .tree-folder .tree-folder-items .dropdown-menu .item button {
+  .tree .tree-folder .tree-folder-items .dropdown-menu .item button,
+  .transition .transition-value a {
     --frss-font-color-dark: white;
     color: white;
+    font-family: inherit;
   }
 
   article .content figure figcaption {
@@ -1756,10 +1758,10 @@ html {
           // Add separation between check icon and label text.
           display: flex;
           gap: 1rem;
-          padding-left: 53px;
+          padding-left: var(--yl-p-xl);
 
           &::before {
-            margin-left: -30px;
+            margin-left: calc(var(--yl-p-lg) * -1);
           }
         }
       }
@@ -2123,6 +2125,8 @@ main.post {
 
 
 .flux {
+  font-family: inherit;
+
   .flux_header {
     .date {
       color: hsl(0deg 0% 100% / 59%);
@@ -2259,7 +2263,7 @@ body:not(.normal) {
  * BEGIN "Dark mode: Card"
  * ==================================== */
 
-body:not(.reader) main#stream {
+body.youlag-active:not(.reader) main#stream {
   div.flux {
     &.not_read {
       position: relative;
@@ -2276,6 +2280,62 @@ body:not(.reader) main#stream {
         border-radius: 6px;
         font-weight: bold;
         pointer-events: none;
+      }
+    }
+  }
+}
+
+body.youlag-inactive:not(.reader) main#stream {
+  div.flux {
+    &.not_read {
+      // youlag-inactive: Unread items background color.
+      background-color: #26272a;
+
+      ul.flux_header {
+
+        .summary {
+          --frss-font-color-grey-dark: #b7b7b7;
+        }
+      }
+    }
+
+    &.active.current {
+      // youlag-inactive: expanaded feed item.
+
+      .flux_content {
+        background-color: #26272a;
+      }
+    }
+
+    ul.flux_header {
+      border-color: #59595d;
+
+      .summary {
+        --frss-font-color-grey-dark: #898989;
+      }
+    }
+
+    .item.manage {
+      a.item-element.bookmark {
+        img.icon[src$="icons/starred.svg"] {
+          filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
+        }
+      }
+    }
+
+  }
+}
+
+
+
+body:not(.reader) main#stream {
+  div.flux {
+    background: transparent;
+
+    ul.horizontal-list {
+
+      &:hover {
+        --grey-lighter: #2f3136;
       }
     }
 
@@ -2382,22 +2442,24 @@ main#stream,
  *
  ****************************************/
 
-main#stream div.flux.active.current {
-  /* Card content on expanded inline view */
-  grid-column: 1 / -1;
-  max-height: calc(100vh - 275px);
-  overflow: auto;
-
-  @media (max-height: 900px) {
-    /* When viewport height is small, card expands to full height on inline view. */
-    height: 100vh;
-    max-height: 100vh;
-  }
-
-  @media (max-width: 840px) {
-    /* Card expands to full height on mobile by default for inline view */
-    height: 100vh;
-    max-height: 100vh;
+.youlag-active {
+  main#stream div.flux.active.current {
+    /* Card content on expanded inline view */
+    grid-column: 1 / -1;
+    max-height: calc(100vh - 275px);
+    overflow: auto;
+  
+    @media (max-height: 900px) {
+      /* When viewport height is small, card expands to full height on inline view. */
+      height: 100vh;
+      max-height: 100vh;
+    }
+  
+    @media (max-width: 840px) {
+      /* Card expands to full height on mobile by default for inline view */
+      height: 100vh;
+      max-height: 100vh;
+    }
   }
 }
 
@@ -2533,6 +2595,12 @@ body:has(.tree-folder.category.favorites.active) {
  *
  ****************************************/
 
+.youlag-active {
+  main#stream > .flux {
+    cursor: pointer;
+  }
+}
+
 .youlag-mode--fullscreen {
   overflow: hidden;
 }
@@ -2573,10 +2641,6 @@ body:has(#global main#stream):before {
 
 body.youlag-loaded:before {
   display: none !important;
-}
-
-main#stream > .flux {
-  cursor: pointer;
 }
 
 #youlagTheaterModal {
@@ -3081,9 +3145,6 @@ a.yl-video-action-button[href=""] {
       margin-bottom: 0.5rem;
     }
 
-    .yl-form-category-subitem-container {
-
-    }
   }
 }
 

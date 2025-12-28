@@ -1,4 +1,5 @@
 let youlagScriptLoaded = false;
+let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
 let modePip = false;
@@ -398,6 +399,7 @@ function setModeFullscreen(state) {
 }
 
 function setupClickListener() {
+  if (!youlagActive) return;
   const streamContainer = document.querySelector('#stream');
   
   if (streamContainer) {
@@ -444,12 +446,6 @@ function collapseBackgroundFeedItem(target) {
     feedItem.classList.remove('current');
   }
 }
-
-
-
-
-
-
 
 function getCurrentPage() {
   // Notate the current page through css class on the body element.
@@ -563,9 +559,11 @@ function setBodyPageClass() {
 
   if (isCategoryWhitelist()) {
     // Testing whitelist
-    document.body.classList.add('whitelist-YES');
+    youlagActive = true;
+    document.body.classList.add('youlag-active');
   } else {
-    document.body.classList.add('whitelist-NO');
+    youlagActive = false;
+    document.body.classList.add('youlag-inactive');
   }
 }
 
