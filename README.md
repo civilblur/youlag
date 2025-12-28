@@ -14,7 +14,7 @@
 ## About
 Browse YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modern video interface that incorporates quality-of-life features.
 
-Youlag supports both text-based and video feeds, while tailored primarily for video content.
+Youlag supports article and video feeds, allowing you to select categories that will use the video interface.
 
 ## Table of Content
 - [Features](#features)
@@ -26,25 +26,26 @@ Youlag supports both text-based and video feeds, while tailored primarily for vi
 ## Features
 
 - ⭐ **Optimized for Video Viewing**
-  - Browse your YouTube, Invidious, Piped RSS subscriptions with ease.
-  - Clean, familiar video platform layout.
-  - Fullscreen viewing for videos and articles.
-  - Quickly exit videos with `Esc` key.
-  - Switch video source between "YouTube" and "Invidious".
-  - Dark mode.
+  - Browse YouTube RSS subscriptions a video-tailored inferface
+  - Fullscreen viewing for videos and articles
+  - Exit videos with `Esc` key
+  - Switch between YouTube and Invidious playback source
+  - Dark mode
+- ⚙️ Customization
+  - Apply the video interface to selected categories, to exclude article feeds
+  - Option to rename "Favorites → Watch Later", "Tags → Playlists"
 - 🖥️ **Desktop & Mobile**
-  - Reponsive design.
-  - Redesigned menus for better one-handed navigation.
-  - Improved readability and legibility across devices.
+  - Mobile friendly, better one-handed navigation
+  - Improved readability and legibility
 - 📺 **Features Offered by FreshRSS:**
-  - Subscribe to YouTube creators without an account.
+  - Subscribe to YouTube creators without an account
 
 ### Planned
 - [x] Minimize video, for background playback while browsing.
 - [ ] Local video queue, but without autoplay due to CORS limitation.
 - [x] Clickable links in video descriptions.
 - [x] Convert to an actual FreshRSS extension, with options for customizing the view and features.
-- [ ] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
+- [x] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
 
 ## Install
 
@@ -62,8 +63,8 @@ Youlag supports both text-based and video feeds, while tailored primarily for vi
 
 1. Fork and make changes to the `dev` branch.
 1. Install dependencies: `npm i`.
-1. Make changes to `src/script.js`, `src/theme.scss`.
-    - Run `npm run watch` to compile to `static/script.min.css` and `static/theme.min.css`.
+1. Run `npm run watch` to compile files to `/static`.
+1. Run `npm run build` to generate a production build to `/dist`.
 
 ## Attributions
 

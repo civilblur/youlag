@@ -2461,6 +2461,14 @@ main#stream,
   border-radius: 8px;
   margin: 1rem 4px;
   overflow: hidden;
+
+  a {
+    background: linear-gradient(135deg, #3466cc 0%, #232b8f 40%, #224faa 100%);
+
+    &:hover {
+      background: linear-gradient(135deg, #2d5bb3 0%, #1f2373 40%, #1e3f8c 100%);
+    }
+  }
 }
 
 /* ====================================
