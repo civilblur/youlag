@@ -2319,7 +2319,7 @@ body.youlag-inactive:not(.reader) main#stream {
       }
 
       .item {
-        .titleAuthorSummaryDate {
+        &.titleAuthorSummaryDate {
           .summary {
             --frss-font-color-grey-dark: #898989;
           }
