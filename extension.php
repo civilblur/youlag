@@ -2,6 +2,11 @@
 
 class YoulagExtension extends Minz_Extension {
     /**
+     * Stores the user's selected category whitelist for UI use.
+     * @var array
+     */
+    protected $yl_category_whitelist = [];
+    /**
      * Whether to use Invidious for playback
      * @var bool
      */
@@ -17,6 +22,7 @@ class YoulagExtension extends Minz_Extension {
      */
     public function init() {
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
+        $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
 
         // Add Youlag theme and script to all extension pages
         Minz_View::appendStyle($this->getFileUrl('theme.min.css'));
@@ -46,20 +52,31 @@ class YoulagExtension extends Minz_Extension {
         if (FreshRSS_Context::$user_conf->yl_invidious_url_1 != '') {
             $this->instance = FreshRSS_Context::$user_conf->yl_invidious_url_1;
         }
+
+        $val = FreshRSS_Context::userConf()->attributeArray('yl_category_whitelist');
+        $this->yl_category_whitelist = is_array($val) ? $val : [];
     }
 
     /**
-     * Get the current user's categories.
+     * Returns the stored category whitelist for UI (after loadConfigValues()).
      * @return array
      */
-    protected function getUserCategories() {
-        if (class_exists('FreshRSS_Factory')) {
-            $dao = FreshRSS_Factory::createCategoryDao();
-            if (method_exists($dao, 'listCategories')) {
-                return $dao->listCategories();
-            }
+    public function getCategoryWhitelist() {
+        return $this->yl_category_whitelist;
+    }
+
+    /**
+     * Pass the category whitelist data to be read in the DOM via nav_entries hook.
+     * The `script.js` handles the behavior based on this the value in `data-yl-category-whitelist`.
+     * @return string
+     */
+    public function setCategoryWhitelist() {
+        $whitelist = FreshRSS_Context::userConf()->attributeArray('yl_category_whitelist');
+        $dataAttr = '';
+        if (!empty($whitelist)) {
+            $dataAttr = ' data-yl-category-whitelist="' . htmlspecialchars(implode(', ', $whitelist)) . '"';
         }
-        return array();
+        return '<div id="yl_category_whitelist"' . $dataAttr . '></div>';
     }
 
     /**
@@ -138,6 +155,19 @@ class YoulagExtension extends Minz_Extension {
         return $entry;
     }
 
+    /**
+     * Get the current user's categories.
+     * @return array
+     */
+    protected function getUserCategories() {
+        if (class_exists('FreshRSS_Factory')) {
+            $dao = FreshRSS_Factory::createCategoryDao();
+            if (method_exists($dao, 'listCategories')) {
+                return $dao->listCategories();
+            }
+        }
+        return array();
+    }
 
     /**
      * Saves the user settings for this extension.
@@ -151,7 +181,17 @@ class YoulagExtension extends Minz_Extension {
         if (Minz_Request::isPost()) {
             FreshRSS_Context::userConf()->_attribute('yl_invidious_enabled', Minz_Request::paramBoolean('yl_invidious_enabled'));
             FreshRSS_Context::$user_conf->yl_invidious_url_1 = (string)Minz_Request::param('yl_invidious_url_1', '');
+
+            // Store selected category whitelist as array
+            $catWhitelist = Minz_Request::paramArray('yl_category_whitelist', true);
+            if (!is_array($catWhitelist)) {
+                $catWhitelist = [];
+            }
+            FreshRSS_Context::userConf()->_attribute('yl_category_whitelist', $catWhitelist);
+
             FreshRSS_Context::$user_conf->save();
         }
     }
+
+
 }

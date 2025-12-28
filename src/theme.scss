@@ -2985,6 +2985,13 @@ a.yl-video-action-button[href=""] {
     margin: 1.4rem 0;
   }
 
+  .yl-form-group-help {
+    font-size: 0.9rem;
+    color: #b3b3b3;
+    margin-bottom: 0.25rem;
+    font-weight: normal;
+  }
+
   .form-group {
     padding: 0;
     margin-bottom: 1rem;
@@ -3044,12 +3051,19 @@ a.yl-video-action-button[href=""] {
       }
 
     }
+  }
 
+  .yl-form-category-container {
+    max-height: 150px;
+    overflow: auto;
 
-    .yl-form-group-help {
-      font-size: 0.9rem;
-      color: #b3b3b3;
-      margin-bottom: 0.25rem;
+    hr {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .yl-form-category-subitem-container {
+      
     }
   }
 }

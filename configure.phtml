@@ -15,18 +15,59 @@ declare(strict_types=1);
       $categories = isset($_SESSION['ext_categories']) ? $_SESSION['ext_categories'] : array();
       ?>
 
+      <h3>
+        Video pages and categories
+        <div class="yl-form-group-help">
+          Select the pages and categories whose feeds will be displayed in Youlag's video interface.
+        </div>
+      </h3>
+
       <?php if (!empty($categories)): ?>
-        <div class="yl-category-checkbox-list">
-          <?php foreach ($categories as $cat): ?>
-            <label style="display:block; margin-bottom: 0.5em;">
-              <input type="checkbox" name="selected_categories[]" value="<?php echo htmlspecialchars((string)$cat->id()); ?>">
-              <?php echo htmlspecialchars((string)$cat->name()); ?>
-              <?php echo '(id: ' . htmlspecialchars((string)$cat->id()) . ')'; ?>
+        <div class="yl-form-category-container">
+          <?php $whitelist = $this->getCategoryWhitelist(); ?>
+          <label>
+            <input type="checkbox" name="yl_category_whitelist[]" value="all"
+              <?php echo in_array('all', $whitelist) ? ' checked="checked"' : ''; ?>>
+            All pages and categories
+          </label>
+          <div class="yl-form-category-subitem-container">
+            <hr>
+            <label>
+              <input type="checkbox" name="yl_category_whitelist[]" value="home"
+                <?php echo in_array('home', $whitelist) ? ' checked="checked"' : ''; ?>>
+              Subscriptions page
             </label>
-          <?php endforeach; ?>
+            <label>
+              <input type="checkbox" name="yl_category_whitelist[]" value="important"
+                <?php echo in_array('important', $whitelist) ? ' checked="checked"' : ''; ?>>
+              Important page
+            </label>
+            <label>
+              <input type="checkbox" name="yl_category_whitelist[]" value="watch_later"
+                <?php echo in_array('watch_later', $whitelist) ? ' checked="checked"' : ''; ?>>
+              Watch later page
+            </label>
+            <label>
+              <input type="checkbox" name="yl_category_whitelist[]" value="playlists"
+                <?php echo in_array('playlists', $whitelist) ? ' checked="checked"' : ''; ?>>
+              Playlists page
+            </label>
+            <?php foreach ($categories as $cat): ?>
+              <?php $catId = (string)$cat->id(); ?>
+              <label>
+                <input
+                  type="checkbox"
+                  name="yl_category_whitelist[]"
+                  value="<?php echo htmlspecialchars($catId); ?>"
+                  <?php echo in_array($catId, $whitelist) ? ' checked="checked"' : ''; ?>>
+                <?php echo htmlspecialchars((string)$cat->name()); ?>
+                <?php echo '(id: ' . htmlspecialchars($catId) . ')'; ?>
+              </label>
+            <?php endforeach; ?>
+          </div>
         </div>
       <?php else: ?>
-        <div class="yl-form-group-help">No categories found for your account.</div>
+        <div class="yl-form-group-help">No categories found.</div>
       <?php endif; ?>
     </section>
     <section class="yl-form-section">
