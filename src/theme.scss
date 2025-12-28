@@ -3191,8 +3191,11 @@ a.yl-video-action-button[href=""] {
   }
 
   .yl-form-category-container {
-    max-height: 150px;
+    max-height: 190px;
     overflow: auto;
+    border: 1px solid hsla(0, 0%, 100%, .2705882353);
+    padding: 1rem;
+    border-radius: 12px;
 
     hr {
       margin-top: 0.5rem;
