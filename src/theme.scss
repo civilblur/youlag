@@ -1705,13 +1705,15 @@ html {
   body:not(.reader) main#stream div.flux li.item.share,
   body:not(.reader) main#stream div.flux li.item.labels,
   .nav_menu #mark-read-menu,
-  .nav_menu #nav_menu_actions {
+  .nav_menu #nav_menu_actions,
+  #nav_menu_sort {
      /** 
       * Turn dropdowns into bottom sheets on mobile
       * - Share button
       * - Playlists button (labels)
-      * - Mark read butto group within feed nav menu
+      * - Mark read button group within feed nav menu
       * - Feed actions button group within feed nav menu
+      * - Sort button within feed nav menu
       */
 
     .dropdown-toggle:after {
@@ -1748,6 +1750,20 @@ html {
       overflow: auto;
       animation: slideUp 0.15s ease-in-out forwards; // Animate bottom sheet from bottom to up
 
+
+      &[role="radiogroup"] {
+        li.item a {
+          // Add separation between check icon and label text.
+          display: flex;
+          gap: 1rem;
+          padding-left: 53px;
+
+          &::before {
+            margin-left: -30px;
+          }
+        }
+      }
+
       & > ul {
         overflow: auto;
 
@@ -1760,7 +1776,6 @@ html {
           width: unset;
           background-color: #303136;
         }
-
       }
 
       p.help {
