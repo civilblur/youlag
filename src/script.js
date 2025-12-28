@@ -525,11 +525,29 @@ function getCategoryWhitelist() {
 
 function isPageWhitelisted(whitelist, currentPageClass) {
   if (whitelist.includes('all')) return true;
+
+  // Category pages (c_{n})
   if (currentPageClass.startsWith('yl-page-category')) {
     const match = currentPageClass.match(/c_(\d+)/);
     if (match) return whitelist.includes('c_' + match[1]);
     return false;
   }
+
+  // Filter pages (f_{n})
+  const urlParams = new URLSearchParams(window.location.search);
+  const getParam = urlParams.get('get');
+  if (/^f_\d+$/.test(getParam || '')) {
+    // Try to find the parent category c_{n} from the sidebar and use that for whitelist checking instead of f_{n}.
+    const activeCat = document.querySelector('#sidebar .tree-folder.category.active');
+    if (activeCat) {
+      const catId = activeCat.getAttribute('id'); // c_{n}
+      if (catId && whitelist.includes(catId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   const pageTypes = ['home', 'important', 'watch_later'];
   return pageTypes.some(type => whitelist.includes(type) && currentPageClass === `yl-page-${type}`);
 }
@@ -596,7 +614,6 @@ function setVideoLabelsClass() {
   }
 }
 
-
 function setBodyPageClass() {
   getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
 
@@ -604,7 +621,6 @@ function setBodyPageClass() {
 
   setCategoryWhitelistClass();
 }
-
 
 function init() {
   setBodyPageClass();
