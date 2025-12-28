@@ -175,14 +175,12 @@ class YoulagExtension extends Minz_Extension {
     public function handleConfigureAction() {
         $this->loadConfigValues();
 
-        // User categories
         $_SESSION['ext_categories'] = $this->getUserCategories();
 
         if (Minz_Request::isPost()) {
             FreshRSS_Context::userConf()->_attribute('yl_invidious_enabled', Minz_Request::paramBoolean('yl_invidious_enabled'));
             FreshRSS_Context::$user_conf->yl_invidious_url_1 = (string)Minz_Request::param('yl_invidious_url_1', '');
 
-            // Store selected category whitelist as array
             $catWhitelist = Minz_Request::paramArray('yl_category_whitelist', true);
             if (!is_array($catWhitelist)) {
                 $catWhitelist = [];

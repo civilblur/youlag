@@ -481,14 +481,14 @@ function getCurrentPage() {
     {
       path: '/i/',
       match: () => urlParams.get('a') === 'normal' && urlParams.get('get') === 's',
-      className: 'watch-later',
+      className: 'watch_later',
     },
     {
       path: '/i/',
       match: () => urlParams.get('a') === 'normal' && /^t_\d+$/.test(urlParams.get('get') || ''),
       className: () => {
         const n = (urlParams.get('get') || '').substring(2);
-        return `playlists playlist playlist--${n}`;
+        return `playlist t_${n}`;
       },
     },
     {
@@ -496,7 +496,7 @@ function getCurrentPage() {
       match: () => urlParams.get('a') === 'normal' && urlParams.get('get') && urlParams.get('get').startsWith('c_'),
       className: () => {
         const n = urlParams.get('get').substring(2);
-        return `category category--${n}`;
+        return `category c_${n}`;
       },
     },
   ];
@@ -510,11 +510,62 @@ function getCurrentPage() {
   return '';
 }
 
+function getCategoryWhitelist() {
+  // Retrieve the category whitelist.
+  // `setCategoryWhitelist()` in `extension.php` outputs the user data to the DOM.
+  const el = document.querySelector('#yl_category_whitelist');
+  if (!el) return [];
+  const data = el.getAttribute('data-yl-category-whitelist');
+  if (!data) return [];
+  return data.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+function isCategoryWhitelist() {
+  // Set body class based on category whitelist.
+  const whitelist = getCategoryWhitelist();
+  const currentPageClass = getCurrentPage();
+  if (whitelist.includes('all')) {
+    // All pages allowed
+    return true;
+  }
+  if (currentPageClass.startsWith('yl-page-category')) {
+    // Category page
+    const categoryIdMatch = currentPageClass.match(/c_(\d+)/);
+    if (categoryIdMatch) {
+      const categoryId = categoryIdMatch[1];
+      if (whitelist.includes('c_' + categoryId)) {
+        return true;
+      }
+    }
+  } else {
+    // Non-category page
+    if (whitelist.includes('home') && currentPageClass === 'yl-page-home') {
+      return true;
+    }
+    if (whitelist.includes('important') && currentPageClass === 'yl-page-important') {
+      return true;
+    }
+    if (whitelist.includes('watch_later') && currentPageClass === 'yl-page-watch_later') {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+
 
 function setBodyPageClass() {
   const pageClass = getCurrentPage();
   if (pageClass) {
     document.body.className += ' ' + pageClass;
+  }
+
+  if (isCategoryWhitelist()) {
+    // Testing whitelist
+    document.body.classList.add('whitelist-YES');
+  } else {
+    document.body.classList.add('whitelist-NO');
   }
 }
 

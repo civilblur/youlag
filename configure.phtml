@@ -58,8 +58,8 @@ declare(strict_types=1);
                 <input
                   type="checkbox"
                   name="yl_category_whitelist[]"
-                  value="<?php echo htmlspecialchars($catId); ?>"
-                  <?php echo in_array($catId, $whitelist) ? ' checked="checked"' : ''; ?>>
+                  value="<?php echo 'c_' . htmlspecialchars($catId); ?>"
+                  <?php echo in_array('c_' . $catId, $whitelist) ? ' checked="checked"' : ''; ?>>
                 <?php echo htmlspecialchars((string)$cat->name()); ?>
                 <?php echo '(id: ' . htmlspecialchars($catId) . ')'; ?>
               </label>
