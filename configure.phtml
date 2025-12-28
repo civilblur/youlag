@@ -28,7 +28,7 @@ declare(strict_types=1);
           <?php $whitelist = $this->getCategoryWhitelist(); ?>
           <!-- Place checkbox outside of label to utilize the checked="checked" state for visual statemanagement via css. -->
           <input id="yl_category_all" type="checkbox" name="yl_category_whitelist[]" value="all"
-            <?php echo in_array('all', $whitelist) ? ' checked="checked"' : ''; ?>>
+            <?php echo (empty($whitelist) || in_array('all', $whitelist)) ? ' checked="checked"' : ''; ?>>
           <label for="yl_category_all" class="inline-block">
             All pages and categories
           </label>
@@ -76,7 +76,7 @@ declare(strict_types=1);
       </h4>
       <label for="yl_video_labels_enabled" class="flex">
         <input type="checkbox" id="yl_video_labels_enabled" name="yl_video_labels_enabled" value="1" class="mb-auto"
-          <?php echo FreshRSS_Context::$user_conf->yl_video_labels_enabled ? ' checked="checked"' : ''; ?>>
+          <?php echo (FreshRSS_Context::$user_conf->yl_video_labels_enabled === null || FreshRSS_Context::$user_conf->yl_video_labels_enabled) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Use video platform labels
           <div class="yl-form-group-help">

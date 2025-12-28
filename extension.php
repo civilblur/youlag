@@ -5,7 +5,7 @@ class YoulagExtension extends Minz_Extension {
      * Stores the user's selected category whitelist for UI use.
      * @var array
      */
-    protected $yl_category_whitelist = [];
+    protected $yl_category_whitelist = ['all'];
     /**
      * Use video platform labels (Favorite → Watch later, Tags → Playlists)
      * @var bool
@@ -60,7 +60,7 @@ class YoulagExtension extends Minz_Extension {
         }
 
         $val = FreshRSS_Context::userConf()->attributeArray('yl_category_whitelist');
-        $this->yl_category_whitelist = is_array($val) ? $val : [];
+        $this->yl_category_whitelist = is_array($val) ? $val : ['all'];
 
         $labelsEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_labels_enabled');
         $this->yl_video_labels_enabled = ($labelsEnabled === null) ? true : $labelsEnabled;
@@ -73,7 +73,7 @@ class YoulagExtension extends Minz_Extension {
      * @return array
      */
     public function getCategoryWhitelist() {
-        return $this->yl_category_whitelist;
+        return (empty($this->yl_category_whitelist) ? ['all'] : $this->yl_category_whitelist);
     }
 
     /**

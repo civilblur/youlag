@@ -513,7 +513,7 @@ function getCategoryWhitelist() {
   if (!el) return [];
 
   const data = el.getAttribute('data-yl-category-whitelist');
-  if (!data) return [];
+  if (!data) return ['all'];
   const whitelist = data.split(',').map(s => s.trim()).filter(Boolean);
 
   try {
