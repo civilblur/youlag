@@ -47,12 +47,14 @@ declare(strict_types=1);
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="watch_later"
                 <?php echo in_array('watch_later', $whitelist) ? ' checked="checked"' : ''; ?>>
-              Watch later
+                <span class="yl-form-category__original-label">Favorites</span>
+                <span class="yl-form-category__video-label">Watch later</span>
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="playlists"
                 <?php echo in_array('playlists', $whitelist) ? ' checked="checked"' : ''; ?>>
-              Playlists
+                <span class="yl-form-category__original-label">My Labels</span>
+                <span class="yl-form-category__video-label">Playlists</span>
             </label>
             <?php foreach ($categories as $cat): ?>
               <?php $catId = (string)$cat->id(); ?>

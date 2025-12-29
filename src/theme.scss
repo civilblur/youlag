@@ -229,8 +229,21 @@ body.youlag-active:not(.reader) main#stream {
   }
 }
 
+.yl-form-category__video-label {
+  /* Extension category list label, for users who enabled 'Video platform labels'. Hide by default. */
+  display: none;
+}
+
 .youlag-video-labels {
   /* Change the labels and references to "Favorite" and "My Labels/Tags" based on user settings. */
+
+  .yl-form-category__video-label {
+    display: inline-block;
+  }
+
+  .yl-form-category__original-label {
+    display: none;
+  }
 
   &.yl-page-playlists:not([class*="yl-page-t_"]) {
     /* Set transition name to "Playlists" only on parent playlists page. */
