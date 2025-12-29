@@ -1,4 +1,5 @@
 let youlagScriptLoaded = false;
+let youlagRestoreVideoQueueRan = false;
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
@@ -45,21 +46,33 @@ function youlagSettingsPageEventListeners() {
  ****************************************/
 
 
-function handleActiveRssItem(targetOrEvent) {
-  // Coordinates the event for extracting the data triggering.
-  let feedItem;
-  if (targetOrEvent instanceof Event) {
-    feedItem = targetOrEvent.target.closest('div[data-feed]');
+function handleActiveRssItem(targetOrEventOrVideo, isVideoObject = false) {
+  // Handles both DOM event/element and direct video object
+  let data;
+
+  if (isVideoObject) {
+    // Use only the data from localStorage, do not rely on DOM
+    const videoObject = targetOrEventOrVideo;
+    const activeVideo = videoObject.queue[videoObject.activeIndex];
+    data = {
+      ...activeVideo,
+      queue: videoObject.queue,
+      activeIndex: videoObject.activeIndex
+      // No feedItemEl, as DOM may not exist
+    };
   } else {
-    feedItem = targetOrEvent.closest('div[data-feed]');
+    // Extract the feed item from the DOM event/element
+    const feedItem = (targetOrEventOrVideo instanceof Event)
+      ? targetOrEventOrVideo.target.closest('div[data-feed]')
+      : targetOrEventOrVideo.closest('div[data-feed]');
+    if (!feedItem) return;
+
+    data = extractFeedItemData(feedItem);
+    data.feedItemEl = feedItem;
   }
-  if (!feedItem) return;
-  const data = extractFeedItemData(feedItem);
-  data.feedItemEl = feedItem;
+
   createModalWithData(data);
-  if (!modePip) {
-    setModeFullscreen(true);
-  }
+  if (!modePip) setModeFullscreen(true);
 }
 
 function getVideoIdFromUrl(url) {
@@ -139,11 +152,14 @@ function extractFeedItemData(feedItem) {
   const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';  
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
-  const invidiousInstance1 = feedItem.querySelector('.content div.text span[data-yl-invidious-instance]')?.getAttribute('data-yl-invidious-instance');
-  const videoSourceDefault = feedItem.querySelector('.content div.text span[data-yl-video-source-default]')?.getAttribute('data-yl-video-source-default');
+  const invidiousInstanceElemenet = feedItem.querySelector('.content div.text span[data-yl-invidious-instance]');
+  const invidiousInstance1 = invidiousInstanceElemenet ? invidiousInstanceElemenet.getAttribute('data-yl-invidious-instance') : '';
+  const videoSourceDefaultElement = feedItem.querySelector('.content div.text span[data-yl-video-source-default]');
+  const videoSourceDefault = videoSourceDefaultElement ? videoSourceDefaultElement.getAttribute('data-yl-video-source-default') : '';
+  
   const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
 
-  return {
+  const videoObject = {
     author: authorElement?.getAttribute('data-article-authors') || '',
     author_filter_url: authorFilterElement?.href || '',
     favicon: feedItem.querySelector('img.favicon')?.src || '',
@@ -154,6 +170,7 @@ function extractFeedItemData(feedItem) {
     external_link: feedItem.querySelector('.item-element.title')?.href || '',
     date: feedItem.querySelector('.flux_content .date')?.textContent.trim() || '',
     isVideoFeedItem: isVideoFeedItem,
+    youtubeId: youtubeId,
     youtube_embed_url: youtubeEmbedUrl,
     video_embed_url: videoEmbedUrl,
     video_invidious_instance_1: invidiousInstance1 || '',
@@ -169,6 +186,63 @@ function extractFeedItemData(feedItem) {
     video_youtube_url: youtubeUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };
+
+  setVideoQueue(videoObject);
+
+  return videoObject;
+}
+
+function setVideoQueue(videoObject) {
+  // Store the videoObject in localStorage.youlagVideoQueue.
+  // The video object is defined in `extractFeedItemData()`.
+
+  let queue = [];
+  let activeIndex = 0;
+  try {
+    const stored = localStorage.getItem('youlagVideoQueue');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed.queue)) queue = parsed.queue;
+      if (typeof parsed.activeIndex === 'number') activeIndex = parsed.activeIndex;
+    }
+  } catch (e) {}
+
+  const videoId = videoObject.video_youtube_url; // video_youtube_url as unique identifier
+  const foundIndex = queue.findIndex(v => v.video_youtube_url === videoId);
+  if (foundIndex === -1) {
+    queue.push(videoObject);
+    activeIndex = queue.length - 1;
+  } else {
+    activeIndex = foundIndex;
+  }
+
+  localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, activeIndex }));
+}
+
+function clearVideoQueue() {
+  localStorage.removeItem('youlagVideoQueue');
+}
+
+function restoreVideoQueue() {
+  // Restore video queue from localStorage on page load.
+  if (youlagRestoreVideoQueueRan) return;
+  youlagRestoreVideoQueueRan = true;
+
+  let queueObj = null;
+  try {
+    const stored = localStorage.getItem('youlagVideoQueue');
+    if (stored) {
+      queueObj = JSON.parse(stored);
+    }
+  } catch (e) {
+    queueObj = null;
+  }
+  console.log('Restored video queue:', queueObj);
+  console.log('youtubeid:', queueObj ? queueObj.queue[queueObj.activeIndex].youtubeId : 'N/A');
+  if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.activeIndex === 'number' && queueObj.queue.length > 0) {
+    setModePip(true); // Restored video queue always opens in PiP mode.
+    handleActiveRssItem(queueObj, true);
+  }
 }
 
 function setPageTitle(title) {
@@ -206,8 +280,8 @@ function createModalWithData(data) {
 
   function getEmbedUrl(source) {
     // Helper to get the correct embed URL for a given source
-    if (source === 'invidious_1' && data.video_invidious_instance_1) {
-      return `${data.video_invidious_instance_1.replace(/\/$/, '')}/embed/${youtubeId}`;
+    if (source === 'invidious_1' && data.video_invidious_instance_1 && data.youtubeId) {
+      return `${data.video_invidious_instance_1.replace(/\/$/, '')}/embed/${data.youtubeId}`;
     } else if (source === 'youtube') {
       return data.youtube_embed_url;
     }
@@ -307,7 +381,7 @@ function createModalWithData(data) {
   }
 
 
-  if (!youtubeId) {
+  if (!data.youtubeId) {
     // Not a video feed item
     modal.classList.add('youlag-modal-feed-item--text');
     let iframeContainer = document.querySelector('.youlag-iframe-container');
@@ -347,19 +421,22 @@ function toggleFavorite(url, container, feedItemEl) {
       if (response.ok) {
         // Toggle favorite classes and icons
         const currentlyTrue = favoriteButton.classList.contains(`${modalFavoriteClassName}--true`);
-        const bookmarkIcon = feedItemEl.querySelector('.item-element.bookmark img.icon');
         favoriteButton.classList.remove(`${modalFavoriteClassName}--${currentlyTrue}`);
         favoriteButton.classList.add(`${modalFavoriteClassName}--${!currentlyTrue}`);
 
-        if (currentlyTrue) {
-          feedItemEl.classList.remove('favorite');
-          if (bookmarkIcon) {
-            bookmarkIcon.src = '../themes/Mapco/icons/non-starred.svg';
-          }
-        } else {
-          feedItemEl.classList.add('favorite');
-          if (bookmarkIcon) {
-            bookmarkIcon.src = '../themes/Mapco/icons/starred.svg';
+        // Only update DOM if feedItemEl exists (i.e., not restoring from localStorage)
+        if (feedItemEl) {
+          const bookmarkIcon = feedItemEl.querySelector('.item-element.bookmark img.icon');
+          if (currentlyTrue) {
+            feedItemEl.classList.remove('favorite');
+            if (bookmarkIcon) {
+              bookmarkIcon.src = '../themes/Mapco/icons/non-starred.svg';
+            }
+          } else {
+            feedItemEl.classList.add('favorite');
+            if (bookmarkIcon) {
+              bookmarkIcon.src = '../themes/Mapco/icons/starred.svg';
+            }
           }
         }
       } else {
@@ -378,6 +455,7 @@ function closeModal() {
   setModePip(false);
   setModeFullscreen(false);
   setPageTitle();
+  clearVideoQueue();
 }
 
 function togglePipMode() {
@@ -662,6 +740,7 @@ function init() {
     // HACK: Delay referencing the settings elements.
     youlagSettingsPageEventListeners();
   }, 1500);
+  restoreVideoQueue();
   removeYoulagLoadingState();
   youlagScriptLoaded = true;
 }
