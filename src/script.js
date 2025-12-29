@@ -237,8 +237,6 @@ function restoreVideoQueue() {
   } catch (e) {
     queueObj = null;
   }
-  console.log('Restored video queue:', queueObj);
-  console.log('youtubeid:', queueObj ? queueObj.queue[queueObj.activeIndex].youtubeId : 'N/A');
   if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.activeIndex === 'number' && queueObj.queue.length > 0) {
     setModePip(true); // Restored video queue always opens in PiP mode.
     handleActiveRssItem(queueObj, true);
@@ -517,6 +515,75 @@ function setupClickListener() {
   }
 }
 
+
+function setupTagsDropdownOverride() {
+  // TODO:
+  // Delegated event listener to override tags (labels) dropdown click
+  const streamContainer = document.querySelector('#stream');
+  if (!streamContainer) return;
+
+  streamContainer.addEventListener('click', async function(event) {
+    const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
+    const entryItemDropdown = entryItem.querySelector('a.dropdown-toggle');
+
+    console.log('Tags item clicked:', entryItem, entryItemDropdown);
+
+    if (entryItemDropdown) {
+      event.preventDefault(); // Comment this out to return to default behavior.
+      event.stopImmediatePropagation(); // Comment this out to return to default behavior.
+      let entryId = entryItem.querySelector('.dropdown-target')?.id;
+      let entryIdMatch = entryId ? entryId.match(/([0-9]+)$/) : null;
+      entryId = entryIdMatch ? entryIdMatch[1] : null;
+
+      console.log('Extracted item ID:', entryId);
+      
+      let tags = await getItemTags(entryId);
+      console.log('Tags for item', entryId, ':', tags);
+    }
+  }, true);
+}
+
+async function getItemTags(itemId) {
+  // TODO:
+  // Fetch tags for a given feed item ID.
+  console.log('Fetching tags for item ID:', itemId);
+  // Example: .../i/?c=tag&a=getTagsForEntry&id_entry=1766954301163174
+
+  if (!itemId) return [];
+  const url = `./?c=tag&a=getTagsForEntry&id_entry=${encodeURIComponent(itemId)}`;
+  try {
+    const response = await fetch(url, { method: 'GET' });
+    if (response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        return data;
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching tags:', error);
+  }
+  return [];
+}
+
+async function setItemTag(entryId, tag) {
+  // TODO:
+  // Add or remove feed a feed item from a tag (playlist)
+  /**
+   * Example request:
+   * 
+   * POST ./?c=tag&a=tagEntry&ajax=1
+   * 
+    {
+      "_csrf": "...",
+      "id_tag": "2", // Tag ID
+      "name_tag": "",
+      "id_entry": "12345", // Entry ID
+      "checked": true,
+      "ajax": 1
+    }
+  */
+}
+
 function collapseBackgroundFeedItem(target) {
   // Workaround: If user has YouTube Video Feed extension installed, prevent it from showing the default embedded 
   // in favor of Youlag theater view modal. This collapses down the original feed item that activates by FreshRSS clickevent.
@@ -736,6 +803,7 @@ function setBodyPageClass() {
 function init() {
   setBodyPageClass();
   setupClickListener();
+  setupTagsDropdownOverride();
   setTimeout(() => {
     // HACK: Delay referencing the settings elements.
     youlagSettingsPageEventListeners();
