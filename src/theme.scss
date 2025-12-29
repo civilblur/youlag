@@ -229,7 +229,21 @@ body.youlag-active:not(.reader) main#stream {
 }
 
 .youlag-video-labels {
-  /* Change the side navigation labels based on user settings. */
+  /* Change the labels and references to "Favorite" and "My Labels/Tags" based on user settings. */
+
+  &.yl-page-playlists:not([class*="yl-page-t_"]) {
+    /* Set transition name to "Playlists" only on parent playlists page. */
+    main#stream {
+      .transition .name {
+        font-size: 0;
+        
+        &:before {
+          content: "Playlists";
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
 
   nav.aside.aside_feed {
     #mark-read-aside ul#sidebar {
