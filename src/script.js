@@ -14,6 +14,7 @@ const modalVideoSourceIdName = `youlagVideoSource`;
 const modalVideoSourceDefaultIdName = `youlagVideoSourceDefault`;
 const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
+const modalTagsIdName = `youlagTagsModal`;
 
 
 /*****************************************
@@ -517,8 +518,7 @@ function setupClickListener() {
 
 
 function setupTagsDropdownOverride() {
-  // TODO:
-  // Delegated event listener to override tags (labels) dropdown click
+  // Delegated event listener to override tags (playlists) dropdown click
   const streamContainer = document.querySelector('#stream');
   if (!streamContainer) return;
 
@@ -526,28 +526,90 @@ function setupTagsDropdownOverride() {
     const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
     const entryItemDropdown = entryItem.querySelector('a.dropdown-toggle');
 
-    console.log('Tags item clicked:', entryItem, entryItemDropdown);
-
     if (entryItemDropdown) {
-      event.preventDefault(); // Comment this out to return to default behavior.
-      event.stopImmediatePropagation(); // Comment this out to return to default behavior.
+      // Prevent default dropdown behavior
+      event.preventDefault();
+      event.stopImmediatePropagation();
       let entryId = entryItem.querySelector('.dropdown-target')?.id;
       let entryIdMatch = entryId ? entryId.match(/([0-9]+)$/) : null;
       entryId = entryIdMatch ? entryIdMatch[1] : null;
-
-      console.log('Extracted item ID:', entryId);
-      
       let tags = await getItemTags(entryId);
-      console.log('Tags for item', entryId, ':', tags);
+
+      // Open custom tags modal
+      createTagsModal(entryId, tags);
     }
   }, true);
 }
 
+function createTagsModal(entryId, tags) {
+  // Opens modal to manage tags (playlists) for feed item (entryId).
+  /**
+   * Example tags object:
+  [
+    {
+      "id": 2,
+      "name": "Some playlist name",
+      "checked": true
+    },
+  ]
+  */
+
+  if (document.getElementById(modalTagsIdName)) {
+    // Remove existing modal if present
+    document.getElementById(modalTagsIdName).remove();
+  }
+
+  let container = document.createElement('div');
+  const useVideoLabels = document.querySelector('body.youlag-video-labels') ? true : false;
+  const modalTitle = useVideoLabels ? 'Save to...' : 'Tags';
+  container.id = modalTagsIdName;
+  container.classList.add('youlag-tags-modal');
+  container.innerHTML = `
+    <forms class="yl-tags-content">
+      <h3 class="yl-tags-modal-title">
+        ${modalTitle}
+
+        <a href="./?c=tag" target="_blank"><img class="icon" src="../themes/Mapco/icons/configure.svg" loading="lazy" alt="⚙️"></a>
+      </h3>
+      <div class="yl-tags-list">
+        ${
+          tags.map(tag => `
+            <div class="yl-tags-list-item">
+              <input type="checkbox" id="yl-tag-${tag.id}" data-tag-id="${tag.id}" data-entry-id="${entryId}" ${tag.checked ? 'checked' : ''} />
+              <label for="yl-tag-${tag.id}">${tag.name}</label>
+            </div>
+          `).join('')
+        }
+      </div>
+      <div class="yl-tags-modal-actions">
+        <button id="yl-tags-modal-close" class="btn">Done</button>
+      </div>
+    </forms>
+  `
+
+  document.body.appendChild(container);
+
+  // Event listener for tags (playlists) items.
+  const checkboxes = container.querySelectorAll('.yl-tags-list-item input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const tagId = this.getAttribute('data-tag-id');
+      const entryId = this.getAttribute('data-entry-id');
+      const checked = this.checked;
+      setItemTag(entryId, { id: tagId, checked: checked });
+    });
+  });
+
+  // Close tags (playlists) modal button
+  const closeButton = container.querySelector('#yl-tags-modal-close');
+  closeButton.addEventListener('click', function() {
+    const modal = document.getElementById(modalTagsIdName);
+    if (modal) modal.remove();
+  });
+}
+
 async function getItemTags(itemId) {
-  // TODO:
   // Fetch tags for a given feed item ID.
-  console.log('Fetching tags for item ID:', itemId);
-  // Example: .../i/?c=tag&a=getTagsForEntry&id_entry=1766954301163174
 
   if (!itemId) return [];
   const url = `./?c=tag&a=getTagsForEntry&id_entry=${encodeURIComponent(itemId)}`;
@@ -559,29 +621,52 @@ async function getItemTags(itemId) {
         return data;
       }
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error fetching tags:', error);
   }
   return [];
 }
 
 async function setItemTag(entryId, tag) {
-  // TODO:
-  // Add or remove feed a feed item from a tag (playlist)
-  /**
-   * Example request:
-   * 
-   * POST ./?c=tag&a=tagEntry&ajax=1
-   * 
-    {
-      "_csrf": "...",
-      "id_tag": "2", // Tag ID
-      "name_tag": "",
-      "id_entry": "12345", // Entry ID
-      "checked": true,
-      "ajax": 1
+  // Add or remove a feed item from a tag (playlist)
+
+  const csrfToken = document.querySelector('input[name="_csrf"]')?.getAttribute('value') || '';
+  const payload = {
+    _csrf: csrfToken,
+    id_tag: tag.id,
+    name_tag: '',
+    id_entry: entryId,
+    checked: !!tag.checked,
+    ajax: 1
+  };
+  try {
+    const response = await fetch('./?c=tag&a=tagEntry&ajax=1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (response.ok) {
+      const text = await response.text();
+      if (text && text.trim().length > 0) {
+        try {
+          const result = JSON.parse(text);
+        }
+        catch (jsonError) {
+          console.error('Error parsing tag update response:', jsonError);
+        }
+      }
     }
-  */
+    else {
+      console.error('Failed to update tag:', response.status);
+    }
+  }
+  catch (error) {
+    console.error('Error updating tag:', error);
+  }
 }
 
 function collapseBackgroundFeedItem(target) {

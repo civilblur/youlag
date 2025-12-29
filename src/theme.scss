@@ -28,6 +28,7 @@
  * - Animation keyframes
  * - Youlag theater view modal
  * - Youlag theater pip view
+ * - Youlag tags (playlists) modal
  * - Youlag extension settings page
  * - Youlag helper classes
  * 
@@ -3139,6 +3140,95 @@ a.yl-video-action-button[href=""] {
 
 /*****************************************
  * END "YOULAG THEATER PIP VIEW"
+ ****************************************/
+
+
+/*****************************************
+ * BEGIN "YOULAG TAGS (PLAYLISTs) MODAL"
+ * Tags (playlist) management modal.
+ ****************************************/
+#youlagTagsModal {
+  position: fixed;
+  z-index: 100000; // Above theater modal: 99999
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+
+  .yl-tags-content {
+    background-color: #1f1f1f;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 350px;
+    max-height: min(80vh, 500px);
+    max-height: min(80dvh, 500px);
+    overflow-y: auto;
+    padding: var(--yl-p-md);
+  }
+
+  .yl-tags-modal-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    font-size: var(--yl-text-md);
+    font-weight: bold;
+    margin-bottom: var(--yl-p-xs);
+    padding-left: var(--yl-p-xs);
+
+    .icon {
+      filter: brightness(2);
+    }
+  }
+
+  .yl-tags-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    max-height: 300px;
+
+    .yl-tags-list-item {
+      display: flex;
+      align-items: center;
+      gap: var(--yl-m-2xs);
+      padding: var(--yl-p-2xs) var(--yl-p-xs);
+      color: #ffffff;
+      font-size: var(--yl-text-sm);
+      border-radius: 8px;
+
+      &:hover {
+        background-color: #303136;
+      }
+
+      label {
+        min-height: 0;
+        width: 100%;;
+      }
+    }
+  }
+
+  .yl-tags-modal-actions {
+    display: flex;
+    gap: var(--yl-p-2xs);
+    margin-top: var(--yl-m-md);
+
+    #yl-tags-modal-close {
+      width: 100%;
+    }
+  }
+
+}
+
+/*****************************************
+ * END "YOULAG TAGS (PLAYLISTs) MODAL"
  ****************************************/
 
 
