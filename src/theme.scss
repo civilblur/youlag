@@ -3188,8 +3188,8 @@ a.yl-video-action-button[href=""] {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     width: 90%;
     max-width: 350px;
-    max-height: min(80vh, 500px);
-    max-height: min(80dvh, 500px);
+    max-height: 80vh;
+    max-height: 80dvh;
     overflow-y: auto;
     padding: var(--yl-p-md);
     margin: var(--yl-p-md);
@@ -3214,7 +3214,7 @@ a.yl-video-action-button[href=""] {
     padding: 0;
     margin: 0;
     overflow: auto;
-    max-height: 300px;
+    max-height: 450px;
 
     .yl-tags-list-item {
       display: flex;
