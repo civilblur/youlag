@@ -904,7 +904,6 @@ function setVideoLabelsClass() {
 
   if (userSettingElement) {
     userSetting = userSettingElement.getAttribute('data-yl-video-labels');
-    console.log('Youlag Video Labels - user setting from DOM:', userSetting);
   }
 
   if (userSetting === 'true') {
