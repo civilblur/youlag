@@ -3167,6 +3167,11 @@ a.yl-video-action-button[href=""] {
  * BEGIN "YOULAG TAGS (PLAYLISTs) MODAL"
  * Tags (playlist) management modal.
  ****************************************/
+
+body.youlag-tags-modal-open {
+  overflow: hidden;
+}
+
 #youlagTagsModal {
   position: fixed;
   z-index: 100000; // Above theater modal: 99999

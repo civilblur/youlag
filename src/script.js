@@ -568,7 +568,6 @@ function setupTagsDropdownOverride() {
 }
 
 function createTagsModal(entryId, tags) {
-
   // Opens modal to manage tags (playlists) for feed item (entryId).
   /**
    * Example tags object:
@@ -613,6 +612,7 @@ function createTagsModal(entryId, tags) {
   `
 
   document.body.appendChild(container);
+  document.body.classList.add('youlag-tags-modal-open');
 
 
   // Event listener for tags (playlists) items.
@@ -626,33 +626,31 @@ function createTagsModal(entryId, tags) {
     });
   });
 
-  // Close tags (playlists) modal button
-  const closeButton = container.querySelector('#yl-tags-modal-close');
-  closeButton.addEventListener('click', function() {
+  function closeTagsModal() {
     const modal = document.getElementById(modalTagsContainerIdName);
     if (modal) modal.remove();
+    document.body.classList.remove('youlag-tags-modal-open');
     document.removeEventListener('keydown', tagsModalEscHandler, true);
-  });
+  }
 
+  // Close button
+  const closeButton = container.querySelector('#yl-tags-modal-close');
+  closeButton.addEventListener('click', closeTagsModal);
+
+  // Close on Esc key
   function tagsModalEscHandler(event) {
-    // Close only the tags modal on Esc, in case other modals are open.
     if (event.key === 'Escape') {
-      const tagsModal = document.getElementById(modalTagsContainerIdName);
-      if (tagsModal) {
-        tagsModal.remove();
-        document.removeEventListener('keydown', tagsModalEscHandler, true);
-        event.stopPropagation(); // Prevent bubbling to other modals
-      }
+      closeTagsModal();
+      event.stopPropagation(); // Prevent bubbling to other modals
     }
   }
   document.addEventListener('keydown', tagsModalEscHandler, true);
 
+  // Close onblur
   container.addEventListener('mousedown', function(event) {
-    // Close modal onblur
     const content = container.querySelector('.yl-tags-content');
     if (content && !content.contains(event.target)) {
-      container.remove();
-      document.removeEventListener('keydown', tagsModalEscHandler, true);
+      closeTagsModal();
     }
   });
 
