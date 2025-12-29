@@ -46,6 +46,7 @@ Youlag supports article and video feeds, allowing you to select categories that 
 - [x] Clickable links in video descriptions.
 - [x] Convert to an actual FreshRSS extension, with options for customizing the view and features.
 - [x] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
+- [ ] Block and hide YouTube shorts.
 
 ## Install
 
