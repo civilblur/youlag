@@ -3000,15 +3000,18 @@ body {
 
 
 a.yl-video-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: #303136;
   color: #fff;
   font-weight: 600;
   font-size: var(--yl-text-xs);
   border-radius: 999px;
   padding: var(--yl-p-xs) var(--yl-p-sm);
-  display: inline-block;
   text-decoration: none;
   transition: background-color 0.2s;
+  min-width: 45px;
 
   &:hover {
     text-decoration: none;
@@ -3017,6 +3020,10 @@ a.yl-video-action-button {
 
   span.yl-video-action-button__icon {
     margin-right: var(--yl-m-2xs);
+  }
+  
+  .icon {
+    filter: brightness(2);
   }
 }
 

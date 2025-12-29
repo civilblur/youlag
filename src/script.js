@@ -6,15 +6,16 @@ let youtubeId;
 let previousPageTitle = null;
 let modePip = false;
 let modeFullscreen = true;
-const modalContainerClassName = `youlag-theater-modal-container`;
-const modalContentClassName = `youlag-theater-modal-content`;
+const modalVideoContainerClassName = `youlag-theater-modal-container`;
+const modalVideoContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
 const modalMinimizeIdName = `youlagMinimizeModal`;
 const modalVideoSourceIdName = `youlagVideoSource`;
 const modalVideoSourceDefaultIdName = `youlagVideoSourceDefault`;
 const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
-const modalTagsIdName = `youlagTagsModal`;
+const modalTagsManageIdName = `youlagTagsManage`;
+const modalTagsContainerIdName = `youlagTagsModal`;
 
 
 /*****************************************
@@ -72,7 +73,7 @@ function handleActiveRssItem(targetOrEventOrVideo, isVideoObject = false) {
     data.feedItemEl = feedItem;
   }
 
-  createModalWithData(data);
+  createVideoModal(data);
   if (!modePip) setModeFullscreen(true);
 }
 
@@ -137,6 +138,7 @@ function sanitizeExtractedVideoUrl(content) {
 
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
+  const entryId = feedItem.getAttribute('data-entry')?.match(/([0-9]+)$/);
   let extractedVideoUrl = feedItem.querySelector('.item.titleAuthorSummaryDate a[href*="youtube"], .item.titleAuthorSummaryDate a[href*="/watch?v="]')?.href || '';
   if (!extractedVideoUrl) {
     // Fallback to see if user has installed the YouTube video feed/Invidious video feed extension, as they create a different DOM structure.
@@ -161,6 +163,7 @@ function extractFeedItemData(feedItem) {
   const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
 
   const videoObject = {
+    entryId: entryId ? entryId[1] : null,
     author: authorElement?.getAttribute('data-article-authors') || '',
     author_filter_url: authorFilterElement?.href || '',
     favicon: feedItem.querySelector('img.favicon')?.src || '',
@@ -259,19 +262,19 @@ function setPageTitle(title) {
   }
 }
 
-function createModalWithData(data) {
+function createVideoModal(data) {
   // Create custom modal
   let modal = document.getElementById('youlagTheaterModal');
 
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'youlagTheaterModal';
-    modal.innerHTML = `<div class="${modalContainerClassName}"></div>`;
+    modal.innerHTML = `<div class="${modalVideoContainerClassName}"></div>`;
     document.body.appendChild(modal);
   }
 
   // Add content to modal
-  const container = modal.querySelector(`.${modalContainerClassName}`);
+  const container = modal.querySelector(`.${modalVideoContainerClassName}`);
   const videoSourceDefault = data.video_source_default;
   const youtubeSelected = videoSourceDefault === 'youtube' ? 'selected' : '';
   const invidiousSelected = videoSourceDefault === 'invidious_1' ? 'selected' : '';
@@ -294,7 +297,7 @@ function createModalWithData(data) {
   setPageTitle(data.title);
  
   container.innerHTML = `
-    <div class="${modalContentClassName}">
+    <div class="${modalVideoContentClassName}">
 
       <div class="youlag-video-header">
         <select id="${modalVideoSourceIdName}" class="${invidiousBaseUrl && data.isVideoFeedItem ? '' : 'display-none'}">
@@ -342,6 +345,13 @@ function createModalWithData(data) {
                 id="${modalToggleFavoriteIdName}">
                 <div class="youlag-favorited-icon"></div>
               </a>
+
+              <a href="#" 
+                class="yl-video-action-button"
+                id="${modalTagsManageIdName}">
+                <img class="icon" src="../themes/icons/label.svg" loading="lazy" alt="🏷️">
+              </a>
+
               <a class="yl-video-action-button" href="${data.external_link}" target="_blank">
                 <span class="yl-video-action-button__icon">🌐</span><span>Source</span>
               </a>
@@ -396,6 +406,11 @@ function createModalWithData(data) {
     // Toggle favorites state in background
     e.preventDefault();
     toggleFavorite(data.favorite_toggle_url, container, data.feedItemEl);
+  });
+  container.querySelector(`#${modalTagsManageIdName}`)?.addEventListener('click', async (e) => {
+    // Open tags (playlists) modal
+    e.preventDefault();
+    createTagsModal(data.entryId, await getItemTags(data.entryId));
   });
 
   // Push a new state to the history, to allow modal close when routing back.
@@ -545,24 +560,22 @@ function createTagsModal(entryId, tags) {
   // Opens modal to manage tags (playlists) for feed item (entryId).
   /**
    * Example tags object:
-  [
-    {
-      "id": 2,
-      "name": "Some playlist name",
-      "checked": true
-    },
-  ]
+  [{
+    "id": 2,
+    "name": "Some playlist name",
+    "checked": true
+  },]
   */
 
-  if (document.getElementById(modalTagsIdName)) {
+  if (document.getElementById(modalTagsContainerIdName)) {
     // Remove existing modal if present
-    document.getElementById(modalTagsIdName).remove();
+    document.getElementById(modalTagsContainerIdName).remove();
   }
 
   let container = document.createElement('div');
   const useVideoLabels = document.querySelector('body.youlag-video-labels') ? true : false;
   const modalTitle = useVideoLabels ? 'Save to...' : 'Tags';
-  container.id = modalTagsIdName;
+  container.id = modalTagsContainerIdName;
   container.classList.add('youlag-tags-modal');
   container.innerHTML = `
     <forms class="yl-tags-content">
@@ -589,6 +602,7 @@ function createTagsModal(entryId, tags) {
 
   document.body.appendChild(container);
 
+
   // Event listener for tags (playlists) items.
   const checkboxes = container.querySelectorAll('.yl-tags-list-item input[type="checkbox"]');
   checkboxes.forEach(checkbox => {
@@ -603,9 +617,24 @@ function createTagsModal(entryId, tags) {
   // Close tags (playlists) modal button
   const closeButton = container.querySelector('#yl-tags-modal-close');
   closeButton.addEventListener('click', function() {
-    const modal = document.getElementById(modalTagsIdName);
+    const modal = document.getElementById(modalTagsContainerIdName);
     if (modal) modal.remove();
+    document.removeEventListener('keydown', tagsModalEscHandler, true);
   });
+
+  function tagsModalEscHandler(event) {
+    // Close only the tags modal on Esc, in case other modals are open.
+    if (event.key === 'Escape') {
+      const tagsModal = document.getElementById(modalTagsContainerIdName);
+      if (tagsModal) {
+        tagsModal.remove();
+        document.removeEventListener('keydown', tagsModalEscHandler, true);
+        event.stopPropagation(); // Prevent bubbling to other modals
+      }
+    }
+  }
+  document.addEventListener('keydown', tagsModalEscHandler, true);
+
 }
 
 async function getItemTags(itemId) {
