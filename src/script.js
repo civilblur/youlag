@@ -855,25 +855,23 @@ function setVideoLabelsClass() {
   let userSetting = undefined;
 
   if (userSettingElement) {
-    userSetting = userSettingElement.getAttribute('data-yl-video-labels') === 'true';
+    userSetting = userSettingElement.getAttribute('data-yl-video-labels');
+    console.log('Youlag Video Labels - user setting from DOM:', userSetting);
   }
 
-  // Apply youlag-video-labels class as quickly as possible to reduce layout shifts, based on localStorage.
-  if (localStorageSetting) {
+  if (userSetting === 'true') {
+    document.body.classList.add('youlag-video-labels');
+    localStorage.setItem('youlagVideoLabels', 'true');
+  }
+  else if (userSetting === 'false') {
+    document.body.classList.remove('youlag-video-labels');
+    localStorage.setItem('youlagVideoLabels', 'false');
+  }
+  else if (localStorageSetting === 'true') {
     document.body.classList.add('youlag-video-labels');
   }
   else {
     document.body.classList.remove('youlag-video-labels');
-  }
-
-  // Sync user setting with localStorage and apply class accordingly.
-  if (userSetting === true) {
-    document.body.classList.add('youlag-video-labels');
-    localStorage.setItem('youlagVideoLabels', 'true');
-  }
-  else if (userSetting === false) {
-    document.body.classList.remove('youlag-video-labels');
-    localStorage.setItem('youlagVideoLabels', 'false');
   }
 }
 
