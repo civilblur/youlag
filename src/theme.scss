@@ -2738,6 +2738,7 @@ body {
       position: absolute;
       background: #0f0f0f;
       z-index: 20;
+      transition: 0.4s;
       opacity: 1;
     }
   }
@@ -2752,7 +2753,6 @@ body {
       &:before {
         pointer-events: none !important;
         opacity: 0 !important;
-        transition: 0.3s;
       }
     }
   }
