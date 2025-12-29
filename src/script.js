@@ -2,6 +2,7 @@ let youlagScriptLoaded = false;
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
+let previousPageTitle = null;
 let modePip = false;
 let modeFullscreen = true;
 const modalContainerClassName = `youlag-theater-modal-container`;
@@ -170,10 +171,24 @@ function extractFeedItemData(feedItem) {
   };
 }
 
+function setPageTitle(title) {
+  if (typeof title === 'string' && title.length > 0) {
+    if (previousPageTitle === null) {
+      previousPageTitle = document.title;
+    }
+    // Set new title
+    document.title = title;
+  }
+  else if (previousPageTitle !== null) {
+    // Restore previous title
+    document.title = previousPageTitle;
+    previousPageTitle = null;
+  }
+}
+
 function createModalWithData(data) {
   // Create custom modal
   let modal = document.getElementById('youlagTheaterModal');
-
 
   if (!modal) {
     modal = document.createElement('div');
@@ -202,6 +217,8 @@ function createModalWithData(data) {
   // Determine the initial video source (default)
   const videoSourceDefaultNormalized = videoSourceDefault === 'invidious_1' ? 'invidious_1' : 'youtube';
   const defaultEmbedUrl = getEmbedUrl(videoSourceDefaultNormalized);
+
+  setPageTitle(data.title);
  
   container.innerHTML = `
     <div class="${modalContentClassName}">
@@ -360,6 +377,7 @@ function closeModal() {
   }
   setModePip(false);
   setModeFullscreen(false);
+  setPageTitle();
 }
 
 function togglePipMode() {
