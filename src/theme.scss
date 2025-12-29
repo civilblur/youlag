@@ -1575,6 +1575,10 @@ html {
     color: white;
   }
 
+  #stream {
+    position: relative;
+  }
+
   /* Text and link colors */
   label,
   .content h1.title a,
@@ -2663,39 +2667,69 @@ body:has(.tree-folder.category.favorites.active) {
   overflow: auto;
 }
  
-body:has(#global main#stream):before {
-  // Loading spinner, before the youlag script has fully loaded. Only on feed stream pages.
-  content: "Loading Youlag features";
-  position: fixed;
-  top: 89px;
-  right: 39px;
-  width: 280px;
-  height: 82px;
-  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23000' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  filter: invert(1);
-  background-position: 20px;
-  background-size: 32px;
-  background-color: #ffffffd4;
-  opacity: 0.8;
-  z-index: 9999;
-  transition: opacity 0.2s;
-  color: black;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding-left: 68px;
-  box-sizing: border-box;
-  font-family: arial;
-  font-size: var(--yl-text-sm);
-  white-space: pre;
-  pointer-events: none;
-  border-radius: 12px;
+body {
+  /* Youlag loading spinner */
+  &:has(#global main#stream):before {
+    // Loading spinner, before the youlag script has fully loaded. Only on feed stream pages.
+    content: "Loading Youlag features";
+    position: fixed;
+    top: 89px;
+    right: 39px;
+    width: 280px;
+    height: 82px;
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23000' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    filter: invert(1);
+    background-position: 20px;
+    background-size: 32px;
+    background-color: #ffffffd4;
+    opacity: 0.8;
+    z-index: 9999;
+    transition: opacity 0.2s;
+    color: black;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 68px;
+    box-sizing: border-box;
+    font-family: arial;
+    font-size: var(--yl-text-sm);
+    white-space: pre;
+    pointer-events: none;
+    border-radius: 12px;
+  }
+
+  main#stream {
+    &:before {
+      // Hide feed content while loading Youlag script.
+      content: "";
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      position: absolute;
+      background: #0f0f0f;
+      z-index: 20;
+      opacity: 1;
+    }
+  }
+
+  &.youlag-loaded {
+    // Youlag script has loaded, remove loading spinner and feed overlay.
+    &:before {
+      display: none !important;
+    }
+  
+    main#stream {
+      &:before {
+        pointer-events: none !important;
+        opacity: 0 !important;
+        transition: 0.3s;
+      }
+    }
+  }
 }
 
-body.youlag-loaded:before {
-  display: none !important;
-}
 
 #youlagTheaterModal {
   position: fixed;
