@@ -568,6 +568,7 @@ function setupTagsDropdownOverride() {
 }
 
 function createTagsModal(entryId, tags) {
+
   // Opens modal to manage tags (playlists) for feed item (entryId).
   /**
    * Example tags object:
@@ -645,6 +646,15 @@ function createTagsModal(entryId, tags) {
     }
   }
   document.addEventListener('keydown', tagsModalEscHandler, true);
+
+  container.addEventListener('mousedown', function(event) {
+    // Close modal onblur
+    const content = container.querySelector('.yl-tags-content');
+    if (content && !content.contains(event.target)) {
+      container.remove();
+      document.removeEventListener('keydown', tagsModalEscHandler, true);
+    }
+  });
 
 }
 
