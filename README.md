@@ -26,13 +26,13 @@ Youlag supports article and video feeds, allowing you to select categories that 
 ## Features
 
 - ⭐ **Optimized for Video Viewing**
-  - Browse YouTube RSS subscriptions a video-tailored inferface
-  - Fullscreen viewing for videos and articles
-  - Exit videos with `Esc` key
+  - Browse YouTube RSS subscriptions through a video-tailored inferface
+  - Fullscreen video viewing
+  - `Esc` key to exit videos.
   - Switch between YouTube and Invidious playback source
   - Dark mode
 - ⚙️ Customization
-  - Apply the video interface to selected categories, to exclude article feeds
+  - Apply the video interface to only selected categories
   - Option to rename "Favorites → Watch Later", "My Tags → Playlists"
 - 🖥️ **Desktop & Mobile**
   - Mobile friendly, better one-handed navigation
