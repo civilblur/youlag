@@ -499,10 +499,15 @@ function getCurrentPage() {
     },
     {
       path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') === 'T',
+      className: 'playlists',
+    },
+    {
+      path: '/i/',
       match: () => urlParams.get('a') === 'normal' && /^t_\d+$/.test(urlParams.get('get') || ''),
       className: () => {
         const n = (urlParams.get('get') || '').substring(2);
-        return `playlist t_${n}`;
+        return `playlists t_${n}`;
       },
     },
     {
@@ -551,22 +556,32 @@ function isPageWhitelisted(whitelist, currentPageClass) {
     return false;
   }
 
-  // Filter pages (f_{n})
   const urlParams = new URLSearchParams(window.location.search);
   const getParam = urlParams.get('get');
-  if (/^f_\d+$/.test(getParam || '')) {
-    // Try to find the parent category c_{n} from the sidebar and use that for whitelist checking instead of f_{n}.
-    const activeCat = document.querySelector('#sidebar .tree-folder.category.active');
-    if (activeCat) {
-      const catId = activeCat.getAttribute('id'); // c_{n}
-      if (catId && whitelist.includes(catId)) {
-        return true;
-      }
-    }
-    return false;
-  }
 
-  const pageTypes = ['home', 'important', 'watch_later'];
+  const subpageParent = [
+    { regex: /^f_\d+$/, selector: '#sidebar .tree-folder.category.active', idPrefix: 'c_' },
+    { regex: /^t_\d+$/, selector: '#sidebar .tree-folder.category.tags.active', idPrefix: 't_' }
+  ];
+
+  // Sub-pages: filter (f_{n}), tag (playlist) (t_{n})
+  for (const { regex, selector, idPrefix } of subpageParent) {
+    if (regex.test(getParam || '')) {
+      const activeElem = document.querySelector(selector);
+      if (activeElem) {
+        // Try to find the parent category/tag from the sidebar and use that for whitelist checking instead of f_{n} or t_{n}.
+        let parentId = activeElem.getAttribute('id'); // c_{n} or tags
+        parentId = parentId === 'tags' ? 'playlists' : parentId; 
+        if (parentId && whitelist.includes(parentId)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+  
+  
+  const pageTypes = ['home', 'important', 'watch_later', 'playlists'];
   return pageTypes.some(type => whitelist.includes(type) && currentPageClass === `yl-page-${type}`);
 }
 
