@@ -232,6 +232,17 @@ function restoreVideoQueue() {
   if (youlagRestoreVideoQueueRan) return;
   youlagRestoreVideoQueueRan = true;
 
+  // Only restore video queue on pages that don't get blocked by Content-Security-Policy. 
+  const bodyClasses = document.body.classList;
+  const isVideoPage = [
+    'yl-page-home',
+    'yl-page-important',
+    'yl-page-watch_later',
+    'yl-page-playlists',
+    'yl-page-category'
+  ].some(cls => bodyClasses.contains(cls));
+  if (!isVideoPage) return;
+
   let queueObj = null;
   try {
     const stored = localStorage.getItem('youlagVideoQueue');
@@ -775,6 +786,14 @@ function getCurrentPage() {
       className: () => {
         const n = urlParams.get('get').substring(2);
         return `category c_${n}`;
+      },
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') && urlParams.get('get').startsWith('f_'),
+      className: () => {
+        const n = urlParams.get('get').substring(2);
+        return `category`;
       },
     },
   ];
