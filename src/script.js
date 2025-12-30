@@ -711,7 +711,7 @@ async function getItemTags(itemId) {
 }
 
 async function setItemTag(entryId, tag) {
-  // Add or remove a feed item from a tag (playlist)
+  // Add or remove a feed item from a tag (playlists)
 
   const csrfToken = document.querySelector('input[name="_csrf"]')?.getAttribute('value') || '';
   const payload = {
@@ -791,6 +791,11 @@ function getCurrentPage() {
   const routes = [
     {
       path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && urlParams.has('search'),
+      className: 'search_results',
+    },
+    {
+      path: '/i/',
       match: () => (!urlParams.has('a') || urlParams.get('a') === 'normal') && !urlParams.has('get') && !urlParams.has('c'),
       className: 'home',
     },
@@ -832,7 +837,7 @@ function getCurrentPage() {
     },
     {
       path: '/i/',
-      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') && urlParams.get('get').startsWith('f_'),
+      match: () => (urlParams.get('a') === 'normal' || !urlParams.has('a')) && urlParams.get('get') && urlParams.get('get').startsWith('f_'),
       className: () => {
         const n = urlParams.get('get').substring(2);
         return `category`;
@@ -858,8 +863,8 @@ function getSubpageParentId(getParam) {
    * For 'f_{n}' returns the DOM id of the active category (e.g. 'c_2'), or null if not found.
    */
   if (/^t_\d+$/.test(getParam)) {
-    // Tag (playlist) page
-    return 'tags';
+    // Tag (playlists) page
+    return 'playlists';
   }
   if (/^f_\d+$/.test(getParam)) {
     // Filter page, a subpage of a category.
@@ -891,31 +896,38 @@ function getCategoryWhitelist() {
 }
 
 function isPageWhitelisted(whitelist, currentPageClass) {
+  if (!Array.isArray(whitelist) || !currentPageClass) return false;
+
+  // If 'all' is included, it means every page and category will use the Youlag interface.
   if (whitelist.includes('all')) return true;
 
-  // Category pages (c_{n})
-  if (currentPageClass.startsWith('yl-page-category')) {
-    const match = currentPageClass.match(/c_(\d+)/);
-
-    if (match) {
-      // Current page is a category page
-      if (whitelist.includes('c_' + match[1])) return true;
+  // Check if parent pages are whitelisted.
+  const pageTypes = ['home', 'important', 'watch_later', 'playlists', 'search_results'];
+  for (const pt of pageTypes) {
+    if (currentPageClass === `yl-page-${pt}` && whitelist.includes(pt)) {
+      return true;
     }
-
-    // Current page is a subpage of a category (e.g. filter page f_{n})
-    const urlParams = new URLSearchParams(window.location.search);
-    const getParam = urlParams.get('get');
-    if (getParam) {
-      const parentId = getSubpageParentId(getParam);
-      if (parentId && whitelist.includes(parentId)) return true;
-    }
-
-    return false;
   }
 
-  // Static pages types
-  const pageTypes = ['home', 'important', 'watch_later', 'playlists'];
-  return pageTypes.some(type => whitelist.includes(type) && currentPageClass === `yl-page-${type}`);
+  // Check if category pages are whitelisted.
+  if (currentPageClass.startsWith('yl-page-category')) {
+    const match = currentPageClass.match(/c_(\d+)/);
+    if (match && whitelist.includes('c_' + match[1])) {
+      return true;
+    }
+  }
+
+  // Check if subpage parent category is whitelisted.
+  const urlParams = new URLSearchParams(window.location.search);
+  const getParam = urlParams.get('get');
+  if (getParam) {
+    const parentId = getSubpageParentId(getParam);
+    if (parentId && whitelist.includes(parentId)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function setCategoryWhitelistClass() {
