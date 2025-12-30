@@ -140,7 +140,7 @@ class YoulagExtension extends Minz_Extension {
             preg_match('#https?://youtu\.be/([\w-]+)#i', $link, $m)) {
             $videoId = $m[1];
             $iframe = '<iframe'
-                . ' class="aspect-ratio-16-9"'
+                . ' class="aspect-ratio-16-9 rounded-md"'
                 . ' width="100%"'
                 . ' height="auto"'
                 . ' src="' . htmlspecialchars('https://www.youtube.com/embed/' . $videoId, ENT_QUOTES) . '"'
