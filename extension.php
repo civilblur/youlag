@@ -140,9 +140,9 @@ class YoulagExtension extends Minz_Extension {
             preg_match('#https?://youtu\.be/([\w-]+)#i', $link, $m)) {
             $videoId = $m[1];
             $iframe = '<iframe'
-                . ' style="width:100%;max-width:560px;height:315px;"'
-                . ' width="560"'
-                . ' height="315"'
+                . ' class="aspect-ratio-16-9"'
+                . ' width="100%"'
+                . ' height="auto"'
                 . ' src="' . htmlspecialchars('https://www.youtube.com/embed/' . $videoId, ENT_QUOTES) . '"'
                 . ' frameborder="0"'
                 . ' allowfullscreen'
@@ -188,6 +188,7 @@ class YoulagExtension extends Minz_Extension {
             $entry->_content($spanInvidiousUrl . $spanVideoSource . $content);
         }
 
+        // Embed video iframe
         $content =  $this->embedVideoIframe($entry);
 
         if ($this->isInvidiousSet() && $this->isInvidiousEnabled()) {

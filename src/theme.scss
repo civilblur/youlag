@@ -3526,7 +3526,9 @@ body.youlag-tags-modal-open {
   width: 100%;
 }
   
-
+.aspect-ratio-16-9 {
+  aspect-ratio: 16 / 9;
+}
 
 [data-yl-invidious-instance],
 [data-yl-video-source-default],
