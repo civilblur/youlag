@@ -838,6 +838,29 @@ function getCurrentPage() {
   return '';
 }
 
+function getSubpageParentId(getParam) {
+  /**
+   * Check parent of current subpage.
+   * Returns the parent category id for a given getParam (e.g. 't_8' or 'f_8').
+   * For 't_{n}' returns 'tags'.
+   * For 'f_{n}' returns the DOM id of the active category (e.g. 'c_2'), or null if not found.
+   */
+  if (/^t_\d+$/.test(getParam)) {
+    // Tag (playlist) page
+    return 'tags';
+  }
+  if (/^f_\d+$/.test(getParam)) {
+    // Filter page, a subpage of a category.
+    const activeElem = document.querySelector('#sidebar .tree-folder.category.active');
+    if (activeElem && activeElem.id) {
+      console.log('Found active category for filter page:', activeElem.id);
+      return activeElem.id; // e.g. 'c_{n}'
+    }
+    return null;
+  }
+  return null;
+}
+
 function getCategoryWhitelist() {
   // Retrieve the category whitelist.
   // `setCategoryWhitelist()` in `extension.php` outputs the user data to the DOM.
@@ -861,35 +884,24 @@ function isPageWhitelisted(whitelist, currentPageClass) {
   // Category pages (c_{n})
   if (currentPageClass.startsWith('yl-page-category')) {
     const match = currentPageClass.match(/c_(\d+)/);
-    if (match) return whitelist.includes('c_' + match[1]);
+
+    if (match) {
+      // Current page is a category page
+      if (whitelist.includes('c_' + match[1])) return true;
+    }
+
+    // Current page is a subpage of a category (e.g. filter page f_{n})
+    const urlParams = new URLSearchParams(window.location.search);
+    const getParam = urlParams.get('get');
+    if (getParam) {
+      const parentId = getSubpageParentId(getParam);
+      if (parentId && whitelist.includes(parentId)) return true;
+    }
+
     return false;
   }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const getParam = urlParams.get('get');
-
-  const subpageParent = [
-    { regex: /^f_\d+$/, selector: '#sidebar .tree-folder.category.active', idPrefix: 'c_' },
-    { regex: /^t_\d+$/, selector: '#sidebar .tree-folder.category.tags.active', idPrefix: 't_' }
-  ];
-
-  // Sub-pages: filter (f_{n}), tag (playlist) (t_{n})
-  for (const { regex, selector, idPrefix } of subpageParent) {
-    if (regex.test(getParam || '')) {
-      const activeElem = document.querySelector(selector);
-      if (activeElem) {
-        // Try to find the parent category/tag from the sidebar and use that for whitelist checking instead of f_{n} or t_{n}.
-        let parentId = activeElem.getAttribute('id'); // c_{n} or tags
-        parentId = parentId === 'tags' ? 'playlists' : parentId; 
-        if (parentId && whitelist.includes(parentId)) {
-          return true;
-        }
-      }
-      return false;
-    }
-  }
-  
-  
+  // Static pages types
   const pageTypes = ['home', 'important', 'watch_later', 'playlists'];
   return pageTypes.some(type => whitelist.includes(type) && currentPageClass === `yl-page-${type}`);
 }
@@ -955,6 +967,8 @@ function setVideoLabelsClass() {
 
 function setBodyPageClass() {
   getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
+  currentPageParams = new URLSearchParams(window.location.search).get('get');
+  getSubpageParentId(currentPageParams) && (document.body.className += ' yl-page-' + getSubpageParentId(currentPageParams));
   setVideoLabelsClass();
   setCategoryWhitelistClass();
 }
@@ -974,8 +988,6 @@ function setVideoLabelsTitle(pageClass, newTitle) {
     }
   }
 }
-
-
 
 function init() {
   setBodyPageClass();
