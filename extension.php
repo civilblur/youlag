@@ -130,13 +130,34 @@ class YoulagExtension extends Minz_Extension {
     }
 
 
+    public function embedVideoIframe($entry) {
+        $this->loadConfigValues();
+
+        // Youlag-inactive: Embed YouTube video for regular articles.
+        $content = $entry->content();
+        $link = $entry->link();
+        if (preg_match('#https?://(?:www\.)?youtube\.com/watch\?v=([\w-]+)#i', $link, $m) ||
+            preg_match('#https?://youtu\.be/([\w-]+)#i', $link, $m)) {
+            $videoId = $m[1];
+            $iframe = '<iframe'
+                . ' style="width:100%;max-width:560px;height:315px;"'
+                . ' width="560"'
+                . ' height="315"'
+                . ' src="' . htmlspecialchars('https://www.youtube.com/embed/' . $videoId, ENT_QUOTES) . '"'
+                . ' frameborder="0"'
+                . ' allowfullscreen'
+                . ' referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+            $content = $iframe . "\n" . $content;
+        }
+        return $content;
+    }
+
     /**
      * Replaces all youtube.com domains in entry links/content with the user Invidious instance.
      * @param FreshRSS_Entry $entry
      * @return FreshRSS_Entry
      */
     public function setInvidiousURL($entry) {
-
         $this->loadConfigValues();
         $invidious = $this->instance;
 
@@ -161,27 +182,31 @@ class YoulagExtension extends Minz_Extension {
          */
         $content = $entry->content();
         $spanInvidiousUrl = '<span data-yl-invidious-instance="' . htmlspecialchars($invidious, ENT_QUOTES) . '"></span>';
-
         $videoSource = $this->yl_invidious_enabled ? 'invidious_1' : 'youtube';
         $spanVideoSource = '<span data-yl-video-source-default="' . htmlspecialchars($videoSource, ENT_QUOTES) . '"></span>';
-        
         if (strpos($content, 'yl-invidious-instance') === false && strpos($content, 'yl-video-source-default') === false) {
             $entry->_content($spanInvidiousUrl . $spanVideoSource . $content);
         }
 
+        $content =  $this->embedVideoIframe($entry);
 
-        // Replace in entry link
-        $link = $entry->link();
-        $newLink = preg_replace('#https?://(www\.)?youtube\.com/#', $invidious . '/', $link);
-        if ($newLink !== $link) {
-            $entry->_link($newLink);
-        }
+        if ($this->isInvidiousSet() && $this->isInvidiousEnabled()) {
+            // Replace in entry link
+            $link = $entry->link();
+            $newLink = preg_replace('#https?://(www\.)?youtube\.com/#', $invidious . '/', $link);
+            if ($newLink !== $link) {
+                $entry->_link($newLink);
+            }
 
-        // Replace in entry content
-        $content = $entry->content();
-        $newContent = preg_replace('#https?://(www\.)?youtube\.com/#', $invidious . '/', $content);
-        if ($newContent !== $content) {
-            $entry->_content($newContent);
+            // Replace in entry content
+            $newContent = preg_replace('#https?://(www\.)?youtube\.com/#', $invidious . '/', $content);
+            if ($newContent !== $content) {
+                $entry->_content($newContent);
+            } else {
+                $entry->_content($content);
+            }
+        } else {
+            $entry->_content($content);
         }
 
         return $entry;
