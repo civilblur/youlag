@@ -2404,6 +2404,16 @@ body.youlag-inactive:not(.reader) main#stream {
           margin: 0 auto;
         }
 
+        header {
+          h1.title a {
+
+            &:hover {
+              color: #ffffff;
+              text-decoration: underline;
+            }
+          }
+        }
+
         @media (max-width: 600px) {
           h1.title {
             /* Mobile: Reduce title size to reduce vertical space */
@@ -2412,10 +2422,7 @@ body.youlag-inactive:not(.reader) main#stream {
             a {
               font-size: var(--yl-text-md);
 
-              &:hover {
-                color: #ffffff;
-                text-decoration: underline;
-              }
+
             }
           }
         }
