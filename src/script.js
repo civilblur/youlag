@@ -823,6 +823,7 @@ function getCurrentPage() {
       return prefixClasses(classString);
     }
   }
+  
   return '';
 }
 
@@ -943,11 +944,26 @@ function setVideoLabelsClass() {
 
 function setBodyPageClass() {
   getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
-
   setVideoLabelsClass();
-
   setCategoryWhitelistClass();
 }
+
+
+
+function setVideoLabelsTitle(pageClass, newTitle) {
+  if (document.body.classList.contains(pageClass) && 
+      document.body.classList.contains('youlag-video-labels')) {
+    // Replace the middle text of the title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
+    // Primarily for Playlists and Watch Later pages.
+    const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*FreshRSS\s*$/);
+    if (titleMatch) {
+      const countPart = titleMatch[1] ? titleMatch[1] : '';
+      document.title = `${countPart}${newTitle} · FreshRSS`;
+    }
+  }
+}
+
+
 
 function init() {
   setBodyPageClass();
@@ -958,6 +974,8 @@ function init() {
     youlagSettingsPageEventListeners();
   }, 1500);
   restoreVideoQueue();
+  setVideoLabelsTitle('yl-page-playlists', 'Playlists');
+  setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
   removeYoulagLoadingState();
   youlagScriptLoaded = true;
 }
