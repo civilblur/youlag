@@ -550,15 +550,26 @@ function setupTagsDropdownOverride() {
 
   streamContainer.addEventListener('click', async function(event) {
     const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
-    const entryItemDropdown = entryItem.querySelector('a.dropdown-toggle');
+    const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle') : null;
+    const entryItemFooter = event.target.closest('div[data-feed] .flux_content footer');
+    const entryItemFooterDropdown = entryItemFooter ? entryItemFooter.querySelector('.item.labels a.dropdown-toggle') : null;
 
-    if (entryItemDropdown) {
+    if (entryItemDropdown || entryItemFooterDropdown) {
       // Prevent default dropdown behavior
       event.preventDefault();
       event.stopImmediatePropagation();
-      let entryId = entryItem.querySelector('.dropdown-target')?.id;
-      let entryIdMatch = entryId ? entryId.match(/([0-9]+)$/) : null;
-      entryId = entryIdMatch ? entryIdMatch[1] : null;
+      let entryId = null;
+      let entryIdRegex = '([0-9]+)$';
+      if (entryItemDropdown) {
+        entryId = entryItem.querySelector('.dropdown-target')?.id;
+        entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
+        entryId = entryId ? entryId[1] : null;
+      }
+      if (entryItemFooterDropdown) {
+        entryId = entryItemFooterDropdown.href;
+        entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
+        entryId = entryId ? entryId[1] : null;
+      }
       let tags = await getItemTags(entryId);
 
       // Open custom tags modal
