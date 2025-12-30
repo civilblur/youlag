@@ -3318,6 +3318,7 @@ body.youlag-tags-modal-open {
 @media (max-width: 840px) {
   #youlagTagsModal {
     align-items: flex-end;
+    height: 100dvh;
 
     .yl-tags-content {
       margin: 0;
