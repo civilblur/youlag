@@ -213,6 +213,7 @@ function setVideoQueue(videoObject) {
 
   const videoId = videoObject.video_youtube_url; // video_youtube_url as unique identifier
   const foundIndex = queue.findIndex(v => v.video_youtube_url === videoId);
+  const isPipMode = document.body.classList.contains('youlag-mode--pip');
   if (foundIndex === -1) {
     queue.push(videoObject);
     activeIndex = queue.length - 1;
@@ -220,7 +221,7 @@ function setVideoQueue(videoObject) {
     activeIndex = foundIndex;
   }
 
-  localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, activeIndex }));
+  localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, activeIndex, isPipMode }) );
 }
 
 function clearVideoQueue() {
@@ -228,9 +229,21 @@ function clearVideoQueue() {
 }
 
 function restoreVideoQueue() {
-  // Restore video queue from localStorage on page load.
+  // Restore video queue from localStorage on page load, only if pip mode was active.
   if (youlagRestoreVideoQueueRan) return;
   youlagRestoreVideoQueueRan = true;
+
+  const stored = localStorage.getItem('youlagVideoQueue');
+  let queueObj = null;
+  if (stored) {
+    try {
+      queueObj = JSON.parse(stored);
+    } 
+    catch (e) {
+      console.error('Error parsing youlagVideoQueue from localStorage:', e);
+    }
+  }
+  if (!queueObj || queueObj.isPipMode !== true) return;
 
   // Only restore video queue on pages that don't get blocked by Content-Security-Policy. 
   const bodyClasses = document.body.classList;
@@ -243,15 +256,6 @@ function restoreVideoQueue() {
   ].some(cls => bodyClasses.contains(cls));
   if (!isVideoPage) return;
 
-  let queueObj = null;
-  try {
-    const stored = localStorage.getItem('youlagVideoQueue');
-    if (stored) {
-      queueObj = JSON.parse(stored);
-    }
-  } catch (e) {
-    queueObj = null;
-  }
   if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.activeIndex === 'number' && queueObj.queue.length > 0) {
     setModePip(true); // Restored video queue always opens in PiP mode.
     handleActiveRssItem(queueObj, true);
@@ -504,6 +508,14 @@ function setModePip(state) {
     document.body.classList.remove('youlag-mode--pip');
     modePip = false;
   }
+  try {
+    const stored = localStorage.getItem('youlagVideoQueue');
+    if (stored) {
+      const obj = JSON.parse(stored);
+      obj.isPipMode = !!state;
+      localStorage.setItem('youlagVideoQueue', JSON.stringify(obj));
+    }
+  } catch (e) {}
 }
 
 function setModeFullscreen(state) {
