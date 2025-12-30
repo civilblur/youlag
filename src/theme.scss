@@ -207,12 +207,16 @@ body.youlag-active:not(.reader) main#stream {
 .youlag-video-labels {
   /* Change the labels and references to "Favorite" and "My Labels/Tags" based on user settings. */
 
-  .yl-form-category__video-label {
-    display: inline-block;
-  }
+  .yl-form-category {
+    /* Extension "Appearance" settings: display both labels in the DOM, show label according to `body.youlag-video-labels` */
 
-  .yl-form-category__original-label {
-    display: none;
+    &__video-label {
+      display: inline-block;
+    }
+
+    &__original-label {
+      display: none;
+    }
   }
 
   &.yl-page-playlists:not([class*="yl-page-t_"]) {
@@ -223,7 +227,7 @@ body.youlag-active:not(.reader) main#stream {
         
         &:before {
           content: "Playlists";
-          font-size: 0.875rem;
+          font-size: var(--yl-text-xs);
         }
       }
     }
@@ -282,16 +286,16 @@ body.youlag-active:not(.reader) main#stream {
     }
   }
 
-/* Settings page buttons */
-#aside_feed .item.nav-section a[href="./?c=tag"] {
-  font-size: 0;
-  transition: background-color 0.2s;
+  /* Settings page buttons */
+  #aside_feed .item.nav-section a[href="./?c=tag"] {
+    font-size: 0;
+    transition: background-color 0.2s;
 
-    &:before {
-    content: "Playlist management";
-    font-size: 1.2rem;
+      &:before {
+      content: "Playlist management";
+      font-size: var(--yl-text-sm);
+    }
   }
-}
 
   /* Change text in settings page containing "Label" to "Playlist" */
   main.post:has(#add_tag) {
@@ -300,7 +304,7 @@ body.youlag-active:not(.reader) main#stream {
 
       &:before {
         content: "Playlist management";
-        font-size: 2rem;
+        font-size: var(--yl-text-lg);
       }
     }
 
@@ -309,7 +313,25 @@ body.youlag-active:not(.reader) main#stream {
 
       &:before {
         content: "Create a playlist";
-        font-size: 1.5rem;
+        font-size: var(--yl-text-md);
+      }
+    }
+  }
+
+  main#stream .flux {
+    article.flux_content {
+
+      footer {
+        li.labels {
+          .dropdown-toggle .dropdown-label {
+            font-size: 0;
+
+            &:before {
+              content: "Save to playlist";
+              font-size: var(--yl-text-xs);
+            }
+          }
+        }
       }
     }
   }
