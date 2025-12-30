@@ -88,6 +88,23 @@ declare(strict_types=1);
       </label>
     </section>
     <section class="yl-form-section">
+      <h3>Feeds</h3>
+
+      <h4 class="mb-0">
+        YouTube shorts
+      </h4>
+      <label for="yl_block_youtube_shorts" class="flex">
+        <input type="checkbox" id="yl_block_youtube_shorts" name="yl_block_youtube_shorts" value="1" class="mb-auto"
+          <?php echo (FreshRSS_Context::$user_conf->yl_block_youtube_shorts) ? ' checked="checked"' : ''; ?>>
+        <div class="inline-block">
+          Block incoming YouTube shorts
+          <div class="yl-form-group-help">
+            Existing shorts in your feeds will not be affected.
+          </div>
+        </div>
+      </label>
+    </section>
+    <section class="yl-form-section">
 
       <h3>Default video playback source</h3>
 

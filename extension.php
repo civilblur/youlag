@@ -39,6 +39,9 @@ class YoulagExtension extends Minz_Extension {
         FreshRSS_Context::userConf()->topline_website = 'full';
         FreshRSS_Context::userConf()->topline_thumbnail = 'landscape';
         FreshRSS_Context::userConf()->topline_summary = true;
+
+        // Register hook to block incoming YouTube shorts
+        $this->registerHook('entry_before_insert', [$this, 'blockYoutubeShorts']);
     }
 
     /**
@@ -197,6 +200,27 @@ class YoulagExtension extends Minz_Extension {
         }
         return array();
     }
+    /**
+     * Block incoming YouTube shorts from being saved to the database.
+     * @param FreshRSS_Entry $entry
+     * @return FreshRSS_Entry|null
+     */
+    public function blockYoutubeShorts($entry) {
+        if (is_object($entry) === true) {
+            // Only block if user setting is enabled
+            $blockShorts = FreshRSS_Context::$user_conf->yl_block_youtube_shorts ?? false;
+            if ($blockShorts) {
+                $link = $entry->link();
+                // Match links that start with e.g. https://www.youtube.com/shorts/
+                if (preg_match('#^https?://(www\.)?youtube\.com/shorts/#i', $link)) {
+                    // Block YouTube shorts from being saved to the database
+                    Minz_Log::warning('Youlag: ' . $entry->link());
+                    return null;
+                }
+            }
+        }
+        return $entry;
+    }
 
     /**
      * Saves the user settings for this extension.
@@ -207,17 +231,23 @@ class YoulagExtension extends Minz_Extension {
         $_SESSION['ext_categories'] = $this->getUserCategories();
 
         if (Minz_Request::isPost()) {
+            // Invidious settings
             FreshRSS_Context::userConf()->_attribute('yl_invidious_enabled', Minz_Request::paramBoolean('yl_invidious_enabled'));
             FreshRSS_Context::$user_conf->yl_invidious_url_1 = (string)Minz_Request::param('yl_invidious_url_1', '');
 
+            // Category whitelist
             $catWhitelist = Minz_Request::paramArray('yl_category_whitelist', true);
             if (!is_array($catWhitelist)) {
                 $catWhitelist = [];
             }
             FreshRSS_Context::userConf()->_attribute('yl_category_whitelist', $catWhitelist);
 
+            // Video platform labels
             $labelsEnabled = Minz_Request::paramBoolean('yl_video_labels_enabled', true);
             FreshRSS_Context::userConf()->_attribute('yl_video_labels_enabled', $labelsEnabled);
+
+            // YouTube shorts blocking
+            FreshRSS_Context::userConf()->_attribute('yl_block_youtube_shorts', Minz_Request::paramBoolean('yl_block_youtube_shorts', true));
 
             FreshRSS_Context::$user_conf->save();
         }

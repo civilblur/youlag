@@ -33,7 +33,8 @@ Youlag supports article and video feeds, allowing you to select categories that 
   - Dark mode
 - ⚙️ Customization
   - Apply the video interface to only selected categories
-  - Option to rename "Favorites → Watch Later", "My Tags → Playlists"
+  - Block YouTube shorts
+  - Rename "Favorites → Watch Later", "My Tags → Playlists"
 - 🖥️ **Desktop & Mobile**
   - Mobile friendly, better one-handed navigation
   - Improved readability and legibility
@@ -45,8 +46,8 @@ Youlag supports article and video feeds, allowing you to select categories that 
 - [x] Clickable links in video descriptions.
 - [x] Convert to an actual FreshRSS extension, with options for customizing the view and features.
 - [x] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
+- [x] Block YouTube shorts.
 - [ ] Local video queue, but without autoplay due to CORS limitation.
-- [ ] Block and hide YouTube shorts.
 
 ## Install
 
