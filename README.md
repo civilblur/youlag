@@ -65,7 +65,7 @@ Youlag supports article and video feeds, allowing you to select categories that 
 1. Fork the `dev` branch.
 1. Install dependencies: `npm i`.
 1. Run `npm run watch` to compile files to `/static`.
-    1. For local development, see `.env.example` to learn how you can sync your changes directly to FreshRSS extensions folder.
+    1. For local development, see `.env.example` to learn how you can sync your changes directly to FreshRSS' extensions folder.
 1. Run `npm run build` to generate a production build to `/dist`.
 
 ## Attributions
