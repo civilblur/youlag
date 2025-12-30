@@ -522,7 +522,7 @@ function setModeFullscreen(state) {
 function setupClickListener() {
   if (!youlagActive) return;
   const streamContainer = document.querySelector('#stream');
-  
+
   if (streamContainer) {
     streamContainer.addEventListener('click', (event) => {
       // Prevent activation if clicked element is inside .flux_header li.
@@ -541,6 +541,17 @@ function setupClickListener() {
     });
   }
 }
+
+document.addEventListener('keydown', function(event) {
+  // youlag-inactive: Close article on Esc key.
+  if (event.key === 'Escape' && document.body.classList.contains('youlag-inactive')) {
+    const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+    if (openedArticle) {
+      openedArticle.classList.remove('active', 'current');
+      event.stopPropagation();
+    }
+  }
+});
 
 
 function setupTagsDropdownOverride() {
