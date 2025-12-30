@@ -955,10 +955,11 @@ function setVideoLabelsTitle(pageClass, newTitle) {
       document.body.classList.contains('youlag-video-labels')) {
     // Replace the middle text of the title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
     // Primarily for Playlists and Watch Later pages.
-    const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*FreshRSS\s*$/);
+  const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/);
     if (titleMatch) {
       const countPart = titleMatch[1] ? titleMatch[1] : '';
-      document.title = `${countPart}${newTitle} · FreshRSS`;
+      const customSuffix = titleMatch[4] ? titleMatch[4] : ''; // In case the user has rename their FreshRSS instance.
+      document.title = `${countPart}${newTitle} · ${customSuffix}`;
     }
   }
 }
