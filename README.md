@@ -41,14 +41,6 @@ Youlag supports article and video feeds, allowing you to select categories that 
 - 📺 **Features Offered by FreshRSS:**
   - Subscribe to YouTube creators without an account
 
-### Planned
-- [x] Minimize video, for background playback while browsing.
-- [x] Clickable links in video descriptions.
-- [x] Convert to an actual FreshRSS extension, with options for customizing the view and features.
-- [x] Ability to specify which category to apply the video grid on, with the intention to only affect video feeds.
-- [x] Block YouTube shorts.
-- [ ] Local video queue, but without autoplay due to CORS limitation.
-
 ## Install
 
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
