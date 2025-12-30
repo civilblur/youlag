@@ -2396,6 +2396,13 @@ body.youlag-inactive:not(.reader) main#stream {
       .flux_content {
         background-color: #26272a;
         background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
+        
+        header,
+        .text {
+          /* youlag-inactive: limit article width */
+          max-width: 800px;
+          margin: 0 auto;
+        }
 
         @media (max-width: 600px) {
           h1.title {
