@@ -2414,8 +2414,6 @@ body.youlag-inactive:not(.reader) main#stream {
 
             a {
               font-size: var(--yl-text-md);
-
-
             }
           }
         }
@@ -2424,6 +2422,26 @@ body.youlag-inactive:not(.reader) main#stream {
           .author {
             --light-font-color: #AAAAAA;
           }
+        }
+
+        .text {
+          pre {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 12px;
+          }
+        }
+
+        video {
+          height: auto;
+        }
+
+        hr {
+          margin: var(--yl-m-xs) 0;
+          border-color: rgba(255,255,255,0.15);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+          margin: var(--yl-m-lg) 0 var(--yl-m-xs) 0;
         }
       }
 
