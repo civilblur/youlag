@@ -3296,11 +3296,12 @@ body.youlag-tags-modal-open {
 @media (max-width: 840px) {
   #youlagTagsModal {
     align-items: flex-end;
-    border-bottom-left-radius: 0; 
-    border-bottom-right-radius: 0;
 
     .yl-tags-content {
       margin: 0;
+      max-width: unset;
+      border-bottom-left-radius: 0; 
+      border-bottom-right-radius: 0;
       animation: slideUp 0.15s ease-in-out forwards; /* Animate bottom sheet from bottom to up */
 
       .yl-tags-list {
