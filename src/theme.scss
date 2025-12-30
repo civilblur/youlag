@@ -2316,53 +2316,82 @@ body.youlag-inactive:not(.reader) main#stream {
   }
 
   div.flux {
+    &:hover ul.flux_header {
+      .titleAuthorSummaryDate .title {
+        /* FreshRSS shrinks the padding-right from '155px' to '0.5rem' on hover.
+           Force it to remain the same to avoid layout shift. */
+        padding-right: 155px;
+      }
+    }
 
     ul.flux_header {
+      --yl-thumbnail-width: 140px;
+      display: flex;
+      flex-wrap: wrap;
       border-color: #3d3d40;
 
-      @media (max-width: 600px) {
-        & {
-          display: flex;
-          flex-wrap: wrap;
-        }
-      }
-
-      &:hover {
-        .item-element.date {
-          visibility: hidden;
-        }
-      }
-
       .item {
-        --yl-feed-item-width--mobile: 100px;
 
         &.thumbnail {
+          /* Place thumbnail first. */
+          order: -3;
           border-radius: 8px;
-        }
+          box-sizing: border-box;
+          width: var(--yl-thumbnail-width);
+          height: auto;
+          aspect-ratio: 16 / 9;
 
-        @media (max-width: 600px) {
-          &.thumbnail {
-            /* Mobile: Place thumbnail first. */
-            order: -2;
-            box-sizing: border-box;
-            width: var(--yl-feed-item-width--mobile);
-            height: auto;
-            aspect-ratio: 16 / 9;
+          @media (max-width: 600px) {
+            --yl-thumbnail-width: 100px;
           }
         }
 
         &.titleAuthorSummaryDate {
-          .summary {
-            --frss-font-color-grey-dark: #898989;
+          /* Place headline and description next to thumbnail. */
+          order: -2;
+          flex-basis: calc(100% - var(--yl-thumbnail-width) - var(--yl-p-2xs) - var(--yl-p-2xs));
+          padding: 0 var(--yl-p-2xs);
+
+          @media (max-width: 291px) {
+            flex-basis: 100%;
           }
 
-          @media (max-width: 600px) {
+          .title {
+            /* Force headline to allow 2 rows of text */
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: unset;
+            text-wrap: auto;
+            position: relative;
+            max-height: calc(var(--yl-text-xs) * 3.2);
+            font-size: var(--yl-text-xs);
+            box-sizing: border-box;
+            padding: 0;
+            margin: var(--yl-p-2xs) 0 0 0;
+          }
+
+          .summary {
+            --frss-font-color-grey-dark: #898989;
+            margin: var(--yl-m-3xs) 0 0 0;
+          }
+        }
+
+        &.website {
+          /* Place website icon and name to the far right. */
+          order: 1;
+
+          @media (min-width: 839px) {
             & {
-              /* Mobile: Place headline and description next to thumbnail. */
-              flex-basis: calc(100% - var(--yl-feed-item-width--mobile) - var(--yl-p-2xs) - var(--yl-p-2xs));
-              order: -1;
-              padding: 0 var(--yl-p-2xs);
+              margin-left: auto;
+              width: auto;
             }
+          }
+
+          a {
+            text-decoration: none;
           }
         }
 
@@ -3528,6 +3557,10 @@ body.youlag-tags-modal-open {
   
 .aspect-ratio-16-9 {
   aspect-ratio: 16 / 9;
+}
+
+.rounded-md {
+  border-radius: 12px;
 }
 
 [data-yl-invidious-instance],
