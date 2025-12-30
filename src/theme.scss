@@ -123,36 +123,6 @@
 }
 
 
-// TODO 2025-02-22: Create an utility classes section and move these classes to it.
-.yl-flex {
-  display: flex;
-}
-
-.yl-flex-col {
-  flex-direction: column;
-}
-
-.yt-items-center {
-  align-items: center;
-}
-
-.yt-flex-1 {
-  flex: 1;
-}
-
-.yl-gap-3xs {
-  gap: var(--yl-space-3xs);
-}
-
-.yl-mb-md {
-  margin-bottom: var(--yl-m-md);
-}
-
-.w-100 {
-  width: 100%;
-}
-  
-
 
 /*****************************************
  * END "VARIABLES AND KEYFRAMES"
@@ -225,7 +195,7 @@ body.youlag-active:not(.reader) main#stream {
 
 @media (max-width: 840px) {
   body {
-    padding-top: 61px; // Encompass mobile fixed header
+    padding-top: 61px; /* Encompass mobile fixed header */
   }
 }
 
@@ -597,20 +567,20 @@ nav.aside.aside_feed {
 
 @media (max-width: 840px) {
   .header {
-    // Header on mobile
+    /* Mobile: Header */
     position: fixed;
     top: 0;
     left: 0;
     z-index: 50;
 
     &:has(.configure .dropdown-target:target) {
-      // On mobile, prevent the fixed hamburger menu `nav_menu .toggle_aside` 
-      // to sit on top of the settings menu. Applies for feed and non-feed pages.
+      /* On mobile, prevent the fixed hamburger menu `nav_menu .toggle_aside` 
+      to sit on top of the settings menu. Applies for feed and non-feed pages. */
       z-index: 110;
     }
 
     .configure .dropdown .dropdown-menu {
-      // Remove gap on left side.
+      /* Remove gap on left side. */
       left: 0 !important;
     }
   }
@@ -618,7 +588,7 @@ nav.aside.aside_feed {
   #slider {
 
     .btn.toggle_aside {
-      // Reset fixed navigation for non-feed pages.
+      /* Reset fixed navigation for non-feed pages. */
       max-width: 49px;
       margin: 0;
       padding: 0.85rem 1.25rem;
@@ -633,16 +603,16 @@ nav.aside.aside_feed {
 
   .aside {
     &:target ~ aside#slider a.toggle_aside {
-      // Hide the fixed hamburger menu on non-feed page when its `aside_feed` menu is opened,
-      // to prevent overlapping.
+      /* Hide the fixed hamburger menu on non-feed page when its `aside_feed` menu is opened,
+      to prevent overlapping. */
       opacity: 0;
       pointer-events: none;
       transition: opacity 0s;
     }
 
     & ~ aside#slider a.toggle_aside {
-      // Fade in the hamburger menu on non-feed page, 
-      // to prevent abrupt display of the button while `aside_feed` is being collapse animated.
+      /* Fade in the hamburger menu on non-feed page, 
+      to prevent abrupt display of the button while `aside_feed` is being collapse animated. */
       transition: opacity 0.3s;
     }
 
@@ -741,26 +711,6 @@ nav.aside.aside_feed {
       width: 18px;
       height: 18px;
     }
-
-    /*
-    > img {
-      // Hide default settings icon
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    // Issue with loading base64 image in settings page due to "Content Security Policy directive: "default-src 'self'".
-    &:before {
-      // User icon
-      content:"";
-      width: 20px;
-      height: 20px;
-      position: absolute;
-      filter: invert(1);
-      background-repeat: no-repeat;
-      background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTIgMy4yYy0xLjg2NCAwLTMuMzc1IDEuNDc3LTMuMzc1IDMuMyAwIDEuODIzIDEuNTExIDMuMyAzLjM3NSAzLjNzMy4zNzUtMS40NzcgMy4zNzUtMy4zYzAtMS44MjMtMS41MTEtMy4zLTMuMzc1LTMuM1pNNi4zNzUgNi41QzYuMzc1IDMuNDYyIDguODkzIDEgMTIgMXM1LjYyNSAyLjQ2MiA1LjYyNSA1LjVTMTUuMTA3IDEyIDEyIDEyIDYuMzc1IDkuNTM4IDYuMzc1IDYuNVpNMTIgMTUuM2MtMy43MjggMC02Ljc1IDIuOTU1LTYuNzUgNi42IDAgLjYwOC0uNTA0IDEuMS0xLjEyNSAxLjFBMS4xMTMgMS4xMTMgMCAwIDEgMyAyMS45YzAtNC44NiA0LjAzLTguOCA5LTguOHM5IDMuOTQgOSA4LjhjMCAuNjA4LS41MDQgMS4xLTEuMTI1IDEuMWExLjExMyAxLjExMyAwIDAgMS0xLjEyNS0xLjFjMC0zLjY0NS0zLjAyMi02LjYtNi43NS02LjZaIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=);
-    }
-    */
   }
 }
 
@@ -803,8 +753,8 @@ nav.aside.aside_feed {
         content: "";
         display: block;
         width: 14px;
-        height: 36px; // For centering the icon vertically, actual icon size is determined by the width.
-        background-image: url('../themes/Mapco/icons/view-normal.svg'); // Existing image from FreshRSS theme "Mapco"
+        height: 36px; /* For centering the icon vertically, actual icon size is determined by the width. */
+        background-image: url('../themes/Mapco/icons/view-normal.svg'); /* Existing image from FreshRSS theme "Mapco" */
         background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
@@ -1037,8 +987,8 @@ body.youlag-active:not(.reader) main#stream div.flux {
 
 
     &:before {
-      // Decorative attr(data-article-authors) text on thumbnail placeholder, visible for feeds without images
-      // Alternative: content:  attr(data-website-name);
+      /* Decorative attr(data-article-authors) text on thumbnail placeholder, visible for feeds without images */
+      /* Alternative: content:  attr(data-website-name); */
       content: attr(data-article-authors);
       position: absolute;
       top: 0;
@@ -1141,7 +1091,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       }
       
       &:before {
-        // Placeholder for empty thumbnails
+        /* Placeholder for empty thumbnails */
         content: "";
         width: 100%;
         position: absolute;
@@ -1796,12 +1746,12 @@ html {
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       overflow: auto;
-      animation: slideUp 0.15s ease-in-out forwards; // Animate bottom sheet from bottom to up
+      animation: slideUp 0.15s ease-in-out forwards; /* Animate bottom sheet from bottom to up */
 
 
       &[role="radiogroup"] {
         li.item a {
-          // Add separation between check icon and label text.
+          /* Add separation between check icon and label text. */
           display: flex;
           gap: 1rem;
           padding-left: var(--yl-p-xl);
@@ -2063,7 +2013,7 @@ main.post {
 
       &:hover {
         text-decoration: none;
-        background-color: #303136; // Hover effect
+        background-color: #303136; /* Hover effect */
       }
 
       img.icon {
@@ -2095,7 +2045,7 @@ main.post {
     }
 
     &.active .tree-folder-title {
-      background-color: #303136; // Active state
+      background-color: #303136; /* Active state */
     }
 
 
@@ -2342,7 +2292,14 @@ body.youlag-inactive:not(.reader) main#stream {
   div.flux {
 
     ul.flux_header {
-      border-color: #59595d;
+      border-color: #3d3d40;
+
+      @media (max-width: 600px) {
+        & {
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
 
       &:hover {
         .item-element.date {
@@ -2351,23 +2308,54 @@ body.youlag-inactive:not(.reader) main#stream {
       }
 
       .item {
+        --yl-feed-item-width--mobile: 100px;
+
+        &.thumbnail {
+          border-radius: 8px;
+        }
+
+        @media (max-width: 600px) {
+          &.thumbnail {
+            /* Mobile: Place thumbnail first. */
+            order: -2;
+            box-sizing: border-box;
+            width: var(--yl-feed-item-width--mobile);
+            height: auto;
+            aspect-ratio: 16 / 9;
+          }
+        }
+
         &.titleAuthorSummaryDate {
           .summary {
             --frss-font-color-grey-dark: #898989;
           }
+
+          @media (max-width: 600px) {
+            & {
+              /* Mobile: Place headline and description next to thumbnail. */
+              flex-basis: calc(100% - var(--yl-feed-item-width--mobile) - var(--yl-p-2xs) - var(--yl-p-2xs));
+              order: -1;
+              padding: 0 var(--yl-p-2xs);
+            }
+          }
         }
+
       }
 
       .item.manage {
         a.item-element.bookmark {
-          // youlag-inactive: Remove ellipsis from being added on 'favorite' icon.  
+          /* youlag-inactive: Remove ellipsis from being added on 'favorite' icon.  */
           text-overflow: unset;
+
+          img.icon[src$="icons/starred.svg"] {
+            filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
+          }
         }
       }
     }
 
     &.not_read {
-      // youlag-inactive: Unread items background color.
+      /* youlag-inactive: Unread items background color. */
       background-color: #26272a;
       background: linear-gradient(135deg, #303030 0%, #181923 40%, #252121 100%);
 
@@ -2381,19 +2369,38 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
     &.active.current {
-      // youlag-inactive: expanaded feed item.
+      /* youlag-inactive: expanaded feed item. */
 
       .flux_content {
         background-color: #26272a;
         background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
-      }
-    }
 
-    .item.manage {
-      a.item-element.bookmark {
-        img.icon[src$="icons/starred.svg"] {
-          filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
+        @media (max-width: 600px) {
+          h1.title {
+            /* Mobile: Reduce title size to reduce vertical space */
+            line-height: 1.2;
+
+            a {
+              font-size: var(--yl-text-md);
+
+              &:hover {
+                color: #ffffff;
+                text-decoration: underline;
+              }
+            }
+          }
         }
+
+        .subtitle {
+          .author {
+            --light-font-color: #AAAAAA;
+          }
+        }
+      }
+
+      a {
+        /* youlag-inactive: Increase legibilty of link color in opened articles. */
+        filter: brightness(1.5);
       }
     }
 
@@ -2401,7 +2408,17 @@ body.youlag-inactive:not(.reader) main#stream {
 
 }
 
-
+body.youlag-active:not(.reader) main#stream {
+  div.flux {
+    @media (max-width: 600px) {
+      &:not(.active),
+      &:not(.active).favorite:not(.current) {
+        /* Mobile, youlag-active:, always display hover effect/background */
+        background-color: hsl(0deg 0% 100% / 6%);
+      }
+    }
+  }
+}
 
 body:not(.reader) main#stream {
   div.flux {
@@ -2422,17 +2439,8 @@ body:not(.reader) main#stream {
       background-color: hsl(0deg 0% 100% / 6%);
     }
 
-    @media (max-width: 600px) {
-      &:not(.active),
-      &:not(.active).favorite:not(.current) {
-        /* Mobile, always display hover effect/background */
-        background-color: hsl(0deg 0% 100% / 6%);
-      }
-    }
-
-
     &.active.current .flux_header {
-      background-color: hsl(0deg 2.56% 15.29%); // Card opened state
+      background-color: hsl(0deg 2.56% 15.29%); /* Card opened state */
     }
 
     .flux_header {
@@ -2698,7 +2706,7 @@ body:has(.tree-folder.category.favorites.active) {
 body {
   /* Youlag loading spinner */
   &:has(#global main#stream):before {
-    // Loading spinner, before the youlag script has fully loaded. Only on feed stream pages.
+    /* Loading spinner, before the youlag script has fully loaded. Only on feed stream pages. */
     content: "Loading Youlag features";
     position: fixed;
     top: 89px;
@@ -2729,7 +2737,7 @@ body {
 
   main#stream {
     &:before {
-      // Hide feed content while loading Youlag script.
+      /* Hide feed content while loading Youlag script. */
       content: "";
       width: 100%;
       height: 100%;
@@ -2744,7 +2752,7 @@ body {
   }
 
   &.youlag-loaded {
-    // Youlag script has loaded, remove loading spinner and feed overlay.
+    /* Youlag script has loaded, remove loading spinner and feed overlay. */
     &:before {
       display: none !important;
     }
@@ -2772,17 +2780,17 @@ body {
   overflow-x: hidden;
   box-sizing: border-box;
   transition: 0.2s;
-  // For browsers with subpixel rendering issues, hide background content peeking through.
+  /* For browsers with subpixel rendering issues, hide background content peeking through. */
   box-shadow: 0 0 0 10px #060606;
 
   &.youlag-modal-feed-item--text {
-    // For feed items that are not video feeds.
+    /* For feed items that are not video feeds. */
     .youlag-iframe-container {
       display: none;
     }
 
     .youlag-video-container {
-      // For text feeds, the thumbnail is displayed in the video area instead.
+      /* For text feeds, the thumbnail is displayed in the video area instead. */
       max-height: 50vh;
 
       .youlag-thumbnail-container {
@@ -2877,7 +2885,7 @@ body {
   .youlag-thumbnail-container {
     width: 100%;
     height: 0;
-    // Use this method of setting 16:9 aspect ratio, due to a subpixel peaking below the iframe that sits on top.
+    /* Use this method of setting 16:9 aspect ratio, due to a subpixel peaking below the iframe that sits on top. */
     padding-bottom: calc(56.25% - 1px); 
     position: relative;
     overflow: hidden;
@@ -3005,7 +3013,7 @@ body {
   }
 
   &:has(.youlag-video-description-content:empty) {
-    // Hide description container if no description within content.
+    /* Hide description container if no description within content. */
     display: none;
   }
 }
@@ -3042,13 +3050,13 @@ a.yl-video-action-button {
 
 
 .yl-video-action-button-group {
-  // For placing related buttons into one group
+  /* For placing related buttons into one group */
   display: flex;
   border-radius: 999px;
   overflow: hidden;
 
   a.yl-video-action-button {
-    // Reset rounded corners of buttons in group
+    /* Reset rounded corners of buttons in group */
     border-radius: 0;
   }
 
@@ -3076,7 +3084,7 @@ a.yl-video-action-button {
 }
 
 a.yl-video-action-button[href=""] {
-  // Hide button if no link was able to be fetched
+  /* Hide button if no link was able to be fetched */
   display: none;
 }
 
@@ -3174,7 +3182,7 @@ body.youlag-tags-modal-open {
 
 #youlagTagsModal {
   position: fixed;
-  z-index: 100000; // Above theater modal: 99999
+  z-index: 100000; /* Above theater modal: 99999 */
   top: 0;
   left: 0;
   width: 100vw;
@@ -3301,7 +3309,7 @@ body.youlag-tags-modal-open {
     label,
     input[type="radio"],
     input[type="checkbox"] {
-      // Reset FreshRSS form group styles
+      /* Reset FreshRSS form group styles */
       display: block;
       min-width: 0;
       min-height: 0;
@@ -3339,7 +3347,7 @@ body.youlag-tags-modal-open {
         
         label,
         .yl-form-group-help  {
-          // Radio button + gap
+          /* Radio button + gap */
           padding-left: calc(15px + 0.5rem);
         }
 
@@ -3368,7 +3376,7 @@ body.youlag-tags-modal-open {
   }
 
   #yl_category_all:checked {
-    // When "All pages and categories" is selected, disable other sub-options.
+    /* When "All pages and categories" is selected, disable other sub-options. */
     & ~ .yl-form-category-subitem-container {
       opacity: 0.5;
       pointer-events: none;
@@ -3413,6 +3421,36 @@ body.youlag-tags-modal-open {
   margin-bottom: 0 !important;
 }
 
+.yl-flex {
+  display: flex;
+}
+
+.yl-flex-col {
+  flex-direction: column;
+}
+
+.yt-items-center {
+  align-items: center;
+}
+
+.yt-flex-1 {
+  flex: 1;
+}
+
+.yl-gap-3xs {
+  gap: var(--yl-space-3xs);
+}
+
+.yl-mb-md {
+  margin-bottom: var(--yl-m-md);
+}
+
+.w-100 {
+  width: 100%;
+}
+  
+
+
 [data-yl-invidious-instance],
 [data-yl-category-whitelist],
 [data-yl-video-labels] {
@@ -3426,7 +3464,7 @@ body.youlag-tags-modal-open {
 
 a[data-type="application/x-shockwave-flash"],
 figure.enclosure img.enclosure-thumbnail {
-  // Hide videos description with empty content
+  /* Hide videos description with empty content */
   display: none;
 }
 
