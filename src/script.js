@@ -575,6 +575,7 @@ function setupTagsDropdownOverride() {
     const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
     const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle') : null;
     const entryItemFooterDropdown = event.target.closest('.item.labels a.dropdown-toggle[href^="#dropdown-labels-"]');
+    
     if (entryItemDropdown || entryItemFooterDropdown) {
       // Prevent default dropdown behavior
       event.preventDefault();

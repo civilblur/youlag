@@ -124,6 +124,7 @@
   --yl-m-2xl: var(--yl-space-2xl);
   --yl-m-3xl: var(--yl-space-3xl);
 
+  --yl-text-3xs: clamp(0.6563rem, 0.6455rem + 0.0217vw, 0.6875rem);
   --yl-text-2xs: clamp(0.7813rem, 0.7747rem + 0.0326vw, 0.8rem);
   --yl-text-xs: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem);
   --yl-text-sm: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
@@ -133,10 +134,12 @@
   --yl-text-2xl: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
   --yl-text-3xl: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
 
-  --favicon-avatar-size: 34px;
-  --favicon-avatar-size-margin: 6px;
-  --feed-day-title-font-size: 1.7rem;
-  --video-pip-width: min(500px, 60%);
+  --yl-favicon-avatar-size: 34px;
+  --yl-favicon-avatar-size-margin: 6px;
+  --yl-feed-day-title-font-size: 1.7rem;
+  --yl-video-pip-width: min(500px, 60%);
+  --yl-sidenav-label-font-size: var(--yl-text-xs);
+  --yl-sidenav-width: 240px;
 
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
@@ -146,7 +149,13 @@
 
 @media (max-width: 840px) {
   :root {
-    --favicon-avatar-size: 42px;
+    --yl-favicon-avatar-size: 42px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --yl-sidenav-width: max(80%, 240px);
   }
 }
 
@@ -598,7 +607,7 @@ nav.aside.aside_feed {
   .tree-folder.category.favorites .tree-folder-title .title:before,
   #tags .tree-folder-title .title:before,
   .tree-folder.category .tree-folder-title .title {
-    font-size: 1.2rem;
+    font-size: var(--yl-sidenav-label-font-size);
     letter-spacing: 1px;
     font-weight: normal;
   }
@@ -609,7 +618,7 @@ nav.aside.aside_feed {
     position: sticky;
     top: 50px;
     z-index: 10;
-    width: 292px;
+    width: calc(var(--yl-sidenav-width) - 7px);
   }
 
   @media (max-width: 840px) {
@@ -643,6 +652,15 @@ nav.aside.aside_feed {
     .configure .dropdown .dropdown-menu {
       /* Remove gap on left side. */
       left: 0 !important;
+      width: var(--yl-sidenav-width);
+
+      & ~ .dropdown-close {
+        backdrop-filter: blur(8px);
+      }
+
+      .toggle_aside {
+        background: var(--yl-color-gradient-active);
+      }
     }
   }
 
@@ -929,7 +947,7 @@ main#stream #stream-footer,
     /* Card day section title */
     .transition {
       grid-column: 1 / -1;
-      font-size: var(--feed-day-title-font-size);
+      font-size: var(--yl-feed-day-title-font-size);
       opacity: 0.8;
       padding: 0 8px;
       line-height: 1.2;
@@ -1507,7 +1525,7 @@ body.youlag-active:not(.reader) main#stream {
 
         & ~ .item.titleAuthorSummaryDate {
           /* If website favicon exist, add padding to make space for it. */
-          padding-left: calc(var(--favicon-avatar-size) + var(--favicon-avatar-size-margin));
+          padding-left: calc(var(--yl-favicon-avatar-size) + var(--yl-favicon-avatar-size-margin));
         }
 
         &:hover {
@@ -1528,15 +1546,15 @@ body.youlag-active:not(.reader) main#stream {
 
         a.item-element {
           display: flex;
-          width: calc(var(--favicon-avatar-size) + var(--favicon-avatar-size-margin));
+          width: calc(var(--yl-favicon-avatar-size) + var(--yl-favicon-avatar-size-margin));
           visibility: visible;
           pointer-events: all;
           box-sizing: unset;
         }
 
         img.favicon {
-          height: var(--favicon-avatar-size);
-          width: var(--favicon-avatar-size);
+          height: var(--yl-favicon-avatar-size);
+          width: var(--yl-favicon-avatar-size);
           background-color: hsl(0deg 0% 100% / 18%);
           padding: 8px;
           box-sizing: border-box;
@@ -1629,6 +1647,14 @@ html {
     background-color: #0f0f0f;
     --frss-font-color-dark: white;
     color: white;
+  }
+
+  #aside_feed {
+    width: var(--yl-sidenav-width);
+
+    & ~ .close-aside {
+      backdrop-filter: blur(8px);
+    }
   }
 
   #stream {
@@ -2101,10 +2127,10 @@ main.post {
     .tree-folder-title {
       display: flex;
       align-items: center;
-      padding: 1rem;
+      padding: var(--yl-p-xs);
       border-radius: 8px;
       text-transform: unset;
-      font-size: 1rem;
+      font-size: var(--yl-sidenav-label-font-size);
       font-weight: normal;
 
       &:hover {
@@ -2250,7 +2276,7 @@ main.post {
 
     & > * {
       /* On desktop, prevent side navigation to stretch when main content isn't loaded, caused by the layout relying on "display: table" */
-      max-width: 300px;
+      max-width: var(--yl-sidenav-width);
     }
   }
 
@@ -2266,6 +2292,9 @@ main.post {
     margin: 0;
     background-color: #89898970;
     font-weight: bold;
+    font-size: var(--yl-text-3xs);
+    padding-left: var(--yl-p-3xs);
+    padding-right: var(--yl-p-3xs);
   }
 }
 
@@ -3494,7 +3523,7 @@ a.yl-video-action-button[href=""] {
   overflow: hidden;
 
   & {
-    width: var(--video-pip-width);
+    width: var(--yl-video-pip-width);
     bottom: 1rem;
     right: 2rem;
     aspect-ratio: 16 / 9;
