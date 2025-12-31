@@ -280,6 +280,62 @@ body.youlag-active:not(.reader) main#stream {
     }
   }
 
+  .transition .name {
+    color: #6f6f6f;
+    /* Hide category name (except for the first one) on date transition. */
+    display: none;
+  }
+
+  #new-article + .transition .name {
+    /* Show category name for the first date transition. */
+    display: block;
+    opacity: 1;
+    font-size: var(--yl-text-md);
+    text-align: center;
+    text-transform: none;
+    margin-top: var(--yl-m-md);
+    margin-bottom: var(--yl-m-md);
+  }
+
+  .transition {
+    /* Global: Date transition in feeds */
+    display: flex;
+    flex-direction: column-reverse; /* Place category name above date transition label. */
+    text-align: left;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1;
+    margin: var(--yl-m-md) 0 var(--yl-m-2xs) 0;
+    padding: 0;
+
+    .transition-value a {
+      color: var(--frss-font-color-grey-dark);
+    }
+
+    .transition-next {
+      font-size: 0;
+      margin-left: 4px;
+      opacity: 1;
+
+      &:before {
+        content: "→";
+        line-height: 1;
+        color: #ababab;
+        border: 1px solid hsla(0,0%,100%,.14);
+        background-color: hsla(0,0%,100%,.10);
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        font-size: var(--yl-text-sm);
+        font-family: monospace;
+      }
+    }
+  }
+
   nav.aside.aside_feed {
     #mark-read-aside ul#sidebar {
 
@@ -944,15 +1000,33 @@ main#stream #stream-footer,
 
 .youlag-active {
   main#stream {
+    .transition,
+    .transition-next {
+      /* youlag-active: Hide transition dates for video feeds, keeping rest of styling intact,
+        in case this ends up becoming an option in the extension settings instead. */
+      display: none !important;
+    }
+
+    #new-article + .transition {
+      /* youlag-active: first date transition, turn it into "Latest" title */
+      font-size: 0;
+      display: block;
+      grid-column: 1 / -1;
+      padding: 0 var(--yl-p-2xs);
+      line-height: 1.2;
+      margin-top: var(--yl-m-md);
+      margin-bottom: var(--yl-m-sm);
+
+      &:before {
+        content: "Latest"; /* TODO: Handle text with javascript instead, user can change sort option, this will no longer make sense. */
+        font-size: var(--yl-text-md);
+        font-weight: bold;
+        color: #ffffff;
+      }
+    }
+
     /* Card day section title */
     .transition {
-      grid-column: 1 / -1;
-      font-size: var(--yl-feed-day-title-font-size);
-      opacity: 0.8;
-      padding: 0 8px;
-      line-height: 1.2;
-      margin-top: 8rem;
-      margin-bottom: 2rem;
   
       & > .name {
         /* Category name */
@@ -960,13 +1034,13 @@ main#stream #stream-footer,
         color: #ffffff;
         padding: 0;
         margin-top: 0.5rem;
-        opacity: 0.7;
+
+        @media (min-width: 840px) {
+          /* Destkop, youlag-active: Hide category name */
+          display: none;
+        }
       }
-    }
-  
-    /* Reduce margin-top on the first day that appears at the top of the feed */
-    #new-article + .transition  {
-      margin-top: 2rem;
+
     }
   
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
@@ -2421,13 +2495,6 @@ body.youlag-inactive:not(.reader) main#stream {
     padding-right: var(--yl-p-2xs);
   }
 
-  .transition {
-    .name {
-      color: #ffffff;
-      opacity: 0.7;
-    }
-  }
-
   div.flux {
     border-radius: 12px;
     transition: all 0.1s;
@@ -2476,7 +2543,9 @@ body.youlag-inactive:not(.reader) main#stream {
 
       @media (max-width: 840px) {
         border-radius: 0;
-        border-bottom: none
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
       }
 
       @media (max-width: 600px) {
@@ -2484,18 +2553,61 @@ body.youlag-inactive:not(.reader) main#stream {
       }
 
       .item {
+        /* Mobile, youlag-inactive: provide enough spacing between icons */
+        &.manage,
+        &.labels,
+        &.link,
+        &.share {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: auto;
+          padding: 0;
+
+          & > a,
+          & > div a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--yl-p-3xs);
+            width: 32px;
+            height: 24px;
+            border: 1px solid hsla(0, 0%, 100%, .08);
+            border-radius: 12px;
+            margin-left: 8px;
+            background-color: rgba(255, 255, 255, 0.04);
+          }
+        }
+
+        &:first-child {
+          padding-left: 0;
+        }
+
+        @media (max-width: 840px) {
+        }
+
         &.thumbnail {
           /* Place thumbnail first. */
           order: -3;
           box-sizing: border-box;
           width: var(--yl-thumbnail-width);
           height: auto;
-          max-height: calc(var(--yl-thumbnail-width) * 10 / 16); // HACK: Prevent Safari from stretching images vertically
-          aspect-ratio: 16 / 10;
 
           img {
+            aspect-ratio: 16 / 10;
+            max-height: calc(var(--yl-thumbnail-width) * 10 / 16); // HACK: Prevent Safari from stretching images vertically
             border-radius: 8px;
           }
+
+          @media (max-width: 600px) {
+
+            img {
+              aspect-ratio: 1 / 1;
+              height: auto;
+              max-height: 100%;
+            }
+          }
+
         }
 
         &.titleAuthorSummaryDate {
@@ -2514,7 +2626,8 @@ body.youlag-inactive:not(.reader) main#stream {
             flex-basis: 100%;
           }
 
-          .title {
+          .title,
+          .title.multiline {
             order: -2; /* Place headline first within container. */
             flex: 1;
             /* Force headline to allow 2 rows of text */
@@ -2527,16 +2640,17 @@ body.youlag-inactive:not(.reader) main#stream {
             min-width: unset;
             text-wrap: auto;
             position: relative;
-            max-height: calc(var(--yl-text-xs) * 5);
+            max-height: calc(var(--yl-text-xs) * 5.5);
             font-size: calc(var(--yl-text-sm) / 1.1);
             font-weight: 600;
-            line-height: 1.2;
+            line-height: 1.38;
             box-sizing: border-box;
             padding: 0;
             margin: var(--yl-p-2xs) 0 0 0;
 
             @media (max-width: 840px) {
               flex-basis: 100%;
+              font-size: var(--yl-text-sm);
             }
 
             .author {
@@ -2553,6 +2667,14 @@ body.youlag-inactive:not(.reader) main#stream {
             flex-basis: 100%;
             max-width: unset;
             padding-right: min(var(--yl-p-3xl), 10%);
+            font-size: var(--yl-text-xs);
+            line-height: 1.2;
+
+            @media (max-width: 840px) {
+              flex-basis: 100%;
+              font-size: var(--yl-text-xs);
+              padding-right: unset;
+            }
           }
 
           .date {
@@ -2572,6 +2694,8 @@ body.youlag-inactive:not(.reader) main#stream {
         &.website {
           /* Place website icon and name to the far right. */
           order: 1;
+          margin-left: auto;
+          width: auto;
 
           &, a {
             display: flex;
@@ -2604,16 +2728,8 @@ body.youlag-inactive:not(.reader) main#stream {
             width: unset;
             max-width: 200px;
 
-
             .websiteName {
               font-size: var(--yl-text-2xs);
-            }
-          }
-
-          @media (min-width: 839px) {
-            & {
-              margin-left: auto;
-              width: auto;
             }
           }
 
