@@ -58,6 +58,41 @@
  * BEGIN "VARIABLES AND KEYFRAMES"
  ****************************************/
 
+
+@mixin yl-gradient-bg($color: #cbd5e1, $colorDarker: #64748b, $hover: true) {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, $color 10%, transparent),
+    color-mix(in oklab, $colorDarker 15%, transparent)
+  );
+  backdrop-filter: blur(60px);
+  border: 1px solid color-mix(in oklab,$color 30%,transparent);
+  transition: filter 0.2s ease-in-out;
+
+  @if $hover {
+    &:hover {
+      background: linear-gradient(
+        to bottom,
+        color-mix(in oklab, $color 10%, transparent),
+        color-mix(in oklab, $colorDarker 15%, transparent)
+      );
+      filter: brightness(1.3) saturate(1.4);
+    }
+  }
+}
+
+@mixin yl-gradient-btn-bg($color: #cbd5e1, $colorDarker: #64748b) {
+  background: radial-gradient(circle at center right, $colorDarker, $color);
+  &:hover {
+    background: radial-gradient(circle at center right, $colorDarker, $color);
+    filter: brightness(1.3) saturate(1.4);
+  }
+}
+
+@function yl-fn-gradient-btn-bg($color: #cbd5e1, $colorDarker: #64748b) {
+  @return radial-gradient(circle at center right, $colorDarker, $color);
+}
+
 :root {
   --yl-space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
   --yl-space-2xs: clamp(0.5625rem, 0.5408rem + 0.1087vw, 0.625rem);
@@ -103,7 +138,7 @@
   --feed-day-title-font-size: 1.7rem;
   --video-pip-width: min(500px, 60%);
 
-  --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3c3737 40%, #2d2d2d 100%);
+  --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
 }
 
@@ -122,39 +157,6 @@
   }
 }
 
-@mixin yl-gradient-bg($color: #cbd5e1, $colorDarker: #64748b, $hover: true) {
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, $color 10%, transparent),
-    color-mix(in oklab, $colorDarker 15%, transparent)
-  );
-  backdrop-filter: blur(60px);
-  border: 1px solid color-mix(in oklab,$color 30%,transparent);
-  transition: filter 0.2s ease-in-out;
-
-  @if $hover {
-    &:hover {
-      background: linear-gradient(
-        to bottom,
-        color-mix(in oklab, $color 10%, transparent),
-        color-mix(in oklab, $colorDarker 15%, transparent)
-      );
-      filter: brightness(1.3) saturate(1.4);
-    }
-  }
-}
-
-@mixin yl-gradient-btn-bg($color: #cbd5e1, $colorDarker: #64748b) {
-  background: radial-gradient(circle at center right, $colorDarker, $color);
-  &:hover {
-    background: radial-gradient(circle at center right, $colorDarker, $color);
-    filter: brightness(1.3) saturate(1.4);
-  }
-}
-
-@function yl-fn-gradient-btn-bg($color: #cbd5e1, $colorDarker: #64748b) {
-  @return radial-gradient(circle at center right, $colorDarker, $color);
-}
 
 
 
@@ -414,7 +416,8 @@ nav.aside.aside_feed {
     #btn-subscription:hover,
     #btn-subscription:hover ~ #btn-add,
     #btn-add:hover {
-      background-color: #303136;
+      background: var(--yl-color-gradient-surface-3);
+
     }
 
     #btn-add {
@@ -1720,7 +1723,8 @@ html {
     }
   }
 
-  .dropdown-menu {
+  .dropdown-menu,
+  .nav_menu .dropdown-menu button.as-link {
     --main-first: var(--yl-color-gradient-active); /* Header top right settings, hover background color */
   }
 
@@ -1995,7 +1999,7 @@ main#stream .box.category {
 .dropdown-header .icon,
 .tree-folder-items .dropdown-toggle .icon,
 .tree-folder-items .item.feed .dropdown-toggle .icon {
-  filter: brightness(2);
+  filter: brightness(4);
 }
 
 .dropdown-menu input,
@@ -3255,7 +3259,7 @@ a.yl-video-action-button {
   }
   
   .icon {
-    filter: brightness(2);
+    filter: brightness(4);
   }
 }
 
@@ -3430,7 +3434,7 @@ body.youlag-tags-modal-open {
     padding-left: var(--yl-p-xs);
 
     .icon {
-      filter: brightness(2);
+      filter: brightness(4);
     }
   }
 
