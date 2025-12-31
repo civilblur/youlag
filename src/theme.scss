@@ -2398,7 +2398,7 @@ body.youlag-inactive:not(.reader) main#stream {
       display: flex;
       flex-wrap: wrap;
       //border-color: #2b2b2b; /* youlag-inactive: feed entry separator border color */
-      border: 1px solid color-mix(in oklab,#fff 8%,transparent);
+      border: 1px solid color-mix(in oklab,#fff 11%,transparent);
       border-radius: 14px;
       box-sizing: border-box;
       padding: var(--yl-p-2xs) var(--yl-p-3xs);
