@@ -140,6 +140,8 @@
 
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
+
+  --frss-noThumbnailImage-background-color: #4d4d4d; /* FreshRSS striped background color, when image is not yet loaded */
 }
 
 @media (max-width: 840px) {
@@ -2397,12 +2399,21 @@ body.youlag-inactive:not(.reader) main#stream {
 
     &.active.current {
       /* youlag-inactive: article is opened */
+      
       ul.flux_header {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
       }
     }
 
+    &.current {
+      /* youlag-inactive: article is in focus */
+      border-left: none; /* Disable default blue/orange and  border indicator of focused feed item */
+    }
+
+    &.favorite {
+      background: linear-gradient(135deg, #50310d 0%, #22170b 40%, #3d2b18 100%); /* Orange glow effect for favorite articles */
+    }
 
     &:hover ul.flux_header {
       .titleAuthorSummaryDate .title {
@@ -2467,15 +2478,16 @@ body.youlag-inactive:not(.reader) main#stream {
             /* Force headline to allow 2 rows of text */
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
             overflow: hidden;
             text-overflow: ellipsis;
             min-width: unset;
             text-wrap: auto;
             position: relative;
-            max-height: calc(var(--yl-text-xs) * 3.2);
-            font-size: var(--yl-text-xs);
+            max-height: calc(var(--yl-text-xs) * 5);
+            font-size: calc(var(--yl-text-sm) / 1.1);
+            font-weight: 600;
             line-height: 1.2;
             box-sizing: border-box;
             padding: 0;
@@ -2489,6 +2501,7 @@ body.youlag-inactive:not(.reader) main#stream {
               display: block;
               padding: 0;
               margin-top: 4px;
+              display: none; /* youlag-inactive: hide author from article preview. */
             }
           }
 
@@ -2658,13 +2671,40 @@ body.youlag-inactive:not(.reader) main#stream {
 
 }
 
+body.youlag-inactive.yl-page-watch_later:not(.reader) main#stream {
+  /* youlag-inactive: Favorites (Watch later) page */
+
+  div.flux {
+    &.favorite {
+      background: none; /* Revert to normal background on favorites (watch later) page */
+      
+      &.not_read {
+        background: linear-gradient(135deg, #303030 0%, #151517 40%, #2d2d2d 100%);
+      }
+
+      li.item.manage {
+        /* youlag-inactive: Actions button hover effect have not yet been setup for article feed view, 
+           so to keep it consistent, disable background on hover for favorite button (which is a consequence 
+           of youlag global styling. */
+        background: none !important;
+      }
+      a.item-element.bookmark {
+        /* On youlag-active interface, actions buttons/icons are normally hidden on desktop view. 
+           Force it to show on youlag-inactive article feed view. */
+        visibility: visible !important;
+      }
+    }
+  }
+
+}
+
 body.youlag-active:not(.reader) main#stream {
   div.flux {
     @media (max-width: 600px) {
       &:not(.active),
       &:not(.active).favorite:not(.current) {
         /* Mobile, youlag-active:, always display hover effect/background */
-        background-color: hsl(0deg 0% 100% / 6%);
+        background: linear-gradient(209deg, #4d4b4b 0%, #212124 40%, #333 100%);;
       }
     }
   }
@@ -2679,14 +2719,14 @@ body:not(.reader) main#stream {
         --grey-lighter: #2f3136;
 
         .item .title {
-            background: transparent !important;        
+          background: transparent !important;        
         }
       }
     }
 
     &:not(.active):hover {
       /* Card hover effect/background */
-      background-color: hsl(0deg 0% 100% / 6%);
+      background: linear-gradient(209deg, #4d4b4b 0%, #212124 40%, #333 100%);
     }
 
     &.active.current .flux_header {
@@ -2778,6 +2818,8 @@ main#stream,
   }
 
   button.close {
+    border-radius: 12px;
+
     img.icon {
       height: 24px;
       width: 24px;
@@ -3282,7 +3324,7 @@ body {
 
 
 .youlag-video-description-container {
-  background-color: rgb(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
   margin-bottom: var(--yl-m-lg);
   padding: var(--yl-p-sm);
   border-radius: 1rem;
