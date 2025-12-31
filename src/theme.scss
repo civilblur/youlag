@@ -2699,7 +2699,18 @@ body.youlag-inactive.yl-page-watch_later:not(.reader) main#stream {
       }
     }
   }
+}
 
+body.youlag-active.yl-page-watch_later:not(.reader) main#stream {
+  div.flux {
+    &.favorite {
+      background: none !important; /* Revert to normal background on favorites (watch later) page */
+
+      &:hover {
+        background: linear-gradient(209deg, #4d4b4b 0%, #212124 40%, #333 100%) !important;
+      }
+    }
+  }
 }
 
 body.youlag-active:not(.reader) main#stream {
