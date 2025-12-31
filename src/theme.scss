@@ -2330,27 +2330,31 @@ body.youlag-inactive:not(.reader) main#stream {
       flex-wrap: wrap;
       border-color: #3d3d40;
 
-      .item {
+      @media (max-width: 600px) {
+        --yl-thumbnail-width: 100px;
+      }
 
+      .item {
         &.thumbnail {
           /* Place thumbnail first. */
           order: -3;
-          border-radius: 8px;
           box-sizing: border-box;
           width: var(--yl-thumbnail-width);
           height: auto;
-          aspect-ratio: 16 / 9;
+          max-height: calc(var(--yl-thumbnail-width) * 10 / 16); // HACK: Prevent Safari from stretching images vertically
+          aspect-ratio: 16 / 10;
 
-          @media (max-width: 600px) {
-            --yl-thumbnail-width: 100px;
+          img {
+            border-radius: 4px;
           }
         }
 
         &.titleAuthorSummaryDate {
           /* Place headline and description next to thumbnail. */
           order: -2;
-          flex-basis: calc(100% - var(--yl-thumbnail-width) - var(--yl-p-2xs) - var(--yl-p-2xs));
+          flex-basis: calc(100% - var(--yl-thumbnail-width));
           padding: 0 var(--yl-p-2xs);
+          box-sizing: border-box;
 
           @media (max-width: 291px) {
             flex-basis: 100%;
