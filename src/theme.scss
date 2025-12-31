@@ -2670,9 +2670,21 @@ body.youlag-inactive:not(.reader) main#stream {
         }
       }
 
-      a {
-        /* youlag-inactive: Increase legibilty of link color in opened articles. */
-        filter: brightness(1.5);
+      .content {
+        .text a,
+        footer a {
+          /* youlag-inactive: article content links. */
+          color: #fff;
+          box-shadow: #fff 0 -1px 0 inset;
+        }
+      }
+
+      footer ul.horizontal-list.bottom,
+      .content header .subtitle {
+        a {
+          /* youlag-inactive: Increase legibilty of blue-colored links in opened articles. */
+          filter: brightness(1.6);
+        }
       }
     }
 
