@@ -687,6 +687,11 @@ nav.aside.aside_feed {
   min-height: 61px;
   box-sizing: border-box;
 
+  @media (max-width: 840px) {
+    /* Mobile: header gradient background, adjust to accommodate colors for the header content on mobile */
+    --sid-bg: linear-gradient(135deg, #303030 0%, #252525 40%, #2d2d2d 100%);
+  }
+
 
   /* Page logo */
   .item.title {
@@ -883,7 +888,7 @@ main#stream #stream-footer,
 
 #load_more.loading,
 #load_more.loading:hover {
-  /* Infinite scroll loading spinner  */
+  /* Infinite scroll loading spinner. */
   border-radius: 8px;
 }
 
@@ -891,6 +896,12 @@ main#stream #stream-footer,
 .nav_menu {
   padding: 2rem 1rem 0 1rem;
   box-sizing: border-box;
+
+  div[id^="nav_menu"] > a:only-child,
+  div[id^="nav_menu"] > div:only-child a {
+    /* Round all corners for orphaned menu button. */
+    border-radius: 4px !important;
+  }
 
   #nav_menu_actions {
     flex-wrap: wrap;
@@ -2920,6 +2931,11 @@ body {
     white-space: pre;
     pointer-events: none;
     border-radius: 12px;
+
+    @media (max-width: 840px) {
+      width: calc(100% - 20px - 20px);
+      right: 20px;
+    }
   }
 
   main#stream {
