@@ -1028,7 +1028,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
 
   /* Card hover effect */
   &:not(.active):hover {
-    background-color: hsl(0deg 0% 0% / 6%);
+    background: linear-gradient(209deg, #4d4b4b 0%, #212124 40%, #333 100%);
   }
 
   &:not(.not_read),
@@ -1036,6 +1036,10 @@ body.youlag-active:not(.reader) main#stream div.flux {
   &:not(.current):hover .item .title {
     background: unset;
     background-color: unset;
+  }
+
+  &.favorite {
+    background: linear-gradient(209deg, #5c3c1a 0%, #181009 40%, #3d260a 100%) !important;
   }
   
   /* Card container */
@@ -2804,7 +2808,11 @@ main#stream,
   }
 }
 
-#notification {
+#notification,
+#actualizeProgress {
+  /* #nofication: general notification */
+  /* #actualizeProgress: feed update progress */
+
   border-radius: 12px;
   margin: var(--yl-m-xs);
   max-width: calc(100% - var(--yl-m-xs) * 2);
