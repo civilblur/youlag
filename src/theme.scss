@@ -291,13 +291,18 @@ body.youlag-active:not(.reader) main#stream {
     display: block;
     opacity: 1;
     font-size: var(--yl-text-md);
-    text-align: center;
+    text-align: left;
     text-transform: none;
+    padding: 0;
     margin-top: var(--yl-m-md);
     margin-bottom: var(--yl-m-md);
   }
 
   .transition {
+    /* Hide transition dates for video feeds, keeping rest of styling intact,
+      in case this ends up becoming an option in the extension settings instead. */
+    display: none !important;
+
     /* Global: Date transition in feeds */
     display: flex;
     flex-direction: column-reverse; /* Place category name above date transition label. */
@@ -309,9 +314,12 @@ body.youlag-active:not(.reader) main#stream {
     margin: var(--yl-m-md) 0 var(--yl-m-2xs) 0;
     padding: 0;
 
-    .transition-value a {
-      color: var(--frss-font-color-grey-dark);
+    .transition-value {      
+      a {
+        color: var(--frss-font-color-grey-dark);
+      }
     }
+
 
     .transition-next {
       font-size: 0;
@@ -1000,13 +1008,6 @@ main#stream #stream-footer,
 
 .youlag-active {
   main#stream {
-    .transition,
-    .transition-next {
-      /* youlag-active: Hide transition dates for video feeds, keeping rest of styling intact,
-        in case this ends up becoming an option in the extension settings instead. */
-      display: none !important;
-    }
-
     #new-article + .transition {
       /* youlag-active: first date transition, turn it into "Latest" title */
       font-size: 0;
@@ -2494,6 +2495,13 @@ body.youlag-inactive:not(.reader) main#stream {
   @media (max-width: 840px) {
     padding-right: var(--yl-p-2xs);
   }
+
+
+  #new-article + .transition + .flux {
+    /* youlag-inactive: Add margin to first article, as youlag hides the date transition that initially added spacing. */
+    margin-top: var(--yl-m-md);
+  }
+
 
   div.flux {
     border-radius: 12px;
