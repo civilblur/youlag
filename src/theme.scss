@@ -122,7 +122,7 @@
   }
 }
 
-@mixin yl-gradient-bg($color: '#cbd5e1', $colorDarker: '#64748b', $hover: true) {
+@mixin yl-gradient-bg($color: #cbd5e1, $colorDarker: #64748b, $hover: true) {
   background: linear-gradient(
     to bottom,
     color-mix(in oklab, $color 10%, transparent),
