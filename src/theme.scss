@@ -194,19 +194,19 @@ body.youlag-active:not(.reader) main#stream {
   }
 
   @media (max-width: 600px) {
-    grid-row-gap: 2rem;
+    grid-row-gap: var(--yl-m-xs);
   }
 
   @media (min-width: 1144px) {
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
   }
 
   @media (min-width: 1360px) {
-    grid-template-columns: repeat(3, minmax(240px, 1fr));
+    grid-template-columns: repeat(4, minmax(240px, 1fr));
   }
 
   @media (min-width: 1800px) {
-    grid-template-columns: repeat(4, minmax(200px, 1fr));
+    grid-template-columns: repeat(5, minmax(200px, 1fr));
   }
 }
 
@@ -2587,6 +2587,10 @@ body.youlag-inactive:not(.reader) main#stream {
       }
 
       .item.manage {
+        &:nth-child(2) {
+          order: -1 !important; /* youlag-inactibe: Place favorite first in the bottom row */
+        }
+
         a.item-element.bookmark {
           /* youlag-inactive: Remove ellipsis from being added on 'favorite' icon.  */
           text-overflow: unset;
