@@ -2296,6 +2296,13 @@ main.post {
     padding-left: var(--yl-p-3xs);
     padding-right: var(--yl-p-3xs);
   }
+
+  .category.important .title:not([data-unread="0"])::after {
+    background-color: unset;
+    //@include yl-gradient-bg(#ff6a00, #ee0979);
+    background: linear-gradient(to bottom, color-mix(in oklab, #ff6a00 35%, transparent), color-mix(in oklab, #e3000b 60%, transparent));
+    border: 1px solid color-mix(in oklab, #db511cd6 30%, transparent);
+  }
 }
 
 .tree#sidebar {
