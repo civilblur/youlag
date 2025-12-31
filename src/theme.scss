@@ -122,7 +122,25 @@
   }
 }
 
+@mixin yl-gradient-bg($color: '#cbd5e1', $colorDarker: '#64748b') {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, $color 10%, transparent),
+    color-mix(in oklab, $colorDarker 15%, transparent)
+  );
+  backdrop-filter: blur(60px);
+  border: 1px solid color-mix(in oklab,$color 30%,transparent);
+  transition: filter 0.2s ease-in-out;
 
+  &:hover {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, $color 10%, transparent),
+      color-mix(in oklab, $colorDarker 15%, transparent)
+    );
+    filter: brightness(1.3) saturate(1.4);
+  }
+}
 
 /*****************************************
  * END "VARIABLES AND KEYFRAMES"
@@ -2610,16 +2628,40 @@ main#stream,
 
 #new-article {
   /* Feed updated notification banner */
+  position: sticky;
+  top: var(--yl-m-2xs);
+  z-index: 10;
   grid-column: 1 / -1;
-  border-radius: 8px;
   margin: 1rem 4px;
   overflow: hidden;
+  background: unset;
+  padding-left: var(--yl-p-xs);
+  padding-right: var(--yl-p-xs);
 
   a {
-    background: linear-gradient(135deg, #3466cc 0%, #232b8f 40%, #224faa 100%);
+    @include yl-gradient-bg(#efd01c, #c29903);
+    border-radius: 8px;
+    padding: var(--yl-p-xs);
+  }
+}
 
-    &:hover {
-      background: linear-gradient(135deg, #2d5bb3 0%, #1f2373 40%, #1e3f8c 100%);
+#notification {
+  border-radius: 12px;
+  margin: var(--yl-m-xs);
+  max-width: calc(100% - var(--yl-m-xs) * 2);
+
+  &.good {
+    @include yl-gradient-bg(#1cef6d, #0a9d2a);
+  }
+
+  &.bad {
+    @include yl-gradient-bg(#fb2424, #b90d0d);
+  }
+
+  button.close {
+    img.icon {
+      height: 24px;
+      width: 24px;
     }
   }
 }
