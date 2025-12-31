@@ -573,8 +573,8 @@ function setupTagsDropdownOverride() {
 
   streamContainer.addEventListener('click', async function(event) {
     const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
-    const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle') : null;
-    const entryItemFooter = event.target.closest('div[data-feed] .flux_content footer');
+    const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle[href^="#dropdown-labels-"]') : null;
+    const entryItemFooter = event.target.closest('div[data-feed] .flux_content .content > footer');
     const entryItemFooterDropdown = entryItemFooter ? entryItemFooter.querySelector('.item.labels a.dropdown-toggle') : null;
 
     if (entryItemDropdown || entryItemFooterDropdown) {

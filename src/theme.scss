@@ -1798,7 +1798,8 @@ html {
   body:not(.reader) main#stream div.flux li.item.labels,
   .nav_menu #mark-read-menu,
   .nav_menu #nav_menu_actions,
-  #nav_menu_sort {
+  #nav_menu_sort,
+  body:not(.reader) main#stream div.flux li.item.tags {
      /** 
       * Turn dropdowns into bottom sheets on mobile
       * - Share button
@@ -1806,6 +1807,7 @@ html {
       * - Mark read button group within feed nav menu
       * - Feed actions button group within feed nav menu
       * - Sort button within feed nav menu
+      * - youlag-inactive: Article tags button within article feeds items
       */
 
     .dropdown-toggle:after {
@@ -2392,7 +2394,6 @@ body.youlag-inactive:not(.reader) main#stream {
 
   div.flux {
     border-radius: 12px;
-    overflow: hidden;
     transition: all 0.1s;
     margin-bottom: var(--yl-m-xs);
 
@@ -2685,6 +2686,10 @@ body.youlag-inactive:not(.reader) main#stream {
           /* youlag-inactive: Increase legibilty of blue-colored links in opened articles. */
           filter: brightness(1.6);
         }
+      }
+
+      footer .tags {
+        align-items: center;
       }
     }
 
