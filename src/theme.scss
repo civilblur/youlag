@@ -3364,8 +3364,13 @@ body {
   }
 }
 
-.youlag-video-metadata-favicon-link:has(.youlag-video-metadata-favicon[src=""]) {
-  display: none;
+.youlag-video-metadata-favicon-link {
+  display: flex;
+  align-items: center;
+
+  &:has(.youlag-video-metadata-favicon[src=""]) {
+    display: none;
+  }
 }
 
 .youlag-favorited {
