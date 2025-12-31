@@ -2368,8 +2368,14 @@ body.youlag-active:not(.reader) main#stream {
 }
 
 body.youlag-inactive:not(.reader) main#stream {
+  max-width: 900px;
+  margin: 0 auto;
   padding-left: var(--yl-p-2xs);
   padding-right: var(--yl-p-md);
+
+  @media (max-width: 840px) {
+    padding-right: var(--yl-p-2xs);
+  }
 
   .transition {
     .name {
@@ -2384,6 +2390,19 @@ body.youlag-inactive:not(.reader) main#stream {
     transition: all 0.1s;
     margin-bottom: var(--yl-m-xs);
 
+    @media (max-width: 840px) {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    &.active.current {
+      /* youlag-inactive: article is opened */
+      ul.flux_header {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+
 
     &:hover ul.flux_header {
       .titleAuthorSummaryDate .title {
@@ -2397,11 +2416,15 @@ body.youlag-inactive:not(.reader) main#stream {
       --yl-thumbnail-width: 140px;
       display: flex;
       flex-wrap: wrap;
-      //border-color: #2b2b2b; /* youlag-inactive: feed entry separator border color */
       border: 1px solid color-mix(in oklab,#fff 11%,transparent);
       border-radius: 14px;
       box-sizing: border-box;
       padding: var(--yl-p-2xs) var(--yl-p-3xs);
+
+      @media (max-width: 840px) {
+        border-radius: 0;
+        border-bottom: none
+      }
 
       @media (max-width: 600px) {
         --yl-thumbnail-width: 100px;
@@ -2461,6 +2484,12 @@ body.youlag-inactive:not(.reader) main#stream {
             @media (max-width: 840px) {
               flex-basis: 100%;
             }
+
+            .author {
+              display: block;
+              padding: 0;
+              margin-top: 4px;
+            }
           }
 
           .summary {
@@ -2488,6 +2517,43 @@ body.youlag-inactive:not(.reader) main#stream {
         &.website {
           /* Place website icon and name to the far right. */
           order: 1;
+
+          &, a {
+            display: flex;
+            align-items: center;
+
+            &:hover {
+              .favicon {
+                filter: unset; /* Disable greyscale effect on website icon hover */
+              }
+              
+              .websiteName {
+                opacity: 1;
+                /* Underline workaround, since the websiteName has 'overflow:hidden','text-decoration:underline' can't be applied. */
+                box-shadow: #fff 0 -1px 0 inset;
+              }
+            }
+          }
+
+          .websiteName {
+            max-width: 140px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1;
+            font-size: var(--yl-text-xs);
+            opacity: 0.7;
+          }
+
+          @media (max-width: 840px) {
+            width: unset;
+            max-width: 200px;
+
+
+            .websiteName {
+              font-size: var(--yl-text-2xs);
+            }
+          }
 
           @media (min-width: 839px) {
             & {
