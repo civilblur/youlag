@@ -39,6 +39,7 @@ class YoulagExtension extends Minz_Extension {
         FreshRSS_Context::userConf()->topline_website = 'full';
         FreshRSS_Context::userConf()->topline_thumbnail = 'landscape';
         FreshRSS_Context::userConf()->topline_summary = true;
+        FreshRSS_Context::userConf()->topline_date = true;
 
         // Register hook to block incoming YouTube shorts
         $this->registerHook('entry_before_insert', [$this, 'blockYoutubeShorts']);
