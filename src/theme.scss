@@ -3558,7 +3558,7 @@ body.youlag-tags-modal-open {
   justify-content: center;
 
 
-  .yl-tags-content {
+  .yl-labels-content {
     background-color: #1f1f1f;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
@@ -3573,7 +3573,7 @@ body.youlag-tags-modal-open {
 
 
 
-  .yl-tags-modal-title {
+  .yl-labels-modal-title {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -3587,14 +3587,14 @@ body.youlag-tags-modal-open {
     }
   }
 
-  .yl-tags-list {
+  .yl-labels-list {
     list-style: none;
     padding: 0;
     margin: 0;
     overflow: auto;
     max-height: 450px;
 
-    .yl-tags-list-item {
+    .yl-labels-list-item {
       display: flex;
       align-items: center;
       gap: var(--yl-m-2xs);
@@ -3614,12 +3614,12 @@ body.youlag-tags-modal-open {
     }
   }
 
-  .yl-tags-modal-actions {
+  .yl-labels-modal-actions {
     display: flex;
     gap: var(--yl-p-2xs);
     margin-top: var(--yl-m-md);
 
-    #yl-tags-modal-close {
+    #yl-labels-modal-close {
       width: 100%;
     }
   }
@@ -3632,14 +3632,14 @@ body.youlag-tags-modal-open {
     align-items: flex-end;
     height: 100dvh;
 
-    .yl-tags-content {
+    .yl-labels-content {
       margin: 0;
       max-width: unset;
       border-bottom-left-radius: 0; 
       border-bottom-right-radius: 0;
       animation: slideUp 0.15s ease-in-out forwards; /* Animate bottom sheet from bottom to up */
 
-      .yl-tags-list {
+      .yl-labels-list {
         max-height: min(50vh, 400px);
       }
     }
