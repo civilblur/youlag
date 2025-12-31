@@ -2415,7 +2415,8 @@ body.youlag-inactive:not(.reader) main#stream {
       border-left: none; /* Disable default blue/orange and  border indicator of focused feed item */
     }
 
-    &.favorite {
+    &.favorite,
+    &.favorite.not_read {
       background: linear-gradient(135deg, #50310d 0%, #22170b 40%, #3d2b18 100%); /* Orange glow effect for favorite articles */
     }
 
