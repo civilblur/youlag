@@ -2572,6 +2572,14 @@ body.youlag-active:not(.reader) main#stream {
   }
 }
 
+body.youlag-inactive:not(.reader) {
+  
+  .nav_menu {
+    max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Match position of article */
+    margin: 0 auto;
+  }
+}
+
 body.youlag-inactive:not(.reader) main#stream {
   max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Articles will effectively be max 900px */
   margin: 0 auto;
@@ -2581,7 +2589,6 @@ body.youlag-inactive:not(.reader) main#stream {
   @media (max-width: 840px) {
     padding-right: var(--yl-p-2xs);
   }
-
 
   #new-article + .transition + .flux {
     /* youlag-inactive: Add margin to first article, as youlag hides the date transition that initially added spacing. */
@@ -2945,7 +2952,6 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
   }
-
 }
 
 body.youlag-inactive.yl-page-watch_later:not(.reader) main#stream {
