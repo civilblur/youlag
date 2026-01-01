@@ -795,7 +795,8 @@ function getCurrentPage() {
     },
     {
       path: '/i/',
-      match: () => (!urlParams.has('a') || urlParams.get('a') === 'normal') && !urlParams.has('get') && !urlParams.has('c'),
+      // Home page: no get or c param
+      match: () => !urlParams.has('get') && !urlParams.has('c'),
       className: 'home',
     },
     {
@@ -805,22 +806,22 @@ function getCurrentPage() {
     },
     {
       path: '/i/',
-      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') === 'i',
+      match: () => urlParams.get('get') === 'i',
       className: 'important',
     },
     {
       path: '/i/',
-      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') === 's',
+      match: () => urlParams.get('get') === 's',
       className: 'watch_later',
     },
     {
       path: '/i/',
-      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') === 'T',
+      match: () => urlParams.get('get') === 'T',
       className: 'playlists',
     },
     {
       path: '/i/',
-      match: () => urlParams.get('a') === 'normal' && /^t_\d+$/.test(urlParams.get('get') || ''),
+      match: () => /^t_\d+$/.test(urlParams.get('get') || ''),
       className: () => {
         const n = (urlParams.get('get') || '').substring(2);
         return `playlists t_${n}`;
@@ -828,7 +829,8 @@ function getCurrentPage() {
     },
     {
       path: '/i/',
-      match: () => urlParams.get('a') === 'normal' && urlParams.get('get') && urlParams.get('get').startsWith('c_'),
+      // Category page: get param starts with c_
+      match: () => urlParams.get('get') && urlParams.get('get').startsWith('c_'),
       className: () => {
         const n = urlParams.get('get').substring(2);
         return `category c_${n}`;
@@ -836,7 +838,7 @@ function getCurrentPage() {
     },
     {
       path: '/i/',
-      match: () => (urlParams.get('a') === 'normal' || !urlParams.has('a')) && urlParams.get('get') && urlParams.get('get').startsWith('f_'),
+      match: () => (urlParams.get('get') && urlParams.get('get').startsWith('f_')),
       className: () => {
         const n = urlParams.get('get').substring(2);
         return `category`;
