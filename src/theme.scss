@@ -145,6 +145,7 @@
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
 
   --yl-loading-spinner-background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23fff' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
+  --frss-loading-image: var(--yl-loading-spinner-background-image); /* Replace FreshRSS loading spinner icon. */
 
   --frss-noThumbnailImage-background-color: #4d4d4d; /* FreshRSS striped background color, when image is not yet loaded */
 }
@@ -782,7 +783,6 @@ nav.aside.aside_feed {
 
   @media (max-width: 840px) {
     /* Mobile: header gradient background, adjust to accommodate colors for the header content on mobile */
-    //--sid-bg: linear-gradient(135deg, #303030 0%, #252525 40%, #2d2d2d 100%);
     --sid-bg: linear-gradient(135deg, #303030b0 0%, #252525d9 40%, #2d2d2da1 100%);
     backdrop-filter: blur(80px);
   }
@@ -1480,7 +1480,7 @@ body.youlag-active:not(.reader) main#stream {
 
     .flux_header {
       .summary {
-        /* No support for summary */
+        /* youlag-active: No support for summary on video cards. */
         display: none;
       }
 
@@ -1835,20 +1835,24 @@ html {
 
       @media (min-width: 840px) {
         padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
-      }
-  
-      &.visible {
-        /* Sidenav is visible */
-        & ~ main#stream,
-        & ~ nav.nav_menu {
-          box-sizing: border-box;
-          padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm)); /* Set aside space for the sidebar */
+          
+          &.visible {
+            /* Desktop: Sidenav is visible */
+            & ~ main#stream,
+            & ~ nav.nav_menu {
+              box-sizing: border-box;
+              padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm)); /* Set aside space for the sidebar */
+            }
         }
       }
   
+
+  
       & ~ .close-aside {
         backdrop-filter: blur(8px);
-        z-index: 40;
+        z-index: 50;
+        max-width: 100vw;
+        max-height: 100vh;
       }
     }
   }
@@ -2481,7 +2485,6 @@ main.post {
     top: 50%;
     transform: translateY(-50%);
     margin: 0;
-    //background-color: #89898970;
     font-weight: bold;
     font-size: var(--yl-text-3xs);
     padding-left: var(--yl-p-3xs);
@@ -2737,7 +2740,7 @@ body.youlag-inactive:not(.reader) main#stream {
 
           img {
             aspect-ratio: 16 / 10;
-            max-height: calc(var(--yl-thumbnail-width) * 10 / 16); // HACK: Prevent Safari from stretching images vertically
+            max-height: calc(var(--yl-thumbnail-width) * 10 / 16); /* HACK: Prevent Safari from stretching images vertically */
             border-radius: 8px;
           }
 
@@ -3111,7 +3114,6 @@ main#stream,
   }
 }
 
-
 #new-article {
   /* Feed updated notification banner */
   position: sticky;
@@ -3400,7 +3402,7 @@ body {
 
   main#stream {
     &:before {
-      /* Hide feed content while loading Youlag script. */
+      /* before youlag-loaded: Hide feed content while loading Youlag script. */
       content: "";
       width: 100%;
       height: 100%;
@@ -3411,6 +3413,7 @@ body {
       z-index: 20;
       transition: 0.4s;
       opacity: 1;
+      box-shadow: 0px -20px 30px 30px #0f0f0f; /* Cover content that peeks through, like '#first_load.loading', the FreshRSS feed loading spinner. */
     }
   }
 
