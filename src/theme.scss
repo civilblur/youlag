@@ -720,10 +720,12 @@ nav.aside.aside_feed {
     .configure .dropdown .dropdown-menu {
       /* Remove gap on left side. */
       left: 0 !important;
-      width: var(--yl-sidenav-width);
+      width: max(80%, 280px);
 
       & ~ .dropdown-close {
         backdrop-filter: blur(8px);
+        height: 100vh;
+        z-index: 40;
       }
 
       .toggle_aside {
@@ -774,13 +776,15 @@ nav.aside.aside_feed {
 }
 
 .header {
-  --sid-bg: var(--yl-color-gradient-surface-3); /* Header background color */
-  min-height: 61px;
+  --sid-bg: transparent; /* Header background color */
+  min-height: 54px;
   box-sizing: border-box;
 
   @media (max-width: 840px) {
     /* Mobile: header gradient background, adjust to accommodate colors for the header content on mobile */
-    --sid-bg: linear-gradient(135deg, #303030 0%, #252525 40%, #2d2d2d 100%);
+    //--sid-bg: linear-gradient(135deg, #303030 0%, #252525 40%, #2d2d2d 100%);
+    --sid-bg: linear-gradient(135deg, #303030b0 0%, #252525d9 40%, #2d2d2da1 100%);
+    backdrop-filter: blur(80px);
   }
 
 
@@ -789,16 +793,25 @@ nav.aside.aside_feed {
     position: relative;
     text-align: unset;
     padding-left: 5px;
-    min-height: 61px;
+    height: 100%;
     box-sizing: border-box;
+    padding-top: 0;
+    padding-bottom: 0;
 
     & > a {
       align-content: center;
+      padding-top: 0;
+      padding-bottom: 0;
+
+      img {
+        height: var(--yl-m-md) !important;
+      }
 
       @media (min-width: 840px) {
         img {
           /* Logo, make room for sidenav toggle button */
           margin-left: 46px;
+          margin-top: 4px;
         }
       }
     }
@@ -813,21 +826,31 @@ nav.aside.aside_feed {
     }
   }
 
+  .item {
+    /* Header items padding top and padding bottom. */
+    --frss-padding-top-bottom: var(--yl-p-2xs);
+  }
+
   /* Header search bar */
   .item.search {
+    
     input {
       width: 600px;
+      height: 40px;
       padding: 0.8rem 1.6rem;
       border-top-left-radius: 99px;
       border-bottom-left-radius: 99px;
+      background: transparent;
+      border: 1px solid hsla(0, 0%, 100%, .14);
 
       &:focus,
       &:hover {
-        background-color: #26272a;
-        color: white;
+        background-color: rgba(255,255,255,0.05);
+        color: #ffffff;
+        outline: none;
 
         & ~ .btn {
-          background-color: #57575a;
+          background-color: #292929;
         }
       }
     }
@@ -835,7 +858,7 @@ nav.aside.aside_feed {
     .btn {
       border-top-right-radius: 99px;
       border-bottom-right-radius: 99px;
-      width: 75px;
+      width: 64px;
 
       &:hover {
         background-color: #57575a;
@@ -845,8 +868,8 @@ nav.aside.aside_feed {
 
   /* Header settings button */
   .item.configure .btn {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -873,7 +896,7 @@ nav.aside.aside_feed {
     .item.configure {
       display: flex;
       align-items: center;
-      height: 50px;
+      height: unset;
       justify-content: flex-end;
       padding-right: 14px;
   
@@ -894,7 +917,7 @@ nav.aside.aside_feed {
       min-height: 61px;
       box-sizing: border-box;
       border-radius: 0;
-      z-index: 60;
+      z-index: 50;
   
       .icon {
         /* Hide existing sidenav toggle icon */
@@ -1006,7 +1029,7 @@ main#stream #stream-footer,
 
 /* Feed menu */
 .nav_menu {
-  padding: 2rem 1rem 0 1rem;
+  padding: var(--yl-p-sm) var(--yl-p-xs) 0 var(--yl-p-xs);
   box-sizing: border-box;
 
   div[id^="nav_menu"] > a:only-child,
@@ -1083,7 +1106,8 @@ nav.nav_menu #nav_menu_toggle_aside {
     z-index: 50;
 
     @media (max-width: 840px) {
-      top: 6px;
+      top: 3px;
+      background: transparent;
     }
 
     &:before {
@@ -1730,6 +1754,7 @@ body.youlag-active:not(.reader) main#stream {
 
 html {
 /* Note: Wrapping in an `html` selector is for IDE toggling only; it has no impact on the actual styles. */
+  background-color: #0f0f0f; /* Display background color for macOS overscroll effect, otherwise white color is shown. */
 
   /* Global background and text color */
   body,
@@ -1744,11 +1769,50 @@ html {
     color: white;
   }
 
-  #aside_feed {
-    width: var(--yl-sidenav-width);
+  @media (min-width: 840px) {
+    #aside_feed {
+      /* Desktop: Only set fixed width for desktop. On mobile, adding fixed width causes the sidebar to display by default on all pages.  */
+      width: var(--yl-sidenav-width);
+      padding: 0;
+    }
+  }
 
-    & ~ .close-aside {
-      backdrop-filter: blur(8px);
+  .yl-page-home,
+  .yl-page-important,
+  .yl-page-watch_later,
+  .yl-page-playlists,
+  .yl-page-category {
+    /* Only implement fixed sidebar for feed pages (to exclude other pages like settings. */
+    #aside_feed {
+      position: fixed; /* sidebar, reimplement its behavior. */
+      top: 0px;
+      left: 0px;
+      height: 100dvh;
+      z-index: 50;  /* Same z-index as toggle sidenav button */
+      background-color: rgb(15, 15, 15);
+      box-sizing: border-box;
+
+      @media (max-width: 840px) {
+        z-index: 60; /* Mobile: Hide sidenav toggle, as mobile sidenav already has a close button. */
+      }
+
+      @media (min-width: 840px) {
+        padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
+      }
+  
+      &.visible {
+        /* Sidenav is visible */
+        & ~ main#stream,
+        & ~ nav.nav_menu {
+          box-sizing: border-box;
+          padding-left: var(--yl-sidenav-width); /* Set aside space for the sidebar */
+        }
+      }
+  
+      & ~ .close-aside {
+        backdrop-filter: blur(8px);
+        z-index: 40;
+      }
     }
   }
 
@@ -2359,7 +2423,7 @@ main.post {
 
   @media (min-width: 840px) {
     /* Desktop, add padding-top on feed sidenav */
-    padding-top: 2rem;
+    padding-top: var(--yl-p-sm);
 
     & > * {
       /* On desktop, prevent side navigation to stretch when main content isn't loaded, caused by the layout relying on "display: table" */
