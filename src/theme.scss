@@ -998,7 +998,11 @@ main#stream #stream-footer,
 }
 
 #nav_entries {
-  width: var(--yl-sidenav-width);
+
+  @media (min-width: 840px) {
+    /* Desktop: Only limit the size of the bottom navigation on desktop, as on mobile, it needs to be dynamic. */
+    width: var(--yl-sidenav-width);
+  }
 }
 
 #load_more {
@@ -1097,6 +1101,10 @@ main#stream #stream-footer,
 }  
 
 nav.nav_menu #nav_menu_toggle_aside {
+  @media (max-width: 840px) {
+    margin: 0;
+  }
+
   /* Button to show/hide sidenav */
   & > button.btn {
     position: fixed;
