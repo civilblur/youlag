@@ -1161,19 +1161,17 @@ nav.nav_menu {
   }
 
   #nav_menu_toggle_aside {
-    @media (max-width: 840px) {
-      /* Mobile: Container for sidenav toggle button. */
-      margin: 0;
-    }
+    /* Mobile: Container for sidenav toggle button. */
+    position: fixed;
+    top: 5px;
+    left: 3px;
+    z-index: 60;
+    margin: 0;
   
     /* Button to show/hide sidenav. */
     & > button.btn {
-      position: fixed;
-      top: 12px;
-      left: 6px;
       border-radius: 8px;
       transition: background-color 0.3s;
-      z-index: 50;
   
       @media (max-width: 840px) {
         height: 43px;
@@ -1911,6 +1909,10 @@ html {
       z-index: 50;  /* Same z-index as toggle sidenav button */
       background-color: var(--yl-color-body-background);
       box-sizing: border-box;
+
+      .toggle_aside {
+        display: none !important; /* Hide existing mobile sidenav toggle button to priotize the 'nav_menu_toggle_aside' (which has been made 'position:fixed'). */
+      }
 
       @media (max-width: 840px) {
         z-index: 60; /* Mobile: Hide sidenav toggle, as mobile sidenav already has a close button. */
