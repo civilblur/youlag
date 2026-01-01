@@ -998,6 +998,9 @@ main#stream #stream-footer,
 }
 
 #nav_entries {
+  --sid-bg: linear-gradient(135deg, #303030b0 0%, #252525d9 40%, #2d2d2da1 100%);
+  backdrop-filter: blur(80px);
+
 
   @media (min-width: 840px) {
     /* Desktop: Only limit the size of the bottom navigation on desktop, as on mobile, it needs to be dynamic. */
