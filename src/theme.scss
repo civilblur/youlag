@@ -270,14 +270,28 @@ body.youlag-active:not(.reader) main#stream {
   }
 
   &.yl-page-playlists:not([class*="yl-page-t_"]) {
-    /* Set transition name to "Playlists" only on parent playlists page. */
+    /* Set transition name to "Playlists" only on parent pages. */
     main#stream {
       .transition .name {
         font-size: 0;
         
         &:before {
           content: "Playlists";
-          font-size: var(--yl-text-xs);
+          font-size: var(--yl-text-md);
+        }
+      }
+    }
+  }
+
+  &.yl-page-watch_later {
+    /* Set transition name to "Watch later" only on parent pages. */
+    main#stream {
+      .transition .name {
+        font-size: 0;
+        
+        &:before {
+          content: "Watch later";
+          font-size: var(--yl-text-md);
         }
       }
     }
@@ -1000,6 +1014,7 @@ main#stream #stream-footer,
 #nav_entries {
   --sid-bg: linear-gradient(135deg, #303030b0 0%, #252525d9 40%, #2d2d2da1 100%);
   backdrop-filter: blur(80px);
+  z-index: 45; /* Avoid blocking mobile dropdown menus that are displayed as bottom sheets. */
 
 
   @media (min-width: 840px) {
@@ -2073,6 +2088,14 @@ html {
       border-bottom-right-radius: 0;
       overflow: auto;
       animation: slideUp 0.15s ease-in-out forwards; /* Animate bottom sheet from bottom to up */
+
+      @media (max-width: 8400px) {
+        & + .dropdown-close {
+          /* Mobile: FreshRSS dropdown background acts as an onblur, close function. */
+          background: var(--frss-modal-background-color-transparent);
+          backdrop-filter: blur(8px);
+        }
+      }
 
 
       &[role="radiogroup"] {
