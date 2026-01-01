@@ -1857,6 +1857,8 @@ body.youlag-active:not(.reader) main#stream {
 html {
 /* Note: Wrapping in an `html` selector is for IDE toggling only; it has no impact on the actual styles. */
   background-color: var(--yl-color-body-background); /* Display background color for macOS overscroll effect, otherwise white color is shown. */
+  min-height: 100%;
+  height: auto; /* Reset FreshRSS 'height:100%', this prevent's e.g. header to be used as sticky top, as the stick ends up being limited by length of the page height. */
 
   /* Global background and text color */
   body,
