@@ -1104,13 +1104,8 @@ main#stream {
       /* youlag-active: first date transition */
       display: block;
       grid-column: 1 / -1;
-      padding: 0 var(--yl-p-2xs); /* Align category name with thumbnail opposed to card container (which is not visible until hover on desktop). */
       line-height: 1.2;
       font-size: var(--yl-text-md);
-
-      @media (max-width: 840px) {
-        padding: 0; /* Align category name with card container on mobile, as the container is visible on mobile devices by default. */
-      }
     }
 
     @media (max-width: 840px) {      
