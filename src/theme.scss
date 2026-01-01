@@ -141,6 +141,7 @@
   --yl-sidenav-label-font-size: var(--yl-text-xs);
   --yl-sidenav-width: 280px;
 
+  --yl-color-body-background: #19191a;
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
 
@@ -1020,6 +1021,7 @@ main#stream #stream-footer,
   @media (min-width: 840px) {
     /* Desktop: Only limit the size of the bottom navigation on desktop, as on mobile, it needs to be dynamic. */
     width: var(--yl-sidenav-width);
+    z-index: 50; /* Desktop: Place bottom navigation on top of sidenav. */
   }
 }
 
@@ -1809,7 +1811,7 @@ body.youlag-active:not(.reader) main#stream {
 
 html {
 /* Note: Wrapping in an `html` selector is for IDE toggling only; it has no impact on the actual styles. */
-  background-color: #0f0f0f; /* Display background color for macOS overscroll effect, otherwise white color is shown. */
+  background-color: var(--yl-color-body-background); /* Display background color for macOS overscroll effect, otherwise white color is shown. */
 
   /* Global background and text color */
   body,
@@ -1819,9 +1821,9 @@ html {
   .nav.nav-list.aside ul,
   .nav-list .item,
   .tree .tree-folder .tree-folder-title {
-    background-color: #0f0f0f;
-    --frss-font-color-dark: white;
-    color: white;
+    background-color: var(--yl-color-body-background);
+    --frss-font-color-dark: #ffffff;
+    color: #ffffff;
   }
 
   @media (min-width: 840px) {
@@ -1844,7 +1846,7 @@ html {
       left: 0px;
       height: 100dvh;
       z-index: 50;  /* Same z-index as toggle sidenav button */
-      background-color: rgb(15, 15, 15);
+      background-color: var(--yl-color-body-background);
       box-sizing: border-box;
 
       @media (max-width: 840px) {
@@ -2305,13 +2307,13 @@ main.post {
 #global #overlay {
 
   #panel {
-    background: #0f0f0f;
+    background: var(--yl-color-body-background);
 
     .flux.not_read:not(.current) {
-      background: #0f0f0f;
+      background: var(--yl-color-body-background);
 
       a {
-        color: white;
+        color: #ffffff;
       }
     }
 
@@ -2487,11 +2489,10 @@ main.post {
   }
 }
 
-.aside.aside_feed {
+#aside_feed.aside {
+  border-right: 1px solid color-mix(in oklab, #fff 11%, transparent);
 
   @media (min-width: 840px) {
-    /* Desktop, add padding-top on feed sidenav */
-    padding-top: var(--yl-p-sm);
 
     & > * {
       /* On desktop, prevent side navigation to stretch when main content isn't loaded, caused by the layout relying on "display: table" */
@@ -3314,12 +3315,12 @@ body:has(.tree-folder.category.favorites.active) {
 
   &,
   .content{
-    background: #0f0f0f;
+    background: var(--yl-color-body-background);
   }
 
   &,
   .text {
-    color: white;
+    color: #ffffff;
   }
 
   .go_website {
@@ -3327,7 +3328,7 @@ body:has(.tree-folder.category.favorites.active) {
   }
 
   .flux_content {
-    background: #0f0f0f;
+    background: var(--yl-color-body-background);
   }
 }
 
@@ -3409,7 +3410,7 @@ body {
     width: 280px;
     height: 82px;
     backdrop-filter: blur(60px);
-    box-shadow: inset -8px 4px 70px 0px hsla(0, 0%, 100%, .1137254902), 0 8px 32px 0 rgba(0, 0, 0, .5019607843);
+    box-shadow: inset -8px 4px 70px 0px hsla(0, 0%, 100%, .1137254902);
     border: 1px solid color-mix(in oklab,#ffffff 30%,transparent);
     background-image: var(--yl-loading-spinner-background-image);
     background-repeat: no-repeat;
@@ -3444,11 +3445,11 @@ body {
       top: 0;
       left: 0;
       position: absolute;
-      background: #0f0f0f;
+      background: var(--yl-color-body-background);
       z-index: 20;
       transition: 0.4s;
       opacity: 1;
-      box-shadow: 0px -4px 14px 0px #0f0f0f; /* Cover content that peeks through, like '#first_load.loading', the FreshRSS feed loading spinner. */
+      box-shadow: 0px -4px 14px 0px var(--yl-color-body-background); /* Cover content that peeks through, like '#first_load.loading', the FreshRSS feed loading spinner. */
     }
   }
 
