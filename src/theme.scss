@@ -1923,6 +1923,7 @@ html {
   .nav_menu {
     background-color: unset;
     border-color: unset;
+    text-align: left;
 
     .stick .btn.active,
     .group .btn.active {
@@ -2572,7 +2573,7 @@ body.youlag-active:not(.reader) main#stream {
 }
 
 body.youlag-inactive:not(.reader) main#stream {
-  max-width: 900px;
+  max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Articles will effectively be max 900px */
   margin: 0 auto;
   padding-left: var(--yl-p-2xs);
   padding-right: var(--yl-p-md);
