@@ -198,7 +198,7 @@ body.youlag-active:not(.reader) main#stream {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
   gap: 4px;
-  padding: 1.5rem;
+  padding: 0 var(--yl-p-2xs) var(--yl-p-sm) var(--yl-p-2xs);
 
   @media (max-width: 840px) {
     grid-template-columns: minmax(200px, 1fr);
@@ -489,7 +489,7 @@ nav.aside.aside_feed {
       /* Hide text, later replace with psuedo element :before text */
       font-size: 0;
       flex: 1;
-      height: 52px;
+      height: 46px;
       margin-left: 8px;
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;
@@ -2760,22 +2760,32 @@ body.youlag-active:not(.reader) main#stream {
 }
 
 body.youlag-inactive:not(.reader) {
-  
   .nav_menu {
-    max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Match position of article */
+    /* youlag-inactive: Feed navigation, align position with feed.. */
+    max-width: 900px;
     margin: 0 auto;
+    padding-left: 0;
+  }
+
+  nav.aside_feed {
+    &.visible ~ .nav_menu {
+      max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Match position of article */
+      margin: 0 auto;
+    }
+  
+    &.visible ~ main#stream {
+      /* Desktop, sidenav opened */
+      max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Articles will effectively be max 900px */
+    }
   }
 }
 
-body.youlag-inactive:not(.reader) nav.aside_feed.visible ~ main#stream {
-  /* Desktop, sidenav opened */
-  max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Articles will effectively be max 900px */
-}
 
 body.youlag-inactive:not(.reader) main#stream {
   margin: 0 auto;
-  padding-left: var(--yl-p-2xs);
+  padding-left: var(--yl-p-md);
   padding-right: var(--yl-p-md);
+  max-width: 900px;
 
   @media (max-width: 840px) {
     padding: 0;
@@ -3551,7 +3561,7 @@ body {
     padding-left: 58px;
     box-sizing: border-box;
     font-family: arial;
-    font-size: var(--yl-text-sm);
+    font-size: var(--yl-text-xs);
     white-space: pre;
     pointer-events: none;
     border-radius: 12px;
