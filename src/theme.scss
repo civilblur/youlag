@@ -1114,7 +1114,7 @@ main#stream #stream-footer,
   
       }
     }
-  
+
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
       /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
       z-index: 20;
@@ -1239,29 +1239,10 @@ body.youlag-active:not(.reader) main#stream div.flux {
   &.favorite {
     background: linear-gradient(209deg, #5c3c1a 0%, #181009 40%, #3d260a 100%) !important;
   }
-  
-  /* Card container */
-  .flux_header {
-    /* In card default state, the header is the card container itself, unlike in card expended view where it is used as a header/toolbar. */
-    border-radius: 12px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    height: 100%;
-    max-width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    border: none;
-    background: unset;
-
-    &:hover,
-    &:hover:not(.current):hover .item .title {
-      /* Prevent background change on hover. */
-      background-color: unset;
-      background: unset;
-    }
 
 
+
+  &:not(.current):not(.active) .flux_header {
     &:before {
       /* Decorative attr(data-article-authors) text on thumbnail placeholder, visible for feeds without images */
       /* Alternative: content:  attr(data-website-name); */
@@ -1284,6 +1265,53 @@ body.youlag-active:not(.reader) main#stream div.flux {
       background-clip: border-box;
       -webkit-background-clip: text;
       -webkit-text-fill-color: rgba(0,0,0,0);
+    }
+  }
+
+  &.current.active {
+    /* youlag-active: Styling for when card was triggered by FreshRSS bottom navigation 'Settings -> Display -> Show the navigation buttons',
+       and not captured byy youlag's eventlistener. */
+    overflow-x: hidden;
+    
+    .flux_header {
+      background-color: #282626 !important;
+      height: auto; /* Prevent expanding when parent element is stretched. */
+  
+      .titleAuthorSummaryDate {
+        padding-left: 0 !important; /* Reset position, that otherwise would have been reserved for author avatar. */
+      }
+    }
+
+    .flux_content {
+      max-width: 100%;
+      flex: 1;
+      background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
+      
+      & > .content {
+        max-width: 100%;
+      } 
+    }
+  }
+
+  /* Card container */
+  .flux_header {
+    /* In card default state, the header is the card container itself, unlike in card expended view where it is used as a header/toolbar. */
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 100%;
+    max-width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: none;
+    background: unset;
+
+    &:hover,
+    &:hover:not(.current):hover .item .title {
+      /* Prevent background change on hover. */
+      background-color: unset;
+      background: unset;
     }
 
     .item.titleAuthorSummaryDate {
@@ -1460,7 +1488,7 @@ body.youlag-active:not(.reader) main#stream div.flux.active.current {
   article {
     display: flex;
     flex-direction: column;
-    background-color: hsl(0deg 0% 9%);
+    background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
   }
 }
 
