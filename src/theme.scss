@@ -853,6 +853,11 @@ nav.aside.aside_feed {
   .item.search {
     display: flex;
     justify-content: center;
+    max-width: 75%;
+
+    form {
+      max-width: 100%;
+    }
     
     input {
       width: 600px;
