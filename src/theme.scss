@@ -137,7 +137,7 @@
   --yl-favicon-avatar-size: 34px;
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
-  --yl-video-pip-width: min(500px, 60%);
+  --yl-video-pip-width: min(460px, 60%);
   --yl-sidenav-label-font-size: var(--yl-text-xs);
   --yl-sidenav-width: 280px;
 
@@ -3307,6 +3307,13 @@ body:has(.tree-folder.category.favorites.active) {
 
   #youlagTheaterModal {
     transition: .2s; /* Time to minimize to mini video player */
+  }
+
+  @media (max-width: 840px) {
+    &:has(#nav_entries) #youlagTheaterModal {
+      /* Mobile: Place pip video above bottom navigation bar. */
+      bottom: calc(4.5rem + 20px); /* 4.5rem = height of bottom navigation bar */
+    }
   }
 }
  
