@@ -953,9 +953,6 @@ nav.aside.aside_feed {
 
 }
 
-
-
-
 /* End of feed footer */
 main#stream #stream-footer,
 #overlay #panel #stream-footer {
@@ -998,6 +995,10 @@ main#stream #stream-footer,
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+#nav_entries {
+  width: var(--yl-sidenav-width);
 }
 
 #load_more {
@@ -1805,7 +1806,7 @@ html {
         & ~ main#stream,
         & ~ nav.nav_menu {
           box-sizing: border-box;
-          padding-left: var(--yl-sidenav-width); /* Set aside space for the sidebar */
+          padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm)); /* Set aside space for the sidebar */
         }
       }
   
