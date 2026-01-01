@@ -1956,6 +1956,28 @@ html {
 
   .dropdown-menu {
     list-style: none;
+
+    form .search {
+      input {
+        /* Mobile: Dropdown search input field */
+        border-bottom-left-radius: 8px;
+        border-top-left-radius: 8px;
+      }
+      
+      .btn[type="submit"] {
+        /* Mobile: Dropdown search submit button */
+        background: var(--yl-color-gradient-active);
+  
+        img {
+          filter: brightness(5);
+        }
+      }
+    }
+
+    .help {
+      font-size: var(--yl-text-sm);
+      margin-top: var(--yl-m-sm);
+    }
   }
 
   article .content figure figcaption {
@@ -2235,33 +2257,42 @@ html {
   color: white;
 }
 
-.dropdown-menu,
-.box {
-  background-color: #303136;
-  color: white;
-  border-radius: 12px;
-
-  li.item {
-    &:hover {
-      background-color: hsla(0,0%,100%,.06);
-    }
-  }
-
-  .box-content .item {
-    background-color: #303136;
-  }
-
-  .box-content .item,
-  .box-content .item a {
+.dropdown {
+  /* Dropdown menu styling. Displayed as bottom sheets on mobile. */
+  .dropdown-menu,
+  .box {
     background-color: #303136;
     color: white;
+    border-radius: 12px;
+  
+    .box-content .item {
+      background-color: #303136;
+    }
+  
+    .box-content .item,
+    .box-content .item a {
+      background-color: #303136;
+      color: white;
+    }
+  
+    .item.dropdown-section ~ .dropdown-section,
+    .item.separator {
+      border-top-color: #646464;
+      border-bottom-color: #646464;
+      border-color: #646464;
+    }
   }
+}
 
-  .item.dropdown-section ~ .dropdown-section,
-  .item.separator {
-    border-top-color: #646464;
-    border-bottom-color: #646464;
-    border-color: #646464;
+.dropdown:not(#dropdown-search-wrapper) {
+  /* Add hover effect to dropdown items, while exluding e.g. #dropdown-search-wrapper */
+  .dropdown-menu,
+  .box {
+    li.item {
+      &:hover {
+        background-color: hsla(0,0%,100%,.06);
+      }
+    }
   }
 }
 
