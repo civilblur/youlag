@@ -572,6 +572,7 @@ nav.aside.aside_feed {
     .tree-folder.category {
       .tree-folder-title .title {
         font-weight: normal;
+        background: none;
       }
     }
 
@@ -1033,39 +1034,34 @@ main#stream #stream-footer,
 .youlag-active {
   main#stream {
     #new-article + .transition {
-      /* youlag-active: first date transition, turn it into "Latest" title */
-      font-size: 0;
+      /* youlag-active: first date transition */
       display: block;
       grid-column: 1 / -1;
       padding: 0 var(--yl-p-2xs);
       line-height: 1.2;
       margin-top: var(--yl-m-md);
       margin-bottom: var(--yl-m-sm);
-
-      &:before {
-        content: "Latest"; /* TODO: Handle text with javascript instead, user can change sort option, this will no longer make sense. */
-        font-size: var(--yl-text-md);
-        font-weight: bold;
-        color: #ffffff;
-      }
+      font-size: var(--yl-text-md);
     }
 
-    /* Card day section title */
-    .transition {
+    @media (max-width: 840px) {      
+      /* Mobile: first date transition, display the category name only */
+      #new-article + .transition {
+        display: block !important;
   
-      & > .name {
-        /* Category name */
-        display: block;
-        color: #ffffff;
-        padding: 0;
-        margin-top: 0.5rem;
-
-        @media (min-width: 840px) {
-          /* Destkop, youlag-active: Hide category name */
+        & > .transition-value {
           display: none;
         }
+    
+        & > .name {
+          /* Category name */
+          display: block !important;
+          color: #ffffff;
+          padding: 0;
+          margin-top: 0.5rem;
+        }
+  
       }
-
     }
   
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
@@ -2314,14 +2310,6 @@ main.post {
           }
 
         }
-
-        &.active {
-          background-color: #303136;
-        }
-
-        &.active a:after {
-          border: none;
-        }
       }
     }
   }
@@ -2385,18 +2373,27 @@ main.post {
   }
 
 
-  .category .title:not([data-unread="0"])::after {
+  .category .title:not([data-unread="0"]):after,
+  .tree .tree-folder ul.tree-folder-items li.item a:after,
+  .tree .tree-folder ul.tree-folder-items li.item.active a:after {
     top: 50%;
     transform: translateY(-50%);
     margin: 0;
-    background-color: #89898970;
+    //background-color: #89898970;
     font-weight: bold;
     font-size: var(--yl-text-3xs);
     padding-left: var(--yl-p-3xs);
     padding-right: var(--yl-p-3xs);
+    border: 1px solid rgb(255 255 255 / 14%);
+    @include yl-gradient-btn-bg(#343434, #303030);
   }
 
-  .category.important .title:not([data-unread="0"])::after {
+  .tree .tree-folder ul.tree-folder-items li.item.active a:after,
+  .tree .tree-folder ul.tree-folder-items li.item a:after {
+    background: transparent;
+  }
+
+  .category.important .title:not([data-unread="0"]):after {
     background-color: unset;
     background: linear-gradient(to bottom, color-mix(in oklab, #ff6a00 35%, transparent), color-mix(in oklab, #e3000b 60%, transparent));
     border: 1px solid color-mix(in oklab, #db511cd6 30%, transparent);
@@ -2608,6 +2605,10 @@ body.youlag-inactive:not(.reader) main#stream {
             border-radius: 12px;
             margin-left: 8px;
             background-color: rgba(255, 255, 255, 0.04);
+
+            &:hover {
+              background-color: hsla(0, 0%, 100%, .08);
+            }
           }
         }
 
@@ -2937,7 +2938,7 @@ body:not(.reader) main#stream {
     ul.horizontal-list.flux_header {
 
       &:hover {
-        --grey-lighter: #2f3136;
+        --grey-lighter: #252525;
 
         .item .title {
           background: transparent !important;        
