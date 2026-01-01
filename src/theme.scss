@@ -2645,8 +2645,12 @@ body.youlag-inactive:not(.reader) {
   }
 }
 
-body.youlag-inactive:not(.reader) main#stream {
+body.youlag-inactive:not(.reader) nav.aside_feed.visible ~ main#stream {
+  /* Desktop, sidenav opened */
   max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Articles will effectively be max 900px */
+}
+
+body.youlag-inactive:not(.reader) main#stream {
   margin: 0 auto;
   padding-left: var(--yl-p-2xs);
   padding-right: var(--yl-p-md);
@@ -2765,8 +2769,8 @@ body.youlag-inactive:not(.reader) main#stream {
           height: auto;
 
           img {
-            aspect-ratio: 16 / 10;
-            max-height: calc(var(--yl-thumbnail-width) * 10 / 16); /* HACK: Prevent Safari from stretching images vertically */
+            width: 120px;
+            height: 90px;
             border-radius: 8px;
           }
 
@@ -2945,6 +2949,8 @@ body.youlag-inactive:not(.reader) main#stream {
       .flux_content {
         background-color: #26272a;
         background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
         
         header {
           h1.title a {
@@ -2970,6 +2976,9 @@ body.youlag-inactive:not(.reader) main#stream {
         .subtitle {
           .author {
             --light-font-color: #AAAAAA;
+            /* youlag-inactive: add spacing between 'By:' and 'author name'. */
+            display: inline-flex;
+            gap: 4px;
           }
         }
 
