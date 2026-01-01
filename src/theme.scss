@@ -851,6 +851,8 @@ nav.aside.aside_feed {
 
   /* Header search bar */
   .item.search {
+    display: flex;
+    justify-content: center;
     
     input {
       width: 600px;
