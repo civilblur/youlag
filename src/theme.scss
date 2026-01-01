@@ -138,8 +138,10 @@
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-pip-width: min(460px, 60%);
-  --yl-sidenav-label-font-size: var(--yl-text-xs);
+  --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
   --yl-sidenav-width: 280px;
+  --yl-sidenav-icon-size: 16px;
+  --yl-sidenav-icon-label-gap: var(--yl-space-sm);
 
   --yl-color-body-background: #19191a;
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
@@ -391,8 +393,8 @@ body.youlag-active:not(.reader) main#stream {
         .tree-folder-title:before {
           /* Playlist icon */
           content:"";
-          width: 20px;
-          height: 20px;
+          width: var(--yl-sidenav-icon-size);
+          height: var(--yl-sidenav-icon-size);
           position: absolute;
           filter: invert(1);
           background-repeat: no-repeat;
@@ -478,7 +480,8 @@ nav.aside.aside_feed {
       content: "Manage feeds";
       position: absolute;
       top: 50%;
-      left: 69px;
+      /* The 21px represents the padding and margin-left around the button. */
+      left: calc(21px + var(--yl-sidenav-icon-size) + var(--yl-sidenav-icon-label-gap));
       transform: translateY(-50%);
       z-index: 1;
       font-weight: normal;
@@ -486,6 +489,7 @@ nav.aside.aside_feed {
     }
 
     &:after {
+      /* RSS icon */
       content: "";
       position: absolute;
       top: 50%;
@@ -493,11 +497,10 @@ nav.aside.aside_feed {
       transform: translateY(-50%);
       z-index: 1;
       filter: invert(1);
-      width: 20px;
-      height: 20px;
+      width: var(--yl-sidenav-icon-size);
+      height: var(--yl-sidenav-icon-size);
       pointer-events: none;
       background-repeat: no-repeat;
-      /* RSS icon */
       background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0OTAgNDkwIj48cGF0aCBkPSJNNDY4LjIgNDg5LjVIMjAuOEM5LjQgNDg5LjUgMCA0ODAuMSAwIDQ2OC43VjIxLjNDMCA5LjkgOS40LjUgMjAuOC41aDQ0OC40QzQ4MC42LjUgNDkwIDkuOSA0OTAgMjEuM3Y0NDguNGMtMSAxMC40LTEwLjQgMTkuOC0yMS44IDE5Ljh6TTQwLjYgNDQ4LjloNDA3LjhWNDEuMUg0MC42djQwNy44eiIvPjxwYXRoIGQ9Ik0yNjAuMSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTc3LTYyLjQtMTM5LjQtMTM5LjQtMTM5LjQtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOFM4OC41IDIxOCA5OS45IDIxOGM5OS45IDAgMTgxIDgxLjEgMTgxIDE4MSAwIDExLjQtOS40IDIwLjgtMjAuOCAyMC44eiIvPjxwYXRoIGQ9Ik0zNDcuNSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTEyNC44LTEwMi0yMjcuOC0yMjcuOC0yMjcuOC0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44czkuNC0yMC44IDIwLjgtMjAuOGMxNDcuNyAwIDI2OC40IDEyMC43IDI2OC40IDI2OC40IDEgMTIuNC04LjQgMjEuOC0xOS44IDIxLjh6TTE3My43IDQxOS44Yy0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44IDAtMjkuMS0yMy45LTUzLjEtNTMuMS01My4xLTExLjQgMC0yMC44LTkuNC0yMC44LTIwLjhzOS40LTIwLjggMjAuOC0yMC44YzUyIDAgOTQuNyA0Mi43IDk0LjcgOTQuNyAwIDExLjQtOS4zIDIwLjgtMjAuOCAyMC44eiIvPjwvc3ZnPg==);
     }
 
@@ -614,8 +617,8 @@ nav.aside.aside_feed {
       .tree-folder-title:before {
         /* Video icon */
         content:"";
-        width: 20px;
-        height: 20px;
+        width: var(--yl-sidenav-icon-size);
+        height: var(--yl-sidenav-icon-size);
         position: absolute;
         filter: invert(1);
         pointer-events: none;
@@ -643,8 +646,8 @@ nav.aside.aside_feed {
       .tree-folder-title:before {
         /* Bell icon */
         content:"";
-        width: 20px;
-        height: 20px;
+        width: var(--yl-sidenav-icon-size);
+        height: var(--yl-sidenav-icon-size);
         position: absolute;
         filter: invert(1);
         background-repeat: no-repeat;
@@ -663,8 +666,8 @@ nav.aside.aside_feed {
       .tree-folder-title:before {
         /* Star icon */
         content:"";
-        width: 20px;
-        height: 20px;
+        width: var(--yl-sidenav-icon-size);
+        height: var(--yl-sidenav-icon-size);
         position: absolute;
         filter: invert(1);
         pointer-events: none;
@@ -1165,7 +1168,7 @@ nav.nav_menu {
     & > button.btn {
       position: fixed;
       top: 12px;
-      left: 8px;
+      left: 6px;
       border-radius: 8px;
       transition: background-color 0.3s;
       z-index: 50;
@@ -2463,9 +2466,9 @@ main.post {
       }
 
       img.icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 2rem;
+        width: var(--yl-sidenav-icon-size);
+        height: var(--yl-sidenav-icon-size);
+        margin-right: var(--yl-sidenav-icon-label-gap);
         filter: brightness(3) !important; /* Prevent chevron icon from having its filter removed on hover */
       }
 
@@ -2508,7 +2511,7 @@ main.post {
         }
 
         a.dropdown-toggle {
-          width: 20px;
+          width: var(--yl-sidenav-icon-size);
           padding-right: 10px;
           padding-left: 15px;
         }
