@@ -1882,21 +1882,30 @@ html {
       padding: 0;
     }
 
-    .youlag-loaded #aside_feed {
-      /* Desktop: Add back FreshRSS logo to sidenav, only if youlag script and css is ready. */
-      &::before {
-        content: "";
-        background-image: url(../themes/icons/FreshRSS-logo.svg);
-        width: 130px;
-        height: 26px;
-        z-index: 100;
-        position: absolute;
-        top: 17.5px; /* Match location of FreshRSS logo in top header, underneath the fixed positioned sidenav. */
-        left: 65px;
-        background-repeat: no-repeat;
-        filter: grayscale(1) brightness(5);
+    .youlag-loaded {
+      &.yl-page-home,
+      &.yl-page-important,
+      &.yl-page-watch_later,
+      &.yl-page-playlists,
+      &.yl-page-category {
+        #aside_feed {
+          /* Desktop: Add back FreshRSS logo to sidenav, only if youlag script and css is ready. */
+          &:before {
+            content: "";
+            background-image: url(../themes/icons/FreshRSS-logo.svg);
+            width: 130px;
+            height: 26px;
+            z-index: 100;
+            position: absolute;
+            top: 17.5px; /* Match location of FreshRSS logo in top header, underneath the fixed positioned sidenav. */
+            left: 65px;
+            background-repeat: no-repeat;
+            filter: grayscale(1) brightness(5);
+          }
+        }
       }
     }
+    
   }
 
   .yl-page-home,
