@@ -1163,10 +1163,15 @@ nav.nav_menu {
   #nav_menu_toggle_aside {
     /* Mobile: Container for sidenav toggle button. */
     position: fixed;
-    top: 5px;
-    left: 3px;
+    top: 12px;
+    left: 7px;
     z-index: 60;
     margin: 0;
+
+    @media (max-width: 840px) {
+      top: 5px;
+      left: 3px;
+    }
   
     /* Button to show/hide sidenav. */
     & > button.btn {
@@ -1175,7 +1180,6 @@ nav.nav_menu {
   
       @media (max-width: 840px) {
         height: 43px;
-        top: 5px;
         background: transparent;
       }
   
