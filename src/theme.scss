@@ -146,6 +146,8 @@
   --yl-color-body-background: #19191a;
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
+  --yl-color-text-default: #dedee4;
+  --yl-color-text-default-emphasis: #f8f8fb; /* Stronger contrast than default text color, e.g. for titles */
 
   --yl-loading-spinner-background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23fff' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
   --frss-loading-image: var(--yl-loading-spinner-background-image); /* Replace FreshRSS loading spinner icon. */
@@ -811,7 +813,7 @@ nav.aside.aside_feed {
       &:focus,
       &:hover {
         background-color: rgba(255,255,255,0.05);
-        color: #ffffff;
+        color: var(--yl-color-text-default);
         outline: none;
 
         & ~ .btn {
@@ -1056,7 +1058,6 @@ main#stream {
       text-transform: none;
       margin: var(--yl-m-md) 0;
       padding: 0;
-      color: #ffffff;
       font-weight: bold;
       line-height: 1;
     }
@@ -1125,7 +1126,7 @@ main#stream {
         & > .name {
           /* Category name */
           display: block;
-          color: #ffffff;
+          color: var(--yl-color-text-default);
           padding: 0;
         }
   
@@ -1271,7 +1272,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       padding-bottom: calc(40.2% - 12px);
       padding-left: 20px;
       font-size: min(1.7rem,5vw);
-      color: #fff;
+      color: var(--yl-color-text-default);
       box-sizing: border-box;
       overflow: hidden;
       background: linear-gradient(to right, #5c8dff, #4cffdd);
@@ -1299,7 +1300,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
     .flux_content {
       max-width: 100%;
       flex: 1;
-      background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
+      background: linear-gradient(135deg, #292929 0%, #252525 40%, #282828 100%);
       
       & > .content {
         max-width: 100%;
@@ -1567,7 +1568,7 @@ body.youlag-active:not(.reader) main#stream {
       li.item.website.name {
         /* For user's who set website setting to "icon and name" or "name" */
         a {
-          color: white;
+          color: var(--yl-color-text-default);
           padding: 0;
         }
       }
@@ -1793,7 +1794,7 @@ body.youlag-active:not(.reader) main#stream {
       footer ul.horizontal-list.bottom .item.labels .item-element.dropdown a[href^="#dropdown-labels-"] {
         font-size: 0;
         white-space: nowrap;
-        color: white;
+        color: var(--yl-color-text-default);
 
         &:before {
           content: "+ Add to playlist";
@@ -1871,8 +1872,8 @@ html {
   .nav-list .item,
   .tree .tree-folder .tree-folder-title {
     background-color: var(--yl-color-body-background);
-    --frss-font-color-dark: #ffffff;
-    color: #ffffff;
+    --frss-font-color-dark: var(--yl-color-text-default);
+    color: var(--yl-color-text-default);
   }
 
   @media (min-width: 840px) {
@@ -1961,15 +1962,8 @@ html {
 
   /* Text and link colors */
   label,
-  .content h1.title a,
-  .content h1 a,
-  .content.thin h1.title a,
-  .content.thin h1 a,
-  .flux .website a,
   .day,
   .day .name,
-  .post h1,
-  .post h2,
   .dropdown-menu .item > a,
   .dropdown-menu .item > span,
   .dropdown-menu .item > .as-link,
@@ -1978,8 +1972,23 @@ html {
   .tree .tree-folder .tree-folder-items .dropdown-menu .item a,
   .tree .tree-folder .tree-folder-items .dropdown-menu .item button,
   .transition .transition-value a {
-    --frss-font-color-dark: white;
-    color: white;
+    --frss-font-color-dark: var(--yl-color-text-default);
+    color: var(--yl-color-text-default);
+    font-family: inherit;
+  }
+
+  .title,
+  .title a,
+  h1, h2, h3, h4, h5, h6,
+  .transition .name,
+  .content h1.title a,
+  .content h1 a,
+  .content.thin h1.title a,
+  .content.thin h1 a,
+  .flux .website a,
+  .post h1,
+  .post h2 {
+    color: var(--yl-color-text-default-emphasis);
     font-family: inherit;
   }
 
@@ -2037,7 +2046,7 @@ html {
     background-color: #303136;
     border-color: #303136;
     border-top-color: #303136;
-    color: white;
+    color: var(--yl-color-text-default);
 
     & .stick .btn,
     & .group .btn,
@@ -2055,7 +2064,7 @@ html {
       background-color: #303136;
       border-color: #303136;
       border-top-color: #303136;
-      color: white;
+      color: var(--yl-color-text-default);
     }
 
     .icon {
@@ -2288,7 +2297,7 @@ html {
 .tree .tree-folder .tree-folder-items .item.active .dropdown li a,
 .dropdown .dropdown-menu .item a,
 li.item.feed .item-title {
-  color: #ffffff;
+  color: var(--yl-color-text-default);
 }
 
 .dropdown {
@@ -2298,7 +2307,7 @@ li.item.feed .item-title {
   .dropdown-menu,
   .box {
     background-color: #303136;
-    color: white;
+    color: var(--yl-color-text-default);
     border-radius: 12px;
   
     .box-content .item {
@@ -2308,7 +2317,7 @@ li.item.feed .item-title {
     .box-content .item,
     .box-content .item a {
       background-color: #303136;
-      color: white;
+      color: var(--yl-color-text-default);
     }
   
     .item.dropdown-section ~ .dropdown-section,
@@ -2334,7 +2343,7 @@ li.item.feed .item-title {
 
 .box .box-title {
   background-color: #424348;
-  color: white;
+  color: var(--yl-color-text-default);
 
   .configure {
     border-radius: 8px;
@@ -2357,14 +2366,14 @@ main#stream .box.category {
 
       a,
       a:hover {
-        color: #fff;
+        color: var(--yl-color-text-default);
       }
     }
   }
 
   .box-title a.title,
   .box-title a.title:hover {
-    color: white;
+    color: var(--yl-color-text-default);
 
     &:not([data-unread="0"]):after {
       background-color: rgba(137, 137, 137, 0.4392156863);
@@ -2422,7 +2431,7 @@ main.post {
       .emptyCategory {
         .alert-warn {
           @include yl-gradient-bg(#fbb324, #b97d0d);
-          color: #ffffffc4;
+          color: var(--yl-color-text-default);
           padding: var(--yl-p-2xs);
           border-radius: 8px;
           text-indent: 0;
@@ -2444,7 +2453,7 @@ main.post {
       background: var(--yl-color-body-background);
 
       a {
-        color: #ffffff;
+        color: var(--yl-color-text-default);
       }
     }
 
@@ -2730,7 +2739,7 @@ body:not(.normal) {
 .post a[href="./"] {
   background-color: #303136;
   border-color: #303136;
-  color: white;
+  color: var(--yl-color-text-default);
 }
 
 /* ====================================
@@ -3099,7 +3108,7 @@ body.youlag-inactive:not(.reader) main#stream {
           h1.title a {
 
             &:hover {
-              color: #ffffff;
+              color: var(--yl-color-text-default);
               text-decoration: underline;
             }
           }
@@ -3279,7 +3288,7 @@ main#stream,
 #overlay #panel {
   button#bigMarkAsRead {
     @include yl-gradient-bg(#0058e6, #0b38c0);
-    color: #ffffff;
+    color: var(--yl-color-text-default);
     transition: 0.1s;
 
     .bigTick {
@@ -3466,7 +3475,7 @@ body:has(.tree-folder.category.favorites.active) {
 
   &,
   .text {
-    color: #ffffff;
+    color: var(--yl-color-text-default);
   }
 
   .go_website {
@@ -3564,7 +3573,7 @@ body {
     background-size: 24px;
     z-index: 9999;
     transition: opacity 0.2s;
-    color: #fff;
+    color: var(--yl-color-text-default);
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -3812,10 +3821,9 @@ body {
 
     .youlag-video-metadata-author a {
       font-size: var(--yl-text-sm);
-      ;
       line-height: 1.66;
       font-weight: 600;
-      color: #fff;
+      color: var(--yl-color-text-default);
     }
   
     .youlag-video-metadata-date {
@@ -3896,7 +3904,7 @@ a.yl-video-action-button {
   align-items: center;
   justify-content: center;
   background-color: #303136;
-  color: #fff;
+  color: var(--yl-color-text-default);
   font-weight: 600;
   font-size: var(--yl-text-xs);
   border-radius: 999px;
@@ -4106,7 +4114,7 @@ body.youlag-tags-modal-open {
       align-items: center;
       gap: var(--yl-m-2xs);
       padding: var(--yl-p-2xs) var(--yl-p-xs);
-      color: #ffffff;
+      color: var(--yl-color-text-default);
       font-size: var(--yl-text-sm);
       border-radius: 8px;
 
