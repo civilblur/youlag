@@ -827,6 +827,9 @@ nav.aside.aside_feed {
           /* Logo, make room for sidenav toggle button */
           margin-left: 46px;
           margin-top: 4px;
+          /* Set fixed size to allow sidenav logo to replicate exact sizing. See '.youlag-loaded #aside_feed::before'. */
+          width: 130px;
+          height: 26px !important;
         }
       }
     }
@@ -1161,7 +1164,8 @@ nav.nav_menu {
       z-index: 50;
   
       @media (max-width: 840px) {
-        top: 3px;
+        height: 43px;
+        top: 5px;
         background: transparent;
       }
   
@@ -1831,6 +1835,22 @@ html {
       /* Desktop: Only set fixed width for desktop. On mobile, adding fixed width causes the sidebar to display by default on all pages.  */
       width: var(--yl-sidenav-width);
       padding: 0;
+    }
+
+    .youlag-loaded #aside_feed {
+      /* Desktop: Add back FreshRSS logo to sidenav, only if youlag script and css is ready. */
+      &::before {
+        content: "";
+        background-image: url(../themes/icons/FreshRSS-logo.svg);
+        width: 130px;
+        height: 26px;
+        z-index: 100;
+        position: absolute;
+        top: 17.5px; /* Match location of FreshRSS logo in top header, underneath the fixed positioned sidenav. */
+        left: 65px;
+        background-repeat: no-repeat;
+        filter: grayscale(1) brightness(5);
+      }
     }
   }
 
