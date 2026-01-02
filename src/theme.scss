@@ -2801,7 +2801,7 @@ body:not(.normal) {
  * BEGIN "Dark mode: Card"
  * ==================================== */
 
-body.youlag-active:not(.reader) main#stream {
+body.youlag-active.youlag-video-unread-badge:not(.reader) main#stream {
 
   div.flux {
     &.not_read {
@@ -2813,12 +2813,16 @@ body.youlag-active:not(.reader) main#stream {
         position: absolute;
         top: 18px;
         left: 18px;
-        padding: 2px 6px;
-        background-color: rgb(255, 0, 0, 0.76);
+        padding: 3px 10px;
+        background: linear-gradient(to bottom, color-mix(in oklab, #845532 35%, transparent), color-mix(in oklab, #8e2d07 60%, transparent));
+        background-color: rgba(157, 12, 12, 0.6);
+        border: 1px solid color-mix(in oklab, #db511cd6 30%, transparent);
         box-shadow: 0 2px 8px 3px hsl(0deg 0% 0% / 13%);
-        border-radius: 6px;
+        border-radius: 99px;
+        font-size: var(--yl-text-2xs);
         font-weight: bold;
         pointer-events: none;
+        z-index: 1;
       }
     }
   }

@@ -21,6 +21,11 @@ class YoulagExtension extends Minz_Extension {
      * @var string
      */
     protected $instance = '';
+    /**
+     * Show "New" badge for unwatched videos
+     * @var bool
+     */
+    protected $yl_video_unread_badge_enabled = false;
 
     /**
      * Initialize this extension
@@ -29,6 +34,7 @@ class YoulagExtension extends Minz_Extension {
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
         $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
         $this->registerHook('nav_entries', array($this, 'setVideoLabels'), 11);
+        $this->registerHook('nav_entries', array($this, 'setVideoUnreadBadge'), 12);
 
         // Add Youlag theme and script to all extension pages
         Minz_View::appendStyle($this->getFileUrl('theme.min.css'));
@@ -68,6 +74,9 @@ class YoulagExtension extends Minz_Extension {
 
         $labelsEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_labels_enabled');
         $this->yl_video_labels_enabled = ($labelsEnabled === null) ? true : $labelsEnabled;
+
+        $unreadBadgeEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_unread_badge_enabled');
+        $this->yl_video_unread_badge_enabled = ($unreadBadgeEnabled === null) ? true : $unreadBadgeEnabled;
     }
 
 
@@ -110,6 +119,24 @@ class YoulagExtension extends Minz_Extension {
     public function setVideoLabels() {
         $enabled = $this->yl_video_labels_enabled ? 'true' : 'false';
         return '<div id="yl_video_labels" data-yl-video-labels="' . $enabled . '"></div>';
+    }
+
+    /**
+     * Returns whether "New" badge for unwatched videos is enabled or not.
+     * @return bool
+     */
+    public function isVideoUnreadBadgeEnabled() {
+        return $this->yl_video_unread_badge_enabled;
+    }
+
+    /**
+     * Pass the "New" badge setting for unwatched videos state to be read in the DOM via nav_entries hook.
+     * The `script.js` handles the behavior based on this the value in `data-yl-video-unread-badge`.
+     * @param bool $enabled
+     */
+    public function setVideoUnreadBadge() {
+        $enabled = $this->yl_video_unread_badge_enabled ? 'true' : 'false';
+        return '<div id="yl_video_unread_badge" data-yl-video-unread-badge="' . $enabled . '"></div>';
     }
 
     /**
@@ -272,6 +299,10 @@ class YoulagExtension extends Minz_Extension {
             // Video platform labels
             $labelsEnabled = Minz_Request::paramBoolean('yl_video_labels_enabled', true);
             FreshRSS_Context::userConf()->_attribute('yl_video_labels_enabled', $labelsEnabled);
+
+            // "New" badge for unwatched videos
+            $unreadBadgeEnabled = Minz_Request::paramBoolean('yl_video_unread_badge_enabled', true);
+            FreshRSS_Context::userConf()->_attribute('yl_video_unread_badge_enabled', $unreadBadgeEnabled);
 
             // YouTube shorts blocking
             FreshRSS_Context::userConf()->_attribute('yl_block_youtube_shorts', Minz_Request::paramBoolean('yl_block_youtube_shorts', true));

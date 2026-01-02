@@ -966,6 +966,10 @@ function setCategoryWhitelistClass() {
 }
 
 function setVideoLabelsClass() {
+  /* Adds css class 'youlag-video-labels' to body if video labels setting is enabled.
+   * The setting is stored in localStorage for faster access.
+   * When active, labels like "My Labels" changes to "Playlists", and "Favorites" to "Watch Later".
+   */
   const localStorageSetting = localStorage.getItem('youlagVideoLabels') || false;
   const userSettingElement = document.querySelector('#yl_video_labels');
   let userSetting = undefined;
@@ -990,11 +994,28 @@ function setVideoLabelsClass() {
   }
 }
 
+function setUnreadBadgeClass() {
+  // Adds css class 'youlag-video-unread-badge' to body if video unread badge setting is enabled.
+  // If enabled, videos will show badge "New" for unwatched videos.
+  const userSettingElement = document.querySelector('#yl_video_unread_badge');
+  let userSetting = undefined;
+  if (userSettingElement) {
+    userSetting = userSettingElement.getAttribute('data-yl-video-unread-badge');
+  }
+  if (userSetting === 'true') {
+    document.body.classList.add('youlag-video-unread-badge');
+  }
+  else {
+    document.body.classList.remove('youlag-video-unread-badge');
+  }
+}
+
 function setBodyPageClass() {
   getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
   currentPageParams = new URLSearchParams(window.location.search).get('get');
   getSubpageParentId(currentPageParams) && (document.body.className += ' yl-page-' + getSubpageParentId(currentPageParams));
   setVideoLabelsClass();
+  setUnreadBadgeClass();
   setCategoryWhitelistClass();
 }
 
