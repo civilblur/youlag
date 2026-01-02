@@ -1991,13 +1991,18 @@ html {
 
       @media (max-width: 840px) {
         z-index: 60; /* Mobile: Hide sidenav toggle, as mobile sidenav already has a close button. */
+      
+        &.visible {
+          /* Mobile: Sidenav is visible. */
+          max-width: 80%;
+        }
       }
 
       @media (min-width: 840px) {
         padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
           
           &.visible {
-            /* Desktop: Sidenav is visible */
+            /* Desktop: Sidenav is visible. */
             & ~ main#stream,
             & ~ nav.nav_menu,
             &.visible ~ main.post {
