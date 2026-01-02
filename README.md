@@ -35,7 +35,7 @@ Optimized for both watching videos and reading articles.
   - Block YouTube shorts
   - Apply video mode layout to chosen categories
 - 🖥️ **Desktop & Mobile**
-  - Modernized theme
+  - Modernized theme design
   - Mobile friendly, better one-handed navigation
   - Improved readability and legibility
 - 📺 **Features Offered by FreshRSS:**

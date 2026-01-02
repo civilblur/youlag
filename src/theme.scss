@@ -2922,7 +2922,7 @@ body.youlag-inactive:not(.reader) main#stream {
       border: 1px solid color-mix(in oklab,#fff 11%,transparent);
       border-radius: 14px;
       box-sizing: border-box;
-      padding: var(--yl-p-2xs) var(--yl-p-xs);
+      padding: var(--yl-p-2xs) var(--yl-p-3xs);
       margin: 0;
 
       @media (max-width: 840px) {
@@ -3377,7 +3377,7 @@ main#stream,
   /* Feed updated notification banner */
   position: sticky;
   top: var(--yl-m-2xs);
-  z-index: 10;
+  z-index: 20;
   grid-column: 1 / -1;
   margin: 1rem 4px;
   overflow: hidden;
