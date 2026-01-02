@@ -147,6 +147,7 @@
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
   --yl-color-text-default: #dedee4;
+  --main-font-color: var(--yl-color-text-default); /* Replace FreshRSS default font color */
   --yl-color-text-default-emphasis: #f8f8fb; /* Stronger contrast than default text color, e.g. for titles */
 
   --yl-loading-spinner-background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23fff' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
