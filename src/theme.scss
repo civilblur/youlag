@@ -4100,8 +4100,8 @@ a.yl-video-action-button[href=""] {
 
   & {
     width: var(--yl-video-pip-width);
-    bottom: 1rem;
-    right: 2rem;
+    bottom: var(--yl-m-sm);
+    right: var(--yl-m-sm);
     aspect-ratio: 16 / 9;
     height: auto;
     border-radius: 12px;
