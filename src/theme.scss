@@ -277,12 +277,6 @@ html {
   }
 }
 
-@media (max-width: 840px) {
-  body {
-    padding-top: 61px; /* Encompass mobile fixed header */
-  }
-}
-
 .yl-form-category__video-label {
   /* Extension category list label, for users who enabled 'Video platform labels'. Hide by default. */
   display: none;
@@ -767,6 +761,8 @@ nav.aside.aside_feed {
   --sid-bg: transparent; /* Header background color */
   min-height: 54px;
   box-sizing: border-box;
+  position: relative;
+  z-index: 50;
 
   @media (max-width: 840px) {
     /* Mobile: header gradient background, adjust to accommodate colors for the header content on mobile */
@@ -2365,16 +2361,6 @@ li.item.feed .item-title {
     color: var(--yl-color-text-default);
     border-radius: 12px;
   
-    .box-content .item {
-      background-color: #303136;
-    }
-  
-    .box-content .item,
-    .box-content .item a {
-      background-color: #303136;
-      color: var(--yl-color-text-default);
-    }
-  
     .item.dropdown-section ~ .dropdown-section,
     .item.separator {
       border-top-color: #646464;
@@ -3612,7 +3598,7 @@ body {
   /* Youlag loading spinner */
   &:has(#global main#stream):before {
     /* Loading spinner, before the youlag script has fully loaded. Only on feed stream pages. */
-    content: "Loading Youlag features";
+    content: "Loading";
     position: fixed;
     top: 89px;
     left: 50%;
@@ -3623,18 +3609,19 @@ body {
     border: 1px solid color-mix(in oklab,#ffffff 28%,transparent);
     background-image: var(--yl-loading-spinner-background-image);
     background-repeat: no-repeat;
-    background-position: 20px;
-    background-size: 24px;
+    background-position: 82px;
+    background-size: 18px;
     z-index: 9999;
     transition: opacity 0.2s;
     color: var(--yl-color-text-default);
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: 58px;
+    padding-left: 111px;
     box-sizing: border-box;
     font-family: arial;
     font-size: var(--yl-text-xs);
+    letter-spacing: 1px;
     white-space: pre;
     pointer-events: none;
     border-radius: 12px;
@@ -3649,6 +3636,8 @@ body {
       width: calc(100% - var(--yl-p-sm) * 2);
       left: var(--yl-p-sm);
       overflow: hidden;
+      padding-left: 40%;
+      background-position: calc(40% - 8px);
     }
   }
 
@@ -3669,7 +3658,7 @@ body {
       box-sizing: border-box;
       background: var(--yl-color-body-background);
       background: rgb(25 25 25 / 80%);
-      z-index: 60;
+      z-index: 40;
       transition: 0.2s;
       opacity: 1;
       backdrop-filter: blur(40px);
