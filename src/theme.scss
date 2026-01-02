@@ -3370,8 +3370,8 @@ main#stream,
   margin: 1rem 4px;
   overflow: hidden;
   background: unset;
-  padding-left: var(--yl-p-xs);
-  padding-right: var(--yl-p-xs);
+  margin-left: 0;
+  padding-right: 0;
 
   a {
     @include yl-gradient-bg(#efd01c, #c29903);
