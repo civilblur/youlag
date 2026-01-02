@@ -27,8 +27,8 @@ Optimized for both watching videos and reading articles.
 
 - ⭐ **Designed for Video and Article Viewing**
   - Browse YouTube RSS subscriptions through a video-tailored inferface
-  - Mini video player: keep video in corner while viewing other content.
-  - `Esc` key to exit videos and articles.
+  - Mini video player: keep video in corner while reading articles
+  - `Esc` key to exit videos and articles
   - Switch between YouTube and Invidious playback sources
   - Modernized dark theme
 - ⚙️ Customization
