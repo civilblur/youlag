@@ -1968,7 +1968,8 @@ html {
   .yl-page-important,
   .yl-page-watch_later,
   .yl-page-playlists,
-  .yl-page-category {
+  .yl-page-category,
+  .yl-page-search_results {
     /* Only implement fixed sidebar for feed pages (to exclude other pages like settings. */
     #aside_feed {
       position: fixed; /* sidebar, reimplement its behavior. */
