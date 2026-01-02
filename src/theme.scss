@@ -138,8 +138,9 @@
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-pip-width: min(460px, 60%);
-  --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
   --yl-sidenav-width: 280px;
+  --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
+  --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
   --yl-sidenav-icon-size: 16px;
   --yl-sidenav-icon-label-gap: var(--yl-space-sm);
 
@@ -159,6 +160,10 @@
 @media (max-width: 840px) {
   :root {
     --yl-favicon-avatar-size: 42px;
+    --yl-sidenav-label-font-size: calc(var(--yl-text-md) * 0.9);
+    --yl-sidenav-sublabel-font-size: var(--yl-text-sm);
+    --yl-sidenav-icon-size: 20px;
+    --yl-sidenav-icon-label-gap: var(--yl-space-sm);
   }
 }
 
@@ -2593,6 +2598,7 @@ main.post {
         border-radius: 6px;
         background-color: unset;
         display: list-item !important; /* Always display all labels on side navigation expand */
+        font-size: var(--yl-sidenav-sublabel-font-size);
 
         &:hover {
           background-color: #303136;
@@ -2624,7 +2630,6 @@ main.post {
 
           &:not([data-unread="0"]) {
             width: calc(100% - 110px);
-            font-size: 1rem;
             font-weight: normal;
             letter-spacing: 0.5px;
           }
