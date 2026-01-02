@@ -3689,15 +3689,13 @@ body {
   &.youlag-loaded {
     /* Youlag script has loaded, remove loading spinner and feed overlay. */
     &:before {
-      pointer-events: none !important;
-      opacity: 0 !important;
+      display: none !important;
     }
   
     #global {
       &:after {
         /* youlag-loaded: Remove black backdrop after Youlag script has loaded. */
-        pointer-events: none !important;
-        opacity: 0 !important;
+        display: none !important;
       }
     }
   }

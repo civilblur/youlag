@@ -260,7 +260,7 @@ class YoulagExtension extends Minz_Extension {
         if (Minz_Request::isPost()) {
             // Invidious settings
             FreshRSS_Context::userConf()->_attribute('yl_invidious_enabled', Minz_Request::paramBoolean('yl_invidious_enabled'));
-            FreshRSS_Context::$user_conf->yl_invidious_url_1 = (string)Minz_Request::param('yl_invidious_url_1', '');
+            FreshRSS_Context::$user_conf->yl_invidious_url_1 = (string)Minz_Request::paramString('yl_invidious_url_1', '');
 
             // Category whitelist
             $catWhitelist = Minz_Request::paramArray('yl_category_whitelist', true);
