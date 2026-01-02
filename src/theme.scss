@@ -3375,6 +3375,11 @@ main#stream,
   margin-left: 0;
   padding-right: 0;
 
+  @media (max-width: 840px) {
+    top: calc(54px + var(--yl-m-xs)); /* Account for mobile top nav height */
+    margin: 0;
+  }
+
   a {
     @include yl-gradient-bg(#efd01c, #c29903);
     border-radius: 8px;
