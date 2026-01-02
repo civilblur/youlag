@@ -1994,7 +1994,7 @@ html {
       
         &.visible {
           /* Mobile: Sidenav is visible. */
-          max-width: 80%;
+          max-width: 80%; /* Mobile: Leave space on the right side to allow onblur close. */
         }
       }
 
