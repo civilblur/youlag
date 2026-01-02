@@ -706,7 +706,6 @@ nav.aside.aside_feed {
       width: max(80%, 280px);
 
       & ~ .dropdown-close {
-        backdrop-filter: blur(8px);
         height: 100vh;
         z-index: 40;
       }
@@ -762,7 +761,6 @@ nav.aside.aside_feed {
   --sid-bg: transparent; /* Header background color */
   min-height: 54px;
   box-sizing: border-box;
-  position: relative;
   z-index: 50;
 
   @media (max-width: 840px) {
@@ -1019,6 +1017,8 @@ main#stream #stream-footer,
 }
 
 #nav_entries {
+  /* Bottom navigation to navigate between feed items.
+     Buttons: Previous item, Scroll to top, Next item. */
   --sid-bg: linear-gradient(135deg, #303030b0 0%, #252525d9 40%, #2d2d2da1 100%);
   backdrop-filter: blur(80px);
   z-index: 45; /* Avoid blocking mobile dropdown menus that are displayed as bottom sheets. */
@@ -2005,7 +2005,6 @@ html {
 
   
       & ~ .close-aside {
-        backdrop-filter: blur(8px);
         z-index: 50;
         max-width: 100vw;
         max-height: 100vh;
@@ -2269,7 +2268,6 @@ html {
         & + .dropdown-close {
           /* Mobile: FreshRSS dropdown background acts as an onblur, close function. */
           background: var(--frss-modal-background-color-transparent);
-          backdrop-filter: blur(8px);
         }
       }
 
@@ -4155,7 +4153,6 @@ body.youlag-tags-modal-open {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
