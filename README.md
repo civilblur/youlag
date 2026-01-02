@@ -25,20 +25,21 @@ Optimized for both watching videos and reading articles.
 
 ## Features
 
-- ⭐ **Designed for Videos and Articles**
+- ⭐ **Videos & Articles**
   - Browse YouTube RSS subscriptions through a video-tailored inferface
   - Mini video player: keep video in corner while reading articles
   - Modernized article viewing experience
-  - Switch between YouTube and Invidious playback sources
 - ⚙️ **Customization**
   - Block YouTube shorts
   - Apply video mode layout to chosen categories
+  - Switch between YouTube and Invidious playback sources
 - 🖥️ **Desktop & Mobile**
   - Modernized theme design
   - Mobile friendly, better one-handed navigation
   - `Esc` key to exit videos and articles
-- 📺 **Features Offered by FreshRSS**
-  - Subscribe to YouTube creators without an account
+- 📺 **FreshRSS feature**
+  - Subscribe to YouTube creators without needing an account
+  - Manage article and video RSS feeds
 
 ## Install
 
