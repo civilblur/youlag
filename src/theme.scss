@@ -3682,6 +3682,10 @@ body {
         margin-left: 0;
       }
     }
+
+    @media (max-width: 840px) {
+      padding-top: 54px; /* Mobile: Height of top navigation bar, to avoid fixed top header to cover content underneath. */
+    }
   }
 
   &.youlag-loaded {
