@@ -25,7 +25,7 @@ Optimized for both watching videos and reading articles.
 
 ## Features
 
-- ⭐ **Videos & Articles**
+- 📺 **Videos & Articles**
   - Browse YouTube RSS subscriptions through a video-tailored inferface
   - Mini video player: keep video in corner while reading articles
   - Modernized article viewing experience
@@ -37,7 +37,7 @@ Optimized for both watching videos and reading articles.
   - Modernized theme design
   - Mobile friendly, better one-handed navigation
   - `Esc` key to exit videos and articles
-- 📺 **FreshRSS feature**
+- 📰 **FreshRSS feature**
   - Subscribe to YouTube creators without needing an account
   - Manage article and video RSS feeds
 
