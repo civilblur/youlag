@@ -952,16 +952,43 @@ main#stream #stream-footer,
 
   button#bigMarkAsRead {
     /* Mark as read button */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;  
     border-radius: 12px;
-    margin-top: 4rem;
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-top: 1rem;
-    padding-bottom: 2rem;
+    margin-top: var(--yl-m-md);
+    padding-left: var(--yl-p-md);
+    padding-right: var(--yl-p-md);
+    padding-top: var(--yl-p-sm);
+    padding-bottom: var(--yl-p-sm);
     margin-bottom: 0;
+    width: 100%;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+
+    &.big {
+      .bigTick {
+        transform: scale(0.65);
+        transform-origin: top left;
+        width: 48px;
+        height: 48px;
+        margin: 0;
+      }
+    }
+
+    &.small {
+      .bigTick {
+        display: none;
+      }
+    }
+
+    [style="visibility: hidden;"],
+    br {
+      /* Hide unused elements to prevent layout issues. */
+      display: none;
+    }
   }
 }
 
