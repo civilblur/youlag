@@ -176,6 +176,27 @@
   }
 }
 
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in--youlag-loading {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 
 
 
@@ -247,6 +268,14 @@ body.youlag-active:not(.reader) main#stream {
  * structural titles, etc.
  *
  ****************************************/
+
+html {
+  .alert-warn {
+    @include yl-gradient-bg(#fbb324, #b97d0d, false);
+    color: var(--yl-color-text-default);
+    border-radius: 8px;
+  }
+}
 
 @media (max-width: 840px) {
   body {
@@ -1960,7 +1989,8 @@ html {
           &.visible {
             /* Desktop: Sidenav is visible */
             & ~ main#stream,
-            & ~ nav.nav_menu {
+            & ~ nav.nav_menu,
+            &.visible ~ main.post {
               box-sizing: border-box;
               padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm)); /* Set aside space for the sidebar */
             }
@@ -2325,6 +2355,9 @@ li.item.feed .item-title {
 .dropdown {
   /* Dropdown menu styling. Displayed as bottom sheets on mobile. */
   position: relative;
+}
+
+
 
   .dropdown-menu,
   .box {
@@ -2349,7 +2382,6 @@ li.item.feed .item-title {
       border-color: #646464;
     }
   }
-}
 
 .dropdown:not(#dropdown-search-wrapper) {
   /* Add hover effect to dropdown items, while exluding e.g. #dropdown-search-wrapper */
@@ -2452,7 +2484,6 @@ main.post {
 
       .emptyCategory {
         .alert-warn {
-          @include yl-gradient-bg(#fbb324, #b97d0d);
           color: var(--yl-color-text-default);
           padding: var(--yl-p-2xs);
           border-radius: 8px;
@@ -2815,9 +2846,10 @@ body.youlag-inactive:not(.reader) {
     }
   
     &.visible ~ main#stream {
-      /* Desktop, sidenav opened */
+      /* Desktop: sidenav opened */
       max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Articles will effectively be max 900px */
     }
+
   }
 }
 
@@ -3606,6 +3638,12 @@ body {
     white-space: pre;
     pointer-events: none;
     border-radius: 12px;
+    opacity: 0;
+    animation-name: fade-in--youlag-loading;
+    animation-duration: 2s ease-in-out 1s forwards;
+    animation-timing-function: ease-in-out;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
 
     @media (max-width: 840px) {
       width: calc(100% - var(--yl-p-sm) * 2);
@@ -3614,6 +3652,7 @@ body {
     }
   }
 
+  /* Display only the youlag loading on non-settings page, that is, feed pages. */
   #global {
     position: relative;
     overflow-x: hidden;
@@ -3621,7 +3660,7 @@ body {
     &:after {
       /* before youlag-loaded: Black backdrop to hide feed content while loading Youlag script. */
       content: "";
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       height: 100%;
@@ -3629,9 +3668,11 @@ body {
       margin-left: var(--yl-sidenav-width); /* To display the sidenav while loading Youlag */
       box-sizing: border-box;
       background: var(--yl-color-body-background);
-      z-index: 20;
-      transition: 0.4s;
+      background: rgb(25 25 25 / 80%);
+      z-index: 60;
+      transition: 0.2s;
       opacity: 1;
+      backdrop-filter: blur(40px);
 
       @media (max-width: 840px) {
         width: 100%;
@@ -3652,6 +3693,28 @@ body {
         /* youlag-loaded: Remove black backdrop after Youlag script has loaded. */
         pointer-events: none !important;
         opacity: 0 !important;
+      }
+    }
+  }
+
+  &.profile,
+  &.display,
+  &.reading,
+  &.archiving,
+  &.integration,
+  &.shortcut,
+  &.queries,
+  &.index,
+  &.privacy,
+  &.system,
+  &.manage,
+  &.checkInstall,
+  &.logs,
+  &.about {
+    #global {
+      &:after {
+        /* Disable youlag loading overlay on settings pages. */
+        display: none;
       }
     }
   }
