@@ -1396,8 +1396,9 @@ body.youlag-active:not(.reader) main#stream div.flux {
       a.item-element.title.multiline {
         display: flex;
         flex-direction: column;
-        padding: 0;
         position: static;
+        padding-top: 0;
+        padding-bottom: 0;
         padding-left: 2px;
         padding-right: 2px;
         min-width: unset;
@@ -2648,14 +2649,14 @@ main.post {
 
   .flux_header {
     .date {
-      color: hsl(0deg 0% 100% / 59%);
+      color: #898989;
     }
   }
 
   .flux_content {
     .bottom {
       .date {
-        color: hsl(0deg 0% 100% / 59%);
+        color: #898989;
       }
     }
   }
@@ -2987,7 +2988,7 @@ body.youlag-inactive:not(.reader) main#stream {
           column-gap: var(--yl-m-2xs);
           flex-wrap: wrap;
           flex-basis: calc(100% - var(--yl-thumbnail-width));
-          padding: 0 var(--yl-p-2xs);
+          padding: var(--yl-p-3xs) var(--yl-p-2xs) 0 var(--yl-p-2xs);
           box-sizing: border-box;
 
           @media (max-width: 291px) {
@@ -3014,7 +3015,6 @@ body.youlag-inactive:not(.reader) main#stream {
             line-height: 1.38;
             box-sizing: border-box;
             padding: 0;
-            margin: var(--yl-p-2xs) 0 0 0;
 
             @media (max-width: 840px) {
               flex-basis: 100%;
@@ -3042,6 +3042,9 @@ body.youlag-inactive:not(.reader) main#stream {
               flex-basis: 100%;
               font-size: var(--yl-text-xs);
               padding-right: unset;
+              /* Mobile: Override FreshRSS 'line-clamp:2' */
+              -webkit-line-clamp: 1;
+              line-clamp: 1;
             }
           }
 
@@ -3050,12 +3053,17 @@ body.youlag-inactive:not(.reader) main#stream {
             /* Reset styling */
             padding-bottom: 0;
             line-height: 1;
-            padding-top: var(--yl-p-xs);
             position: static;
             top: unset;
             right: unset;
             width: auto;
             z-index: auto;
+
+            @media (max-width: 840px) {
+              order: -3; /* Mobile: Place date below headline */
+              display: block; /* Force display on mobile. */
+              padding-bottom: var(--yl-m-3xs);
+            }
           }
         }
 
