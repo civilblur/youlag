@@ -12,9 +12,9 @@
 
 
 ## About
-Browse YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modern video interface that incorporates quality-of-life features.
+Browse YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modernized design that incorporates quality-of-life features.
 
-Youlag supports article and video feeds, allowing you to select categories that will use the video interface.
+Optimized for both watching videos and reading articles.
 
 ## Table of Content
 - [Features](#features)
@@ -25,17 +25,15 @@ Youlag supports article and video feeds, allowing you to select categories that 
 
 ## Features
 
-- ⭐ **Optimized for Video Viewing**
+- ⭐ **Designed for Video and Article Viewing**
   - Browse YouTube RSS subscriptions through a video-tailored inferface
-  - Fullscreen video viewing
-  - Mini video player, to keep video at bottom corner while viewing other content.
+  - Mini video player: keep video in corner while viewing other content.
   - `Esc` key to exit videos and articles.
-  - Switch between YouTube and Invidious playback source
-  - Dark mode
+  - Switch between YouTube and Invidious playback sources
+  - Modernized dark theme
 - ⚙️ Customization
-  - Apply the video interface to only selected categories
   - Block YouTube shorts
-  - Rename "Favorites → Watch Later", "My Tags → Playlists"
+  - Apply video mode layout to chosen categories
 - 🖥️ **Desktop & Mobile**
   - Mobile friendly, better one-handed navigation
   - Improved readability and legibility
