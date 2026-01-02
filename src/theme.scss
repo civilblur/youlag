@@ -1925,6 +1925,12 @@ html {
     color: var(--yl-color-text-default);
   }
 
+  iframe {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
   @media (min-width: 840px) {
     #aside_feed {
       /* Desktop: Only set fixed width for desktop. On mobile, adding fixed width causes the sidebar to display by default on all pages.  */
