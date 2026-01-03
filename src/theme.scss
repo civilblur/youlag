@@ -440,6 +440,23 @@ html {
   }
 }
 
+#yl_nav_menu_container_toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--yl-p-2xs) var(--yl-p-sm);
+  border: 1px solid hsla(0, 0%, 100%, .08);
+  border-radius: 12px;
+  margin-left: 8px;
+  background-color: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  font-size: var(--yl-text-xs);
+
+  &:hover {
+    background-color: hsla(0, 0%, 100%, .08);
+  }
+}
+
 #yl_nav_menu_container {
   /* Custom element for placing the FreshRSS `.nav_menu`. */
   grid-column: 1 / -1; // Span full width in youlag-active layout
@@ -452,6 +469,11 @@ html {
       gap: var(--yl-m-xs);
       align-items: flex-start;
       flex-wrap: wrap;
+
+      @media (max-width: 840px) {
+        padding-left: var(--yl-p-sm);
+        padding-right: var(--yl-p-sm);
+      }
 
       & > * {
         margin: 0; /* Reset margin (gutter for nav_menu groups), prioritize flex gap instead. */
@@ -1133,8 +1155,11 @@ main#stream {
     line-height: 1;
     margin-top: 0;
     padding: 0;
-    margin: var(--yl-m-md) 0 var(--yl-m-2xs) 0;
+    margin: var(--yl-m-md) 0 var(--yl-m-xs) 0;
 
+    @media (max-width: 840px) {
+      padding-right: var(--yl-p-sm);
+    }
 
     .name {
       /* Show category name for the first date transition. */
@@ -1147,6 +1172,7 @@ main#stream {
       padding: 0;
       font-weight: bold;
       line-height: 1;
+      margin: 0;
     }
 
 
@@ -2880,7 +2906,6 @@ body.youlag-inactive:not(.reader) main#stream {
     padding: 0;
 
     .transition {
-      padding-right: var(--yl-p-sm);
 
       .name {
         padding-left: var(--yl-p-sm) !important; /* youlag-inactive: Align category name article thumbnail. */
