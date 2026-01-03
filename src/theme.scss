@@ -442,13 +442,20 @@ html {
 
 #yl_nav_menu_container {
   /* Custom element for placing the FreshRSS `.nav_menu`. */
+  grid-column: 1 / -1; // Span full width in youlag-active layout
 
-  &.yl-nav-menu-container--open {    
+  &.yl-nav-menu-container--open {   
+    margin-bottom: var(--yl-m-xs);
+    
     #yl_nav_menu_container_content {
       display: flex;
       gap: var(--yl-m-xs);
       align-items: flex-start;
       flex-wrap: wrap;
+
+      & > * {
+        margin: 0; /* Reset margin (gutter for nav_menu groups), prioritize flex gap instead. */
+      }
     }
   }
 }
@@ -1118,7 +1125,7 @@ main#stream {
   #new-article + .transition {
     /* Global: Date transition in feeds, only the first one. */
     display: flex;
-    flex-direction: column-reverse; /* Place category name above date transition label. */
+    align-items: center;
     text-align: left;
     font-weight: 400;
     letter-spacing: 0;
@@ -1126,15 +1133,17 @@ main#stream {
     line-height: 1;
     margin-top: 0;
     padding: 0;
+    margin: var(--yl-m-md) 0 var(--yl-m-2xs) 0;
+
 
     .name {
       /* Show category name for the first date transition. */
-      display: block;
+      flex: 1;
+      display: inline-block;
       opacity: 1;
       font-size: var(--yl-text-md);
       text-align: left;
       text-transform: none;
-      margin: var(--yl-m-md) 0;
       padding: 0;
       font-weight: bold;
       line-height: 1;
@@ -1180,30 +1189,10 @@ main#stream {
   main#stream {
     #new-article + .transition {
       /* youlag-active: first date transition */
-      display: block;
+      display: flex;
       grid-column: 1 / -1;
       line-height: 1.2;
       font-size: var(--yl-text-md);
-    }
-
-    @media (max-width: 840px) {      
-
-      /* Mobile: first date transition, display the category name only */
-      #new-article + .transition {
-        display: block;
-  
-        & > .transition-value {
-          display: none;
-        }
-    
-        & > .name {
-          /* Category name */
-          display: block;
-          color: var(--yl-color-text-default);
-          padding: 0;
-        }
-  
-      }
     }
 
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
@@ -2891,6 +2880,8 @@ body.youlag-inactive:not(.reader) main#stream {
     padding: 0;
 
     .transition {
+      padding-right: var(--yl-p-sm);
+
       .name {
         padding-left: var(--yl-p-sm) !important; /* youlag-inactive: Align category name article thumbnail. */
         box-sizing: border-box;
