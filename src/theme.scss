@@ -574,6 +574,7 @@ nav.aside.aside_feed {
       margin-left: 8px;
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;
+      color: var(--yl-color-text-default-emphasis);
     }
 
     #btn-subscription,
@@ -587,7 +588,7 @@ nav.aside.aside_feed {
     }
 
     #btn-add {
-      font-size: 1rem;
+      font-size: var(--yl-text-sm);
       border-top-right-radius: 8px;
       border-bottom-right-radius: 8px;
       background: none;
@@ -596,6 +597,7 @@ nav.aside.aside_feed {
       display: flex;
       justify-content: center;
       align-items: center;
+      color: var(--yl-color-text-default-emphasis);
 
       .icon {
         filter: brightness(3);
@@ -719,6 +721,7 @@ nav.aside.aside_feed {
     letter-spacing: 1px;
     font-weight: normal;
     max-width: 64%; /* Avoid overlapping with badge count. */
+    color: var(--yl-color-text-default-emphasis);
   }
 
 
