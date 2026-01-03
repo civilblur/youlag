@@ -1031,23 +1031,23 @@ function setVideoLabelsTitle(pageClass, newTitle) {
   }
 }
 
+let youlagNavMenuInitialized = false;
+
 function setupNavMenu() {
   // Wrap FreshRSS nav_menu actions into a toggle button.
   // The container elements comes from `extensions.php` which adds element `#yl_nav_menu_container` via 'nav_entries' hook., 
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
   const ylNavMenu = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_content') : null;
-  const ylNavMenuToggle = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_toggle') : null;
-  const freshRssNavMenu = document.querySelector('#global nav.nav_menu');
-  ylNavMenu.hidden = true; // Initially hide the nav_menu options.
-  
-  // Move ylNavMenuContainer to be placed as a sibling, above freshRssNavMenu
+  const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
+  ylNavMenu.hidden = true;
+
   if (
     freshRssNavMenu &&
     ylNavMenuContainer &&
     !ylNavMenuContainer.contains(freshRssNavMenu)
   ) {
     freshRssNavMenu.parentNode.insertBefore(ylNavMenuContainer, freshRssNavMenu);
-    ylNavMenu.classList.add('nav_menu'); // Restore CSS class, the DOM tree structure that the styling relies on.
+    ylNavMenu.classList.add('nav_menu');
   }
 
   if (freshRssNavMenu && ylNavMenu) {
@@ -1059,11 +1059,15 @@ function setupNavMenu() {
     });
   }
 
-  // Reveal the nav_menu options.
-  if (ylNavMenuContainer && ylNavMenuToggle && ylNavMenu) {
-    ylNavMenuToggle.addEventListener('click', () => {
-      const isOpen = ylNavMenuContainer.classList.toggle('yl-nav-menu-container--open');
-      ylNavMenu.hidden = !isOpen;
+  if (ylNavMenuContainer && ylNavMenu) {
+    document.addEventListener('click', function (e) {
+      const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
+      if (toggleBtn && ylNavMenuContainer.contains(toggleBtn)) {
+        const isOpen = ylNavMenuContainer.classList.toggle('yl-nav-menu-container--open');
+        ylNavMenu.hidden = !isOpen;
+        e.preventDefault();
+        e.stopPropagation();
+      }
     });
   }
 }

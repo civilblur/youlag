@@ -1195,6 +1195,8 @@ main#stream {
 }  
 
 nav.nav_menu {
+  padding: 0;
+
   #dropdown-search-wrapper.only-mobile {
     /* Mobile: Container for search button, place it on the top header, left to settings. */
     position: fixed;
@@ -4472,7 +4474,8 @@ body.youlag-tags-modal-open {
 [data-yl-invidious-instance],
 [data-yl-video-source-default],
 [data-yl-category-whitelist],
-[data-yl-video-labels] {
+[data-yl-video-labels],
+[yl_video_unread_badge] {
   /**
    * Elements containing user extension settings rendered in frontend.
    * This exposes the Youlag extension settings to allow `script.js`
