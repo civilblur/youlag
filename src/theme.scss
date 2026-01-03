@@ -443,10 +443,10 @@ html {
 #yl_nav_menu_container {
   /* Custom element for placing the FreshRSS `.nav_menu`. */
 
-  &--open {    
+  &.yl-nav-menu-container--open {    
     #yl_nav_menu_container_content {
       display: flex;
-      gap: var(--yl-m-sm);
+      gap: var(--yl-m-xs);
       align-items: flex-start;
       flex-wrap: wrap;
     }
@@ -1212,34 +1212,10 @@ main#stream {
     }
   }
 
-}  
+}
 
 nav.nav_menu {
   padding: 0;
-
-  #dropdown-search-wrapper.only-mobile {
-    /* Mobile: Container for search button, place it on the top header, left to settings. */
-    position: fixed;
-    top: 7px;
-    z-index: 50;
-    right: 60px;
-    
-    #toggle-search {
-      /* Mobile: Search button */
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #26272a;
-
-      img {
-        filter: brightness(5);
-      }
-    }
-  }
 
   #nav_menu_toggle_aside {
     /* Mobile: Container for sidenav toggle button. */
@@ -2251,7 +2227,8 @@ html {
   .nav_menu #mark-read-menu,
   .nav_menu #nav_menu_actions,
   #nav_menu_sort,
-  body:not(.reader) main#stream div.flux li.item.tags {
+  body:not(.reader) main#stream div.flux li.item.tags,
+  #dropdown-search-wrapper {
      /** 
       * Turn dropdowns into bottom sheets on mobile
       * - Share button
@@ -2349,7 +2326,6 @@ html {
     }
   }
 
-
   .dropdown .dropdown-menu,
   .dropdown-target:target ~ .dropdown-menu {
     border-radius: 12px;
@@ -2365,6 +2341,30 @@ html {
 
   #overlay a.close {
     border: none;
+  }
+
+  #dropdown-search-wrapper.only-mobile {
+    /* Mobile: Container for search button, place it on the top header, left to settings. */
+    position: fixed;
+    top: 7px;
+    z-index: 50;
+    right: 60px;
+    
+    #toggle-search {
+      /* Mobile: Search button */
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #26272a;
+
+      img {
+        filter: brightness(5);
+      }
+    }
   }
 
 

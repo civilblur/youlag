@@ -1040,18 +1040,26 @@ function setupNavMenu() {
   youlagNavMenuInitialized = true;
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
   const ylNavMenu = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_content') : null;
+  const ylNavMenuToggle = ylNavMenuContainer ? document.getElementById('yl_nav_menu_container_toggle') : null;
+  const toggleSearch = ylNavMenuContainer ? document.getElementById('dropdown-search-wrapper') : null;
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
+  const firstTransitionEElement = document.querySelector('#new-article + .transition');
   ylNavMenu.hidden = true;
 
-  if (
-    freshRssNavMenu &&
-    ylNavMenuContainer &&
-    !ylNavMenuContainer.contains(freshRssNavMenu)
-  ) {
-    freshRssNavMenu.parentNode.insertBefore(ylNavMenuContainer, freshRssNavMenu);
-    ylNavMenu.classList.add('nav_menu');
+  // Place only ylNavMenuToggle inside .transition, rest of ylNavMenuContainer as sibling after .transition.
+  if (firstTransitionEElement && ylNavMenuContainer && ylNavMenuToggle) {
+    if (toggleSearch) {
+      // Break out search from nav_menu parent container, to keep it independent for styling.
+      firstTransitionEElement.appendChild(toggleSearch);
+    }
+    firstTransitionEElement.appendChild(ylNavMenuToggle);
+    if (firstTransitionEElement.nextSibling) {
+      // Place ylNavMenuContainer after .transition (the category title).
+      firstTransitionEElement.parentNode.insertBefore(ylNavMenuContainer, firstTransitionEElement.nextSibling);
+    } else {
+      firstTransitionEElement.parentNode.appendChild(ylNavMenuContainer);
+    }
   }
-
   if (freshRssNavMenu && ylNavMenu) {
     const navMenuChildren = Array.from(freshRssNavMenu.children);
     navMenuChildren.forEach(child => {
@@ -1061,10 +1069,11 @@ function setupNavMenu() {
     });
   }
 
-  if (ylNavMenuContainer && ylNavMenu) {
+  if (ylNavMenuContainer && ylNavMenu && ylNavMenuToggle) {
+    // Toggle custom youlag ylNavMenu on click.
     document.addEventListener('click', function (e) {
       const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
-      if (toggleBtn && ylNavMenuContainer.contains(toggleBtn)) {
+      if (toggleBtn && document.body.contains(ylNavMenuContainer)) {
         const isOpen = ylNavMenuContainer.classList.toggle('yl-nav-menu-container--open');
         ylNavMenu.hidden = !isOpen;
         e.preventDefault();
