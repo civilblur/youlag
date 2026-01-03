@@ -1618,6 +1618,17 @@ body.youlag-active:not(.reader) main#stream {
     }
 
     .flux_header {
+      &:hover {
+        li.item.manage,
+        li.item.website.icon,
+        li.item.website.full,
+        li.item.link,
+        li.item.labels,
+        li.item.share {
+          box-shadow: inset 0 0 0 1px hsla(0, 0%, 100%, .12);
+        }
+      }
+
       .summary {
         /* youlag-active: No support for summary on video cards. */
         display: none;
@@ -1679,7 +1690,7 @@ body.youlag-active:not(.reader) main#stream {
         }
 
         &:hover {
-          background-color: hsla(0, 0%, 100%, 0.08)
+          background-color: hsla(0, 0%, 100%, 0.08);
         }
       }
 
