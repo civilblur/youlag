@@ -32,6 +32,7 @@ class YoulagExtension extends Minz_Extension {
      */
     public function init() {
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
+        $this->registerHook('nav_entries', array($this, 'createNavMenuContainer'), 5);
         $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
         $this->registerHook('nav_entries', array($this, 'setVideoLabels'), 11);
         $this->registerHook('nav_entries', array($this, 'setVideoUnreadBadge'), 12);
@@ -275,6 +276,16 @@ class YoulagExtension extends Minz_Extension {
         }
         return $entry;
     }
+
+
+    public function createNavMenuContainer() {
+        $html = '<div id="yl_nav_menu_container">'
+              .     '<button id="yl_nav_menu_container_toggle">Configure View</button>'
+              .     '<nav id="yl_nav_menu_container_content" class="nav_menu"></nav>'
+              . '</div>';
+        return $html;
+    }
+
 
     /**
      * Saves the user settings for this extension.

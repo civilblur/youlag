@@ -102,7 +102,7 @@ function matchURL(text) {
 }
 
 function appendUrl(text) {
-  console.log( 'appendUrl input:', text);
+  console.log('appendUrl input:', text);
   const urls = matchURL(text);
   if (urls) {
     urls.forEach(url => {
@@ -131,7 +131,7 @@ function sanitizeExtractedVideoUrl(content) {
   if (hrefMatch && hrefMatch[1]) {
     return hrefMatch[1];
   }
-  
+
   return '';
 }
 
@@ -151,15 +151,15 @@ function extractFeedItemData(feedItem) {
   const videoBaseUrl = isVideoFeedItem ? getBaseUrl(extractedVideoUrl) : '';
   youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
   const youtubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
-  const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';  
-  const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';  
+  const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';
+  const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
   const invidiousInstanceElemenet = feedItem.querySelector('.content div.text span[data-yl-invidious-instance]');
   const invidiousInstance1 = invidiousInstanceElemenet ? invidiousInstanceElemenet.getAttribute('data-yl-invidious-instance') : '';
   const videoSourceDefaultElement = feedItem.querySelector('.content div.text span[data-yl-video-source-default]');
   const videoSourceDefault = videoSourceDefaultElement ? videoSourceDefaultElement.getAttribute('data-yl-video-source-default') : '';
-  
+
   const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
 
   const videoObject = {
@@ -182,10 +182,9 @@ function extractFeedItemData(feedItem) {
     video_description:
       // If video description is found, use it, otherwise fallback to generic description element.
       `<div class="youlag-video-description-content">
-        ${
-          isVideoFeedItem && videoDescriptionExists ? appendUrl(feedItem.querySelector('.enclosure-description')?.innerHTML.trim()) :
-          feedItem.querySelector('article div.text')?.innerHTML.trim() || ''
-        }
+        ${isVideoFeedItem && videoDescriptionExists ? appendUrl(feedItem.querySelector('.enclosure-description')?.innerHTML.trim()) :
+        feedItem.querySelector('article div.text')?.innerHTML.trim() || ''
+      }
       </div>`,
     video_youtube_url: youtubeUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
@@ -209,7 +208,7 @@ function setVideoQueue(videoObject) {
       if (Array.isArray(parsed.queue)) queue = parsed.queue;
       if (typeof parsed.activeIndex === 'number') activeIndex = parsed.activeIndex;
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const videoId = videoObject.video_youtube_url; // video_youtube_url as unique identifier
   const foundIndex = queue.findIndex(v => v.video_youtube_url === videoId);
@@ -221,7 +220,7 @@ function setVideoQueue(videoObject) {
     activeIndex = foundIndex;
   }
 
-  localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, activeIndex, isPipMode }) );
+  localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, activeIndex, isPipMode }));
 }
 
 function clearVideoQueue() {
@@ -238,7 +237,7 @@ function restoreVideoQueue() {
   if (stored) {
     try {
       queueObj = JSON.parse(stored);
-    } 
+    }
     catch (e) {
       console.error('Error parsing youlagVideoQueue from localStorage:', e);
     }
@@ -310,7 +309,7 @@ function createVideoModal(data) {
   const defaultEmbedUrl = getEmbedUrl(videoSourceDefaultNormalized);
 
   setPageTitle(data.title);
- 
+
   container.innerHTML = `
     <div class="${modalVideoContentClassName}">
 
@@ -515,7 +514,7 @@ function setModePip(state) {
       obj.isPipMode = !!state;
       localStorage.setItem('youlagVideoQueue', JSON.stringify(obj));
     }
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function setModeFullscreen(state) {
@@ -554,7 +553,7 @@ function setupClickListener() {
   }
 }
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
   // youlag-inactive: Close article on Esc key.
   if (event.key === 'Escape' && document.body.classList.contains('youlag-inactive')) {
     const openedArticle = document.querySelector('#stream div[data-feed].active.current');
@@ -571,11 +570,11 @@ function setupTagsDropdownOverride() {
   const streamContainer = document.querySelector('#stream');
   if (!streamContainer) return;
 
-  streamContainer.addEventListener('click', async function(event) {
+  streamContainer.addEventListener('click', async function (event) {
     const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
     const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle') : null;
     const entryItemFooterDropdown = event.target.closest('.item.labels a.dropdown-toggle[href^="#dropdown-labels-"]');
-    
+
     if (entryItemDropdown || entryItemFooterDropdown) {
       // Prevent default dropdown behavior
       event.preventDefault();
@@ -629,14 +628,13 @@ function createTagsModal(entryId, tags) {
         <a href="./?c=tag" target="_blank"><img class="icon" src="../themes/Mapco/icons/configure.svg" loading="lazy" alt="⚙️"></a>
       </h3>
       <div class="yl-tags-list">
-        ${
-          tags.map(tag => `
+        ${tags.map(tag => `
             <div class="yl-tags-list-item">
               <input type="checkbox" id="yl-tag-${tag.id}" data-tag-id="${tag.id}" data-entry-id="${entryId}" ${tag.checked ? 'checked' : ''} />
               <label for="yl-tag-${tag.id}">${tag.name}</label>
             </div>
           `).join('')
-        }
+    }
       </div>
       <div class="yl-tags-modal-actions">
         <button id="yl-tags-modal-close" class="btn">Done</button>
@@ -651,7 +649,7 @@ function createTagsModal(entryId, tags) {
   // Event listener for tags (playlists) items.
   const checkboxes = container.querySelectorAll('.yl-tags-list-item input[type="checkbox"]');
   checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
+    checkbox.addEventListener('change', function () {
       const tagId = this.getAttribute('data-tag-id');
       const entryId = this.getAttribute('data-entry-id');
       const checked = this.checked;
@@ -680,7 +678,7 @@ function createTagsModal(entryId, tags) {
   document.addEventListener('keydown', tagsModalEscHandler, true);
 
   // Close onblur
-  container.addEventListener('mousedown', function(event) {
+  container.addEventListener('mousedown', function (event) {
     const content = container.querySelector('.yl-tags-content');
     if (content && !content.contains(event.target)) {
       closeTagsModal();
@@ -753,7 +751,7 @@ async function setItemTag(entryId, tag) {
 function collapseBackgroundFeedItem(target) {
   // Workaround: If user has YouTube Video Feed extension installed, prevent it from showing the default embedded 
   // in favor of Youlag theater view modal. This collapses down the original feed item that activates by FreshRSS clickevent.
-  
+
   const feedItem = target;
   let isActive = feedItem.classList.contains('active') && feedItem.classList.contains('current');
   const iframes = feedItem.querySelectorAll('iframe');
@@ -852,7 +850,7 @@ function getCurrentPage() {
       return prefixClasses(classString);
     }
   }
-  
+
   return '';
 }
 
@@ -891,7 +889,7 @@ function getCategoryWhitelist() {
 
   try {
     localStorage.setItem('youlagCategoryWhitelist', JSON.stringify(whitelist));
-  } catch (e) {}
+  } catch (e) { }
 
   return whitelist;
 }
@@ -933,12 +931,12 @@ function isPageWhitelisted(whitelist, currentPageClass) {
 
 function setCategoryWhitelistClass() {
   // Quickly apply youlag-category-whitelist class based on localStorage to reduce layout shifts.
-  
+
   let localStorageWhitelist = [];
   try {
     const stored = localStorage.getItem('youlagCategoryWhitelist');
     if (stored) localStorageWhitelist = JSON.parse(stored);
-  } catch (e) {}
+  } catch (e) { }
 
   const currentPageClass = getCurrentPage();
   const isWhitelisted = isPageWhitelisted(localStorageWhitelist, currentPageClass);
@@ -959,7 +957,7 @@ function setCategoryWhitelistClass() {
     document.body.classList.toggle('youlag-inactive', !isWhitelistedUserSetting);
     try {
       localStorage.setItem('youlagCategoryWhitelist', JSON.stringify(whitelist));
-    } catch (e) {}
+    } catch (e) { }
     return isWhitelistedUserSetting;
   }
   return isWhitelisted;
@@ -1019,19 +1017,54 @@ function setBodyPageClass() {
   setCategoryWhitelistClass();
 }
 
-
-
 function setVideoLabelsTitle(pageClass, newTitle) {
-  if (document.body.classList.contains(pageClass) && 
-      document.body.classList.contains('youlag-video-labels')) {
+  if (document.body.classList.contains(pageClass) &&
+    document.body.classList.contains('youlag-video-labels')) {
     // Replace the middle text of the title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
     // Primarily for Playlists and Watch Later pages.
-  const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/);
+    const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/);
     if (titleMatch) {
       const countPart = titleMatch[1] ? titleMatch[1] : '';
       const customSuffix = titleMatch[4] ? titleMatch[4] : ''; // In case the user has rename their FreshRSS instance.
       document.title = `${countPart}${newTitle} · ${customSuffix}`;
     }
+  }
+}
+
+function setupNavMenu() {
+  // Wrap FreshRSS nav_menu actions into a toggle button.
+  // The container elements comes from `extensions.php` which adds element `#yl_nav_menu_container` via 'nav_entries' hook., 
+  const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
+  const ylNavMenu = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_content') : null;
+  const ylNavMenuToggle = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_toggle') : null;
+  const freshRssNavMenu = document.querySelector('#global nav.nav_menu');
+  ylNavMenu.hidden = true; // Initially hide the nav_menu options.
+  
+  // Move ylNavMenuContainer to be placed as a sibling, above freshRssNavMenu
+  if (
+    freshRssNavMenu &&
+    ylNavMenuContainer &&
+    !ylNavMenuContainer.contains(freshRssNavMenu)
+  ) {
+    freshRssNavMenu.parentNode.insertBefore(ylNavMenuContainer, freshRssNavMenu);
+    ylNavMenu.classList.add('nav_menu'); // Restore CSS class, the DOM tree structure that the styling relies on.
+  }
+
+  if (freshRssNavMenu && ylNavMenu) {
+    const navMenuChildren = Array.from(freshRssNavMenu.children);
+    navMenuChildren.forEach(child => {
+      if (!(child.id === 'nav_menu_toggle_aside')) {
+        ylNavMenu.appendChild(child);
+      }
+    });
+  }
+
+  // Reveal the nav_menu options.
+  if (ylNavMenuContainer && ylNavMenuToggle && ylNavMenu) {
+    ylNavMenuToggle.addEventListener('click', () => {
+      const isOpen = ylNavMenuContainer.classList.toggle('yl-nav-menu-container--open');
+      ylNavMenu.hidden = !isOpen;
+    });
   }
 }
 
@@ -1043,6 +1076,7 @@ function init() {
     // HACK: Delay referencing the settings elements.
     youlagSettingsPageEventListeners();
   }, 1500);
+  setupNavMenu();
   restoreVideoQueue();
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
