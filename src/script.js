@@ -1,4 +1,5 @@
 let youlagScriptLoaded = false;
+let youlagNavMenuInitialized = false;
 let youlagRestoreVideoQueueRan = false;
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
@@ -1031,11 +1032,12 @@ function setVideoLabelsTitle(pageClass, newTitle) {
   }
 }
 
-let youlagNavMenuInitialized = false;
 
 function setupNavMenu() {
   // Wrap FreshRSS nav_menu actions into a toggle button.
   // The container elements comes from `extensions.php` which adds element `#yl_nav_menu_container` via 'nav_entries' hook., 
+  if (youlagNavMenuInitialized) return;
+  youlagNavMenuInitialized = true;
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
   const ylNavMenu = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_content') : null;
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');

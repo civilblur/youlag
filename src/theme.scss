@@ -440,9 +440,29 @@ html {
   }
 }
 
+#yl_nav_menu_container {
+  /* Custom element for placing the FreshRSS `.nav_menu`. */
+
+  &--open {    
+    #yl_nav_menu_container_content {
+      display: flex;
+      gap: var(--yl-m-sm);
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+  }
+}
+
 nav.aside.aside_feed {
   /* Position and adjust behavior of "Subscriptions management" button */
   text-align: unset;
+
+  &.visible {
+    & ~ #yl_nav_menu_container {
+      /* Accommmodate fixed sidenav expanded state. */
+      padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm));
+    }
+  }
 
   /* Manage feeds ("Subscriptions management") button */
   .stick.configure-feeds {
@@ -2698,11 +2718,9 @@ main.post {
     }
   }
 
-
   a.toggle_aside {
     border: none;
   }
-
 
   .category .title:not([data-unread="0"]):after,
   .tree .tree-folder ul.tree-folder-items li.item a:after,
