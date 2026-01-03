@@ -1045,6 +1045,7 @@ function setupNavMenu() {
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
   const firstTransitionEElement = document.querySelector('#new-article + .transition');
   ylNavMenu.hidden = true;
+  ylNavMenu.classList.add('nav_menu'); // Apply FreshRSS nav_menu class to retain styling and correct css selectors.
 
   // Place only ylNavMenuToggle inside .transition, rest of ylNavMenuContainer as sibling after .transition.
   if (firstTransitionEElement && ylNavMenuContainer && ylNavMenuToggle) {

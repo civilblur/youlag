@@ -280,8 +280,8 @@ class YoulagExtension extends Minz_Extension {
 
     public function createNavMenuContainer() {
         $html = '<div id="yl_nav_menu_container">'
-              .     '<button id="yl_nav_menu_container_toggle">Configure View</button>'
-              .     '<nav id="yl_nav_menu_container_content" class="nav_menu"></nav>'
+              .     '<button id="yl_nav_menu_container_toggle">Configure view</button>'
+              .     '<nav id="yl_nav_menu_container_content"></nav>'
               . '</div>';
         return $html;
     }
