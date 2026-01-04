@@ -1219,7 +1219,6 @@ main#stream {
       grid-column: 1 / -1;
       line-height: 1.2;
       font-size: var(--yl-text-md);
-      margin-bottom: 0; /* The 'main#stream' element already creates a gutter due to grid-row-gap. */
     }
 
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
