@@ -1151,7 +1151,7 @@ main#stream {
   #new-article + .transition {
     /* Global: Date transition in feeds, only the first one. */
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     text-align: left;
     font-weight: 400;
     letter-spacing: 0;
@@ -1159,7 +1159,7 @@ main#stream {
     line-height: 1;
     margin-top: 0;
     padding: 0;
-    margin: var(--yl-m-md) 0 var(--yl-m-xs) 0;
+    margin: var(--yl-m-md) 0 var(--yl-m-sm) 0;
 
     .name {
       /* Show category name for the first date transition. */
