@@ -1212,6 +1212,20 @@ main#stream {
 }
 
 .youlag-active {
+
+  @media (max-width: 840px) {
+    #yl_nav_menu_container {
+      &.yl-nav-menu-container--open {
+
+        #yl_nav_menu_container_content {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+    }
+  }
+
+
   main#stream {
     #new-article + .transition {
       /* youlag-active: first date transition */
@@ -2933,8 +2947,8 @@ body.youlag-inactive:not(.reader) {
       /* Desktop: sidenav opened */
       max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Articles will effectively be max 900px */
     }
-
   }
+
 }
 
 
@@ -2949,7 +2963,7 @@ body.youlag-inactive:not(.reader) main#stream {
 
     .transition {
       @media (max-width: 840px) {
-        padding-right: var(--yl-p-sm);
+        padding-right: var(--yl-p-sm) !important;
       }
 
       .name {
