@@ -447,9 +447,7 @@ html {
   justify-content: center;
   padding: var(--yl-p-2xs) var(--yl-p-sm);
   border: 1px solid hsla(0, 0%, 100%, .08);
-  border-radius: 12px;
-  margin-left: 8px;
-  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;  background-color: rgba(255, 255, 255, 0.04);
   cursor: pointer;
   font-size: var(--yl-text-xs);
 
@@ -470,6 +468,7 @@ html {
       gap: var(--yl-m-xs);
       align-items: flex-start;
       flex-wrap: wrap;
+      margin-top: var(--yl-m-xs);
 
       @media (max-width: 840px) {
         padding-left: var(--yl-p-sm);
@@ -1159,7 +1158,7 @@ main#stream {
     line-height: 1;
     margin-top: 0;
     padding: 0;
-    margin: var(--yl-m-md) 0 var(--yl-m-sm) 0;
+    margin: var(--yl-m-sm) 0;
 
     .name {
       /* Show category name for the first date transition. */
@@ -1233,6 +1232,14 @@ main#stream {
       grid-column: 1 / -1;
       line-height: 1.2;
       font-size: var(--yl-text-md);
+      /* Maintain consistent bottom margin for transition category title, 
+         due to parent grid-column-gap. */
+      margin-bottom: calc((var(--yl-m-xs) * -1) + var(--yl-m-sm)); /* Negate, and add back margin. */
+    
+      @media (max-width: 600px) {
+        /* Mobile: Maintain consistent bottom margin for transition category title. */
+        margin-bottom: calc((var(--yl-m-md) * -1) + var(--yl-m-sm)); /* Negate, and add back margin. */
+      }
     }
 
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
