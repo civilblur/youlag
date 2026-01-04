@@ -1161,10 +1161,6 @@ main#stream {
     padding: 0;
     margin: var(--yl-m-md) 0 var(--yl-m-xs) 0;
 
-    @media (max-width: 840px) {
-      padding-right: var(--yl-p-sm);
-    }
-
     .name {
       /* Show category name for the first date transition. */
       flex: 1;
@@ -1223,6 +1219,7 @@ main#stream {
       grid-column: 1 / -1;
       line-height: 1.2;
       font-size: var(--yl-text-md);
+      margin-bottom: 0; /* The 'main#stream' element already creates a gutter due to grid-row-gap. */
     }
 
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
@@ -1404,7 +1401,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       display: flex;
       flex-direction: column;
       width: 100%;
-      margin: 4px 0;
+      margin: 4px 0 var(--yl-m-xs) 0;
 
 
       @media (min-width: 600px) {
@@ -1618,7 +1615,22 @@ body.youlag-active:not(.reader) main#stream {
     }
 
     .flux_header {
-      &:hover {
+
+      @media (min-width: 680px) {
+        &:hover {
+          /* Desktop, youlag-active: only show the border around card actions on hover. */
+          li.item.manage,
+          li.item.website.icon,
+          li.item.link,
+          li.item.labels,
+          li.item.share {
+            box-shadow: inset 0 0 0 1px hsla(0, 0%, 100%, .12);
+          }
+        }
+      }
+
+      @media (max-width: 680px) {
+        /* Mobile, youlag-active: the buttons are always visible on mobile, so always show the card action borders. */
         li.item.manage,
         li.item.website.icon,
         li.item.link,
@@ -1627,6 +1639,7 @@ body.youlag-active:not(.reader) main#stream {
           box-shadow: inset 0 0 0 1px hsla(0, 0%, 100%, .12);
         }
       }
+
 
       .summary {
         /* youlag-active: No support for summary on video cards. */
@@ -2049,8 +2062,15 @@ html {
     }
   }
 
+  .yl-page-home {
+    main#stream #new-article + .transition .name:before {
+      /* Add "Subscriptions" category title to home screen. Normally it is empty. */
+      content: "Subscriptions";
+    }
+  }
+
   #stream {
-    position: relative;
+    position: relative; /* To position the youlag overlay, to block interactions before loaded. */
   }
 
   /* Text and link colors */
@@ -2929,6 +2949,9 @@ body.youlag-inactive:not(.reader) main#stream {
     padding: 0;
 
     .transition {
+      @media (max-width: 840px) {
+        padding-right: var(--yl-p-sm);
+      }
 
       .name {
         padding-left: var(--yl-p-sm) !important; /* youlag-inactive: Align category name article thumbnail. */
