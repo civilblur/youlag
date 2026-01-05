@@ -3486,7 +3486,7 @@ main#stream,
   top: var(--yl-m-2xs);
   z-index: 20;
   grid-column: 1 / -1;
-  margin: 1rem 4px;
+  margin: var(--yl-m-sm) 0;
   overflow: hidden;
   background: unset;
   margin-left: 0;

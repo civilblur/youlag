@@ -1032,46 +1032,57 @@ function setVideoLabelsTitle(pageClass, newTitle) {
   }
 }
 
-
 function setupNavMenu() {
-  // Wrap FreshRSS nav_menu actions into a toggle button.
-  // The container elements comes from `extensions.php` which adds element `#yl_nav_menu_container` via 'nav_entries' hook., 
+  /**
+   * Wrap FreshRSS `.nav_menu` actions into a toggle button.
+   * The container elements comes from `extensions.php` which adds element `#yl_nav_menu_container` via 'nav_entries' hook.
+   */
+  // NOTE: This type of dom manipulation is not ideal. Use css whenever possible instead, due to fragility of dom structure changes. 
   if (youlagNavMenuInitialized) return;
   youlagNavMenuInitialized = true;
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
   const ylNavMenu = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_content') : null;
   const ylNavMenuToggle = ylNavMenuContainer ? document.getElementById('yl_nav_menu_container_toggle') : null;
-  const toggleSearch = ylNavMenuContainer ? document.getElementById('dropdown-search-wrapper') : null;
+  const freshRsstoggleSearch = ylNavMenuContainer ? document.getElementById('dropdown-search-wrapper') : null;
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
-  const firstTransitionEElement = document.querySelector('#new-article + .transition');
-  ylNavMenu.hidden = true;
+  const freshRssTransition = document.querySelector('#new-article + .transition'); // Category title container.
+
+  if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !freshRssTransition) {
+    // Fail gracefully
+    return;
+  }
+
+  ylNavMenu.hidden = true; // Init state of custom Youlag `.nav_menu`, ylNavMenu.
   ylNavMenu.classList.add('nav_menu'); // Apply FreshRSS nav_menu class to retain styling and correct css selectors.
 
-  // Place only ylNavMenuToggle inside .transition, rest of ylNavMenuContainer as sibling after .transition.
-  if (firstTransitionEElement && ylNavMenuContainer && ylNavMenuToggle) {
-    if (toggleSearch) {
-      // Break out search from nav_menu parent container, to keep it independent for styling.
-      firstTransitionEElement.appendChild(toggleSearch);
+  if (freshRssTransition && ylNavMenuContainer && ylNavMenuToggle) {
+    if (freshRsstoggleSearch) {
+      // Break out search from the FreshRSS `.nav_menu` container, to keep it independent for styling.
+      freshRssTransition.appendChild(freshRsstoggleSearch);
     }
-    firstTransitionEElement.appendChild(ylNavMenuToggle);
-    if (firstTransitionEElement.nextSibling) {
-      // Place ylNavMenuContainer after .transition (the category title).
-      firstTransitionEElement.parentNode.insertBefore(ylNavMenuContainer, firstTransitionEElement.nextSibling);
-    } else {
-      firstTransitionEElement.parentNode.appendChild(ylNavMenuContainer);
+    freshRssTransition.appendChild(ylNavMenuToggle);
+    if (freshRssTransition.nextSibling) {
+      // Place ylNavMenuContainer after `.transition` (the category title).
+      // The ylNavMenuContainer containing the `.nav_menu` will appear below the title when toggled this way.
+      freshRssTransition.parentNode.insertBefore(ylNavMenuContainer, freshRssTransition.nextSibling);
+    }
+    else {
+      freshRssTransition.parentNode.appendChild(ylNavMenuContainer);
     }
   }
   if (freshRssNavMenu && ylNavMenu) {
+    // Move FreshRSS `.nav_menu` items inside Youlag's own `.nav_menu` content, ylNavMenu (child of ylNavMenuContainer).
     const navMenuChildren = Array.from(freshRssNavMenu.children);
     navMenuChildren.forEach(child => {
       if (!(child.id === 'nav_menu_toggle_aside')) {
+        // Exclude the sidebar toggle button, as that its position placement is handled via css already.
         ylNavMenu.appendChild(child);
       }
     });
   }
 
   if (ylNavMenuContainer && ylNavMenu && ylNavMenuToggle) {
-    // Toggle custom youlag ylNavMenu on click.
+    // Toggle custom Youlag `.nav_menu`, ylNavMenu, on click.
     document.addEventListener('click', function (e) {
       const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
       if (toggleBtn && document.body.contains(ylNavMenuContainer)) {
