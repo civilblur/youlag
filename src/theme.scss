@@ -139,7 +139,7 @@
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-pip-width: min(460px, 60%);
   --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
-  --yl-feed-nav-menu-height: 77px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
+  --yl-feed-nav-menu-height: 76px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
   --yl-sidenav-width: 280px;
   --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
   --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
@@ -167,6 +167,7 @@
     --yl-sidenav-sublabel-font-size: var(--yl-text-sm);
     --yl-sidenav-icon-size: 20px;
     --yl-sidenav-icon-label-gap: var(--yl-space-sm);
+    --yl-topnav-height: 54px;
   }
 }
 
@@ -461,11 +462,12 @@ html {
 #yl_nav_menu_container {
   /* Custom element for placing the FreshRSS `.nav_menu`. */
   grid-column: 1 / -1; // Span full width in youlag-active layout
+  background-color: var(--yl-color-body-background);
 
   &.yl-nav-menu-container--sticky {
     position: sticky;
     top: var(--yl-feed-nav-menu-height);
-    z-index: 99;
+    z-index: 20;
     transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
     will-change: transform, opacity;
 
@@ -475,14 +477,14 @@ html {
   }
 
   &.yl-nav-menu-container--open {   
-    margin-bottom: var(--yl-m-xs);
+    padding-bottom: var(--yl-p-xs);
     
     #yl_nav_menu_container_content {
       display: flex;
       gap: var(--yl-m-xs);
       align-items: flex-start;
       flex-wrap: wrap;
-      margin-top: var(--yl-m-xs);
+      padding-top: var(--yl-p-xs);
 
       @media (max-width: 840px) {
         padding-left: var(--yl-p-sm);
@@ -761,7 +763,6 @@ nav.aside.aside_feed {
 
   header.header {
     /* Mobile: Header */
-    --yl-topnav-height: 54px;
     position: fixed;
     top: 0;
     left: 0;
@@ -1166,7 +1167,7 @@ main#stream {
   #new-article + .transition {
     /* Global: Date transition in feeds, only the first one. */
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     text-align: left;
     font-weight: 400;
     letter-spacing: 0;
@@ -1178,7 +1179,7 @@ main#stream {
     &.yl-freshrss-transition--sticky {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 20;
       transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
       will-change: transform, opacity;
 
@@ -1665,7 +1666,7 @@ body.youlag-active:not(.reader) main#stream {
 
     .flux_header {
 
-      @media (min-width: 680px) {
+      @media (min-width: 600px) {
         &:hover {
           /* Desktop, youlag-active: only show the border around card actions on hover. */
           li.item.manage,
@@ -1678,7 +1679,7 @@ body.youlag-active:not(.reader) main#stream {
         }
       }
 
-      @media (max-width: 680px) {
+      @media (max-width: 600px) {
         /* Mobile, youlag-active: the buttons are always visible on mobile, so always show the card action borders. */
         li.item.manage,
         li.item.website.icon,
