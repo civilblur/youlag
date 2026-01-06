@@ -231,7 +231,7 @@ body.youlag-active:not(.reader) main#stream {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
   gap: 4px;
-  padding: 0 var(--yl-p-2xs) var(--yl-p-sm) var(--yl-p-2xs);
+  padding: 0 var(--yl-p-sm) var(--yl-p-sm) var(--yl-p-sm);
 
   @media (max-width: 840px) {
     grid-template-columns: minmax(200px, 1fr);
@@ -461,7 +461,7 @@ html {
 
 #yl_nav_menu_container {
   /* Custom element for placing the FreshRSS `.nav_menu`. */
-  grid-column: 1 / -1; // Span full width in youlag-active layout
+  grid-column: 1 / -1; /* Span full width in youlag-active layout */
   background-color: var(--yl-color-body-background);
 
   &.yl-nav-menu-container--sticky {
@@ -470,7 +470,7 @@ html {
     z-index: 20;
     transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
     will-change: transform, opacity;
-    box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background); // HACK: For youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges.
+    box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background); /* HACK: For youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
 
     @media (max-width: 840px) {
       top: calc(var(--yl-topnav-height) + var(--yl-feed-nav-menu-height));
@@ -1190,7 +1190,7 @@ main#stream {
       z-index: 20;
       transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
       will-change: transform, opacity;
-      box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background); // HACK: For youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges.
+      box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background); /* HACK: For youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
 
       @media (max-width: 840px) {
         top: var(--yl-topnav-height);
@@ -1269,11 +1269,7 @@ main#stream {
       grid-column: 1 / -1;
       line-height: 1.2;
       font-size: var(--yl-text-md);
-      /* Maintain consistent bottom margin for transition category title, 
-         due to parent grid-column-gap. */
-      margin-bottom: calc(var(--yl-m-xs) * -1); /* Negate, and add back margin. */
-      padding-bottom: var(--yl-m-sm);
-    
+
       @media (max-width: 600px) {
         /* Mobile: Maintain consistent bottom margin for transition category title. */
         margin-bottom: calc(var(--yl-m-md) * -1); /* Negate, and add back margin. */
@@ -1862,9 +1858,11 @@ body.youlag-active:not(.reader) main#stream {
 
     /* Favorites (bookmark) button */
     &.favorite {
-      .flux_header li.item.manage a.bookmark {
-        visibility: visible;
-        filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
+      .flux_header li.item.manage {
+        a.bookmark {
+          visibility: visible;
+          filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
+        }
       }
 
       .flux_header li.item.manage:nth-child(2) {
@@ -3654,10 +3652,6 @@ body:has(.tree-folder.category.favorites.active) {
       }
     }
     .flux_header:not(:hover)  {
-      li.item.manage:nth-child(2) {
-        /* In "Favorites", do not constantly highlight favorites button. */
-        visibility: hidden;
-      }
 
       a.bookmark {
         /* In "Favorites", hide by favorites icon by default; behave like other icons. */
