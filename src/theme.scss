@@ -1123,7 +1123,7 @@ main#stream #stream-footer,
     backdrop-filter: blur(60px);
     border: 1px solid color-mix(in oklab, #0058e6 30%, transparent);
     transition: filter .2s ease-in-out;
-    box-shadow: inset -8px 4px 70px 0px hsl(208.4deg 100% 41.56% / 13%), 0 8px 32px 0 rgba(0, 0, 0, 0.5019607843);
+    box-shadow: inset -8px 4px 70px 0px hsl(208.4deg 100% 41.56% / 13%);
     background-color: transparent;
   }
 
