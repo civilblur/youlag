@@ -3976,9 +3976,9 @@ body {
 
 #youlagVideoSource {
   margin-right: auto;
-  border-radius: 8px;
-  padding-right: 1rem;
-  padding-left: 1rem;
+  border-radius: 12px;
+  padding-right: var(--yl-p-sm);
+  padding-left: var(--yl-p-sm);
 }
 
 .youlag-video-container {
@@ -4156,7 +4156,7 @@ a.yl-video-action-button {
   color: var(--yl-color-text-default);
   font-weight: 600;
   font-size: var(--yl-text-xs);
-  border-radius: 999px;
+  border-radius: 14px;
   padding: var(--yl-p-xs) var(--yl-p-sm);
   text-decoration: none;
   transition: background-color 0.2s;
