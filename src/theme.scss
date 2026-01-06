@@ -1671,7 +1671,7 @@ body.youlag-active:not(.reader) main#stream {
 
     .flux_header {
 
-      @media (min-width: 600px) {
+      @media (min-width: 840px) {
         &:hover {
           /* Desktop, youlag-active: only show the border around card actions on hover. */
           li.item.manage,
@@ -1684,7 +1684,7 @@ body.youlag-active:not(.reader) main#stream {
         }
       }
 
-      @media (max-width: 600px) {
+      @media (max-width: 840px) {
         /* Mobile, youlag-active: the buttons are always visible on mobile, so always show the card action borders. */
         li.item.manage,
         li.item.website.icon,
@@ -1823,7 +1823,7 @@ body.youlag-active:not(.reader) main#stream {
           }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 840px) {
           /* Always display card actions on mobile */
           li.item.manage a,
           li.item.website.icon a,
@@ -3436,7 +3436,7 @@ body.youlag-active.yl-page-watch_later:not(.reader) main#stream {
 
 body.youlag-active:not(.reader) main#stream {
   div.flux {
-    @media (max-width: 600px) {
+    @media (max-width: 840px) {
       &:not(.active),
       &:not(.active).favorite:not(.current) {
         /* Mobile, youlag-active:, always display hover effect/background */
