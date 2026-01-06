@@ -935,6 +935,7 @@ nav.aside.aside_feed {
   /* Header settings button */
   .item.configure {
     width: calc(40px + var(--yl-p-sm));
+    text-align: left;
 
     .btn {
       width: 40px;
@@ -2999,8 +3000,8 @@ body.youlag-inactive:not(.reader) {
 
 body.youlag-inactive:not(.reader) main#stream {
   margin: 0 auto;
-  padding-left: var(--yl-p-md);
-  padding-right: var(--yl-p-md);
+  padding-left: var(--yl-p-sm);
+  padding-right: var(--yl-p-sm);
   max-width: 900px;
 
   @media (max-width: 840px) {
