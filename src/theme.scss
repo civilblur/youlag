@@ -138,7 +138,8 @@
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-pip-width: min(460px, 60%);
-  --yl-topnav-height: 58px; /* Desktop: Topnav default height */ 
+  --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
+  --yl-feed-nav-menu-height: 77px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
   --yl-sidenav-width: 280px;
   --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
   --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
@@ -463,10 +464,14 @@ html {
 
   &.yl-nav-menu-container--sticky {
     position: sticky;
-    top: var(--yl-topnav-height, 54px);
+    top: var(--yl-feed-nav-menu-height);
     z-index: 99;
     transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
     will-change: transform, opacity;
+
+    @media (max-width: 840px) {
+      top: calc(var(--yl-topnav-height) + var(--yl-feed-nav-menu-height));
+    }
   }
 
   &.yl-nav-menu-container--open {   
@@ -827,7 +832,7 @@ nav.aside.aside_feed {
 
 .header {
   --sid-bg: transparent; /* Header background color */
-  min-height: 54px;
+  height: var(--yl-topnav-height);
   box-sizing: border-box;
   z-index: 50;
 
@@ -1167,9 +1172,8 @@ main#stream {
     letter-spacing: 0;
     text-transform: none;
     line-height: 1;
-    margin-top: 0;
-    padding: 0;
-    margin: var(--yl-m-sm) 0;
+    margin: 0;
+    padding: var(--yl-m-sm) 0;
 
     &.yl-freshrss-transition--sticky {
       position: sticky;
@@ -1177,6 +1181,10 @@ main#stream {
       z-index: 100;
       transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
       will-change: transform, opacity;
+
+      @media (max-width: 840px) {
+        top: var(--yl-topnav-height);
+      }
     }
 
     .name {
@@ -1253,11 +1261,13 @@ main#stream {
       font-size: var(--yl-text-md);
       /* Maintain consistent bottom margin for transition category title, 
          due to parent grid-column-gap. */
-      margin-bottom: calc((var(--yl-m-xs) * -1) + var(--yl-m-sm)); /* Negate, and add back margin. */
+      margin-bottom: calc(var(--yl-m-xs) * -1); /* Negate, and add back margin. */
+      padding-bottom: var(--yl-m-sm);
     
       @media (max-width: 600px) {
         /* Mobile: Maintain consistent bottom margin for transition category title. */
-        margin-bottom: calc((var(--yl-m-md) * -1) + var(--yl-m-sm)); /* Negate, and add back margin. */
+        margin-bottom: calc(var(--yl-m-md) * -1); /* Negate, and add back margin. */
+        padding-bottom: var(--yl-m-sm);
       }
     }
 
