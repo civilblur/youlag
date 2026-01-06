@@ -1033,66 +1033,114 @@ function setVideoLabelsTitle(pageClass, newTitle) {
 }
 
 function setupNavMenu() {
-  /**
-   * Wrap FreshRSS `.nav_menu` actions into a toggle button.
-   * The container elements comes from `extensions.php` which adds element `#yl_nav_menu_container` via 'nav_entries' hook.
-   */
-  // NOTE: This type of dom manipulation is not ideal. Use css whenever possible instead, due to fragility of dom structure changes. 
   if (youlagNavMenuInitialized) return;
   youlagNavMenuInitialized = true;
+
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
-  const ylNavMenu = ylNavMenuContainer ? ylNavMenuContainer.querySelector('#yl_nav_menu_container_content') : null;
-  const ylNavMenuToggle = ylNavMenuContainer ? document.getElementById('yl_nav_menu_container_toggle') : null;
-  const freshRsstoggleSearch = ylNavMenuContainer ? document.getElementById('dropdown-search-wrapper') : null;
+  const ylNavMenu = ylNavMenuContainer?.querySelector('#yl_nav_menu_container_content');
+  const ylNavMenuToggle = ylNavMenuContainer?.querySelector('#yl_nav_menu_container_toggle');
+  const freshRsstoggleSearch = ylNavMenuContainer?.querySelector('#dropdown-search-wrapper');
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
-  const freshRssTransition = document.querySelector('#new-article + .transition'); // Category title container.
+  const freshRssTransition = document.querySelector('#new-article + .transition');
 
-  if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !freshRssTransition) {
-    // Fail gracefully
-    return;
+  // Gracefully fail
+  if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !freshRssTransition) return;
+
+  ylNavMenu.hidden = true; // `.nav_menu` is hidden by default.
+  ylNavMenu.classList.add('nav_menu'); 
+
+  freshRssTransition.classList.add('yl-freshrss-transition--sticky');
+  ylNavMenuContainer.classList.add('yl-nav-menu-container--sticky');
+
+  if (freshRsstoggleSearch) {
+    // Break out search from the FreshRSS `.nav_menu` container, to keep it independent for styling.
+    freshRssTransition.appendChild(freshRsstoggleSearch);
   }
-
-  ylNavMenu.hidden = true; // Init state of custom Youlag `.nav_menu`, ylNavMenu.
-  ylNavMenu.classList.add('nav_menu'); // Apply FreshRSS nav_menu class to retain styling and correct css selectors.
-
-  if (freshRssTransition && ylNavMenuContainer && ylNavMenuToggle) {
-    if (freshRsstoggleSearch) {
-      // Break out search from the FreshRSS `.nav_menu` container, to keep it independent for styling.
-      freshRssTransition.appendChild(freshRsstoggleSearch);
-    }
-    freshRssTransition.appendChild(ylNavMenuToggle);
-    if (freshRssTransition.nextSibling) {
-      // Place ylNavMenuContainer after `.transition` (the category title).
-      // The ylNavMenuContainer containing the `.nav_menu` will appear below the title when toggled this way.
-      freshRssTransition.parentNode.insertBefore(ylNavMenuContainer, freshRssTransition.nextSibling);
-    }
-    else {
-      freshRssTransition.parentNode.appendChild(ylNavMenuContainer);
-    }
+  freshRssTransition.appendChild(ylNavMenuToggle);
+  if (freshRssTransition.nextSibling) {
+    // Place ylNavMenuContainer after `.transition` (the category title).
+    // The ylNavMenuContainer containing the `.nav_menu` will appear below the title when toggled this way.
+    freshRssTransition.parentNode.insertBefore(ylNavMenuContainer, freshRssTransition.nextSibling);
+  } else {
+    freshRssTransition.parentNode.appendChild(ylNavMenuContainer);
   }
   if (freshRssNavMenu && ylNavMenu) {
     // Move FreshRSS `.nav_menu` items inside Youlag's own `.nav_menu` content, ylNavMenu (child of ylNavMenuContainer).
     const navMenuChildren = Array.from(freshRssNavMenu.children);
     navMenuChildren.forEach(child => {
-      if (!(child.id === 'nav_menu_toggle_aside')) {
+      if (child.id !== 'nav_menu_toggle_aside') {
         // Exclude the sidebar toggle button, as that its position placement is handled via css already.
         ylNavMenu.appendChild(child);
       }
     });
   }
+  
+  // Setup sticky scroll behavior for FreshRSS `.transition` and Youlag `.nav_menu`, ylNavMenuContainer.
+  setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer);
 
-  if (ylNavMenuContainer && ylNavMenu && ylNavMenuToggle) {
-    // Toggle custom Youlag `.nav_menu`, ylNavMenu, on click.
-    document.addEventListener('click', function (e) {
-      const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
-      if (toggleBtn && document.body.contains(ylNavMenuContainer)) {
-        const isOpen = ylNavMenuContainer.classList.toggle('yl-nav-menu-container--open');
-        ylNavMenu.hidden = !isOpen;
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    });
+  // Toggle custom Youlag `.nav_menu`, ylNavMenu, on click.
+  document.addEventListener('click', function (e) {
+    const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
+    if (toggleBtn && document.body.contains(ylNavMenuContainer)) {
+      const isOpen = ylNavMenuContainer.classList.toggle('yl-nav-menu-container--open');
+      ylNavMenu.hidden = !isOpen;
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+}
+
+
+function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
+  // Setup scroll listener to show/hide the Youlag `.nav_menu`. Visible while scrolling up, hidden while scrolling down.
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  let ignoreNextScroll = false; // 'Configure view' toggling expands ylNavMenuContainer, casuing unwanted scroll events. Prevent those.  
+
+  function setStickyVisibility(show) {
+    const add = (el) => {
+      el.classList.toggle('sticky-visible', show);
+      el.classList.toggle('sticky-hidden', !show);
+    };
+    add(freshRssTransition);
+    add(ylNavMenuContainer);
   }
+
+  function onScroll() {
+    if (ignoreNextScroll) {
+      ignoreNextScroll = false;
+      lastScrollY = window.scrollY;
+      return;
+    }
+    const currentScrollY = window.scrollY;
+    if (currentScrollY <= 0) {
+      setStickyVisibility(true);
+    }
+    else if (currentScrollY > lastScrollY + 2) {
+      setStickyVisibility(false);
+    }
+    else if (currentScrollY < lastScrollY - 2) {
+      setStickyVisibility(true);
+    }
+    lastScrollY = currentScrollY;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        onScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  const observer = new MutationObserver(() => {
+    ignoreNextScroll = true;
+  });
+  // Observe class changes on ylNavMenuContainer, to see if `.yl-nav-menu-container--open` is added/removed.
+  // Set `ignoreNextScroll = true` if so, to prevent unwanted scroll events caused by toggling ylNavMenuToggle ('configure view' button).
+  observer.observe(ylNavMenuContainer, { attributes: true, attributeFilter: ['class'] });
 }
 
 function init() {

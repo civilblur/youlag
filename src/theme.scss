@@ -138,6 +138,7 @@
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-pip-width: min(460px, 60%);
+  --yl-topnav-height: 58px; /* Desktop: Topnav default height */ 
   --yl-sidenav-width: 280px;
   --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
   --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
@@ -460,6 +461,14 @@ html {
   /* Custom element for placing the FreshRSS `.nav_menu`. */
   grid-column: 1 / -1; // Span full width in youlag-active layout
 
+  &.yl-nav-menu-container--sticky {
+    position: sticky;
+    top: var(--yl-topnav-height, 54px);
+    z-index: 99;
+    transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
+    will-change: transform, opacity;
+  }
+
   &.yl-nav-menu-container--open {   
     margin-bottom: var(--yl-m-xs);
     
@@ -744,8 +753,10 @@ nav.aside.aside_feed {
 }
 
 @media (max-width: 840px) {
-  .header {
+
+  header.header {
     /* Mobile: Header */
+    --yl-topnav-height: 54px;
     position: fixed;
     top: 0;
     left: 0;
@@ -1159,6 +1170,14 @@ main#stream {
     margin-top: 0;
     padding: 0;
     margin: var(--yl-m-sm) 0;
+
+    &.yl-freshrss-transition--sticky {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
+      will-change: transform, opacity;
+    }
 
     .name {
       /* Show category name for the first date transition. */
@@ -4574,6 +4593,15 @@ body.youlag-tags-modal-open {
 
 .rounded-md {
   border-radius: 12px;
+}
+
+.sticky-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.sticky-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
 }
 
 [data-yl-invidious-instance],
