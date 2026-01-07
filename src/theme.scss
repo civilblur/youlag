@@ -1860,16 +1860,7 @@ body.youlag-active:not(.reader) main#stream {
     &.favorite {
       .flux_header li.item.manage {
         a.bookmark {
-          visibility: visible;
           filter: brightness(1.5) sepia(1) hue-rotate(-25deg) saturate(4) contrast(1.2);
-        }
-      }
-
-      .flux_header li.item.manage:nth-child(2) {
-        background-color: hsl(33.65deg 100% 54.9% / 13%);
-
-        &:hover {
-          background-color: hsl(33.65deg 100% 54.9% / 20%);
         }
       }
     }
