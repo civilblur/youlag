@@ -1147,7 +1147,7 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
   function setStickyVisibilitySidenavToggle(show) {
     const sidenavToggle = document.getElementById('nav_menu_toggle_aside');
     if (sidenavToggle) {
-      /* Desktop: The css uses desktop media queries.
+      /* Desktop: The css uses desktop media queries to avoid needing to use js resizeobserver.
          While the classes are applied, the visual changes only applies on desktop, when sidenav is not visible. */
       sidenavToggle.classList.toggle('sticky-visible--sidenav-toggle', show);
       sidenavToggle.classList.toggle('sticky-hidden--sidenav-toggle', !show);

@@ -466,7 +466,7 @@ html {
 
   &.yl-nav-menu-container--sticky {
     position: sticky;
-    top: var(--yl-feed-nav-menu-height);
+    top: calc(var(--yl-feed-nav-menu-height) - 1px); /* HACK: Prevent half-pixel gap depending on browser zoom label. */
     z-index: 20;
     transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
     will-change: transform, opacity;
