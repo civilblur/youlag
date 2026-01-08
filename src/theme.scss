@@ -1182,7 +1182,7 @@ main#stream {
     text-transform: none;
     line-height: 1;
     margin: 0;
-    padding: var(--yl-m-sm) 0;
+    padding: var(--yl-m-2xs) 0;
 
     &.yl-freshrss-transition--sticky {
       position: sticky;
@@ -2081,14 +2081,23 @@ html {
       @media (min-width: 841px) {
         padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
           
-          &.visible {
-            /* Desktop: Sidenav is visible. */
-            & ~ main#stream,
-            & ~ nav.nav_menu,
-            &.visible ~ main.post {
-              box-sizing: border-box;
-              padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm)); /* Set aside space for the sidebar */
-            }
+        &.visible {
+          /* Desktop: Sidenav is visible. */
+          & ~ main#stream,
+          & ~ nav.nav_menu,
+          &.visible ~ main.post {
+            box-sizing: border-box;
+            padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm)); /* Set aside space for the sidebar */
+          }
+        }
+      }
+
+      @media (min-width: 841px) and (max-width: 1028px) {
+        /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
+        &:not(.visible) {
+          & ~ main#stream .yl-freshrss-transition--sticky {
+            padding-left: 44px; /* Width of sidenav toggle button. */
+          }
         }
       }
   
@@ -2786,8 +2795,8 @@ main.post {
       .icon.loading,
       .icon.spinner {
         background: var(--yl-loading-spinner-background-image) center center no-repeat;
-        background-size: 1rem; // Allow `var(--yl-loading-spinner-background-image)` to size correctly for the button containers.
-        object-position: -9999px 0; // Hide FreshRSS' default loading icon by positioning it x-coordinate: -9999px.
+        background-size: 1rem; /* Allow `var(--yl-loading-spinner-background-image)` to size correctly for the button containers. */
+        object-position: -9999px 0; /* Hide FreshRSS' default loading icon by positioning it x-coordinate: -9999px. */
       }
     }
 
@@ -3520,8 +3529,12 @@ main#stream,
   padding-right: 0;
 
   @media (max-width: 840px) {
-    top: calc(54px + var(--yl-m-xs)); /* Account for mobile top nav height */
-    margin: 0;
+    top: calc(54px + var(--yl-m-2xs)); /* Account for mobile top nav height */
+    margin: 0 var(--yl-m-xs);
+    margin-top: 0;
+    margin-left: var(--yl-m-xs);
+    margin-right: var(--yl-m-xs);
+    margin-bottom: var(--yl-m-sm); /* Prevent getting overlapped by transition (category) title. */
   }
 
   a {
