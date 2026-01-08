@@ -2094,7 +2094,7 @@ html {
         }
       }
 
-      @media (min-width: 841px) {
+      @media (min-width: 841px) and (max-width: 1020px) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         &:not(.visible) {
           & ~ main#stream .yl-freshrss-transition--sticky {
