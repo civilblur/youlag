@@ -172,7 +172,7 @@ class YoulagExtension extends Minz_Extension {
                 . ' class="aspect-ratio-16-9 rounded-md"'
                 . ' width="100%"'
                 . ' height="auto"'
-                . ' src="' . htmlspecialchars('https://www.youtube.com/embed/' . $videoId, ENT_QUOTES) . '"'
+                . ' data-original="' . htmlspecialchars('https://www.youtube.com/embed/' . $videoId, ENT_QUOTES) . '"'
                 . ' frameborder="0"'
                 . ' allowfullscreen'
                 . ' referrerpolicy="strict-origin-when-cross-origin"></iframe>';
