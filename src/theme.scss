@@ -4630,7 +4630,10 @@ body.youlag-tags-modal-open {
   #aside_feed:not(.visible) {
     /* Sidenav is not visible, hide and show sidenav toggle button based on scroll down or up. */
     & ~ nav.nav_menu #nav_menu_toggle_aside {
-      transition: 0.15s ease-out;
+      transition: 
+        transform 0.15s ease-out,
+        opacity 0.15s ease-out,
+        background-color 0.2s;
 
       & .btn:not(:hover) {
         background-color: transparent;
