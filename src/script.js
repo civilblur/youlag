@@ -95,26 +95,30 @@ function getBaseUrl(url) {
   }
 }
 
+
 function matchURL(text) {
-  const urlPattern = /https?:\/\/[\w\-._~:/?#\[\]@!$&'()*+,;=%]+[\w\-_/~#@?=&%]/g;
+  // Find URLs in e.g. video description.
   if (!text || typeof text !== 'string') return [];
-  const matches = text.match(urlPattern);
+  let textWithoutAnchors = text.replace(/<a [^>]*href=["'][^"']+["'][^>]*>.*?<\/a>/gi, '');
+  let urlPattern = /https?:\/\/[\w\-._~:/?#\[\]@!$&'()*+,;=%]+[\w\-_/~#@?=&%]/g;
+  let matches = textWithoutAnchors.match(urlPattern);
   return matches ? matches : [];
 }
 
 function appendUrl(text) {
-  console.log('appendUrl input:', text);
-  const urls = matchURL(text);
-  if (urls) {
-    urls.forEach(url => {
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.textContent = url;
-      anchor.target = '_blank';
-      text = text.replace(url, anchor.outerHTML);
-    });
+  // Append URLs anchor tags for URLs found in the video description, ignore existing potential anchor tags.
+  if (!text || typeof text !== 'string') return text;
+  let urlPattern = /https?:\/\/[\w\-._~:/?#\[\]@!$&'()*+,;=%]+[\w\-_/~#@?=&%]/g;
+  let parts = text.split(/(<a [^>]*>.*?<\/a>)/gi);
+  for (let i = 0; i < parts.length; i++) {
+    // Only replace in non-anchor segments
+    if (!/^<a [^>]*>.*<\/a>$/i.test(parts[i])) {
+      parts[i] = parts[i].replace(urlPattern, function (url) {
+        return '<a href="' + url + '" target="_blank">' + url + '</a>';
+      });
+    }
   }
-  return text;
+  return parts.join('');
 }
 
 function sanitizeExtractedVideoUrl(content) {
@@ -870,7 +874,6 @@ function getSubpageParentId(getParam) {
     // Filter page, a subpage of a category.
     const activeElem = document.querySelector('#sidebar .tree-folder.category.active');
     if (activeElem && activeElem.id) {
-      console.log('Found active category for filter page:', activeElem.id);
       return activeElem.id; // e.g. 'c_{n}'
     }
     return null;
