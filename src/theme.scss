@@ -139,7 +139,7 @@
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-pip-width: min(460px, 60%);
   --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
-  --yl-feed-nav-menu-height: 76px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
+  --yl-feed-nav-menu-height: 61px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
   --yl-sidenav-width: 280px;
   --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
   --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
@@ -1183,6 +1183,8 @@ main#stream {
     line-height: 1;
     margin: 0;
     padding: var(--yl-m-2xs) 0;
+    height: var(--yl-feed-nav-menu-height);
+    box-sizing: border-box;
 
     &.yl-freshrss-transition--sticky {
       position: sticky;
@@ -1301,7 +1303,7 @@ nav.nav_menu {
       left: 5px;
     }
   
-    /* Button to show/hide sidenav. */
+    /* Button to toggle (show/hide) sidenav. */
     & > button.btn {
       border-radius: 8px;
       transition: background-color 0.3s;
@@ -2092,7 +2094,7 @@ html {
         }
       }
 
-      @media (min-width: 841px) and (max-width: 1028px) {
+      @media (min-width: 841px) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         &:not(.visible) {
           & ~ main#stream .yl-freshrss-transition--sticky {
@@ -4617,9 +4619,33 @@ body.youlag-tags-modal-open {
   transform: translateY(0);
   opacity: 1;
 }
+
 .sticky-hidden {
   transform: translateY(-100%);
   opacity: 0;
+}
+
+@media (min-width: 841px) {
+  #aside_feed:not(.visible) {
+    /* Sidenav is not visible, hide and show sidenav toggle button based on scroll down or up. */
+    & ~ nav.nav_menu #nav_menu_toggle_aside {
+      transition: 0.15s ease-out;
+
+      & .btn:not(:hover) {
+        background-color: transparent;
+      }
+    }
+    
+    & ~ nav.nav_menu .sticky-visible--sidenav-toggle {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    & ~ nav.nav_menu .sticky-hidden--sidenav-toggle {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
 }
 
 [data-yl-invidious-instance],

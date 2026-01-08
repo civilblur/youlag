@@ -1144,6 +1144,16 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
     add(ylNavMenuContainer);
   }
 
+  function setStickyVisibilitySidenavToggle(show) {
+    const sidenavToggle = document.getElementById('nav_menu_toggle_aside');
+    if (sidenavToggle) {
+      /* Desktop: The css uses desktop media queries.
+         While the classes are applied, the visual changes only applies on desktop, when sidenav is not visible. */
+      sidenavToggle.classList.toggle('sticky-visible--sidenav-toggle', show);
+      sidenavToggle.classList.toggle('sticky-hidden--sidenav-toggle', !show);
+    }
+  }
+
   function onScroll() {
     if (ignoreNextScroll) {
       ignoreNextScroll = false;
@@ -1153,12 +1163,15 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
     const currentScrollY = window.scrollY;
     if (currentScrollY <= 0) {
       setStickyVisibility(true);
+      setStickyVisibilitySidenavToggle(true);
     }
     else if (currentScrollY > lastScrollY + 2) {
       setStickyVisibility(false);
+      setStickyVisibilitySidenavToggle(false);
     }
     else if (currentScrollY < lastScrollY - 2) {
       setStickyVisibility(true);
+      setStickyVisibilitySidenavToggle(true);
     }
     lastScrollY = currentScrollY;
   }
