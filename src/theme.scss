@@ -1938,12 +1938,6 @@ body.youlag-active:not(.reader) main#stream {
         white-space: nowrap;
         color: var(--yl-color-text-default);
 
-        &:before {
-          content: "+ Add to playlist";
-          font-weight: bold;
-          font-size: 14px;
-        }
-
         & + .dropdown-menu .dropdown-header {
           font-size: 0;
 
@@ -2787,6 +2781,11 @@ main.post {
 
       .date {
         color: #898989;
+      }
+
+      .icon.loading {
+        background-size: 1rem; // Allow var(--frss-loading-image) to size correctly for the button.
+        object-position: -9999px 0; // Hide FreshRSS' default loading icon by positioning it x-coordinate: -9999px.
       }
     }
 
