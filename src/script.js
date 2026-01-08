@@ -1061,7 +1061,7 @@ function setupNavMenu() {
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
   const ylNavMenu = ylNavMenuContainer?.querySelector('#yl_nav_menu_container_content');
   const ylNavMenuToggle = ylNavMenuContainer?.querySelector('#yl_nav_menu_container_toggle');
-  const freshRsstoggleSearch = ylNavMenuContainer?.querySelector('#dropdown-search-wrapper');
+  const freshRssToggleSearch = document?.querySelector('#dropdown-search-wrapper');
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
   const freshRssTransition = document.querySelector('#new-article + .transition');
 
@@ -1074,9 +1074,11 @@ function setupNavMenu() {
   freshRssTransition.classList.add('yl-freshrss-transition--sticky');
   ylNavMenuContainer.classList.add('yl-nav-menu-container--sticky');
 
-  if (freshRsstoggleSearch) {
+  if (freshRssToggleSearch) {
     // Break out search from the FreshRSS `.nav_menu` container, to keep it independent for styling.
-    freshRssTransition.appendChild(freshRsstoggleSearch);
+    if (ylNavMenuContainer.nextSibling) {
+      ylNavMenuContainer.parentNode.insertBefore(freshRssToggleSearch, ylNavMenuContainer.nextSibling);
+    } 
   }
   freshRssTransition.appendChild(ylNavMenuToggle);
   if (freshRssTransition.nextSibling) {
