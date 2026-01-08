@@ -408,7 +408,6 @@ function createVideoModal(data) {
     });
   }
 
-
   if (!data.youtubeId) {
     // Not a video feed item
     modal.classList.add('youlag-modal-feed-item--text');
@@ -417,7 +416,6 @@ function createVideoModal(data) {
       document.querySelector('.youlag-iframe-container').remove();
     }
   }
-
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModal);
   container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
@@ -502,7 +500,7 @@ function closeModal() {
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
   if (history.state && history.state.modalOpen) {
-    history.back();
+    history.replaceState(null, '', location.href);
   }
   setModePip(false);
   setModeFullscreen(false);
@@ -555,39 +553,40 @@ function setModeFullscreen(state) {
 }
 
 function setupClickListener() {
-  if (!youlagActive) return;
-  const streamContainer = document.querySelector('#stream');
-
-  if (streamContainer) {
-    streamContainer.addEventListener('click', (event) => {
-      // Prevent activation if clicked element is inside .flux_header li.
-      // These are the feed item actions buttons.
-      if (event.target.closest('div[data-feed] .flux_header li.manage')) return;
-      if (event.target.closest('div[data-feed] .flux_header li.labels')) return;
-      if (event.target.closest('div[data-feed] .flux_header li.share')) return;
-      if (event.target.closest('div[data-feed] .flux_header li.link')) return;
-      if (event.target.closest('div[data-feed] .flux_header .website a[href^="./?get=f_"]')) return;
-      const target = event.target.closest('div[data-feed]');
-
-      if (target) {
-        handleActiveRssItem(event);
-        collapseBackgroundFeedItem(target);
+  if (youlagActive) {
+    const streamContainer = document.querySelector('#stream');
+  
+    if (streamContainer) {
+      streamContainer.addEventListener('click', (event) => {
+        // Prevent activation if clicked element is inside .flux_header li.
+        // These are the feed item actions buttons.
+        if (event.target.closest('div[data-feed] .flux_header li.manage')) return;
+        if (event.target.closest('div[data-feed] .flux_header li.labels')) return;
+        if (event.target.closest('div[data-feed] .flux_header li.share')) return;
+        if (event.target.closest('div[data-feed] .flux_header li.link')) return;
+        if (event.target.closest('div[data-feed] .flux_header .website a[href^="./?get=f_"]')) return;
+        const target = event.target.closest('div[data-feed]');
+  
+        if (target) {
+          handleActiveRssItem(event);
+          collapseBackgroundFeedItem(target);
+        }
+      });
+    }
+  }
+  else if (!youlagActive) {
+    document.addEventListener('keydown', function (event) {
+      // youlag-inactive: Close article on Esc key.
+      if (event.key === 'Escape' && document.body.classList.contains('youlag-inactive')) {
+        const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+        if (openedArticle) {
+          openedArticle.classList.remove('active', 'current');
+          event.stopPropagation();
+        }
       }
     });
   }
 }
-
-document.addEventListener('keydown', function (event) {
-  // youlag-inactive: Close article on Esc key.
-  if (event.key === 'Escape' && document.body.classList.contains('youlag-inactive')) {
-    const openedArticle = document.querySelector('#stream div[data-feed].active.current');
-    if (openedArticle) {
-      openedArticle.classList.remove('active', 'current');
-      event.stopPropagation();
-    }
-  }
-});
-
 
 function setupTagsDropdownOverride() {
   // Delegated event listener to override tags (playlists) dropdown click
