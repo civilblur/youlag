@@ -1,7 +1,7 @@
 {
   "name": "Youlag",
   "author": "civilblur",
-  "description": "Browse YouTube RSS feeds through a modern video interface that incorporates quality-of-life features.",
+  "description": "Browse YouTube and articles feeds through a modern interface that incorporates quality-of-life features.",
   "version": "4.1.0",
   "entrypoint": "Youlag",
   "type": "user"

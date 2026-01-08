@@ -3,7 +3,7 @@
 
    Youlag
    <br>
-   Video extension for FreshRSS
+   Modernize FreshRSS for browsing YouTube and articles
 </h1>
 
 <center>
@@ -12,7 +12,7 @@
 
 
 ## About
-Browse YouTube RSS feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modernized design that incorporates quality-of-life features.
+Browse YouTube and article feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modernized design that incorporates quality-of-life features.
 
 Optimized for both watching videos and reading articles.
 
