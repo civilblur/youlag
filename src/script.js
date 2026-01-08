@@ -593,8 +593,9 @@ function setupClickListener() {
               offset = parseInt(val.trim(), 10) || 0;
             }
           }
+          const targetScroll = rect.top + scrollTop - offset - staticOffset;
           window.scrollTo({
-            top: rect.top + scrollTop - offset - staticOffset,
+            top: Math.max(0, targetScroll)
           });
           event.stopPropagation();
         }
