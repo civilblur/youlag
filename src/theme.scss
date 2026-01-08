@@ -3902,7 +3902,8 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  transition: 0.1s; /* Time to restore to fullscreen */
+  transition: 0.3s; /* Time to restore to fullscreen */
+  will-change: width, height, transform;
   /* For browsers with subpixel rendering issues, hide background content peeking through. */
   box-shadow: 0 0 0 10px #060606;
   transform-origin: bottom right;
