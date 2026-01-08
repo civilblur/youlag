@@ -168,6 +168,13 @@ class YoulagExtension extends Minz_Extension {
         if (preg_match('#https?://(?:www\.)?youtube\.com/watch\?v=([\w-]+)#i', $link, $m) ||
             preg_match('#https?://youtu\.be/([\w-]+)#i', $link, $m)) {
             $videoId = $m[1];
+            /* 
+             * HACK: Use 'data-original' instead of 'src' to prevent FreshRSS from lazy-loading through its injected 'grey.gif',
+             * which creates an http call for every iframe. 'data-original' is not a standard attribute, but handled through Youlag's script.js.
+             * 
+             * NOTE: The attribute naming scheme follows what is used in FreshRSS for lazyload:
+             * https://github.com/FreshRSS/FreshRSS/blob/131f4f8e636fd2d0b7652c3afeb54eaaa48b283a/lib/lib_rss.php#L279
+             */
             $iframe = '<iframe'
                 . ' class="aspect-ratio-16-9 rounded-md"'
                 . ' width="100%"'
