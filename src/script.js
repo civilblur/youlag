@@ -581,6 +581,21 @@ function setupClickListener() {
         const openedArticle = document.querySelector('#stream div[data-feed].active.current');
         if (openedArticle) {
           openedArticle.classList.remove('active', 'current');
+          // Scroll to the top of the closed article, offset by `var(--yl-topnav-height)`.
+          const rect = openedArticle.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const staticOffset = 80; // Increase offset to prevent e.g. `nav_menu` to overlap.
+          let offset = 0;
+          if (window.getComputedStyle) {
+            const root = document.documentElement;
+            const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+            if (val) {
+              offset = parseInt(val.trim(), 10) || 0;
+            }
+          }
+          window.scrollTo({
+            top: rect.top + scrollTop - offset - staticOffset,
+          });
           event.stopPropagation();
         }
       }
