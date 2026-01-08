@@ -864,7 +864,7 @@ nav.aside.aside_feed {
         height: var(--yl-m-md) !important;
       }
 
-      @media (min-width: 840px) {
+      @media (min-width: 841px) {
         img {
           /* Logo, make room for sidenav toggle button */
           margin-left: 46px;
@@ -1106,7 +1106,7 @@ main#stream #stream-footer,
   z-index: 45; /* Avoid blocking mobile dropdown menus that are displayed as bottom sheets. */
 
 
-  @media (min-width: 840px) {
+  @media (min-width: 841px) {
     /* Desktop: Only limit the size of the bottom navigation on desktop, as on mobile, it needs to be dynamic. */
     width: var(--yl-sidenav-width);
     z-index: 50; /* Desktop: Place bottom navigation on top of sidenav. */
@@ -1671,7 +1671,7 @@ body.youlag-active:not(.reader) main#stream {
 
     .flux_header {
 
-      @media (min-width: 840px) {
+      @media (min-width: 841px) {
         &:hover {
           /* Desktop, youlag-active: only show the border around card actions on hover. */
           li.item.manage,
@@ -2016,7 +2016,7 @@ html {
     aspect-ratio: 16 / 9;
   }
 
-  @media (min-width: 840px) {
+  @media (min-width: 841px) {
     #aside_feed {
       /* Desktop: Only set fixed width for desktop. On mobile, adding fixed width causes the sidebar to display by default on all pages.  */
       width: var(--yl-sidenav-width);
@@ -2078,7 +2078,7 @@ html {
         }
       }
 
-      @media (min-width: 840px) {
+      @media (min-width: 841px) {
         padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
           
           &.visible {
@@ -2759,7 +2759,7 @@ main.post {
     &.tags {
       .item.feed a.item-title {
 
-        @media (min-width: 840px) {
+        @media (min-width: 841px) {
           &:not(.active) {
             padding-left: 15px;
           }
@@ -2821,7 +2821,7 @@ main.post {
 #aside_feed.aside {
   border-right: 1px solid color-mix(in oklab, #fff 11%, transparent);
 
-  @media (min-width: 840px) {
+  @media (min-width: 841px) {
 
     & > * {
       /* On desktop, prevent side navigation to stretch when main content isn't loaded, caused by the layout relying on "display: table" */
@@ -3051,7 +3051,7 @@ body.youlag-inactive:not(.reader) main#stream {
       border: 1px solid color-mix(in oklab,#fff 11%,transparent);
       border-radius: 14px;
       box-sizing: border-box;
-      padding: var(--yl-p-2xs) var(--yl-p-3xs);
+      padding: var(--yl-p-2xs) var(--yl-p-2xs);
       margin: 0;
 
       @media (max-width: 840px) {
