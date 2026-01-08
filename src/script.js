@@ -442,7 +442,25 @@ function createVideoModal(data) {
     }
   });
 
-  window.addEventListener('popstate', closeModal);
+  // Only close modal if path or search changes, not just hash (#).
+  // FreshRSS utilizes hash paths displaying dropdown menus, e.g. `example.com/#dropdown-configure`, `#close`, etc.
+  let lastLocation = {
+    pathname: location.pathname,
+    search: location.search,
+    hash: location.hash
+  };
+  window.addEventListener('popstate', function popstateHandler() {
+    // If only the hash changed, do not close the modal.
+    if (
+      location.pathname === lastLocation.pathname &&
+      location.search === lastLocation.search &&
+      location.hash !== lastLocation.hash
+    ) {
+      lastLocation.hash = location.hash;
+      return;
+    }
+    closeModal();
+  });
 }
 
 function toggleFavorite(url, container, feedItemEl) {
@@ -480,6 +498,7 @@ function toggleFavorite(url, container, feedItemEl) {
 }
 
 function closeModal() {
+  console.log('Closing Youlag theater modal');
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
   if (history.state && history.state.modalOpen) {

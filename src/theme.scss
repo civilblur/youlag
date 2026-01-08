@@ -3751,7 +3751,7 @@ body:has(.tree-folder.category.favorites.active) {
   @media (max-width: 840px) {
     &:has(#nav_entries) #youlagTheaterModal {
       /* Mobile: Place pip video above bottom navigation bar. */
-      bottom: calc(4.5rem + 20px); /* 4.5rem = height of bottom navigation bar */
+      bottom: calc(4.5rem + var(--yl-m-sm)); /* 4.5rem = height of bottom navigation bar */
     }
   }
 }
@@ -4245,6 +4245,7 @@ a.yl-video-action-button[href=""] {
 
 .youlag-mode--pip #youlagTheaterModal {
   overflow: hidden;
+  z-index: 50;
 
   & {
     width: var(--yl-video-pip-width);
