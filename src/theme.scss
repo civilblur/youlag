@@ -2783,8 +2783,10 @@ main.post {
         color: #898989;
       }
 
-      .icon.loading {
-        background-size: 1rem; // Allow var(--frss-loading-image) to size correctly for the button.
+      .icon.loading,
+      .icon.spinner {
+        background: var(--yl-loading-spinner-background-image) center center no-repeat;
+        background-size: 1rem; // Allow `var(--yl-loading-spinner-background-image)` to size correctly for the button containers.
         object-position: -9999px 0; // Hide FreshRSS' default loading icon by positioning it x-coordinate: -9999px.
       }
     }
