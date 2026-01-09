@@ -7,7 +7,8 @@
 </h1>
 
 <center>
-   <img src=".github/capture.png" alt="youlag screencapture" width="1000">
+   <img src=".github/capture-1.jpg" alt="youlag video mode" width="1000">
+   <img src=".github/capture-2.jpg" alt="youlag article view" width="1000">
 </center>
 
 
@@ -26,7 +27,7 @@ Optimized for both watching videos and reading articles.
 ## Features
 
 - 📺 **Videos & Articles**
-  - Browse YouTube RSS subscriptions through a video-tailored inferface
+  - Browse YouTube subscriptions through a video-tailored inferface
   - Mini video player: keep video in corner while reading articles
   - Modernized article viewing experience
 - ⚙️ **Customization**
@@ -71,8 +72,6 @@ Optimized for both watching videos and reading articles.
 - **Integration**: [Korbak/freshrss-invidious](https://github.com/Korbak/freshrss-invidious)
 - **Icons used/remixed**: [SVG Repo](https://www.svgrepo.com/collection/design-and-development-elements/), [krystonschwarze](https://www.svgrepo.com/author/krystonschwarze/), [phosphor](https://www.svgrepo.com/author/phosphor/), [Solar Icons](https://www.svgrepo.com/svg/529779/playlist), [Dazzle UI](https://www.svgrepo.com/author/Dazzle%20UI/), [n3r4zzurr0/svg-spinners](https://github.com/n3r4zzurr0/svg-spinners).
 - **Tools**: [SVGOptimizer](https://jakearchibald.github.io/svgomg/).
-- **Featured channels on top image:** [Novaspirit Tech](https://www.youtube.com/channel/UCrjKdwxaQMSV_NDywgKXVmw), [Hardware Haven](https://www.youtube.com/channel/UCgdTVe88YVSrOZ9qKumhULQ).
-   - Edit 2025-02-05: Rest in peace Don (Novaspirit Tech), thank you for your contribution to the community.
 
 ## License
 
