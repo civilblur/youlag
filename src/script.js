@@ -620,18 +620,30 @@ function setupTagsDropdownOverride() {
       event.stopImmediatePropagation();
       let entryId = null;
       let entryIdRegex = '([0-9]+)$';
+      let iconImg = null;
       if (entryItemDropdown) {
         entryId = entryItem.querySelector('.dropdown-target')?.id;
         entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
         entryId = entryId ? entryId[1] : null;
+        iconImg = entryItemDropdown.closest('li.labels')?.querySelector('img.icon');
       }
       if (entryItemFooterDropdown) {
         entryId = entryItemFooterDropdown.href;
         entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
         entryId = entryId ? entryId[1] : null;
+        iconImg = entryItemFooterDropdown.closest('li.labels, .item.labels')?.querySelector('img.icon');
+      }
+      let prevSrc = null;
+      if (iconImg) {
+        prevSrc = iconImg.src;
+        iconImg.classList.add('loading');
+        iconImg.src = '../themes/icons/spinner.svg';
       }
       let tags = await getItemTags(entryId);
-
+      if (iconImg) {
+        iconImg.classList.remove('loading');
+        iconImg.src = prevSrc;
+      }
       // Open custom tags modal
       createTagsModal(entryId, tags);
     }
