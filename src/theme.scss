@@ -471,7 +471,7 @@ html {
     z-index: 20;
     transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
     will-change: transform, opacity;
-    box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background); /* HACK: For youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
+    box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background), 0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
 
     @media (max-width: 840px) {
       top: calc(var(--yl-topnav-height) + var(--yl-feed-nav-menu-height));
@@ -1193,7 +1193,7 @@ main#stream {
       z-index: 20;
       transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
       will-change: transform, opacity;
-      box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background); /* HACK: For youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
+      box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background), 0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
 
       @media (max-width: 840px) {
         top: var(--yl-topnav-height);
@@ -1740,7 +1740,7 @@ body.youlag-active:not(.reader) main#stream {
         padding: 0;
         z-index: 10;
         transition: background-color 0.1s;
-        order: 2;
+        order: 3;
         min-height: 34px;
 
       li.item.share {
@@ -1753,7 +1753,7 @@ body.youlag-active:not(.reader) main#stream {
           width: 100%;
         }
 
-        &:nth-child(2) {
+        &:has(.item-element.bookmark) {
           /* Place favorite button to the far left */
           order: 1;
         }
@@ -3301,8 +3301,8 @@ body.youlag-inactive:not(.reader) main#stream {
       }
 
       .item.manage {
-        &:nth-child(2) {
-          order: -1 !important; /* youlag-inactibe: Place favorite first in the bottom row */
+        &:has(.item-element.bookmark) {
+          order: -1; /* youlag-inactibe: Place favorite first in the bottom row */
         }
 
         a.item-element.bookmark {
@@ -3687,7 +3687,7 @@ main#stream,
 body:has(.tree-folder.category.favorites.active) {
   main#stream div.flux.favorite:not(.active) {
     .flux_header {
-      li.item.manage:nth-child(2) {
+      li.item.manage:has(.item-element.bookmark) {
         /* In "Favorites", do not use special highlight effect. */
         background-color: inherit;
 
