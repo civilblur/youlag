@@ -54,7 +54,9 @@ Optimized for both watching videos and reading articles.
 
 ## Additional resources
 - [Video Background Play Fix](https://addons.mozilla.org/en-US/firefox/addon/video-background-play-fix/)
-  - Enables background playback of YouTube videos in Firefox-based browsers on Android devices.
+    - Enables background playback of YouTube videos in Firefox-based browsers on Android devices.
+- [Invidious](https://invidious.io/)
+    - An open source alternative front-end to YouTube.
 
 ## Contribution
 
