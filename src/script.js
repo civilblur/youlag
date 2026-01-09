@@ -8,6 +8,7 @@ let previousPageTitle = null;
 let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
 let modePip = false;
 let modeFullscreen = true;
+let feedItemActive = false; // Whether an article/video is currently active.
 const modalVideoContainerClassName = `youlag-theater-modal-container`;
 const modalVideoContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
@@ -50,8 +51,8 @@ function youlagSettingsPageEventListeners() {
  ****************************************/
 
 
-function handleActiveRssItem(targetOrEventOrVideo, isVideoObject = false) {
-  // Handles both DOM event/element and direct video object
+function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) {
+  // Handles both DOM event/element and direct video object.
   previousFeedItemScrollTop = 0;
   let data;
 
@@ -80,6 +81,10 @@ function handleActiveRssItem(targetOrEventOrVideo, isVideoObject = false) {
 
   createVideoModal(data);
   if (!modePip) setModeFullscreen(true);
+}
+
+function handleActiveItemArticle(event) {
+  history.pushState({ articleOpen: true }, '', '');
 }
 
 function getVideoIdFromUrl(url) {
@@ -267,7 +272,7 @@ function restoreVideoQueue() {
 
   if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.activeIndex === 'number' && queueObj.queue.length > 0) {
     setModePip(true); // Restored video queue always opens in PiP mode.
-    handleActiveRssItem(queueObj, true);
+    handleActiveItemVideoMode(queueObj, true);
   }
 }
 
@@ -307,6 +312,7 @@ function createVideoModal(data) {
   data.thumbnail
     ? modal.classList.add('youlag-modal-feed-item--has-thumbnail')
     : modal.classList.add('youlag-modal-feed-item--no-thumbnail');
+  feedItemActive = true;
 
   function getEmbedUrl(source) {
     // Helper to get the correct embed URL for a given source
@@ -426,7 +432,7 @@ function createVideoModal(data) {
     }
   }
 
-  container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModal);
+  container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModalVideo);
   container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
   container.querySelector(`#${modalToggleFavoriteIdName}`)?.addEventListener('click', (e) => {
     // Toggle favorites state in background
@@ -445,7 +451,7 @@ function createVideoModal(data) {
   // Close theater modal on Esc key
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-      closeModal();
+      closeModalVideo();
     }
   });
 
@@ -467,7 +473,7 @@ function createVideoModal(data) {
       lastLocation.hash = location.hash;
       return;
     }
-    closeModal();
+    closeModalVideo();
   });
 }
 
@@ -505,12 +511,13 @@ function toggleFavorite(url, container, feedItemEl) {
     .catch(error => console.error('Error:', error));
 }
 
-function closeModal() {
+function closeModalVideo() {
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
   if (history.state && history.state.modalOpen) {
     history.replaceState(null, '', location.href);
   }
+  feedItemActive = false;
   setModePip(false);
   setModeFullscreen(false);
   setPageTitle();
@@ -581,9 +588,10 @@ function setModeFullscreen(state) {
 }
 
 function setupClickListener() {
+  // youlag-active: Video mode
+  const streamContainer = document.querySelector('#stream');
+
   if (youlagActive) {
-    const streamContainer = document.querySelector('#stream');
-  
     if (streamContainer) {
       streamContainer.addEventListener('click', (event) => {
         // Prevent activation if clicked element is inside .flux_header li.
@@ -596,44 +604,98 @@ function setupClickListener() {
         const target = event.target.closest('div[data-feed]');
   
         if (target) {
-          handleActiveRssItem(event);
+          handleActiveItemVideoMode(event);
           collapseBackgroundFeedItem(target);
         }
       });
     }
   }
   else if (!youlagActive) {
+    // youlag-inactive: Article context.
+    if (streamContainer) {
+      streamContainer.addEventListener('click', function (event) {
+        const target = event.target.closest('div[data-feed]');
+
+        if (target && !feedItemActive) {
+          handleActiveItemArticle(event);
+          feedItemActive = true;
+        }
+      });
+    }
+
+    window.addEventListener('popstate', function (event) {
+      if (document.body.classList.contains('youlag-active')) {
+        // youlag-active: Video modal context.
+        const modal = document.getElementById('youlagTheaterModal');
+        if (modal) {
+          closeModalVideo();
+        }
+      } else if (document.body.classList.contains('youlag-inactive')) {
+        // youlag-inactive: Article context.
+        const openArticle = document.querySelector('#stream div[data-feed].active.current');
+        if (openArticle) {
+          closeArticle(event);
+        }
+      }
+    });
+
     document.addEventListener('keydown', function (event) {
-      // youlag-inactive: Close article on Esc key.
-      if (event.key === 'Escape' && document.body.classList.contains('youlag-inactive')) {
-        const openedArticle = document.querySelector('#stream div[data-feed].active.current');
-        if (openedArticle) {
-          openedArticle.classList.remove('active', 'current');
-          // Scroll to the top of the closed article, offset by `var(--yl-topnav-height)`.
-          const rect = openedArticle.getBoundingClientRect();
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          const staticOffset = 80; // Increase offset to prevent e.g. `nav_menu` to overlap.
-          let offset = 0;
-          if (window.getComputedStyle) {
-            const root = document.documentElement;
-            const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
-            if (val) {
-              offset = parseInt(val.trim(), 10) || 0;
-            }
+      if (event.key === 'Escape') {
+        if (document.body.classList.contains('youlag-active')) {
+          // youlag-active: Video modal context.
+          const modal = document.getElementById('youlagTheaterModal');
+          if (modal) {
+            closeModalVideo();
           }
-          const targetScroll = rect.top + scrollTop - offset - staticOffset;
-          window.scrollTo({
-            top: Math.max(0, targetScroll)
-          });
-          event.stopPropagation();
+        } else if (document.body.classList.contains('youlag-inactive')) {
+          // youlag-inactive: Article context.
+          const openArticle = document.querySelector('#stream div[data-feed].active.current');
+          if (openArticle) {
+            closeArticle(event);
+          }
         }
       }
     });
   }
 }
 
+function closeArticle(event) {
+  const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+
+  if (openedArticle) {
+    openedArticle.classList.remove('active', 'current');
+    const rect = openedArticle.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const staticOffset = 80; // Increase offset to prevent e.g. `nav_menu` to overlap.
+    let offset = 0;
+
+    if (window.getComputedStyle) {
+      const root = document.documentElement;
+      const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+      if (val) {
+        offset = parseInt(val.trim(), 10) || 0;
+      }
+    }
+
+    // Scroll to the top of the closed article, offset by `var(--yl-topnav-height)`.
+    const targetScroll = rect.top + scrollTop - offset - staticOffset;
+    window.scrollTo({
+      top: Math.max(0, targetScroll)
+    });
+    event?.stopPropagation?.();
+    // Allow navigating back to close an open article, by intercepting the back navigation using popstate event.
+    const initialPath = location.pathname + location.search;
+    // Ensure article closes if popstate has articleOpen, while keeping on the same page.
+    if (history.state && history.state.articleOpen && (location.pathname + location.search === initialPath)) {
+      history.back();
+    }
+
+    feedItemActive = false;
+  }
+}
+
 function setupTagsDropdownOverride() {
-  // Delegated event listener to override tags (playlists) dropdown click
+  // Delegated eventlistener to override tags (playlists) dropdown click
   const streamContainer = document.querySelector('#stream');
   if (!streamContainer) return;
 
@@ -643,7 +705,7 @@ function setupTagsDropdownOverride() {
     const entryItemFooterDropdown = event.target.closest('.item.labels a.dropdown-toggle[href^="#dropdown-labels-"]');
 
     if (entryItemDropdown || entryItemFooterDropdown) {
-      // Prevent default dropdown behavior
+      // Prevent default tag dropdown behavior
       event.preventDefault();
       event.stopImmediatePropagation();
       let entryId = null;
