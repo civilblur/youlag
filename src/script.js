@@ -5,6 +5,7 @@ let youlagActive = true; // Whether Youlag is active on this page based on user 
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
 let previousPageTitle = null;
+let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
 let modePip = false;
 let modeFullscreen = true;
 const modalVideoContainerClassName = `youlag-theater-modal-container`;
@@ -520,12 +521,32 @@ function togglePipMode() {
 }
 
 function setModePip(state) {
+  const modal = document.getElementById('youlagTheaterModal');
+
   if (state === true) {
+    modal ? (previousFeedItemScrollTop = modal.scrollTop) : null;
     document.body.classList.add('youlag-mode--pip');
     modePip = true;
     modeFullscreen = false;
+    modal ? modal.scrollTo({ top: 0 }) : null;
   }
   else if (state === false) {
+    if (modal) {
+      let transitionRan = false;
+      const onTransitionEnd = () => {
+        transitionRan = true;
+        console.log('Scrolled to: ' + previousFeedItemScrollTop);
+        // Scroll back to previous position when exiting pip mode.
+        modal.scrollTo({ top: previousFeedItemScrollTop, behavior: 'smooth' });
+      };
+      modal.addEventListener('transitionend', onTransitionEnd, { once: true });
+      setTimeout(() => {
+        // Fallback if transition event is not detected.
+        if (!transitionRan) {
+          modal.scrollTo({ top: previousFeedItemScrollTop, behavior: 'smooth' });
+        }
+      }, 500);
+    }
     document.body.classList.remove('youlag-mode--pip');
     modePip = false;
   }
@@ -545,6 +566,7 @@ function setModeFullscreen(state) {
     document.body.classList.remove('youlag-mode--pip');
     modeFullscreen = true;
     modePip = false;
+    previousFeedItemScrollTop = 0;
   }
   else if (state === false) {
     document.body.classList.remove('youlag-mode--fullscreen');

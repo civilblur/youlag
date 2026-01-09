@@ -3558,13 +3558,14 @@ main#stream,
   background: unset;
   margin-left: 0;
   padding-right: 0;
+  font-size: var(--yl-text-xs);
 
   @media (max-width: 840px) {
     top: calc(54px + var(--yl-m-2xs)); /* Account for mobile top nav height */
     margin: 0 var(--yl-m-xs);
     margin-top: 0;
-    margin-left: var(--yl-m-xs);
-    margin-right: var(--yl-m-xs);
+    margin-left: var(--yl-m-2xs);
+    margin-right: var(--yl-m-2xs);
     margin-bottom: var(--yl-m-sm); /* Prevent getting overlapped by transition (category) title. */
   }
 
@@ -4326,7 +4327,7 @@ a.yl-video-action-button[href=""] {
   }
 
   .youlag-video-header {
-    position: absolute;
+    position: absolute; /* Header overlaps video instead of sticky, to not occupying vertical space in pip mode. */
     left: auto;
     right: 0;
     padding: 3px;
