@@ -138,6 +138,7 @@
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-pip-width: min(460px, 60%);
+  --yl-article-thumbnail-width: 120px;
   --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
   --yl-feed-nav-menu-height: 61px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
   --yl-sidenav-width: 280px;
@@ -3056,7 +3057,6 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
     ul.flux_header {
-      --yl-thumbnail-width: 140px;
       display: flex;
       flex-wrap: wrap;
       border: 1px solid color-mix(in oklab,#fff 11%,transparent);
@@ -3073,7 +3073,7 @@ body.youlag-inactive:not(.reader) main#stream {
       }
 
       @media (max-width: 600px) {
-        --yl-thumbnail-width: 100px;
+        --yl-article-thumbnail-width: 80px;
       }
 
       &.not_read {
@@ -3124,22 +3124,20 @@ body.youlag-inactive:not(.reader) main#stream {
           /* Place thumbnail first. */
           order: -3;
           box-sizing: border-box;
-          width: var(--yl-thumbnail-width);
-          height: auto;
-
-          img {
-            width: 120px;
-            height: 90px;
-            border-radius: 8px;
-          }
+          padding: 0;
+          width: var(--yl-article-thumbnail-width);
+          height: 90px;
+          background: rgb(255 255 255 / 7%);
+          border-radius: 8px;
+          overflow: hidden;
+          margin-top: var(--yl-m-3xs);
+          margin-bottom: var(--yl-m-3xs);
+          margin-left: var(--yl-m-2xs);
+          margin-right: var(--yl-m-2xs);
 
           @media (max-width: 600px) {
-
-            img {
-              aspect-ratio: 1 / 1;
-              height: auto;
-              max-height: 100%;
-            }
+            height: var(--yl-article-thumbnail-width);
+            max-height: 100%;
           }
 
         }
@@ -3152,7 +3150,7 @@ body.youlag-inactive:not(.reader) main#stream {
           align-content: baseline;
           column-gap: var(--yl-m-2xs);
           flex-wrap: wrap;
-          flex-basis: calc(100% - var(--yl-thumbnail-width));
+          flex-basis: calc(100% - var(--yl-article-thumbnail-width) - (var(--yl-m-2xs) * 2));
           padding: var(--yl-p-3xs) var(--yl-p-2xs) 0 var(--yl-p-2xs);
           box-sizing: border-box;
 
