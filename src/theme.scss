@@ -3125,6 +3125,7 @@ body.youlag-inactive:not(.reader) main#stream {
           order: -3;
           box-sizing: border-box;
           padding: 0;
+          position: relative;
           width: var(--yl-article-thumbnail-width);
           height: 90px;
           background: rgb(255 255 255 / 7%);
@@ -3140,6 +3141,25 @@ body.youlag-inactive:not(.reader) main#stream {
             max-height: 100%;
           }
 
+          &:before {
+            content: "";
+            background-image: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0OTAuMDgyIDQ5MC4wODIiPjxwYXRoIGQ9Ik00NTAuOTkxIDBoLTQxMS44Yy0yMC45IDAtMzguNiAxNi43LTM4LjYgMzguNnYyNzMuMWMwIDIwLjkgMTYuNyAzOC42IDM4LjYgMzguNmgyNXYxMTkuOWMwIDguMyA1LjIgMTUuNiAxMi41IDE4LjggMi4xIDEgMTQuOSAzLjQgMjIuOS01LjJsMTI3LjItMTM0LjVoMjI0LjFjMjAuOSAwIDM4LjYtMTYuNyAzOC42LTM4LjZWMzguNmMuMS0yMC45LTE2LjYtMzguNi0zOC41LTM4LjZtLTEgMzA5LjZoLTIzMS41Yy01LjIgMC0xMC40IDIuMS0xNC42IDYuM2wtOTkgMTAzLjJ2LTg4LjZjMC0xMS41LTkuNC0yMC45LTIwLjktMjAuOWgtNDIuN3YtMjY5aDQwOC43eiIvPjwvc3ZnPg==);
+            background-repeat: no-repeat;
+            background-size: 32px;
+            background-position: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.24;
+            z-index: 0;
+          }
+
+          img {
+            position: relative;
+            z-index: 1;
+          }
         }
 
         &.titleAuthorSummaryDate {
