@@ -1743,9 +1743,9 @@ body.youlag-active:not(.reader) main#stream {
         order: 3;
         min-height: 34px;
 
-      li.item.share {
-        width: 100%;
-      } 
+        li.item.share {
+          width: 100%;
+        }
 
         a {
           padding: 4px 6px;
@@ -1754,13 +1754,18 @@ body.youlag-active:not(.reader) main#stream {
         }
 
         &:has(.item-element.bookmark) {
-          /* Place favorite button to the far left */
+          /* Place favorite button to the far left. */
           order: 1;
         }
 
         &:hover {
           background-color: hsla(0, 0%, 100%, 0.08);
         }
+      }
+
+
+      li.item.manage {
+        order: 4; /* Put 'Mark as read' button far right. */
       }
 
 
@@ -2106,7 +2111,7 @@ html {
 
   
       & ~ .close-aside {
-        z-index: 50;
+        z-index: 55;
         max-width: 100vw;
         max-height: 100vh;
       }
@@ -3115,6 +3120,10 @@ body.youlag-inactive:not(.reader) main#stream {
           }
         }
 
+        &.manage {
+          order: 3;
+        }
+
         &:first-child {
           padding-left: 0;
         }
@@ -3253,7 +3262,7 @@ body.youlag-inactive:not(.reader) main#stream {
 
         &.website {
           /* Place website icon and name to the far right. */
-          order: 1;
+          order: 4;
           margin-left: auto;
           width: auto;
 
@@ -3302,7 +3311,7 @@ body.youlag-inactive:not(.reader) main#stream {
 
       .item.manage {
         &:has(.item-element.bookmark) {
-          order: -1; /* youlag-inactibe: Place favorite first in the bottom row */
+          order: -1; /* youlag-inactive: Place favorite first in the bottom row. */
         }
 
         a.item-element.bookmark {
