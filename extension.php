@@ -42,11 +42,16 @@ class YoulagExtension extends Minz_Extension {
         Minz_View::appendScript($this->getFileUrl('script.min.js'));
 
         // Required user settings to properly render Youlag styling
+        // See FreshRSS `config-user.php` and the html form fields with `for="{setting_name}"` in settings for reference. This is not in the official documentation.
         FreshRSS_Context::userConf()->theme = 'Mapco';
         FreshRSS_Context::userConf()->topline_website = 'full';
         FreshRSS_Context::userConf()->topline_thumbnail = 'landscape';
         FreshRSS_Context::userConf()->topline_summary = true;
         FreshRSS_Context::userConf()->topline_date = true;
+        FreshRSS_Context::userConf()->sticky_post = false; // Option to auto-scroll to article top. Youlag handles this itself for articles. Videos should not auto scroll.
+        FreshRSS_Context::userConf()->show_feed_name = 'a';
+        FreshRSS_Context::userConf()->show_author_date = 'h';
+        FreshRSS_Context::userConf()->show_tags = 'f';
 
         // Register hook to block incoming YouTube shorts
         $this->registerHook('entry_before_insert', [$this, 'blockYoutubeShorts']);
