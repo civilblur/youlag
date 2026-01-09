@@ -3591,6 +3591,26 @@ main#stream,
   }
 }
 
+.alert {
+  &.alert-error {
+    @include yl-gradient-bg(#fb2424, #b90d0d, false);
+    color: var(--yl-color-text-default);
+    border-radius: 12px;
+  }
+
+  &.alert-success {
+    @include yl-gradient-bg(#1cef6d, #0a9d2a, false);
+    color: var(--yl-color-text-default);
+    border-radius: 12px;
+  }
+
+  &.alert-warn {
+    @include yl-gradient-bg(#efd01c, #c29903, false);
+    color: var(--yl-color-text-default);
+    border-radius: 12px;
+  }
+}
+
 /* ====================================
  * END "Dark mode: Card"
  * ==================================== */
