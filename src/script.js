@@ -300,6 +300,10 @@ function createVideoModal(data) {
   const youtubeSelected = videoSourceDefault === 'youtube' ? 'selected' : '';
   const invidiousSelected = videoSourceDefault === 'invidious_1' ? 'selected' : '';
   const invidiousBaseUrl = data.video_invidious_instance_1;
+  modal.classList.remove('youlag-modal-feed-item--has-thumbnail', 'youlag-modal-feed-item--no-thumbnail');
+  data.thumbnail
+    ? modal.classList.add('youlag-modal-feed-item--has-thumbnail')
+    : modal.classList.add('youlag-modal-feed-item--no-thumbnail');
 
   function getEmbedUrl(source) {
     // Helper to get the correct embed URL for a given source

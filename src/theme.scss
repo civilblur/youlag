@@ -3961,6 +3961,9 @@ body {
 
   &.youlag-modal-feed-item--text {
     /* For feed items that are not video feeds. */
+
+    transition: 0.1s; /* Time to restore articles to fullscreen. Use shorter time to avoid layout shift due to text wrapping. */
+
     .youlag-iframe-container {
       display: none;
     }
@@ -4130,6 +4133,12 @@ body {
       line-height: 1.66;
       font-weight: 600;
       color: var(--yl-color-text-default);
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      line-clamp: 1;
+      overflow: hidden;
+      max-width: 300px;
     }
   
     .youlag-video-metadata-date {
@@ -4345,9 +4354,55 @@ a.yl-video-action-button[href=""] {
     height: 20px;
     font-size: var(--yl-text-sm);
   }
-  
+
   .youlag-video-details {
-    display: none;
+    display: none; /* For videos, hide description from pip mode. */
+  }
+
+  &.youlag-modal-feed-item--text {
+
+    .youlag-video-details {
+      display: block; /* Show article details if no thumbnail is available. */
+    }
+
+    .youlag-video-actions-container,
+    .youlag-video-description-container {
+      /* Hide rest of the content that may peak up when article is in pip mode. */
+      display: none;
+    }
+
+    .youlag-video-metadata-container {
+      pointer-events: none;
+    }
+
+    .youlag-video-metadata-title {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-clamp: 2;
+      overflow: hidden;
+    }
+
+    .youlag-video-metadata-author a {
+      max-width: 150px;
+    }
+
+    &.youlag-modal-feed-item--no-thumbnail {
+      .youlag-thumbnail-container {
+        display: none;
+      }
+    }
+  
+    &.youlag-modal-feed-item--has-thumbnail {
+      .youlag-video-container {
+        /* Place thumbnail behind article headline. */
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        filter: grayscale(0.3) brightness(0.50) blur(30px);
+      }
+    }
   }
 
 }
