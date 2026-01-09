@@ -1154,7 +1154,9 @@ function setupNavMenu() {
     });
     const settingsShortcut = document.createElement('div');
     settingsShortcut.id = 'yl_nav_menu_settings_shortcut';
-    settingsShortcut.innerHTML = '<a href="/i/?c=extension&a=configure&e=Youlag" class="btn">More settings</a>';
+    settingsShortcut.innerHTML = `<a href="/i/?c=extension&a=configure&e=Youlag" class="btn" target="_blank" rel="noopener noreferrer">
+                                    More settings
+                                  </a>`;
     ylNavMenu.appendChild(settingsShortcut);
   }
   
