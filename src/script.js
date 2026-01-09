@@ -458,7 +458,8 @@ function createVideoModal(data) {
     if (
       location.pathname === lastLocation.pathname &&
       location.search === lastLocation.search &&
-      location.hash !== lastLocation.hash
+      location.hash !== lastLocation.hash ||
+      modePip
     ) {
       lastLocation.hash = location.hash;
       return;
