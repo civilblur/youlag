@@ -3,7 +3,7 @@
 
    Youlag
    <br>
-   Modernize FreshRSS for browsing YouTube and articles
+   Modernize FreshRSS for viewing YouTube and articles
 </h1>
 
 <center>
