@@ -1265,6 +1265,23 @@ main#stream {
   }
 
 
+  &.yl-page-home,
+  &.yl-page-important,
+  &.yl-page-watch_later,
+  &.yl-page-playlists,
+  &.yl-page-category {
+    #aside_feed {
+      @media (min-width: 841px) {
+        /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
+        &:not(.visible) {
+          & ~ main#stream .yl-freshrss-transition--sticky {
+            padding-left: 44px; /* Width of sidenav toggle button. */
+          }
+        }
+      }
+    }
+  }
+
   main#stream {
     #new-article + .transition {
       /* youlag-active: first date transition */
@@ -1285,6 +1302,25 @@ main#stream {
     }
   }
 
+}
+
+.youlag-inactive {
+  &.yl-page-home,
+  &.yl-page-important,
+  &.yl-page-watch_later,
+  &.yl-page-playlists,
+  &.yl-page-category {
+    #aside_feed {
+      @media (min-width: 841px) and (max-width: 1020px) {
+        /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
+        &:not(.visible) {
+          & ~ main#stream .yl-freshrss-transition--sticky {
+            padding-left: 44px; /* Width of sidenav toggle button. */
+          }
+        }
+      }
+    }
+  }
 }
 
 nav.nav_menu {
@@ -2098,17 +2134,6 @@ html {
           }
         }
       }
-
-      @media (min-width: 841px) and (max-width: 1020px) {
-        /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
-        &:not(.visible) {
-          & ~ main#stream .yl-freshrss-transition--sticky {
-            padding-left: 44px; /* Width of sidenav toggle button. */
-          }
-        }
-      }
-  
-
   
       & ~ .close-aside {
         z-index: 55;
@@ -3473,7 +3498,7 @@ body.youlag-active:not(.reader) main#stream {
         background: linear-gradient(209deg, #4d4b4b 0%, #212124 40%, #333 100%);;
       }
     }
-  }
+  }  
 }
 
 body:not(.reader) main#stream {
