@@ -60,6 +60,8 @@ Optimized for both watching videos and reading articles.
 
 1. Repeat the same steps from the [Install instructions](#install).
 
+1. Hard reload the page without cache: `ctrl/cmd + shift + r`.
+
 
 ## Additional resources
 - [Video Background Play Fix](https://addons.mozilla.org/en-US/firefox/addon/video-background-play-fix/)
