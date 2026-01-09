@@ -75,7 +75,6 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
 
     data = extractFeedItemData(feedItem);
     data.feedItemEl = feedItem;
-    console.log(data);
     setVideoQueue(data);
   }
 
