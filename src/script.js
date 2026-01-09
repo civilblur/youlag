@@ -74,6 +74,8 @@ function handleActiveRssItem(targetOrEventOrVideo, isVideoObject = false) {
 
     data = extractFeedItemData(feedItem);
     data.feedItemEl = feedItem;
+    console.log(data);
+    setVideoQueue(data);
   }
 
   createVideoModal(data);
@@ -197,8 +199,6 @@ function extractFeedItemData(feedItem) {
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };
 
-  setVideoQueue(videoObject);
-
   return videoObject;
 }
 
@@ -217,14 +217,17 @@ function setVideoQueue(videoObject) {
     }
   } catch (e) { }
 
-  const videoId = videoObject.video_youtube_url; // video_youtube_url as unique identifier
-  const foundIndex = queue.findIndex(v => v.video_youtube_url === videoId);
+  const entryId = videoObject.entryId;
+  const foundIndex = queue.findIndex(v => v.entryId === entryId);
   const isPipMode = document.body.classList.contains('youlag-mode--pip');
   if (foundIndex === -1) {
     queue.push(videoObject);
     activeIndex = queue.length - 1;
-  } else {
-    activeIndex = foundIndex;
+  }
+  else {
+    queue.splice(foundIndex, 1);
+    queue.push(videoObject);
+    activeIndex = queue.length - 1;
   }
 
   localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, activeIndex, isPipMode }));
