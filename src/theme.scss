@@ -3812,7 +3812,7 @@ body:has(.tree-folder.category.favorites.active) {
   overflow: auto;
 
   #youlagTheaterModal {
-    transition: .2s; /* Time to minimize to mini video player */
+    transition: .2s; /* Time to minimize to mini player */
   }
 
   @media (max-width: 840px) {

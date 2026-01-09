@@ -29,7 +29,7 @@ Optimized for both watching videos and reading articles.
 
 - 📺 **Videos & Articles**
   - Browse YouTube subscriptions through a video-tailored inferface
-  - Mini video player: keep video in corner while reading articles
+  - Mini player: keep video in corner while reading articles
   - Modernized article viewing experience
 - ⚙️ **Customization**
   - Block YouTube shorts
