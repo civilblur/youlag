@@ -498,7 +498,6 @@ function toggleFavorite(url, container, feedItemEl) {
 }
 
 function closeModal() {
-  console.log('Closing Youlag theater modal');
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
   if (history.state && history.state.modalOpen) {
@@ -536,7 +535,6 @@ function setModePip(state) {
       let transitionRan = false;
       const onTransitionEnd = () => {
         transitionRan = true;
-        console.log('Scrolled to: ' + previousFeedItemScrollTop);
         // Scroll back to previous position when exiting pip mode.
         modal.scrollTo({ top: previousFeedItemScrollTop, behavior: 'smooth' });
       };
