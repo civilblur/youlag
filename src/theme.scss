@@ -1276,7 +1276,6 @@ main#stream {
       @media (max-width: 600px) {
         /* Mobile: Maintain consistent bottom margin for transition category title. */
         margin-bottom: calc(var(--yl-m-md) * -1); /* Negate, and add back margin. */
-        padding-bottom: var(--yl-m-sm);
       }
     }
 
