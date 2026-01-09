@@ -52,6 +52,7 @@ function youlagSettingsPageEventListeners() {
 
 function handleActiveRssItem(targetOrEventOrVideo, isVideoObject = false) {
   // Handles both DOM event/element and direct video object
+  previousFeedItemScrollTop = 0;
   let data;
 
   if (isVideoObject) {
@@ -566,7 +567,6 @@ function setModeFullscreen(state) {
     document.body.classList.remove('youlag-mode--pip');
     modeFullscreen = true;
     modePip = false;
-    previousFeedItemScrollTop = 0;
   }
   else if (state === false) {
     document.body.classList.remove('youlag-mode--fullscreen');
