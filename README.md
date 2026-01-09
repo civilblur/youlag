@@ -52,6 +52,9 @@ Optimized for both watching videos and reading articles.
 1. In FreshRSS, go to `Settings → Extensions` and enable the `Youlag` extension.
     - For [Invidious](https://invidious.io/) users, you can add your instance in the Youlag settings. This will allow you to choose which video source to play from when watching videos.
 
+## Additional resources
+- [Video Background Play Fix](https://addons.mozilla.org/en-US/firefox/addon/video-background-play-fix/)
+  - Enables background playback of YouTube videos in Firefox-based browsers on Android devices.
 
 ## Contribution
 
