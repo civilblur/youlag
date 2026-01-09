@@ -20,6 +20,7 @@ Optimized for both watching videos and reading articles.
 ## Table of Content
 - [Features](#features)
 - [Install](#install)
+- [Update](#update)
 - [Additional Resources](#additional-resources)
 - [Contribution](#contribution)
 - [Attributions](#attributions)
@@ -51,7 +52,14 @@ Optimized for both watching videos and reading articles.
 1. Move the `xExtension-Youlag` folder into your FreshRSS installation: `freshrss/extensions/`.
 
 1. In FreshRSS, go to `Settings → Extensions` and enable the `Youlag` extension.
-    - For [Invidious](https://invidious.io/) users, you can add your instance in the Youlag settings. This will allow you to choose which video source to play from when watching videos.
+    - Click the gear (⚙️) icon to explore the available settings.
+
+## Update
+
+1. Delete the old version of Youlag in your FreshRSS installation: `freshrss/extensions/`.
+
+1. Repeat the same steps from the [Install instructions](#install).
+
 
 ## Additional resources
 - [Video Background Play Fix](https://addons.mozilla.org/en-US/firefox/addon/video-background-play-fix/)
