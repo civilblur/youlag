@@ -3593,6 +3593,7 @@ main#stream,
 
 .alert {
   &.alert-error {
+    /* FreshRSS error container: https://example.com/i/?c=error */
     @include yl-gradient-bg(#fb2424, #b90d0d, false);
     color: var(--yl-color-text-default);
     border-radius: 12px;
