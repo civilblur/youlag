@@ -1112,6 +1112,10 @@ function setupNavMenu() {
         ylNavMenu.appendChild(child);
       }
     });
+    const settingsShortcut = document.createElement('div');
+    settingsShortcut.id = 'yl_nav_menu_settings_shortcut';
+    settingsShortcut.innerHTML = '<a href="/i/?c=extension&a=configure&e=Youlag" class="btn">More settings</a>';
+    ylNavMenu.appendChild(settingsShortcut);
   }
   
   // Setup sticky scroll behavior for FreshRSS `.transition` and Youlag `.nav_menu`, ylNavMenuContainer.
