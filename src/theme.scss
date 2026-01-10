@@ -4451,8 +4451,8 @@ a.yl-video-action-button[href=""] {
   #youlagCloseModal,
   #youlagMinimizeModal {
     padding: var(--yl-p-xs);
-    width: 20px;
-    height: 20px;
+    width: var(--yl-text-xl);
+    height: var(--yl-text-xl);
     font-size: var(--yl-text-sm);
   }
 
@@ -4482,6 +4482,12 @@ a.yl-video-action-button[href=""] {
       -webkit-box-orient: vertical;
       line-clamp: 2;
       overflow: hidden;
+      padding-right: var(--yl-p-xl);
+
+      @media (max-width: 600px) {
+        font-size: var(--yl-text-sm);
+        padding-right: 0;
+      }
     }
 
     .youlag-video-metadata-author a {
