@@ -418,7 +418,7 @@ function createVideoModal(data) {
     </div>
   `;
 
-  // Only update iframe src if the user interacts with the select (not on initial render)
+  // Only update iframe src if the user interacts with the select (not on initial render).
   const videoSourceSelect = container.querySelector(`#${modalVideoSourceIdName}`);
   const iframe = container.querySelector('.youlag-iframe');
   if (videoSourceSelect && iframe) {
@@ -428,7 +428,7 @@ function createVideoModal(data) {
   }
 
   if (!data.youtubeId) {
-    // Not a video feed item
+    // Handle non-video feed items, such as text-based articles.
     modal.classList.add('youlag-modal-feed-item--text');
     let iframeContainer = document.querySelector('.youlag-iframe-container');
     if (iframeContainer) {
@@ -439,12 +439,12 @@ function createVideoModal(data) {
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModalVideo);
   container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
   container.querySelector(`#${modalToggleFavoriteIdName}`)?.addEventListener('click', (e) => {
-    // Toggle favorites state in background
+    // Toggle favorites state in background.
     e.preventDefault();
     toggleFavorite(data.favorite_toggle_url, container, data.feedItemEl);
   });
   container.querySelector(`#${modalTagsManageIdName}`)?.addEventListener('click', async (e) => {
-    // Open tags (playlists) modal
+    // Open tags (playlists) modal.
     e.preventDefault();
     createTagsModal(data.entryId, await getItemTags(data.entryId));
   });
@@ -632,13 +632,13 @@ function setupClickListener() {
     }
 
     window.addEventListener('popstate', function (event) {
-        // youlag-active: Video modal context.
-        if (modePip) {
-          history.back();
-        }
+      // youlag-active: Video modal context.
+      if (modePip) {
+        history.back();
+      }
       else if (articleOpen) {
         // youlag-inactive: Article context.
-        const openArticle = document.querySelector('#stream div[data-feed].active.current');
+        const openArticle = document.querySelector('#stream div[data-feed].active.current'); // If any article is opened.
         if (openArticle) {
           closeArticle(event);
         }
@@ -856,7 +856,7 @@ async function getItemTags(itemId) {
 }
 
 async function setItemTag(entryId, tag) {
-  // Add or remove a feed item from a tag (playlists)
+  // Add or remove a feed item from a tag (playlists).
 
   const csrfToken = document.querySelector('input[name="_csrf"]')?.getAttribute('value') || '';
   const payload = {
@@ -906,7 +906,7 @@ function collapseBackgroundFeedItem(target) {
 
   if (iframes || youtubeExtensionInstalled) {
     iframes.forEach(iframe => {
-      // Disable iframes to prevent autoplay
+      // Disable iframes to prevent autoplay.
       const src = iframe.getAttribute('src');
       if (src) {
         iframe.setAttribute('data-original', src);
