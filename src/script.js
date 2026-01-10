@@ -618,12 +618,14 @@ function setupClickListener() {
   }
   else if (!youlagActive) {
     // youlag-inactive: Article context.
+    let articleOpen;
     if (streamContainer) {
       streamContainer.addEventListener('click', function (event) {
         const target = event.target.closest('div[data-feed]');
 
         if (target && !feedItemActive) {
           handleActiveItemArticle(event);
+          articleOpen = (target.classList.contains('current') && target.classList.contains('active')) ? target : null;
           feedItemActive = true;
         }
       });
@@ -631,14 +633,11 @@ function setupClickListener() {
 
     window.addEventListener('popstate', function (event) {
         // youlag-active: Video modal context.
-        if (modal && modeFullscreen) {
-          closeModalVideo();
-        } 
-        else if (modePip) {
+        if (modePip) {
           // If modal is not open but history.state.modalOpen is present, allow normal navigation
           history.back();
         }
-      else if (!youlagActive) {
+      else if (articleOpen) {
         // youlag-inactive: Article context.
         const openArticle = document.querySelector('#stream div[data-feed].active.current');
         if (openArticle) {
