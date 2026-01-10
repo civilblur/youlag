@@ -7,6 +7,7 @@ let youlagRestoreVideoQueueRan = false;
 let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
+let disableStickyTransitionTitle = false; // To temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
 let youtubeId;
 let previousPageTitle = null;
 let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
@@ -631,12 +632,37 @@ function setupClickListener() {
           feedItemActive = true;
         }
 
+        // Scroll to top of the article
         const rect = target.getBoundingClientRect();
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const transitionTitle = document.getElementsByClassName('yl-freshrss-transition--sticky')[0];
+        let offset = 0;
+        if (window.getComputedStyle) {
+          const root = document.documentElement;
+          const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+          offset = parseInt(val, 10) || 0;
+        }
+
+        // Prevent sticky transition title from showing when auto-scrolling.
+        disableStickyTransitionTitle = true;
+        transitionTitle.classList.remove('sticky-visible');
+        transitionTitle.classList.add('sticky-hidden');
+        
+        const targetScroll = rect.top + scrollTop - offset;
         window.scrollTo({
-          top: rect.top + scrollTop,
+          top: targetScroll,
           behavior: 'smooth'
         });
+
+        const onScrollEnd = () => {
+          if (Math.abs(window.pageYOffset - targetScroll) < 2) {
+            setTimeout(() => {
+              disableStickyTransitionTitle = false;
+            }, 50); // Buffer to ensure scroll has fully ended.
+            window.removeEventListener('scroll', onScrollEnd);
+          }
+        };
+        window.addEventListener('scroll', onScrollEnd);
       });
     }
 
@@ -1278,7 +1304,7 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
   }
 
   function onScroll() {
-    if (ignoreNextScroll) {
+    if (ignoreNextScroll || disableStickyTransitionTitle) {
       ignoreNextScroll = false;
       lastScrollY = window.scrollY;
       return;
