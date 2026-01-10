@@ -38,7 +38,7 @@ Optimized for both watching videos and reading articles.
 - 🖥️ **Desktop & Mobile**
   - Modernized theme design
   - Mobile friendly, better one-handed navigation
-  - `Esc` key to exit videos and articles
+  - Use `Esc` key or the browser's `Back` navigation to exit videos and articles
 - 📰 **FreshRSS feature**
   - Subscribe to YouTube creators without needing an account
   - Manage article and video RSS feeds
