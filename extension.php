@@ -37,7 +37,6 @@ class YoulagExtension extends Minz_Extension {
      */
     public function init() {
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
-        $this->registerHook('nav_entries', array($this, 'createNavMenuContainer'), 5);
         $this->registerHook('nav_entries', array($this, 'createFreshRssLogo'), 6);
         $this->registerHook('nav_entries', array($this, 'createCategoryTitle'), 7);
         $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
@@ -437,16 +436,14 @@ class YoulagExtension extends Minz_Extension {
 
         $categoryTitle = htmlspecialchars($categoryTitle);
 
-        $html = '<div id="yl_category_title_container">'
-              .     '<div id="yl_category_title" data-yl-category-title="' . $categoryTitle . '">' . $categoryTitle . '</div>'
-              . '</div>';
-        return $html;
-    }
-
-    public function createNavMenuContainer() {
-        $html = '<div id="yl_nav_menu_container">'
-              .     '<button id="yl_nav_menu_container_toggle">Configure view</button>'
-              .     '<nav id="yl_nav_menu_container_content"></nav>'
+        $html = '<div id="yl_category_toolbar">'
+              .     '<div id="yl_category_title_container">'
+              .         '<div id="yl_category_title" data-yl-category-title="' . $categoryTitle . '">' . $categoryTitle . '</div>'
+              .         '<button id="yl_nav_menu_container_toggle">Configure view</button>'
+              .     '</div>'
+              .     '<div id="yl_nav_menu_container">'
+              .         '<nav id="yl_nav_menu_container_content"></nav>'
+              .     '</div>'
               . '</div>';
         return $html;
     }

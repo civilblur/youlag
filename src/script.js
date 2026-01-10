@@ -667,13 +667,14 @@ function setupClickListener() {
     if (streamContainer) {
       streamContainer.addEventListener('click', function (event) {
         const target = event.target.closest('div[data-feed]');
+        if (!target) return;
 
         if (target && !feedItemActive) {
           handleActiveItemArticle(event);
           feedItemActive = true;
         }
 
-        // Scroll to top of the article robustly
+        // Scroll to top of the article when opened.
         const scrollToTarget = () => {
           const rect = target.getBoundingClientRect();
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -686,11 +687,11 @@ function setupClickListener() {
           return rect.top + scrollTop - offset;
         };
 
-        // Prevent sticky transition title from showing when auto-scrolling.
-        const transitionTitle = document.getElementsByClassName('yl-freshrss-transition--sticky')[0];
+        // Prevent sticky category title from showing when auto-scrolling.
+        const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
         disableStickyTransitionTitle = true;
-        transitionTitle.classList.remove('sticky-visible');
-        transitionTitle.classList.add('sticky-hidden');
+        ylCategoryToolbar.classList.remove('sticky-visible');
+        ylCategoryToolbar.classList.add('sticky-hidden');
 
         let attempts = 0;
         const maxAttempts = 4;
@@ -778,10 +779,10 @@ function closeArticle(event) {
     }
 
     // Prevent sticky transition title from showing when auto-scrolling.
-    const transitionTitle = document.getElementsByClassName('yl-freshrss-transition--sticky')[0];
+    const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
     disableStickyTransitionTitle = true;
-    transitionTitle.classList.remove('sticky-visible');
-    transitionTitle.classList.add('sticky-hidden');
+    ylCategoryToolbar.classList.remove('sticky-visible');
+    ylCategoryToolbar.classList.add('sticky-hidden');
 
     // Scroll to the top of the closed article, offset by `var(--yl-topnav-height)`.
     const targetScroll = rect.top + scrollTop - offset;
@@ -1259,8 +1260,27 @@ function setUnreadBadgeClass() {
   }
 }
 
+// Update body classes based on sidenav state (expanded/collapsed)
+function setSidenavState() {
+  const sidenav = document.getElementById('aside_feed');
+  if (!sidenav) return;
+  const expanded = sidenav.classList.contains('visible');
+  document.body.classList.toggle('youlag-sidenav--expanded', expanded);
+  document.body.classList.toggle('youlag-sidenav--collapsed', !expanded);
+}
+
+function setupSidenavStateListener() {
+  // Listen for class changes on #aside_feed and update body classes
+  const sidenav = document.getElementById('aside_feed');
+  if (!sidenav) return;
+  setSidenavState();
+  const observer = new MutationObserver(setSidenavState);
+  observer.observe(sidenav, { attributes: true, attributeFilter: ['class'] });
+}
+
 function setBodyPageClass() {
   getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
+  setupSidenavStateListener();
   currentPageParams = new URLSearchParams(window.location.search).get('get');
   getSubpageParentId(currentPageParams) && (document.body.className += ' yl-page-' + getSubpageParentId(currentPageParams));
   setVideoLabelsClass();
@@ -1286,44 +1306,49 @@ function setupNavMenu() {
   if (youlagNavMenuInitialized) return;
   youlagNavMenuInitialized = true;
 
+  const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
+  const ylCategoryTitle = ylCategoryToolbar?.querySelector('#yl_category_title');
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
   const ylNavMenu = ylNavMenuContainer?.querySelector('#yl_nav_menu_container_content');
-  const ylNavMenuToggle = ylNavMenuContainer?.querySelector('#yl_nav_menu_container_toggle');
+  const ylNavMenuToggle = ylCategoryToolbar?.querySelector('#yl_nav_menu_container_toggle');
+
+
   const freshRssToggleSearch = document?.querySelector('#dropdown-search-wrapper');
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
-  const freshRssTransition = document.querySelector('#new-article + .transition');
 
   // Gracefully fail
-  if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !freshRssTransition) {
+  if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !ylCategoryToolbar) {
     const missing = [];
     if (!ylNavMenuContainer) missing.push('ylNavMenuContainer');
     if (!ylNavMenu) missing.push('ylNavMenu');
     if (!ylNavMenuToggle) missing.push('ylNavMenuToggle');
     if (!freshRssNavMenu) missing.push('freshRssNavMenu');
-    if (!freshRssTransition) missing.push('freshRssTransition');
+    if (!ylCategoryToolbar) missing.push('ylCategoryToolbar');
     console.warn('Failed to setup sticky nav menu, missing elements:', missing);
     return;
   }
 
-  ylNavMenu.hidden = true; // `.nav_menu` is hidden by default.
+  ylNavMenu.hidden = true; // `#yl_nav_menu_container_content` is hidden by default.
   ylNavMenu.classList.add('nav_menu'); 
 
-  freshRssTransition.classList.add('yl-freshrss-transition--sticky');
-  ylNavMenuContainer.classList.add('yl-nav-menu-container--sticky');
+  ylCategoryToolbar.classList.add('yl-category-toolbar--sticky');
+  // ylNavMenuContainer.classList.add('yl-nav-menu-container--sticky');
+
+  // Place `#yl_category_toolbar` after `#new-article` notification.
+  const domLocation = document.querySelector('#stream #new-article');
+  if (domLocation && ylCategoryToolbar) {
+    if (domLocation.nextSibling) {
+      domLocation.parentNode.insertBefore(ylCategoryToolbar, domLocation.nextSibling);
+    } else {
+      domLocation.parentNode.appendChild(ylCategoryToolbar);
+    }
+  }
 
   if (freshRssToggleSearch) {
     // Break out search from the FreshRSS `.nav_menu` container, to keep it independent for styling.
-    if (ylNavMenuContainer.nextSibling) {
-      ylNavMenuContainer.parentNode.insertBefore(freshRssToggleSearch, ylNavMenuContainer.nextSibling);
+    if (ylCategoryToolbar.nextSibling) {
+      ylCategoryToolbar.parentNode.insertBefore(freshRssToggleSearch, ylCategoryToolbar.nextSibling);
     } 
-  }
-  freshRssTransition.appendChild(ylNavMenuToggle);
-  if (freshRssTransition.nextSibling) {
-    // Place ylNavMenuContainer after `.transition` (the category title).
-    // The ylNavMenuContainer containing the `.nav_menu` will appear below the title when toggled this way.
-    freshRssTransition.parentNode.insertBefore(ylNavMenuContainer, freshRssTransition.nextSibling);
-  } else {
-    freshRssTransition.parentNode.appendChild(ylNavMenuContainer);
   }
   if (freshRssNavMenu && ylNavMenu) {
     // Move FreshRSS `.nav_menu` items inside Youlag's own `.nav_menu` content, ylNavMenu (child of ylNavMenuContainer).
@@ -1343,42 +1368,50 @@ function setupNavMenu() {
   }
   
   // Setup sticky scroll behavior for FreshRSS `.transition` and Youlag `.nav_menu`, ylNavMenuContainer.
-  setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer);
+  setupNavMenuStickyScroll(ylCategoryToolbar, ylNavMenuContainer);
 
-  // Toggle custom Youlag `.nav_menu`, ylNavMenu, on click.
   document.addEventListener('click', function (e) {
+    // Toggle custom Youlag `ylNavMenu`, on click 'Configure view' button.
     const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
     if (toggleBtn && document.body.contains(ylNavMenuContainer)) {
-      const isOpen = ylNavMenuContainer.classList.toggle('yl-nav-menu-container--open');
+      const isOpen = ylCategoryToolbar.classList.toggle('yl-nav-menu-container--open');
       ylNavMenu.hidden = !isOpen;
+      disableStickyTransitionTitle = true;
+      setTimeout(() => {
+        disableStickyTransitionTitle = false;
+      }, 100);
       e.preventDefault();
       e.stopPropagation();
+    }
+
+    const menuLink = e.target.closest('#yl_nav_menu_container_content a');
+    if (menuLink && document.body.contains(ylNavMenuContainer)) {
+      // Allow mobile dropdown to expand without causing scroll events to hide the toolbar. 
+      disableStickyTransitionTitle = true;
+      setTimeout(() => {
+        disableStickyTransitionTitle = false;
+      }, 100);
     }
   });
 }
 
 
-function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
+function setupNavMenuStickyScroll(ylCategoryToolbar) {
   // Setup scroll listener to show/hide the Youlag `.nav_menu`. Visible while scrolling up, hidden while scrolling down.
   let lastScrollY = window.scrollY;
   let ticking = false;
-  let ignoreNextScroll = false; // 'Configure view' toggling expands ylNavMenuContainer, casuing unwanted scroll events. Prevent those.  
+  let ignoreNextScroll = false; // 'Configure view' toggling expands ylCategoryToolbar, causing unwanted scroll events. Prevent those.  
 
   function setStickyVisibility(show) {
     if (disableStickyTransitionTitle) return;
-    const add = (el) => {
-      el.classList.toggle('sticky-visible', show);
-      el.classList.toggle('sticky-hidden', !show);
-    };
-    add(freshRssTransition);
-    add(ylNavMenuContainer);
+    ylCategoryToolbar.classList.toggle('sticky-visible', show);
+    ylCategoryToolbar.classList.toggle('sticky-hidden', !show);
   }
 
   function setStickyVisibilitySidenavToggle(show) {
     const sidenavToggle = document.getElementById('nav_menu_toggle_aside');
     if (sidenavToggle) {
-      /* Desktop: The css uses desktop media queries to avoid needing to use js resizeobserver.
-         While the classes are applied, the visual changes only applies on desktop, when sidenav is not visible. */
+      /* Desktop: Hide show the sidenav toggle button based on scroll direction. */
       sidenavToggle.classList.toggle('sticky-visible--sidenav-toggle', show);
       sidenavToggle.classList.toggle('sticky-hidden--sidenav-toggle', !show);
     }
@@ -1415,13 +1448,6 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
       ticking = true;
     }
   });
-
-  const observer = new MutationObserver(() => {
-    ignoreNextScroll = true;
-  });
-  // Observe class changes on ylNavMenuContainer, to see if `.yl-nav-menu-container--open` is added/removed.
-  // Set `ignoreNextScroll = true` if so, to prevent unwanted scroll events caused by toggling ylNavMenuToggle ('configure view' button).
-  observer.observe(ylNavMenuContainer, { attributes: true, attributeFilter: ['class'] });
 }
 
 function clearPathHash() {

@@ -287,17 +287,6 @@ html {
     color: var(--yl-color-text-default);
     border-radius: 8px;
   }
-
-  /* Testing category title */
-  #yl_category_title {
-    position: fixed;
-    top:100px;
-    left: 300px;
-    font-size: 4rem;
-    color: white;
-    z-index: 9999;
-    background: grey;
-  }
 }
 
 body {
@@ -368,37 +357,6 @@ body {
       display: none;
     }
   }
-
-  &.yl-page-playlists:not([class*="yl-page-t_"]) {
-    /* Set transition name to "Playlists" only on parent pages. */
-    main#stream {
-      .transition .name,
-      #new-article + .transition .name {
-        font-size: 0;
-        
-        &:before {
-          content: "Playlists";
-          font-size: var(--yl-text-md);
-        }
-      }
-    }
-  }
-
-  &.yl-page-watch_later {
-    /* Set transition name to "Watch later" only on parent pages. */
-    main#stream {
-      .transition .name,
-      #new-article + .transition .name {
-        font-size: 0;
-        
-        &:before {
-          content: "Watch later";
-          font-size: var(--yl-text-md);
-        }
-      }
-    }
-  }
-
 
   nav.aside.aside_feed {
     #mark-read-aside ul#sidebar {
@@ -506,41 +464,77 @@ body {
   }
 }
 
-#yl_nav_menu_container_toggle {
+#yl_category_toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--yl-p-2xs) var(--yl-p-sm);
-  border: 1px solid hsla(0, 0%, 100%, .08);
-  border-radius: 12px;  background-color: rgba(255, 255, 255, 0.04);
-  cursor: pointer;
-  font-size: var(--yl-text-xs);
-
-  &:hover {
-    background-color: hsla(0, 0%, 100%, .08);
-  }
-}
-
-#yl_nav_menu_container {
-  /* Custom element for placing the FreshRSS `.nav_menu`. */
-  grid-column: 1 / -1; /* Span full width in youlag-active layout */
+  flex-direction: column;
+  grid-column: 1 / -1; // youlag-active: Span full width in video mode layout
+  transition: transform .18s cubic-bezier(0.4, 0, 0.2, 1), opacity .18s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+  box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background), 0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
   background-color: var(--yl-color-body-background);
+  padding: var(--yl-p-2xs) 0;
+  box-sizing: border-box;
+  padding-left: var(--yl-p-sm);
+  padding-right: var(--yl-p-sm);
+  /* Negate `#stream` padding to stretch to edges. */
+  margin-left: calc(var(--yl-p-sm) * -1);
+  margin-right: calc(var(--yl-p-sm) * -1);
 
-  &.yl-nav-menu-container--sticky {
-    position: sticky;
-    top: calc(var(--yl-feed-nav-menu-height) - 1px); /* HACK: Prevent half-pixel gap depending on browser zoom label. */
-    z-index: 20;
-    transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
-    will-change: transform, opacity;
-    box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background), 0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
+  @media (max-width: 840px) {
+    top: var(--yl-topnav-height);
+  }
 
-    @media (max-width: 840px) {
-      top: calc(var(--yl-topnav-height) + var(--yl-feed-nav-menu-height));
+  #yl_category_title_container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    #yl_category_title {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      line-height: 1.2;
+      font-size: var(--yl-text-sm);
+      color: var(--yl-color-text-default);
+      font-weight: bold;
+    }
+  }
+
+  #yl_nav_menu_container_toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--yl-p-2xs) var(--yl-p-sm);
+    border: 1px solid hsla(0, 0%, 100%, .08);
+    border-radius: 12px;  background-color: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    font-size: var(--yl-text-xs);
+
+    &:hover {
+      background-color: hsla(0, 0%, 100%, .08);
+    }
+  }
+
+  #yl_nav_menu_container {
+    /* Custom element for placing the FreshRSS `.nav_menu`. */
+    
+    &.yl-nav-menu-container--sticky {
+      position: sticky;
+      top: calc(var(--yl-feed-nav-menu-height) - 1px); /* HACK: Prevent half-pixel gap depending on browser zoom label. */
+      z-index: 20;
+      transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
+      will-change: transform, opacity;
+
+      @media (max-width: 840px) {
+        top: calc(var(--yl-topnav-height) + var(--yl-feed-nav-menu-height));
+      }
     }
   }
 
   &.yl-nav-menu-container--open {   
-    padding-bottom: var(--yl-p-xs);
     
     #yl_nav_menu_container_content {
       display: flex;
@@ -549,17 +543,23 @@ body {
       flex-wrap: wrap;
       padding-top: var(--yl-p-xs);
 
-      @media (max-width: 840px) {
-        padding-left: var(--yl-p-sm);
-        padding-right: var(--yl-p-sm);
-      }
-
       & > * {
         margin: 0; /* Reset margin (gutter for nav_menu groups), prioritize flex gap instead. */
       }
     }
   }
 }
+
+.youlag-inactive {
+  @media (max-width: 840px) {
+    #yl_category_toolbar {
+      /* youlag-inactive: Reset negation */
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+}
+
 
 nav.aside.aside_feed {
   /* Position and adjust behavior of "Subscriptions management" button */
@@ -1230,11 +1230,6 @@ main#stream #stream-footer,
 
 main#stream {
   .transition {
-    /* Hide all date transitions by default. Then later, enable the first date transition, used as a page title through the category name '.transition .name'. */
-    display: none;
-  }
-
-  #new-article + .transition {
     /* Global: Date transition in feeds, only the first one. */
     display: flex;
     align-items: center;
@@ -1248,42 +1243,9 @@ main#stream {
     height: var(--yl-feed-nav-menu-height);
     box-sizing: border-box;
 
-    &.yl-freshrss-transition--sticky {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      transition: transform 0.18s cubic-bezier(.4,0,.2,1), opacity 0.18s cubic-bezier(.4,0,.2,1);
-      will-change: transform, opacity;
-      box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background), 0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
-
-      @media (max-width: 840px) {
-        top: var(--yl-topnav-height);
-      }
-    }
-
-    .name {
-      /* Show category name for the first date transition. */
-      flex: 1;
-      display: inline-block;
-      opacity: 1;
-      font-size: var(--yl-text-md);
-      text-align: left;
-      text-transform: none;
-      font-weight: bold;
-      line-height: 1;
-      padding: 0 var(--yl-p-sm) 0 0;
-      margin: 0;
-    }
-
-
-    .transition-value {     
-      /* Hide transition dates for video feeds, keeping rest of styling intact,
-        in case this ends up becoming an option in the extension settings instead. */
+    & {
+      /* Hide all date transitions by default. Currently not used. */
       display: none;
-      
-      a {
-        color: var(--frss-font-color-grey-dark);
-      }
     }
 
     .transition-next {
@@ -1335,7 +1297,7 @@ main#stream {
       @media (min-width: 841px) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         &:not(.visible) {
-          & ~ main#stream .yl-freshrss-transition--sticky {
+          & ~ main#stream .yl-category-toolbar--sticky {
             padding-left: 44px; /* Width of sidenav toggle button. */
           }
         }
@@ -1344,19 +1306,6 @@ main#stream {
   }
 
   main#stream {
-    #new-article + .transition {
-      /* youlag-active: first date transition */
-      display: flex;
-      grid-column: 1 / -1;
-      line-height: 1.2;
-      font-size: var(--yl-text-md);
-
-      @media (max-width: 600px) {
-        /* Mobile: Maintain consistent bottom margin for transition category title. */
-        margin-bottom: calc(var(--yl-m-md) * -1); /* Negate, and add back margin. */
-      }
-    }
-
     .flux:has(li.item.labels .item-element.dropdown .dropdown-target:target) {
       /* Prevent card item favicon avatar to be placed above Playlist (labels) dropdown */
       z-index: 20;
@@ -1375,7 +1324,7 @@ main#stream {
       @media (min-width: 841px) and (max-width: 1020px) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         &:not(.visible) {
-          & ~ main#stream .yl-freshrss-transition--sticky {
+          & ~ main#stream .yl-category-toolbar--sticky {
             padding-left: 44px; /* Width of sidenav toggle button. */
           }
         }
@@ -2176,13 +2125,6 @@ html {
         max-width: 100vw;
         max-height: 100vh;
       }
-    }
-  }
-
-  .yl-page-home {
-    main#stream #new-article + .transition .name:before {
-      /* Add "Subscriptions" category title to home screen. Normally it is empty. */
-      content: "Subscriptions";
     }
   }
 
@@ -3132,17 +3074,6 @@ body.youlag-inactive:not(.reader) main#stream {
 
   @media (max-width: 840px) {
     padding: 0;
-
-    .transition {
-      @media (max-width: 840px) {
-        padding-right: var(--yl-p-sm) !important;
-      }
-
-      .name {
-        padding-left: var(--yl-p-sm) !important; /* youlag-inactive: Align category name article thumbnail. */
-        box-sizing: border-box;
-      }
-    }
   }
 
   div.flux {
