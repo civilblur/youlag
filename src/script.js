@@ -1,6 +1,10 @@
+let youlagModalNavigatingBack = false; // Prevent multiple history.back() triggers
+let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
 let youlagScriptLoaded = false;
 let youlagNavMenuInitialized = false;
+let youlagClickListenersInitialized = false;
 let youlagRestoreVideoQueueRan = false;
+let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let youtubeId;
@@ -66,7 +70,8 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
       activeIndex: videoObject.activeIndex
       // No feedItemEl, as DOM may not exist
     };
-  } else {
+  } 
+  else {
     // Extract the feed item from the DOM event/element
     const feedItem = (targetOrEventOrVideo instanceof Event)
       ? targetOrEventOrVideo.target.closest('div[data-feed]')
@@ -78,8 +83,8 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
     setVideoQueue(data);
   }
 
-  createVideoModal(data);
   if (!modePip) setModeFullscreen(true);
+  createVideoModal(data);
 }
 
 function handleActiveItemArticle(event) {
@@ -445,34 +450,28 @@ function createVideoModal(data) {
   });
 
   // Push a new state to the history, to allow modal close when routing back.
-  history.pushState({ modalOpen: true }, '', '');
+  if (modeFullscreen && !youladModalPopstateAdded) {
+    history.pushState({ modalOpen: true }, '', '');
+    youladModalPopstateAdded = true;
+  }
 
-  // Close theater modal on Esc key
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && modeFullscreen) {
       closeModalVideo();
     }
   });
 
-  // Only close modal if path or search changes, not just hash (#).
-  // FreshRSS utilizes hash paths displaying dropdown menus, e.g. `example.com/#dropdown-configure`, `#close`, etc.
-  let lastLocation = {
-    pathname: location.pathname,
-    search: location.search,
-    hash: location.hash
-  };
-  window.addEventListener('popstate', function popstateHandler() {
-    // If only the hash changed, do not close the modal.
-    if (
-      location.pathname === lastLocation.pathname &&
-      location.search === lastLocation.search &&
-      location.hash !== lastLocation.hash ||
-      modePip
-    ) {
-      lastLocation.hash = location.hash;
+  window.addEventListener('popstate', function popstateHandler(e) {
+    // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
+    if (youlagModalPopstateIgnoreNext) {
+      youlagModalPopstateIgnoreNext = false;
+      youlagModalNavigatingBack = false;
       return;
     }
-    closeModalVideo();
+    if (modeFullscreen && e.state?.modalOpen) {
+      youlagModalNavigatingBack = false;
+      closeModalVideo();
+    }
   });
 }
 
@@ -483,12 +482,12 @@ function toggleFavorite(url, container, feedItemEl) {
   fetch(url, { method: 'GET' })
     .then(response => {
       if (response.ok) {
-        // Toggle favorite classes and icons
+        // Toggle favorite classes and icons.
         const currentlyTrue = favoriteButton.classList.contains(`${modalFavoriteClassName}--true`);
         favoriteButton.classList.remove(`${modalFavoriteClassName}--${currentlyTrue}`);
         favoriteButton.classList.add(`${modalFavoriteClassName}--${!currentlyTrue}`);
 
-        // Only update DOM if feedItemEl exists (i.e., not restoring from localStorage)
+        // Only update DOM if feedItemEl exists (i.e., not restoring from localStorage).
         if (feedItemEl) {
           const bookmarkIcon = feedItemEl.querySelector('.item-element.bookmark img.icon');
           if (currentlyTrue) {
@@ -513,7 +512,14 @@ function toggleFavorite(url, container, feedItemEl) {
 function closeModalVideo() {
   const modal = document.getElementById('youlagTheaterModal');
   if (modal) modal.remove();
-  if (history.state && history.state.modalOpen) {
+  youladModalPopstateAdded = false;
+  if (!youlagModalNavigatingBack && history.state && history.state.modalOpen && (modeFullscreen || !modePip)) {
+    // Only trigger history.back() once, and set the ignore flags.
+    youlagModalNavigatingBack = true;
+    youlagModalPopstateIgnoreNext = true;
+    history.back();
+  }
+  else {
     history.replaceState(null, '', location.href);
   }
   feedItemActive = false;
@@ -588,6 +594,7 @@ function setModeFullscreen(state) {
 
 function setupClickListener() {
   // youlag-active: Video mode
+  if (youlagClickListenersInitialized) return;
   const streamContainer = document.querySelector('#stream');
 
   if (youlagActive) {
@@ -623,13 +630,15 @@ function setupClickListener() {
     }
 
     window.addEventListener('popstate', function (event) {
-      if (document.body.classList.contains('youlag-active')) {
         // youlag-active: Video modal context.
-        const modal = document.getElementById('youlagTheaterModal');
-        if (modal) {
+        if (modal && modeFullscreen) {
           closeModalVideo();
+        } 
+        else if (modePip) {
+          // If modal is not open but history.state.modalOpen is present, allow normal navigation
+          history.back();
         }
-      } else if (document.body.classList.contains('youlag-inactive')) {
+      else if (!youlagActive) {
         // youlag-inactive: Article context.
         const openArticle = document.querySelector('#stream div[data-feed].active.current');
         if (openArticle) {
@@ -640,13 +649,13 @@ function setupClickListener() {
 
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
-        if (document.body.classList.contains('youlag-active')) {
+        if (youlagActive) {
           // youlag-active: Video modal context.
           const modal = document.getElementById('youlagTheaterModal');
           if (modal) {
             closeModalVideo();
           }
-        } else if (document.body.classList.contains('youlag-inactive')) {
+        } else if (!youlagActive) {
           // youlag-inactive: Article context.
           const openArticle = document.querySelector('#stream div[data-feed].active.current');
           if (openArticle) {
@@ -656,6 +665,7 @@ function setupClickListener() {
       }
     });
   }
+  youlagClickListenersInitialized = true;
 }
 
 function closeArticle(event) {
