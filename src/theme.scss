@@ -2734,7 +2734,7 @@ main.post {
       * 
       * To fix this, expand the height of the `#yl_nav_menu_container_content`, to allow it to reach the bottom of the viewport.
       */
-    height: calc(100vh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height));
+    height: calc(100dvh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height));
     /* The `#yl_nav_menu_container` doesn't stretch to the edge of the screen. Fill out the sides with the same color as the dropdown backdrop. */
     box-shadow: 0px 0 0 500px var(--yl-color-body-background);
   }
@@ -2751,7 +2751,7 @@ main.post {
     opacity: 1 !important;
     pointer-events: all !important;
   }
-  
+
 }
 
  /* ====================================
