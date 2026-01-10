@@ -298,12 +298,10 @@ body {
   
     #yl_freshrss_logo_container {
       /* Custom FreshRSS logo element, to create a clickable logo in the side navigation. */
-      width: 130px;
-      height: 26px;
       z-index: 60;
       position: fixed;
       top: 9px;
-      left: 56px;
+      left: 57px;
       padding: 8px;
       transition: opacity 0.2s ease-in-out;
 
@@ -312,13 +310,15 @@ body {
       }
     
       img {
+        width: 130px;
+        height: 27px;
         filter: grayscale(1) brightness(5);
       }
 
       @media (max-width: 840px) {
-        width: 120px;
-        height: 24px;
-        top: 8px;
+        width: 121px !important;
+        height: 24px !important;
+        top: 6px;
         left: 54px;
       }
     }
@@ -327,6 +327,12 @@ body {
       /* Hide the original FreshRSS logo now that #yl_freshrss_logo_container is added.*/
       visibility: hidden;
       pointer-events: none;
+
+      @media (max-width: 840px) {
+        /* Reduce visual layout shifts by setting same size as the custom FreshRSS logo. */
+        width: 121px;
+        height: 24px;
+      }
     }
   }
 }
