@@ -70,7 +70,6 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
       ...activeVideo,
       queue: videoObject.queue,
       activeIndex: videoObject.activeIndex
-      // No feedItemEl, as DOM may not exist
     };
   } 
   else {
@@ -655,9 +654,7 @@ function setupClickListener() {
   
         if (target) {
           handleActiveItemVideoMode(event);
-          setTimeout(() => {
-            collapseBackgroundFeedItem(target);
-          }, 100);
+          collapseBackgroundFeedItem(target);
         }
       });
     }

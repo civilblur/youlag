@@ -2181,46 +2181,6 @@ html {
     font-family: inherit;
   }
 
-  .dropdown-menu {
-    list-style: none;
-    overflow: auto;
-
-    @media (min-width: 841px) {
-      /* Desktop dropdown menu, prevent overflowing viewport height. */
-      max-height: calc(100dvh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height) - var(--yl-m-3xl)); // `var(--yl-m-3xl)` is arbitrary padding to prevent touching the viewport edge.
-    }
-
-    form .search {
-      input {
-        /* Mobile: Dropdown search input field */
-        border-bottom-left-radius: 8px;
-        border-top-left-radius: 8px;
-        background-color: #303136;
-        box-shadow: inset 0 0 0 1px hsla(0,0%,100%,.14);
-        box-sizing: border-box;
-
-        &:focus {
-          outline: none;
-          box-shadow: inset 0 0 0 2px hsla(0,0%,100%,.14);
-        }
-      }
-      
-      .btn[type="submit"] {
-        /* Mobile: Dropdown search submit button */
-        background: var(--yl-color-gradient-active);
-  
-        img {
-          filter: brightness(5);
-        }
-      }
-    }
-
-    .help {
-      font-size: var(--yl-text-sm);
-      margin-top: var(--yl-m-sm);
-    }
-  }
-
   article .content figure figcaption {
     font-style: normal;
   }
@@ -2344,6 +2304,48 @@ html {
 /* ====================================
  * BEGIN "Dark mode: Dropdown, dialog, box"
  * ==================================== */
+
+
+.dropdown-menu {
+  list-style: none;
+  overflow: auto;
+
+  @media (min-width: 841px) {
+    /* Desktop dropdown menu, prevent overflowing viewport height. */
+    max-height: calc(100dvh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height) - var(--yl-m-3xl)); // `var(--yl-m-3xl)` is arbitrary padding to prevent touching the viewport edge.
+  }
+
+  form .search {
+    input {
+      /* Mobile: Dropdown search input field */
+      border-bottom-left-radius: 8px;
+      border-top-left-radius: 8px;
+      background-color: #303136;
+      box-shadow: inset 0 0 0 1px hsla(0,0%,100%,.14);
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 2px hsla(0,0%,100%,.14);
+      }
+    }
+    
+    .btn[type="submit"] {
+      /* Mobile: Dropdown search submit button */
+      background: var(--yl-color-gradient-active);
+
+      img {
+        filter: brightness(5);
+      }
+    }
+  }
+
+  .help {
+    font-size: var(--yl-text-sm);
+    margin-top: var(--yl-m-sm);
+  }
+}
+
 
 @media (max-width: 840px) {
   /* Mobile dropdown, with media query increase selector specificity */
