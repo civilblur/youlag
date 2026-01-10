@@ -634,7 +634,6 @@ function setupClickListener() {
     window.addEventListener('popstate', function (event) {
         // youlag-active: Video modal context.
         if (modePip) {
-          // If modal is not open but history.state.modalOpen is present, allow normal navigation
           history.back();
         }
       else if (articleOpen) {
