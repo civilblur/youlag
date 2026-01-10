@@ -667,6 +667,10 @@ function setupClickListener() {
     }
 
     window.addEventListener('popstate', function (event) {
+      if (location.hash && (!location.pathname || location.pathname === '/' || location.pathname === window.location.pathname)) {
+        // Ignore hash-only routes, e.g. when clicking dropdown menus that routes to e.g. `#dropdown-configure`.
+        return;
+      }
       // Close the open article if one is open when navigating back.
       if (modePip) {
         history.back();
