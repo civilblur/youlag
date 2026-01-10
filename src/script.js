@@ -613,7 +613,9 @@ function setupClickListener() {
   
         if (target) {
           handleActiveItemVideoMode(event);
-          collapseBackgroundFeedItem(target);
+          setTimeout(() => {
+            collapseBackgroundFeedItem(target);
+          }, 100);
         }
       });
     }
