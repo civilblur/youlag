@@ -86,7 +86,7 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
   }
 
   if (!modePip) setModeFullscreen(true);
-  createVideoModal(data);
+  createModalVideo(data);
 }
 
 function handleActiveItemArticle(event) {
@@ -297,7 +297,7 @@ function setPageTitle(title) {
   }
 }
 
-function createVideoModal(data) {
+function createModalVideo(data) {
   // Create custom modal
   let modal = document.getElementById(youlagModalVideoRootIdName);
 
