@@ -304,7 +304,7 @@ body {
       position: fixed;
       top: 9px;
       left: 56px;
-      padding: var(--yl-p-2xs);
+      padding: 8px;
       transition: opacity 0.2s ease-in-out;
 
       &:hover {
@@ -318,7 +318,7 @@ body {
       @media (max-width: 840px) {
         width: 120px;
         height: 24px;
-        top: 7px;
+        top: 8px;
         left: 54px;
       }
     }
