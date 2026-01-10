@@ -36,9 +36,9 @@ Optimized for both watching videos and reading articles.
   - Apply video mode layout to chosen categories
   - Switch between YouTube and Invidious playback sources
 - 🖥️ **Desktop & Mobile**
-  - Modernized theme design
-  - Mobile friendly, better one-handed navigation
+  - Swipe down in video mode to activate mini player mode
   - Use `Esc` key or the browser's `Back` navigation to exit videos and articles
+  - Mobile friendly, better one-handed navigation
 - 📰 **FreshRSS feature**
   - Subscribe to YouTube creators without needing an account
   - Manage article and video RSS feeds
