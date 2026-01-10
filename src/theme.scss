@@ -19,6 +19,7 @@
  * - Mapco theme dark mode (1)
  *  - Dark mode: Global styles
  *  - Dark mode: Dropdown, dialog, box
+ *  - Dark mode: Dropdown custom mobile behavior hacks
  *  - Dark mode: Feed side navigation
  *  - Dark mode: Settings side navigation
  *  - Dark mode: Card
@@ -2428,6 +2429,9 @@ html {
       animation: slideUp 0.15s ease-in-out forwards; /* Animate bottom sheet from bottom to up */
 
       @media (max-width: 8400px) {
+        max-height: 60vh;
+
+
         & + .dropdown-close {
           /* Mobile: FreshRSS dropdown background acts as an onblur, close function. */
           background: var(--frss-modal-background-color-transparent);
@@ -2546,21 +2550,19 @@ li.item.feed .item-title {
   position: relative;
 }
 
+.dropdown-menu,
+.box {
+  background-color: #303136;
+  color: var(--yl-color-text-default);
+  border-radius: 12px;
 
-
-  .dropdown-menu,
-  .box {
-    background-color: #303136;
-    color: var(--yl-color-text-default);
-    border-radius: 12px;
-  
-    .item.dropdown-section ~ .dropdown-section,
-    .item.separator {
-      border-top-color: #646464;
-      border-bottom-color: #646464;
-      border-color: #646464;
-    }
+  .item.dropdown-section ~ .dropdown-section,
+  .item.separator {
+    border-top-color: #646464;
+    border-bottom-color: #646464;
+    border-color: #646464;
   }
+}
 
 .dropdown:not(#dropdown-search-wrapper) {
   /* Add hover effect to dropdown items, while exluding e.g. #dropdown-search-wrapper */
@@ -2674,8 +2676,6 @@ main.post {
   }
 }
 
-
-
 #global #overlay {
 
   #panel {
@@ -2705,12 +2705,58 @@ main.post {
   }
 }
 
-
-
-
 /* ====================================
  * END "Dark mode: Dropdown, dialog, box"
  * ==================================== */
+
+
+
+
+ /* ====================================
+  * BEGIN "Dropdown custom mobile behavior hacks"
+  * ==================================== */
+
+@media (max-width: 840px) {
+  #yl_nav_menu_container:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Dropdown menu is opened */
+
+    .dropdown-close {
+      background: var(--yl-color-body-background);
+    }
+  }
+
+  #yl_nav_menu_container_content:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Dropdown menu is opened */
+    
+    /**
+      * HACK: Mobile: due to `position:sticky` on `#yl_nav_menu_container`, 
+      * the dropdown is forced to be positioned relative to the parent container, instead of the viewport.
+      * 
+      * To fix this, expand the height of the `#yl_nav_menu_container_content`, to allow it to reach the bottom of the viewport.
+      */
+    height: calc(100vh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height));
+    /* The `#yl_nav_menu_container` doesn't stretch to the edge of the screen. Fill out the sides with the same color as the dropdown backdrop. */
+    box-shadow: 0px 0 0 500px var(--yl-color-body-background);
+  }
+
+
+  body:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Disable body scroll when any dropdown is opened on mobile. */
+    overflow: hidden;
+  }
+  
+  #yl_nav_menu_container:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Force `#yl_nav_menu_container` to show, otherwise the dropdown menu will be hidden. */
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+  }
+  
+}
+
+ /* ====================================
+  * END "Dropdown custom mobile behavior hacks"
+  * ==================================== */
 
 
 
@@ -4785,6 +4831,7 @@ body.youlag-tags-modal-open {
 .sticky-hidden {
   transform: translateY(-100%);
   opacity: 0;
+  pointer-events: none;
 }
 
 @media (min-width: 841px) {

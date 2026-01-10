@@ -1294,7 +1294,16 @@ function setupNavMenu() {
   const freshRssTransition = document.querySelector('#new-article + .transition');
 
   // Gracefully fail
-  if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !freshRssTransition) return;
+  if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !freshRssTransition) {
+    const missing = [];
+    if (!ylNavMenuContainer) missing.push('ylNavMenuContainer');
+    if (!ylNavMenu) missing.push('ylNavMenu');
+    if (!ylNavMenuToggle) missing.push('ylNavMenuToggle');
+    if (!freshRssNavMenu) missing.push('freshRssNavMenu');
+    if (!freshRssTransition) missing.push('freshRssTransition');
+    console.warn('Failed to setup sticky nav menu, missing elements:', missing);
+    return;
+  }
 
   ylNavMenu.hidden = true; // `.nav_menu` is hidden by default.
   ylNavMenu.classList.add('nav_menu'); 
@@ -1415,7 +1424,16 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
   observer.observe(ylNavMenuContainer, { attributes: true, attributeFilter: ['class'] });
 }
 
+function clearPathHash() {
+  // Clear the URL hash to prevent dropdown menus from opening on page load.
+  // Related to the css hacks used in: "Dropdown custom mobile behavior hacks".
+  if (window.location.hash) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+}
+
 function init() {
+  clearPathHash();
   setBodyPageClass();
   setupClickListener();
   setupTagsDropdownOverride();
