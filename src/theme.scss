@@ -490,10 +490,11 @@ body {
   will-change: transform, opacity;
   box-shadow: -1px 0 0 var(--yl-color-body-background), 1px 0 0 var(--yl-color-body-background), 0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
   background-color: var(--yl-color-body-background);
-  padding: var(--yl-p-2xs) 0;
-  box-sizing: border-box;
+  padding-top: var(--yl-p-2xs);
+  padding-bottom: 0;
   padding-left: var(--yl-p-sm);
   padding-right: var(--yl-p-sm);
+  box-sizing: border-box;
   /* Negate `#stream` padding to stretch to edges. */
   margin-left: calc(var(--yl-p-sm) * -1);
   margin-right: calc(var(--yl-p-sm) * -1);
@@ -2405,7 +2406,7 @@ html {
 
       @media (max-width: 8400px) {
         max-height: 60vh;
-
+        margin-bottom: calc(var(--yl-m-sm) * -1); /* HACK: Nudge mobile dropdown (bottom sheet) to bottom edge. */
 
         & + .dropdown-close {
           /* Mobile: FreshRSS dropdown background acts as an onblur, close function. */
