@@ -320,7 +320,12 @@ function createModalVideo(data) {
     : modal.classList.add('youlag-modal-feed-item--no-thumbnail');
   feedItemActive = true;
 
-  setupModalOverscrollToPip(modal);
+  // Check if user settings allow swipe-to-pip mode, setup if enabled.
+  const miniPlayerSwipeEnabledElement = document.querySelector('#yl_mini_player_swipe_enabled');
+  const miniPlayerSwipeEnabled = miniPlayerSwipeEnabledElement?.getAttribute('data-yl-mini-player-swipe-enabled') === 'true';
+  if (miniPlayerSwipeEnabled) {
+    setupSwipeToPipMode(modal);
+  }
 
   function getEmbedUrl(source) {
     // Helper to get the correct embed URL for a given source
@@ -597,7 +602,7 @@ function setModeFullscreen(state) {
   }
 }
 
-function setupModalOverscrollToPip(modal) {
+function setupSwipeToPipMode(modal) {
   // Allow video modal overscroll to enter pip mode on touch devices.
   let touchStartY = null;
   let overscrollActive = false;
