@@ -663,7 +663,8 @@ function setupClickListener() {
             const newTargetScroll = scrollToTarget();
             if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
               window.requestAnimationFrame(scroll);
-            } else {
+            }
+            else {
               setTimeout(() => {
                 disableStickyTransitionTitle = false;
               }, 50);
@@ -683,7 +684,8 @@ function setupClickListener() {
       // Close the open article if one is open when navigating back.
       if (modePip) {
         history.back();
-      } else {
+      }
+      else {
         const openArticle = document.querySelector('#stream div[data-feed].active.current');
         if (openArticle) {
           closeArticle(event);
@@ -734,12 +736,23 @@ function closeArticle(event) {
       }
     }
 
+    // Prevent sticky transition title from showing when auto-scrolling.
+    const transitionTitle = document.getElementsByClassName('yl-freshrss-transition--sticky')[0];
+    disableStickyTransitionTitle = true;
+    transitionTitle.classList.remove('sticky-visible');
+    transitionTitle.classList.add('sticky-hidden');
+
     // Scroll to the top of the closed article, offset by `var(--yl-topnav-height)`.
     const targetScroll = rect.top + scrollTop - offset;
     window.scrollTo({
       top: Math.max(0, targetScroll)
     });
     event?.stopPropagation?.();
+
+    setTimeout(() => {
+      disableStickyTransitionTitle = false;
+    }, 50);
+
     // Allow navigating back to close an open article, by intercepting the back navigation using popstate event.
     const initialPath = location.pathname + location.search;
     // Ensure article closes if popstate has articleOpen, while keeping on the same page.
@@ -1302,7 +1315,7 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
   let ignoreNextScroll = false; // 'Configure view' toggling expands ylNavMenuContainer, casuing unwanted scroll events. Prevent those.  
 
   function setStickyVisibility(show) {
-    if (!disableStickyTransitionTitle) return;
+    if (disableStickyTransitionTitle) return;
     const add = (el) => {
       el.classList.toggle('sticky-visible', show);
       el.classList.toggle('sticky-hidden', !show);
