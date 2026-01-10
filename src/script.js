@@ -716,10 +716,14 @@ function closeArticle(event) {
   const openedArticle = document.querySelector('#stream div[data-feed].active.current');
 
   if (openedArticle) {
+    // Focus closed article, to easier visually navigate where one last left off. 
+    openedArticle.setAttribute('tabindex', '-1');
+    openedArticle.focus({ preventScroll: true });
+
+    // Close the article
     openedArticle.classList.remove('active', 'current');
     const rect = openedArticle.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const staticOffset = 80; // Increase offset to prevent e.g. `nav_menu` to overlap.
     let offset = 0;
 
     if (window.getComputedStyle) {
@@ -731,7 +735,7 @@ function closeArticle(event) {
     }
 
     // Scroll to the top of the closed article, offset by `var(--yl-topnav-height)`.
-    const targetScroll = rect.top + scrollTop - offset - staticOffset;
+    const targetScroll = rect.top + scrollTop - offset;
     window.scrollTo({
       top: Math.max(0, targetScroll)
     });

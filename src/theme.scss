@@ -3061,6 +3061,12 @@ body.youlag-inactive:not(.reader) main#stream {
       border-radius: 0;
     }
 
+    &:focus {
+      /* Used when an article is closed, to easier visually navigate where one last left off. */
+      outline: none;
+      background-color: #2a2a2a;
+    }
+
     &.active.current {
       /* youlag-inactive: article is opened */
       
