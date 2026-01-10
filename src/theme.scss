@@ -336,6 +336,21 @@ body {
       }
     }
   }
+
+  &.youlag-sidenav--collapsed {
+
+    @media (min-width: 841px) {
+      header .item.title,
+      #yl_freshrss_logo_container {
+        /**
+         * 1. FreshRSS native logo.
+         * 2. Custom FreshRSS logo element.
+         */
+        display: none;
+      }
+    }
+
+  }
 }
 
 .yl-form-category__video-label {
@@ -520,7 +535,7 @@ body {
 
   #yl_nav_menu_container {
     /* Custom element for placing the FreshRSS `.nav_menu`. */
-    
+
     &.yl-nav-menu-container--sticky {
       position: sticky;
       top: calc(var(--yl-feed-nav-menu-height) - 1px); /* HACK: Prevent half-pixel gap depending on browser zoom label. */
@@ -559,6 +574,7 @@ body {
     }
   }
 }
+
 
 
 nav.aside.aside_feed {
@@ -959,7 +975,7 @@ nav.aside.aside_feed {
     margin-left: 15%;
 
     form {
-      max-width: 100%;
+      max-width: min(440px, 100%);
     }
     
     input {
@@ -1298,7 +1314,7 @@ main#stream {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         &:not(.visible) {
           & ~ main#stream .yl-category-toolbar--sticky {
-            padding-left: 44px; /* Width of sidenav toggle button. */
+            padding-left: 52px; /* About the width of sidenav toggle button. */
           }
         }
       }
@@ -1325,7 +1341,7 @@ main#stream {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         &:not(.visible) {
           & ~ main#stream .yl-category-toolbar--sticky {
-            padding-left: 44px; /* Width of sidenav toggle button. */
+            padding-left: 52px; /* About the width of sidenav toggle button. */
           }
         }
       }
