@@ -632,13 +632,11 @@ function setupClickListener() {
     }
 
     window.addEventListener('popstate', function (event) {
-      // youlag-active: Video modal context.
+      // Close the open article if one is open when navigating back.
       if (modePip) {
         history.back();
-      }
-      else if (articleOpen) {
-        // youlag-inactive: Article context.
-        const openArticle = document.querySelector('#stream div[data-feed].active.current'); // If any article is opened.
+      } else {
+        const openArticle = document.querySelector('#stream div[data-feed].active.current');
         if (openArticle) {
           closeArticle(event);
         }
