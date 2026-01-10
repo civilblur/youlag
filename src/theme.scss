@@ -2213,6 +2213,12 @@ html {
 
   .dropdown-menu {
     list-style: none;
+    overflow: auto;
+
+    @media (min-width: 841px) {
+      /* Desktop dropdown menu, prevent overflowing viewport height. */
+      max-height: calc(100dvh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height) - var(--yl-m-3xl)); // `var(--yl-m-3xl)` is arbitrary padding to prevent touching the viewport edge.
+    }
 
     form .search {
       input {
@@ -2752,6 +2758,13 @@ main.post {
     pointer-events: all !important;
   }
 
+}
+
+@media (min-width: 841px) {
+  /* Desktop: Expand clickable area to close dropdown */
+  #yl_nav_menu_container_content .dropdown-close {
+    height: 100vh;
+  }
 }
 
  /* ====================================
