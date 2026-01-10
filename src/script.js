@@ -320,6 +320,8 @@ function createModalVideo(data) {
     : modal.classList.add('youlag-modal-feed-item--no-thumbnail');
   feedItemActive = true;
 
+  setupModalOverscrollToPip(modal);
+
   function getEmbedUrl(source) {
     // Helper to get the correct embed URL for a given source
     if (source === 'invidious_1' && data.video_invidious_instance_1 && data.youtubeId) {
@@ -593,6 +595,40 @@ function setModeFullscreen(state) {
     document.body.classList.remove('youlag-mode--fullscreen');
     modeFullscreen = false;
   }
+}
+
+function setupModalOverscrollToPip(modal) {
+  // Allow video modal overscroll to enter pip mode on touch devices.
+  let touchStartY = null;
+  let overscrollActive = false;
+  
+  modal.addEventListener('touchstart', function (e) {
+    if (modal.scrollTop === 0 && e.touches.length === 1) {
+      touchStartY = e.touches[0].clientY;
+      overscrollActive = false;
+    }
+  }, { passive: false });
+  modal.addEventListener('touchmove', function (e) {
+    if (touchStartY !== null && modal.scrollTop === 0 && e.touches.length === 1) {
+      const moveY = e.touches[0].clientY;
+      if (moveY - touchStartY > 0) {
+        // Touch is moving downward while scroll is at the very top; start tracking overscroll gesture
+        overscrollActive = true;
+        e.preventDefault(); // Prevent native scroll bounce to allow custom overscroll detection
+      }
+    }
+  }, { passive: false });
+  modal.addEventListener('touchend', function (e) {
+    if (touchStartY !== null && overscrollActive && e.changedTouches.length === 1) {
+      const endY = e.changedTouches[0].clientY;
+      if (endY - touchStartY > 40 && modal.scrollTop === 0) {
+        // Overscroll (pull-down) detected at top, toggle pip mode.
+        togglePipMode(true);
+      }
+    }
+    touchStartY = null;
+    overscrollActive = false;
+  }, { passive: false });
 }
 
 function setupClickListener() {
