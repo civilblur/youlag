@@ -622,16 +622,21 @@ function setupClickListener() {
   }
   else if (!youlagActive) {
     // youlag-inactive: Article context.
-    let articleOpen;
     if (streamContainer) {
       streamContainer.addEventListener('click', function (event) {
         const target = event.target.closest('div[data-feed]');
 
         if (target && !feedItemActive) {
           handleActiveItemArticle(event);
-          articleOpen = (target.classList.contains('current') && target.classList.contains('active')) ? target : null;
           feedItemActive = true;
         }
+
+        const rect = target.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        window.scrollTo({
+          top: rect.top + scrollTop,
+          behavior: 'smooth'
+        });
       });
     }
 
