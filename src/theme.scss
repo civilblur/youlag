@@ -287,6 +287,17 @@ html {
     color: var(--yl-color-text-default);
     border-radius: 8px;
   }
+
+  /* Testing category title */
+  #yl_category_title {
+    position: fixed;
+    top:100px;
+    left: 300px;
+    font-size: 4rem;
+    color: white;
+    z-index: 9999;
+    background: grey;
+  }
 }
 
 body {

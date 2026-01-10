@@ -39,6 +39,7 @@ class YoulagExtension extends Minz_Extension {
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
         $this->registerHook('nav_entries', array($this, 'createNavMenuContainer'), 5);
         $this->registerHook('nav_entries', array($this, 'createFreshRssLogo'), 6);
+        $this->registerHook('nav_entries', array($this, 'createCategoryTitle'), 7);
         $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
         $this->registerHook('nav_entries', array($this, 'setVideoLabels'), 11);
         $this->registerHook('nav_entries', array($this, 'setVideoUnreadBadge'), 12);
@@ -295,6 +296,64 @@ class YoulagExtension extends Minz_Extension {
         }
         return array();
     }
+
+    /**
+     * Get the name of a feed/filter by its ID.
+     * Undocumented reference: See FreshRSS core, the `transition()` function in `app/Controllers/indexController.php`:
+     *   'f.name' => $entry->feed()?->name() ?? ''
+     * @param int|string $feedId
+     * @return string
+     */
+    protected function getFeedNameById($feedId) {
+        if (class_exists('FreshRSS_Factory')) {
+            $feedDao = FreshRSS_Factory::createFeedDao();
+            if (method_exists($feedDao, 'listFeeds')) {
+                $feeds = $feedDao->listFeeds();
+                foreach ($feeds as $feed) {
+                    $name = $feed?->name();
+                    if (is_object($feed) && method_exists($feed, 'id') && $feed->id() == $feedId) {
+                        return $name ?? 'Filtered';
+                    }
+                }
+            }
+        }
+        return 'Filtered'; // Fallback if not found
+    }
+
+    /**
+     * Get the name of a category by its ID.
+     * Undocumented reference: See FreshRSS core, the `transition()` function in `app/Controllers/indexController.php`:
+     *   'c.name' => $entry->feed()?->category()?->name() ?? ''
+     * @param int|string $catId
+     * @return string
+     */
+    protected function getCategoryNameById($catId) {
+        $categories = $this->getUserCategories();
+        foreach ($categories as $cat) {
+            $name = $cat?->name();
+            if (is_object($cat) && method_exists($cat, 'id') && $cat->id() == $catId) {
+                return $name ?? '';
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Get the name of a tag (label/playlist) by its ID.
+     * Undocumented reference: See FreshRSS core, the `labels()` function in `app/Models/Context.php`.
+     * @param int|string $tagId Tag (label) ID to resolve
+     * @return string Tag name, or fallback to 'Tag {ID}' if not found
+     */
+    protected function getTagNameById($tagId) {
+        $tags = FreshRSS_Context::labels();
+        foreach ($tags as $id => $tag) {
+            if ((string)$id === (string)$tagId || (is_object($tag) && method_exists($tag, 'id') && $tag->id() == $tagId)) {
+                return is_object($tag) && method_exists($tag, 'name') ? $tag->name() : ('Tag ' . $tagId);
+            }
+        }
+        return 'Tag ' . $tagId;
+    }
+
     /**
      * Block incoming YouTube shorts from being saved to the database.
      * @param FreshRSS_Entry $entry
@@ -317,6 +376,72 @@ class YoulagExtension extends Minz_Extension {
         return $entry;
     }
 
+    /**
+     * Extract the current category/tag/filter title from FreshRSS request params
+     * This logic replicates some of the FreshRSS core behavior.
+     * See the PHPDoc in `getFeedNameById()`, `getCategoryNameById()`, `getTagNameById()`. 
+     * @return string HTML content for the category title container
+     */
+    public function createCategoryTitle() {
+        $categoryTitle = '';
+        $getParam = Minz_Request::paramString('get', '');
+        $categories = $this->getUserCategories();
+
+        // Category page `c_{n}`
+        // Prefer FreshRSS_Context::$category?->name() for accuracy, fallback to getCategoryNameById() if unavailable.
+        if (preg_match('/^c_(\d+)$/', $getParam, $m)) {
+            $catId = $m[1];
+            if (property_exists('FreshRSS_Context', 'category') && isset(FreshRSS_Context::$category)) {
+                $categoryTitle = FreshRSS_Context::$category?->name() ?? $this->getCategoryNameById($catId);
+            } else {
+                $categoryTitle = $this->getCategoryNameById($catId);
+            }
+        }
+        // Tag page `t_{n}`
+        elseif (preg_match('/^t_(\d+)$/', $getParam, $m)) {
+            $tagId = $m[1];
+            $categoryTitle = $this->getTagNameById($tagId);
+        }
+        // Filter/feed page `f_{n}`
+        elseif (preg_match('/^f_(\d+)$/', $getParam, $m)) {
+            $filterId = $m[1];
+            // Prefer FreshRSS_Context::$feed?->name() for accuary, fallback to getFeedNameById() if unavailable.
+            if (property_exists('FreshRSS_Context', 'feed') && isset(FreshRSS_Context::$feed)) {
+                $categoryTitle = FreshRSS_Context::$feed?->name() ?? $this->getFeedNameById($filterId);
+            } else {
+                $categoryTitle = $this->getFeedNameById($filterId);
+            }
+        }
+        // Specific top level category pages.
+        elseif ($getParam === 'T') {
+            // 'My labels' page. Use 'Playlists' if video labels are enabled.
+            $categoryTitle = $this->isVideoLabelsEnabled() ? 'Playlists' : 'My labels';
+        }
+        elseif ($getParam === 'i') {
+            $categoryTitle = 'Important';
+        }
+        elseif ($getParam === 's') {
+            // 'Favorites' page. Use 'Watch later' if video labels are enabled.
+            $categoryTitle = $this->isVideoLabelsEnabled() ? 'Watch later' : 'Favorites';
+        }
+        elseif ($getParam === '') {
+            $categoryTitle = 'Subscriptions';
+        }
+        else {
+            if (property_exists('FreshRSS_Context', 'category') && isset(FreshRSS_Context::$category)) {
+                $categoryTitle = FreshRSS_Context::$category?->name() ?? '';
+            } else {
+                $categoryTitle = '';
+            }
+        }
+
+        $categoryTitle = htmlspecialchars($categoryTitle);
+
+        $html = '<div id="yl_category_title_container">'
+              .     '<div id="yl_category_title" data-yl-category-title="' . $categoryTitle . '">' . $categoryTitle . '</div>'
+              . '</div>';
+        return $html;
+    }
 
     public function createNavMenuContainer() {
         $html = '<div id="yl_nav_menu_container">'
@@ -334,7 +459,6 @@ class YoulagExtension extends Minz_Extension {
               . '</div>';
         return $html;
     }
-
 
     /**
      * Saves the user settings for this extension.
