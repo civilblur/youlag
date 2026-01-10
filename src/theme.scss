@@ -492,12 +492,9 @@ body {
   background-color: var(--yl-color-body-background);
   padding-top: var(--yl-p-2xs);
   padding-bottom: var(--yl-p-2xs);
-  padding-left: var(--yl-p-sm);
-  padding-right: var(--yl-p-sm);
+  padding-left: 0;
+  padding-right: 0;
   box-sizing: border-box;
-  /* Negate `#stream` padding to stretch to edges. */
-  margin-left: calc(var(--yl-p-sm) * -1);
-  margin-right: calc(var(--yl-p-sm) * -1);
 
   @media (max-width: 840px) {
     top: var(--yl-topnav-height);
@@ -569,9 +566,8 @@ body {
 .youlag-inactive {
   @media (max-width: 840px) {
     #yl_category_toolbar {
-      /* youlag-inactive: Reset negation */
-      margin-left: 0;
-      margin-right: 0;
+      padding-left: var(--yl-p-sm);
+      padding-right: var(--yl-p-sm);
     }
   }
 }
