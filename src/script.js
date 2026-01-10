@@ -13,6 +13,7 @@ let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item
 let modePip = false;
 let modeFullscreen = true;
 let feedItemActive = false; // Whether an article/video is currently active.
+const youlagModalVideoRootIdName = `youlagTheaterModal`;
 const modalVideoContainerClassName = `youlag-theater-modal-container`;
 const modalVideoContentClassName = `youlag-theater-modal-content`;
 const modalCloseIdName = `youlagCloseModal`;
@@ -297,11 +298,11 @@ function setPageTitle(title) {
 
 function createVideoModal(data) {
   // Create custom modal
-  let modal = document.getElementById('youlagTheaterModal');
+  let modal = document.getElementById(youlagModalVideoRootIdName);
 
   if (!modal) {
     modal = document.createElement('div');
-    modal.id = 'youlagTheaterModal';
+    modal.id = youlagModalVideoRootIdName;
     modal.innerHTML = `<div class="${modalVideoContainerClassName}"></div>`;
     document.body.appendChild(modal);
   }
@@ -468,7 +469,8 @@ function createVideoModal(data) {
       youlagModalNavigatingBack = false;
       return;
     }
-    if (modeFullscreen && e.state?.modalOpen) {
+    const modal = document.getElementById(youlagModalVideoRootIdName);
+    if (modeFullscreen && modal) {
       youlagModalNavigatingBack = false;
       closeModalVideo();
     }
@@ -510,7 +512,7 @@ function toggleFavorite(url, container, feedItemEl) {
 }
 
 function closeModalVideo() {
-  const modal = document.getElementById('youlagTheaterModal');
+  const modal = document.getElementById(youlagModalVideoRootIdName);
   if (modal) modal.remove();
   youladModalPopstateAdded = false;
   if (!youlagModalNavigatingBack && history.state && history.state.modalOpen && (modeFullscreen || !modePip)) {
@@ -541,7 +543,7 @@ function togglePipMode() {
 }
 
 function setModePip(state) {
-  const modal = document.getElementById('youlagTheaterModal');
+  const modal = document.getElementById(youlagModalVideoRootIdName);
 
   if (state === true) {
     modal ? (previousFeedItemScrollTop = modal.scrollTop) : null;
@@ -647,7 +649,7 @@ function setupClickListener() {
       if (event.key === 'Escape') {
         if (youlagActive) {
           // youlag-active: Video modal context.
-          const modal = document.getElementById('youlagTheaterModal');
+          const modal = document.getElementById(youlagModalVideoRootIdName);
           if (modal) {
             closeModalVideo();
           }
