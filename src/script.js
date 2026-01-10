@@ -632,37 +632,46 @@ function setupClickListener() {
           feedItemActive = true;
         }
 
-        // Scroll to top of the article
-        const rect = target.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const transitionTitle = document.getElementsByClassName('yl-freshrss-transition--sticky')[0];
-        let offset = 0;
-        if (window.getComputedStyle) {
-          const root = document.documentElement;
-          const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
-          offset = parseInt(val, 10) || 0;
-        }
+        // Scroll to top of the article robustly
+        const scrollToTarget = () => {
+          const rect = target.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          let offset = 0;
+          if (window.getComputedStyle) {
+            const root = document.documentElement;
+            const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+            offset = parseInt(val, 10) || 0;
+          }
+          return rect.top + scrollTop - offset;
+        };
 
         // Prevent sticky transition title from showing when auto-scrolling.
+        const transitionTitle = document.getElementsByClassName('yl-freshrss-transition--sticky')[0];
         disableStickyTransitionTitle = true;
         transitionTitle.classList.remove('sticky-visible');
         transitionTitle.classList.add('sticky-hidden');
-        
-        const targetScroll = rect.top + scrollTop - offset;
-        window.scrollTo({
-          top: targetScroll,
-          behavior: 'smooth'
-        });
 
-        const onScrollEnd = () => {
-          if (Math.abs(window.pageYOffset - targetScroll) < 2) {
-            setTimeout(() => {
-              disableStickyTransitionTitle = false;
-            }, 50); // Buffer to ensure scroll has fully ended.
-            window.removeEventListener('scroll', onScrollEnd);
-          }
+        let attempts = 0;
+        const maxAttempts = 4;
+        const scroll = () => {
+          const targetScroll = scrollToTarget();
+          window.scrollTo({
+            top: targetScroll,
+          });
+          const assessScrollPosition = () => {
+            attempts++;
+            const newTargetScroll = scrollToTarget();
+            if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
+              window.requestAnimationFrame(scroll);
+            } else {
+              setTimeout(() => {
+                disableStickyTransitionTitle = false;
+              }, 50);
+            }
+          };
+          window.setTimeout(assessScrollPosition, 180);
         };
-        window.addEventListener('scroll', onScrollEnd);
+        scroll();
       });
     }
 
