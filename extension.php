@@ -38,6 +38,7 @@ class YoulagExtension extends Minz_Extension {
     public function init() {
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
         $this->registerHook('nav_entries', array($this, 'createNavMenuContainer'), 5);
+        $this->registerHook('nav_entries', array($this, 'createFreshRssLogo'), 6);
         $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
         $this->registerHook('nav_entries', array($this, 'setVideoLabels'), 11);
         $this->registerHook('nav_entries', array($this, 'setVideoUnreadBadge'), 12);
@@ -321,6 +322,15 @@ class YoulagExtension extends Minz_Extension {
         $html = '<div id="yl_nav_menu_container">'
               .     '<button id="yl_nav_menu_container_toggle">Configure view</button>'
               .     '<nav id="yl_nav_menu_container_content"></nav>'
+              . '</div>';
+        return $html;
+    }
+
+    public function createFreshRssLogo() {
+        $html = '<div id="yl_freshrss_logo_container">'
+              .     '<a href="/i/">'
+              .         '<img id="yl_freshrss_logo" src="' . '../themes/icons/FreshRSS-logo.svg' . '" alt="FreshRSS" loading="lazy" />'
+              .     '</a>'
               . '</div>';
         return $html;
     }

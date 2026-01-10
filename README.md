@@ -36,7 +36,7 @@ Optimized for both watching videos and reading articles.
   - Apply video mode layout to chosen categories
   - Switch between YouTube and Invidious playback sources
 - 🖥️ **Desktop & Mobile**
-  - Mobile: Swipe down in video mode to activate mini player mode
+  - Mobile: Swipe down in video mode to enter mini player mode
   - Use `Esc` key or the browser's `Back` navigation to exit videos and articles
   - Mobile friendly, better one-handed navigation
 - 📰 **FreshRSS feature**

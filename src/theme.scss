@@ -288,6 +288,49 @@ html {
   }
 }
 
+body {
+  &.yl-page-home,
+  &.yl-page-important,
+  &.yl-page-watch_later,
+  &.yl-page-playlists,
+  &.yl-page-category {
+    /* Use custom FreshRSS logo on feed pages only, where fixed sidenav is used. */
+  
+    #yl_freshrss_logo_container {
+      /* Custom FreshRSS logo element, to create a clickable logo in the side navigation. */
+      width: 130px;
+      height: 26px;
+      z-index: 60;
+      position: fixed;
+      top: 9px;
+      left: 56px;
+      padding: var(--yl-p-2xs);
+      transition: opacity 0.2s ease-in-out;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    
+      img {
+        filter: grayscale(1) brightness(5);
+      }
+
+      @media (max-width: 840px) {
+        width: 120px;
+        height: 24px;
+        top: 7px;
+        left: 54px;
+      }
+    }
+    
+    header .item.title {
+      /* Hide the original FreshRSS logo now that #yl_freshrss_logo_container is added.*/
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+}
+
 .yl-form-category__video-label {
   /* Extension category list label, for users who enabled 'Video platform labels'. Hide by default. */
   display: none;
@@ -2064,32 +2107,7 @@ html {
       /* Desktop: Only set fixed width for desktop. On mobile, adding fixed width causes the sidebar to display by default on all pages.  */
       width: var(--yl-sidenav-width);
       padding: 0;
-    }
-
-    .youlag-loaded {
-      &.yl-page-home,
-      &.yl-page-important,
-      &.yl-page-watch_later,
-      &.yl-page-playlists,
-      &.yl-page-category {
-        #aside_feed {
-          /* Desktop: Add back FreshRSS logo to sidenav, only if youlag script and css is ready. */
-          &:before {
-            content: "";
-            background-image: url(../themes/icons/FreshRSS-logo.svg);
-            width: 130px;
-            height: 26px;
-            z-index: 100;
-            position: absolute;
-            top: 17.5px; /* Match location of FreshRSS logo in top header, underneath the fixed positioned sidenav. */
-            left: 65px;
-            background-repeat: no-repeat;
-            filter: grayscale(1) brightness(5);
-          }
-        }
-      }
-    }
-    
+    }    
   }
 
   .yl-page-home,
