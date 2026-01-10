@@ -7,7 +7,7 @@ let youlagRestoreVideoQueueRan = false;
 let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
-let disableStickyTransitionTitle = false; // To temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
+let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
 let youtubeId;
 let previousPageTitle = null;
 let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
@@ -1302,6 +1302,7 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
   let ignoreNextScroll = false; // 'Configure view' toggling expands ylNavMenuContainer, casuing unwanted scroll events. Prevent those.  
 
   function setStickyVisibility(show) {
+    if (!disableStickyTransitionTitle) return;
     const add = (el) => {
       el.classList.toggle('sticky-visible', show);
       el.classList.toggle('sticky-hidden', !show);
@@ -1321,7 +1322,7 @@ function setupNavMenuStickyScroll(freshRssTransition, ylNavMenuContainer) {
   }
 
   function onScroll() {
-    if (ignoreNextScroll || disableStickyTransitionTitle) {
+    if (ignoreNextScroll) {
       ignoreNextScroll = false;
       lastScrollY = window.scrollY;
       return;
