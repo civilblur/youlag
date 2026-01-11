@@ -449,6 +449,10 @@ function createModalVideo(data) {
       document.querySelector('.youlag-iframe-container').remove();
     }
   }
+  else {
+    // When article is in pip mode, and the next triggered item is a video, ensure the text class is removed.
+    modal.classList.remove('youlag-modal-feed-item--text');
+  }
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModalVideo);
   container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
