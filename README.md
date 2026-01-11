@@ -1,6 +1,6 @@
 <h1 align="center">
   <img src=".github/icon.png" alt="youlag icon" width="180">
-  
+
    Youlag
 </h1>
 
@@ -15,7 +15,7 @@
 
 
 ## About
-Browse YouTube and article feeds in [FreshRSS](https://github.com/FreshRSS/FreshRSS) through a modernized design that incorporates quality-of-life features.
+Youlag is an extension for [FreshRSS](https://github.com/FreshRSS/FreshRSS), allowing you to browse YouTube and article feeds through a modernized design that incorporates quality-of-life features.
 
 Optimized for both watching videos and reading articles.
 
