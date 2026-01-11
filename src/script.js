@@ -653,28 +653,31 @@ function setupClickListener() {
   if (youlagActive) {
     if (streamContainer) {
       streamContainer.addEventListener('click', (event) => {
-        // Prevent activation if clicked element is inside .flux_header li.
-        // These are the feed item actions buttons.
+
         const target = event.target.closest('div[data-feed]');
         if (!target) return;
-        if (target.closest('.flux_header li.manage')) return;
-        if (target.closest('.flux_header li.labels')) return;
-        if (target.closest('.flux_header li.share')) return;
-        if (target.closest('.flux_header li.link')) return;
-        if (target.closest('.flux_header .website a[href^="./?get=f_"]')) return;
+        
+        // Do not expand video modal if clicking on the card action buttons.
+        const actionButtons = [
+          'li.manage',
+          'li.labels',
+          'li.share',
+          'li.link',
+          '.website a[href^="./?get=f_"]'
+        ].join(', ');
+        if (event.target.closest(actionButtons)) return;
   
         handleActiveItemVideoMode(event);
         // Ensure the native freshrss view does not expand the feed item when clicked.
         if (target.classList.contains('active')) {
-          // If already active, collapse it back.
           collapseBackgroundFeedItem(target);
         }
         else {
           // Otherwise, observe until it's active, then collapse it.
-          const observer = new MutationObserver((mutationsList, obs) => {
+          const observer = new MutationObserver((mutationsList, observer) => {
             if (target.classList.contains('active')) {
               collapseBackgroundFeedItem(target);
-              obs.disconnect();
+              observer.disconnect();
             }
           });
           observer.observe(target, { attributes: true, attributeFilter: ['class'] });
@@ -688,11 +691,16 @@ function setupClickListener() {
       streamContainer.addEventListener('click', function (event) {
         const target = event.target.closest('div[data-feed]');
         if (!target) return;
-        if (target.closest('.flux_header li.manage')) return;
-        if (target.closest('.flux_header li.labels')) return;
-        if (target.closest('.flux_header li.share')) return;
-        if (target.closest('.flux_header li.link')) return;
-        if (target.closest('.flux_header li.website')) return;
+
+        // Do not expand article and perform e.g. auto-scroll if clicking on the card action buttons.
+        const actionButtons = [
+          '.flux_header li.manage',
+          '.flux_header li.labels',
+          '.flux_header li.share',
+          '.flux_header li.link',
+          '.flux_header li.website'
+        ].join(', ');
+        if (event.target.closest(actionButtons)) return;
 
         if (!feedItemActive) {
           handleActiveItemArticle(event);
