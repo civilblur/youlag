@@ -698,7 +698,8 @@ function setupClickListener() {
           '.flux_header li.labels',
           '.flux_header li.share',
           '.flux_header li.link',
-          '.flux_header li.website'
+          '.flux_header li.website',
+          '.flux_content',
         ].join(', ');
         if (event.target.closest(actionButtons)) return;
 
