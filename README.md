@@ -9,8 +9,8 @@
 </h2>
 
 <center>
-   <img src=".github/capture-1.jpg" alt="youlag video mode" width="1000">
-   <img src=".github/capture-2.jpg" alt="youlag article view" width="1000">
+   <img src=".github/preview-1.jpg" alt="youlag video mode" width="1000">
+   <img src=".github/preview-2.jpg" alt="youlag article view" width="1000">
 </center>
 
 
