@@ -655,35 +655,29 @@ function setupClickListener() {
       streamContainer.addEventListener('click', (event) => {
         // Prevent activation if clicked element is inside .flux_header li.
         // These are the feed item actions buttons.
-        if (!target) return;
-        if (event.target.closest('div[data-feed] .flux_header li.manage')) return;
-        if (event.target.closest('div[data-feed] .flux_header li.labels')) return;
-        if (event.target.closest('div[data-feed] .flux_header li.share')) return;
-        if (event.target.closest('div[data-feed] .flux_header li.link')) return;
-        if (event.target.closest('div[data-feed] .flux_header .website a[href^="./?get=f_"]')) return;
         const target = event.target.closest('div[data-feed]');
+        if (!target) return;
+        if (target.closest('.flux_header li.manage')) return;
+        if (target.closest('.flux_header li.labels')) return;
+        if (target.closest('.flux_header li.share')) return;
+        if (target.closest('.flux_header li.link')) return;
+        if (target.closest('.flux_header .website a[href^="./?get=f_"]')) return;
   
-        if (target) {
-          handleActiveItemVideoMode(event);
-          
-          // Ensure the native freshrss view does not expand the feed item when clicked.
-          const feedItem = target.closest('div[data-feed]');
-          if (feedItem) {
-            if (feedItem.classList.contains('active')) {
-              // If already active, collapse it back.
-              collapseBackgroundFeedItem(feedItem);
+        handleActiveItemVideoMode(event);
+        // Ensure the native freshrss view does not expand the feed item when clicked.
+        if (target.classList.contains('active')) {
+          // If already active, collapse it back.
+          collapseBackgroundFeedItem(target);
+        }
+        else {
+          // Otherwise, observe until it's active, then collapse it.
+          const observer = new MutationObserver((mutationsList, obs) => {
+            if (target.classList.contains('active')) {
+              collapseBackgroundFeedItem(target);
+              obs.disconnect();
             }
-            else {
-              // Otherwise, observe until it's active, then collapse it.
-              const observer = new MutationObserver((mutationsList, obs) => {
-                if (feedItem.classList.contains('active')) {
-                  collapseBackgroundFeedItem(feedItem);
-                  obs.disconnect();
-                }
-              });
-              observer.observe(feedItem, { attributes: true, attributeFilter: ['class'] });
-            }
-          }
+          });
+          observer.observe(target, { attributes: true, attributeFilter: ['class'] });
         }
       });
     }
@@ -694,13 +688,13 @@ function setupClickListener() {
       streamContainer.addEventListener('click', function (event) {
         const target = event.target.closest('div[data-feed]');
         if (!target) return;
-        if (event.target.closest('div[data-feed] .flux_header li.manage')) return;
-        if (event.target.closest('div[data-feed] .flux_header li.labels')) return;
-        if (event.target.closest('div[data-feed] .flux_header li.share')) return;
-        if (event.target.closest('div[data-feed] .flux_header li.link')) return;
-        if (event.target.closest('div[data-feed] .flux_header li.website')) return;
+        if (target.closest('.flux_header li.manage')) return;
+        if (target.closest('.flux_header li.labels')) return;
+        if (target.closest('.flux_header li.share')) return;
+        if (target.closest('.flux_header li.link')) return;
+        if (target.closest('.flux_header li.website')) return;
 
-        if (target && !feedItemActive) {
+        if (!feedItemActive) {
           handleActiveItemArticle(event);
           feedItemActive = true;
         }
