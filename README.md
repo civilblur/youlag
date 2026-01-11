@@ -1,10 +1,12 @@
 <h1 align="center">
   <img src=".github/icon.png" alt="youlag icon" width="180">
-
+  
    Youlag
-   <br>
-   Modernize FreshRSS for viewing YouTube and articles
 </h1>
+
+<h2 align="center">
+   Modernize FreshRSS for viewing YouTube and articles
+</h2>
 
 <center>
    <img src=".github/capture-1.jpg" alt="youlag video mode" width="1000">
