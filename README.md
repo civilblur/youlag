@@ -56,7 +56,7 @@ Optimized for both watching videos and reading articles.
 
 ## Update
 
-1. Delete the old version of Youlag in your FreshRSS installation: `freshrss/extensions/`.
+1. Delete the old version of Youlag: `freshrss/extensions/xExtension-Youlag`.
 
 1. Repeat the same steps from the [Install instructions](#install).
 
