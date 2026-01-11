@@ -655,6 +655,7 @@ function setupClickListener() {
       streamContainer.addEventListener('click', (event) => {
         // Prevent activation if clicked element is inside .flux_header li.
         // These are the feed item actions buttons.
+        if (!target) return;
         if (event.target.closest('div[data-feed] .flux_header li.manage')) return;
         if (event.target.closest('div[data-feed] .flux_header li.labels')) return;
         if (event.target.closest('div[data-feed] .flux_header li.share')) return;
@@ -693,6 +694,11 @@ function setupClickListener() {
       streamContainer.addEventListener('click', function (event) {
         const target = event.target.closest('div[data-feed]');
         if (!target) return;
+        if (event.target.closest('div[data-feed] .flux_header li.manage')) return;
+        if (event.target.closest('div[data-feed] .flux_header li.labels')) return;
+        if (event.target.closest('div[data-feed] .flux_header li.share')) return;
+        if (event.target.closest('div[data-feed] .flux_header li.link')) return;
+        if (event.target.closest('div[data-feed] .flux_header li.website')) return;
 
         if (target && !feedItemActive) {
           handleActiveItemArticle(event);
