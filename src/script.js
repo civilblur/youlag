@@ -13,7 +13,7 @@ let previousPageTitle = null;
 let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
 let modePip = false;
 let modeFullscreen = true;
-let feedItemActive = false; // Whether an article/video is currently active.
+let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.
 const youlagModalVideoRootIdName = `youlagTheaterModal`;
 const modalVideoContainerClassName = `youlag-theater-modal-container`;
 const modalVideoContentClassName = `youlag-theater-modal-content`;
@@ -311,6 +311,10 @@ function createModalVideo(data) {
     modal.id = youlagModalVideoRootIdName;
     modal.innerHTML = `<div class="${modalVideoContainerClassName}"></div>`;
     document.body.appendChild(modal);
+
+    if (!modePip && modeFullscreen) {
+      feedItemActive = true;
+    }
   }
 
   // Add content to modal
@@ -323,7 +327,6 @@ function createModalVideo(data) {
   data.thumbnail
     ? modal.classList.add('youlag-modal-feed-item--has-thumbnail')
     : modal.classList.add('youlag-modal-feed-item--no-thumbnail');
-  feedItemActive = true;
 
   // Check if user settings allow swipe-to-pip mode, setup if enabled.
   const miniPlayerSwipeEnabledElement = document.querySelector('#yl_mini_player_swipe_enabled');
@@ -567,6 +570,7 @@ function setModePip(state) {
     document.body.classList.add('youlag-mode--pip');
     modePip = true;
     modeFullscreen = false;
+    feedItemActive = false; // Pip mode is not considered active.
     modal ? modal.scrollTo({ top: 0 }) : null;
   }
   else if (state === false) {
@@ -604,10 +608,12 @@ function setModeFullscreen(state) {
     document.body.classList.remove('youlag-mode--pip');
     modeFullscreen = true;
     modePip = false;
+    feedItemActive = true;
   }
   else if (state === false) {
     document.body.classList.remove('youlag-mode--fullscreen');
     modeFullscreen = false;
+    feedItemActive = false;
   }
 }
 
@@ -753,17 +759,24 @@ function setupClickListener() {
     }
 
     window.addEventListener('popstate', function (event) {
+      function getOpenArticle() {
+        return document.querySelector('#stream div[data-feed].active.current');
+      }
+
       if (location.hash && (!location.pathname || location.pathname === '/' || location.pathname === window.location.pathname)) {
         // Ignore hash-only routes, e.g. when clicking dropdown menus that routes to e.g. `#dropdown-configure`.
         return;
       }
-      // Close the open article if one is open when navigating back.
-      if (modePip) {
+      if (modePip && getOpenArticle()) {
+        closeArticle(event);
+        return;
+      }
+      if (modePip && !getOpenArticle()) {
         history.back();
       }
       else {
-        const openArticle = document.querySelector('#stream div[data-feed].active.current');
-        if (openArticle) {
+        if (getOpenArticle()) {
+          // Close the open article if one is open when navigating back.
           closeArticle(event);
         }
       }
