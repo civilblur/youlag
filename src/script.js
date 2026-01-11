@@ -1303,11 +1303,15 @@ function setBodyPageClass() {
   setCategoryWhitelistClass();
 }
 
+function isVideoLabelsEnabled() {
+  // If user has enabled video labels setting, where "Favorites" becomes "Watch Later", and "My Labels" becomes "Playlists".
+  return document.body.classList.contains('youlag-video-labels');
+}
+
 function setVideoLabelsTitle(pageClass, newTitle) {
-  if (document.body.classList.contains(pageClass) &&
-    document.body.classList.contains('youlag-video-labels')) {
-    // Replace the middle text of the title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
-    // Primarily for Playlists and Watch Later pages.
+  if (document.body.classList.contains(pageClass) && isVideoLabelsEnabled()) {
+    // Replace the middle text of the tab title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
+    // Primarily for 'Playlists' and 'Watch Later' pages.
     const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/);
     if (titleMatch) {
       const countPart = titleMatch[1] ? titleMatch[1] : '';
@@ -1473,6 +1477,13 @@ function clearPathHash() {
   }
 }
 
+function updateAnchorLink(newUrl, anchorElement) {
+  // Update anchor link href to a custom URL.
+  if (anchorElement && anchorElement.tagName === 'A') {
+    anchorElement.setAttribute('href', newUrl);
+  }
+}
+
 function init() {
   clearPathHash();
   setBodyPageClass();
@@ -1483,6 +1494,17 @@ function init() {
     youlagSettingsPageEventListeners();
   }, 1500);
   setupNavMenu();
+  if (isVideoLabelsEnabled()) {
+    // Sort 'Watch later' and 'Playlists' by 'User modified 9→1': most recently added feed items first.
+    updateAnchorLink(
+      '/i/?a=normal&get=s&sort=lastUserModified&order=DESC', 
+      document.querySelector('#aside_feed #sidebar .category.favorites > a')
+    );
+    updateAnchorLink(
+      '/i/?a=normal&get=T&order=DESC&sort=lastUserModified',
+      document.querySelector('#aside_feed #sidebar .category.tags > a')
+    )
+  }
   restoreVideoQueue();
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
