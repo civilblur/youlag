@@ -56,6 +56,12 @@ function youlagSettingsPageEventListeners() {
  * END "YOULAG EXTENSION SETTINGS PAGE"
  ****************************************/
 
+function getAttrValue(attr, element) {
+  // Helper to get any value of a data attribute. Where element is optional, defaults to using it as querySelector on document.
+  const el = element || document;
+  const value = el.querySelector(`[${attr}]`)?.getAttribute(attr);
+  return value;
+}
 
 function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) {
   // Handles both DOM event/element and direct video object.
@@ -1301,6 +1307,22 @@ function setBodyPageClass() {
   setVideoLabelsClass();
   setUnreadBadgeClass();
   setCategoryWhitelistClass();
+  setPageSortingClass();
+}
+
+function isFeedPage() {
+  // Determine if the current page is a feed page, and not e.g. settings or extensions page.
+  const feedPageClasses = [
+    'yl-page-home',
+    'yl-page-important',
+    'yl-page-watch_later',
+    'yl-page-playlists',
+    'yl-page-category',
+    'yl-page-search_results',
+  ];
+  // Check body if classes exist
+  const isFeedPage = feedPageClasses.some(feedPage => document.body.classList.contains(feedPage));
+  return isFeedPage;
 }
 
 function isVideoLabelsEnabled() {
@@ -1326,7 +1348,6 @@ function setupNavMenu() {
   youlagNavMenuInitialized = true;
 
   const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
-  const ylCategoryTitle = ylCategoryToolbar?.querySelector('#yl_category_title');
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
   const ylNavMenu = ylNavMenuContainer?.querySelector('#yl_nav_menu_container_content');
   const ylNavMenuToggle = ylCategoryToolbar?.querySelector('#yl_nav_menu_container_toggle');
@@ -1335,7 +1356,7 @@ function setupNavMenu() {
   const freshRssToggleSearch = document?.querySelector('#dropdown-search-wrapper');
   const freshRssNavMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
 
-  // Gracefully fail
+  // Fail gracefully 
   if (!ylNavMenuContainer || !ylNavMenu || !ylNavMenuToggle || !freshRssNavMenu || !ylCategoryToolbar) {
     const missing = [];
     if (!ylNavMenuContainer) missing.push('ylNavMenuContainer');
@@ -1469,6 +1490,14 @@ function setupNavMenuStickyScroll(ylCategoryToolbar) {
   });
 }
 
+function setPageSortingClass() {
+  // Adds css class e.g. `youlag-sort-watch_later--user-modified`.
+  // Used as a reference for determining the user settings, and run functions based on that.
+  if (getAttrValue('data-yl-video-sort-modified') === 'true') {
+    document.body.classList.add('youlag-sort-watch_later--user-modified');
+  }
+}
+
 function clearPathHash() {
   // Clear the URL hash to prevent dropdown menus from opening on page load.
   // Related to the css hacks used in: "Dropdown custom mobile behavior hacks".
@@ -1484,28 +1513,36 @@ function updateAnchorLink(newUrl, anchorElement) {
   }
 }
 
-function init() {
-  clearPathHash();
-  setBodyPageClass();
-  setupClickListener();
-  setupTagsDropdownOverride();
-  setTimeout(() => {
-    // HACK: Delay referencing the settings elements.
-    youlagSettingsPageEventListeners();
-  }, 1500);
-  setupNavMenu();
-  if (isVideoLabelsEnabled()) {
-    // Sort 'Watch later' and 'Playlists' by 'User modified 9→1': most recently added feed items first.
+function updateSidenavLinks() {
+  // Update sidenav links for custom links.
+
+  // Sort 'Watch later' by 'User modified 9→1': most recently added/modified feed items first.
+  isWatchLaterSortModified = document.body.classList.contains('youlag-sort-watch_later--user-modified');
+
+  if (!isWatchLaterSortModified) return;
+
+  if (isWatchLaterSortModified) {
     updateAnchorLink(
       '/i/?a=normal&get=s&sort=lastUserModified&order=DESC', 
       document.querySelector('#aside_feed #sidebar .category.favorites > a')
     );
-    updateAnchorLink(
-      '/i/?a=normal&get=T&order=DESC&sort=lastUserModified',
-      document.querySelector('#aside_feed #sidebar .category.tags > a')
-    )
   }
-  restoreVideoQueue();
+}
+
+function init() {
+  clearPathHash();
+  setBodyPageClass();
+  if (isFeedPage()) {
+    setupClickListener();
+    setupTagsDropdownOverride();
+    setupNavMenu();
+    restoreVideoQueue();
+  }
+  updateSidenavLinks();
+  setTimeout(() => {
+    // HACK: Delay referencing the settings elements.
+    youlagSettingsPageEventListeners();
+  }, 1500);
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
   removeYoulagLoadingState();

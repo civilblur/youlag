@@ -4841,7 +4841,8 @@ body.youlag-tags-modal-open {
 [data-yl-category-whitelist],
 [data-yl-video-labels],
 [data-yl-video-unread-badge],
-[data-yl-mini-player-swipe-enabled] {
+[data-yl-mini-player-swipe-enabled],
+[data-yl-video-sort-modified] {
   /**
    * Elements containing user extension settings rendered in frontend.
    * This exposes the Youlag extension settings to allow `script.js`

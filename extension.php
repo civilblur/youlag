@@ -31,6 +31,11 @@ class YoulagExtension extends Minz_Extension {
      * @var bool
      */
     protected $yl_video_unread_badge_enabled = false;
+    /**
+     * Enable sorting by modified date for Watch later/Playlists
+     * @var bool
+     */
+    protected $yl_video_sort_modified_enabled = false;
 
     /**
      * Initialize this extension
@@ -43,6 +48,7 @@ class YoulagExtension extends Minz_Extension {
         $this->registerHook('nav_entries', array($this, 'setVideoLabels'), 11);
         $this->registerHook('nav_entries', array($this, 'setVideoUnreadBadge'), 12);
         $this->registerHook('nav_entries', array($this, 'setMiniPlayerSwipeEnabled'), 13);
+        $this->registerHook('nav_entries', array($this, 'setVideoSortModifiedEnabled'), 14);
 
         // Add Youlag theme and script to all extension pages
         Minz_View::appendStyle($this->getFileUrl('theme.min.css'));
@@ -93,6 +99,9 @@ class YoulagExtension extends Minz_Extension {
 
         $unreadBadgeEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_unread_badge_enabled');
         $this->yl_video_unread_badge_enabled = ($unreadBadgeEnabled === null) ? true : $unreadBadgeEnabled;
+
+        $sortModifiedEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_sort_modified_enabled');
+        $this->yl_video_sort_modified_enabled = ($sortModifiedEnabled === null) ? false : $sortModifiedEnabled;
     }
 
 
@@ -171,6 +180,23 @@ class YoulagExtension extends Minz_Extension {
     public function setVideoUnreadBadge() {
         $enabled = $this->yl_video_unread_badge_enabled ? 'true' : 'false';
         return '<div id="yl_video_unread_badge" data-yl-video-unread-badge="' . $enabled . '"></div>';
+    }
+
+    /**
+     * Returns whether sorting by modified date is enabled or not.
+     * @return bool
+     */
+    public function isVideoSortModifiedEnabled() {
+        return $this->yl_video_sort_modified_enabled;
+    }
+
+    /**
+     * Pass the sort modified setting to be read in the DOM via nav_entries hook.
+     * The `script.js` handles the behavior based on this the value in `data-yl-video-sort-modified`.
+     */
+    public function setVideoSortModifiedEnabled() {
+        $enabled = $this->yl_video_sort_modified_enabled ? 'true' : 'false';
+        return '<div id="yl_video_sort_modified" data-yl-video-sort-modified="' . $enabled . '"></div>';
     }
 
     /**
@@ -488,6 +514,10 @@ class YoulagExtension extends Minz_Extension {
             // "New" badge for unwatched videos
             $unreadBadgeEnabled = Minz_Request::paramBoolean('yl_video_unread_badge_enabled', true);
             FreshRSS_Context::userConf()->_attribute('yl_video_unread_badge_enabled', $unreadBadgeEnabled);
+
+            // Sort by modified date for Watch later/Playlists
+            $sortModifiedEnabled = Minz_Request::paramBoolean('yl_video_sort_modified_enabled', false);
+            FreshRSS_Context::userConf()->_attribute('yl_video_sort_modified_enabled', $sortModifiedEnabled);
 
             // YouTube shorts blocking
             FreshRSS_Context::userConf()->_attribute('yl_block_youtube_shorts', Minz_Request::paramBoolean('yl_block_youtube_shorts', true));

@@ -116,6 +116,24 @@ declare(strict_types=1);
           </div>
         </div>
       </label>
+
+      <h4 class="mb-0">
+        Sorting
+      </h4>
+      <label for="yl_video_sort_modified_enabled" class="flex">
+        <input type="checkbox" id="yl_video_sort_modified_enabled" name="yl_video_sort_modified_enabled" value="1" class="mb-auto"
+          <?php echo (FreshRSS_Context::$user_conf->yl_video_sort_modified_enabled) ? ' checked="checked"' : ''; ?>>
+        <div class="inline-block">
+          Sort 
+          <span class="yl-form-category__original-label">"Favorite"</span><span class="yl-form-category__video-label">"Watch later"</span> 
+          entries by recently modified
+          <div class="yl-form-group-help">
+            Entries are now sorted based on when you added or read them, instead of received date.
+          </div>
+        </div>
+      </label>
+
+
     </section>
     <section class="yl-form-section">
       <h3>Subscription</h3>
