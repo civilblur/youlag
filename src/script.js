@@ -351,8 +351,8 @@ function createModalVideo(data) {
           <option value="invidious_1" ${invidiousSelected}>Invidious</option>
         </select>
 
-        <button id="${modalMinimizeIdName}">⧉</button>
-        <button id="${modalCloseIdName}">×</button>
+        <button id="${modalMinimizeIdName}" title="Minimize or expand">⧉</button>
+        <button id="${modalCloseIdName}" title="Close">×</button>
       </div>
 
       <div class="youlag-video-container">
