@@ -654,7 +654,25 @@ function setupClickListener() {
   
         if (target) {
           handleActiveItemVideoMode(event);
-          collapseBackgroundFeedItem(target);
+          
+          // Ensure the native freshrss view does not expand the feed item when clicked.
+          const feedItem = target.closest('div[data-feed]');
+          if (feedItem) {
+            if (feedItem.classList.contains('active')) {
+              // If already active, collapse it back.
+              collapseBackgroundFeedItem(feedItem);
+            }
+            else {
+              // Otherwise, observe until it's active, then collapse it.
+              const observer = new MutationObserver((mutationsList, obs) => {
+                if (feedItem.classList.contains('active')) {
+                  collapseBackgroundFeedItem(feedItem);
+                  obs.disconnect();
+                }
+              });
+              observer.observe(feedItem, { attributes: true, attributeFilter: ['class'] });
+            }
+          }
         }
       });
     }
@@ -1003,7 +1021,7 @@ function collapseBackgroundFeedItem(target) {
   // in favor of Youlag theater view modal. This collapses down the original feed item that activates by FreshRSS clickevent.
 
   const feedItem = target;
-  let isActive = feedItem.classList.contains('active') && feedItem.classList.contains('current');
+  let isActive = feedItem.classList.contains('active');
   const iframes = feedItem.querySelectorAll('iframe');
 
   if (iframes || youtubeExtensionInstalled) {
