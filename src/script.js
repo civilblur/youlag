@@ -310,6 +310,10 @@ function isHashUrl() {
   return isHash;
 }
 
+function getModalVideo() {
+  return document.getElementById(youlagModalVideoRootIdName);
+}
+
 function createModalVideo(data) {
   // Create custom modal
   let modal = document.getElementById(youlagModalVideoRootIdName);
@@ -493,17 +497,13 @@ function createModalVideo(data) {
   window.addEventListener('popstate', function popstateHandler(e) {
     // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
 
-    function getModalVideo() {
-      return document.getElementById(youlagModalVideoRootIdName);
-    }
-
-    // Ignore popstate if only the hash changed
     if (isHashUrl(lastPathnameSearch)) {
+      // Ignore popstate if only the hash changed
       return;
     }
 
-    // Video in fullscreen mode should be closed on popstate and not navigate back a page.
     if (modeFullscreen && getModalVideo()) {
+      // Video in fullscreen mode should be closed on popstate and not navigate back a page.
       youlagModalNavigatingBack = false;
       closeModalVideo();
       return;
@@ -512,6 +512,14 @@ function createModalVideo(data) {
     if (youlagModalPopstateIgnoreNext) {
       youlagModalPopstateIgnoreNext = false;
       youlagModalNavigatingBack = false;
+      return;
+    }
+
+    if (modePip && youlagActive) {
+      // Allow normal browser navigation when in pip mode.
+      this.alert('youlag-active: pip mode navigation');
+      youlagModalPopstateIgnoreNext = true;
+      history.back();
       return;
     }
   });
