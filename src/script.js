@@ -1620,7 +1620,7 @@ function init() {
     setupClickListener();
     setupTagsDropdownOverride();
     setupNavMenu();
-    updateVideoAuthorPlacement();
+    if (youlagActive) updateVideoAuthorPlacement();
     observeStreamNewItems()
     restoreVideoQueue();
   }
