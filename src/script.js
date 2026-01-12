@@ -1573,6 +1573,41 @@ function updateSidenavLinks() {
   }
 }
 
+function updateVideoAuthorPlacement() {
+  // youlag-active: On video cards, use move out the `.author` element outside of the video title.
+  // This prevents the author from being truncated in the title line, and is always displayed regardless of title length.
+  const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--author)');
+  feedCards.forEach(card => {
+    const author = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title .author');
+    const title = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title');
+    if (author && title && title.parentNode) {
+      // Move author element after title element.
+      title.parentNode.insertBefore(author, title.nextSibling);
+      card.classList.add('yl-modified--author');
+      console.log('Moved author element for feed item:', card);
+    }
+  });
+}
+
+function observeStreamNewItems() {
+  // Run actions based on if there's new items added to the feed stream.
+  const stream = document.getElementById('stream');
+  if (!stream) return;
+  const observer = new MutationObserver((mutationsList) => {
+    let hasNewFeedItems = false;
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+        hasNewFeedItems = true;
+        break;
+      }
+    }
+    if (hasNewFeedItems) {
+      if (youlagActive) updateVideoAuthorPlacement(); // Only update the author placement for video mode
+    }
+  });
+  observer.observe(stream, { childList: true, subtree: true });
+}
+
 function init() {
   clearPathHash();
   setBodyPageClass();
@@ -1580,6 +1615,8 @@ function init() {
     setupClickListener();
     setupTagsDropdownOverride();
     setupNavMenu();
+    updateVideoAuthorPlacement();
+    observeStreamNewItems()
     restoreVideoQueue();
   }
   updateSidenavLinks();

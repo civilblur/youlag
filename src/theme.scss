@@ -1522,8 +1522,8 @@ body.youlag-active:not(.reader) main#stream div.flux {
 
       @media (min-width: 600px) {
         & {
-          /* Hack: On desktop, keep position consistent while allowing 100% vertical stretch of .flux and .flux-header */
-          height: 105px;
+          /* HACK: On desktop, keep position consistent while allowing 100% vertical stretch of .flux and .flux-header */
+          height: 115px;
         }
       }
 
@@ -1541,18 +1541,18 @@ body.youlag-active:not(.reader) main#stream div.flux {
         white-space: normal;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 4;
-        line-clamp: 4;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
         overflow: hidden;
+      }
 
-        .author {
-          padding: 0;
-          display: block;
-          margin-top: 4px;
-          font-size: 1rem;
-          line-height: 1.2;
-          color: hsla(0, 0%, 100%, 0.59);
-        }
+      .author {
+        padding: 0;
+        display: block;
+        margin-top: var(--yl-m-2xs);
+        font-size: var(--yl-text-xs);
+        line-height: 1.2;
+        color: hsla(0, 0%, 100%, 0.59);
       }
 
       span.item-element.date {
