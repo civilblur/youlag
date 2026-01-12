@@ -482,12 +482,23 @@ function createModalVideo(data) {
     }
   });
 
+  // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
+  let lastPathnameSearch = window.location.pathname + window.location.search;
+  
   window.addEventListener('popstate', function popstateHandler(e) {
     // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
 
     function getModalVideo() {
       return document.getElementById(youlagModalVideoRootIdName);
     }
+
+    // Ignore popstate if only the hash changed
+    const currentPathnameSearch = window.location.pathname + window.location.search;
+    if (lastPathnameSearch === currentPathnameSearch && window.location.hash) {
+      lastPathnameSearch = currentPathnameSearch; // update for next event
+      return;
+    }
+    lastPathnameSearch = currentPathnameSearch;
 
     if (!feedItemActive && modePip) {
       history.back();
