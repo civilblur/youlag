@@ -1552,6 +1552,9 @@ body.youlag-active:not(.reader) main#stream div.flux {
         font-size: var(--yl-text-xs);
         line-height: 1.2;
         color: hsla(0, 0%, 100%, 0.59);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
 
       span.item-element.date {
@@ -1559,11 +1562,14 @@ body.youlag-active:not(.reader) main#stream div.flux {
         position: static;
         text-align: left;
         margin-top: 4px;
-        padding-left: 2px;
+        padding-left: 0;
         padding-right: 2px;
         display: flex;
         width: 100%;
-        font-size: 1rem;
+        font-size: var(--yl-text-xs);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
     }
 
