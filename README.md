@@ -41,7 +41,7 @@ Optimized for both watching videos and reading articles.
   - Mobile: Swipe down in video mode to activate mini player
   - Use `Esc` key or the browser's `Back` navigation to exit videos and articles
   - Mobile friendly, better one-handed navigation
-- 📰 **FreshRSS feature**
+- 📰 **FreshRSS features**
   - Subscribe to YouTube creators without needing an account
   - Manage article and video RSS feeds
 
