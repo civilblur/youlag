@@ -1,10 +1,10 @@
 let youlagModalNavigatingBack = false; // Prevent multiple history.back() triggers
 let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
+let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
 let youlagScriptLoaded = false;
 let youlagNavMenuInitialized = false;
 let youlagClickListenersInitialized = false;
 let youlagRestoreVideoQueueRan = false;
-let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
@@ -484,13 +484,21 @@ function createModalVideo(data) {
 
   window.addEventListener('popstate', function popstateHandler(e) {
     // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
+
+    function getModalVideo() {
+      return document.getElementById(youlagModalVideoRootIdName);
+    }
+
+    if (!feedItemActive && modePip) {
+      history.back();
+      return;
+    }
     if (youlagModalPopstateIgnoreNext) {
       youlagModalPopstateIgnoreNext = false;
       youlagModalNavigatingBack = false;
       return;
     }
-    const modal = document.getElementById(youlagModalVideoRootIdName);
-    if (modeFullscreen && modal) {
+    if (modeFullscreen && getModalVideo()) {
       youlagModalNavigatingBack = false;
       closeModalVideo();
     }
@@ -555,6 +563,16 @@ function togglePipMode() {
   if (modePip) {
     setModePip(false);
     setModeFullscreen(true);
+
+    if (!youladModalPopstateAdded) {
+      /**
+       * When `restoreVideoQueue()` opens in pip mode, the popstate is not yet added.
+       * Thus, if expanding back to fullscreen mode, we need to add it here to avoid routing back a page,
+       * and instead just close the modal.
+       */
+      history.pushState({ modalOpen: true }, '', '');
+      youladModalPopstateAdded = true;
+    }
   }
   else {
     setModePip(true);
