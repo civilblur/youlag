@@ -1519,7 +1519,6 @@ body.youlag-active:not(.reader) main#stream div.flux {
       width: 100%;
       margin: 4px 0 var(--yl-m-xs) 0;
 
-
       @media (min-width: 600px) {
         & {
           /* HACK: On desktop, keep position consistent while allowing 100% vertical stretch of .flux and .flux-header */
@@ -1549,7 +1548,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       .author {
         padding: 0;
         display: block;
-        margin-top: var(--yl-m-2xs);
+        margin-top: var(--yl-m-3xs);
         font-size: var(--yl-text-xs);
         line-height: 1.2;
         color: hsla(0, 0%, 100%, 0.59);
