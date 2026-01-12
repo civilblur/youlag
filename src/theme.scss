@@ -1567,9 +1567,12 @@ body.youlag-active:not(.reader) main#stream div.flux {
         display: flex;
         width: 100%;
         font-size: var(--yl-text-xs);
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+
+        time {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
       }
     }
 
