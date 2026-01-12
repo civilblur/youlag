@@ -60,7 +60,7 @@ Optimized for both watching videos and reading articles.
 
 1. Delete the old version of Youlag: `freshrss/extensions/xExtension-Youlag`.
 
-1. Repeat the same steps from the [Install instructions](#install).
+1. Repeat the same steps from the ["Install" instructions](#install).
 
 ## Additional resources
 - [Video Background Play Fix](https://addons.mozilla.org/en-US/firefox/addon/video-background-play-fix/)
