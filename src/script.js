@@ -8,6 +8,7 @@ let youlagRestoreVideoQueueRan = false;
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
+let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
 let youtubeId;
 let previousPageTitle = null;
 let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
@@ -302,6 +303,13 @@ function setPageTitle(title) {
   }
 }
 
+function isHashUrl() {
+  const currentPathnameSearch = window.location.pathname + window.location.search;
+  const isHash = lastPathnameSearch === currentPathnameSearch && window.location.hash;
+  lastPathnameSearch = currentPathnameSearch;
+  return isHash;
+}
+
 function createModalVideo(data) {
   // Create custom modal
   let modal = document.getElementById(youlagModalVideoRootIdName);
@@ -482,9 +490,6 @@ function createModalVideo(data) {
     }
   });
 
-  // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
-  let lastPathnameSearch = window.location.pathname + window.location.search;
-  
   window.addEventListener('popstate', function popstateHandler(e) {
     // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
 
@@ -493,25 +498,21 @@ function createModalVideo(data) {
     }
 
     // Ignore popstate if only the hash changed
-    const currentPathnameSearch = window.location.pathname + window.location.search;
-    if (lastPathnameSearch === currentPathnameSearch && window.location.hash) {
-      lastPathnameSearch = currentPathnameSearch; // update for next event
+    if (isHashUrl(lastPathnameSearch)) {
       return;
     }
-    lastPathnameSearch = currentPathnameSearch;
 
-    if (!feedItemActive && modePip) {
-      history.back();
+    // Video in fullscreen mode should be closed on popstate and not navigate back a page.
+    if (modeFullscreen && getModalVideo()) {
+      youlagModalNavigatingBack = false;
+      closeModalVideo();
       return;
     }
+
     if (youlagModalPopstateIgnoreNext) {
       youlagModalPopstateIgnoreNext = false;
       youlagModalNavigatingBack = false;
       return;
-    }
-    if (modeFullscreen && getModalVideo()) {
-      youlagModalNavigatingBack = false;
-      closeModalVideo();
     }
   });
 }
@@ -792,7 +793,7 @@ function setupClickListener() {
         return document.querySelector('#stream div[data-feed].active.current');
       }
 
-      if (location.hash && (!location.pathname || location.pathname === '/' || location.pathname === window.location.pathname)) {
+      if (isHashUrl()) {
         // Ignore hash-only routes, e.g. when clicking dropdown menus that routes to e.g. `#dropdown-configure`.
         return;
       }
@@ -819,7 +820,8 @@ function setupClickListener() {
           if (modal) {
             closeModalVideo();
           }
-        } else if (!youlagActive) {
+        }
+        else if (!youlagActive) {
           // youlag-inactive: Article context.
           const openArticle = document.querySelector('#stream div[data-feed].active.current');
           if (openArticle) {
@@ -870,13 +872,6 @@ function closeArticle(event) {
     setTimeout(() => {
       disableStickyTransitionTitle = false;
     }, 50);
-
-    // Allow navigating back to close an open article, by intercepting the back navigation using popstate event.
-    const initialPath = location.pathname + location.search;
-    // Ensure article closes if popstate has articleOpen, while keeping on the same page.
-    if (history.state && history.state.articleOpen && (location.pathname + location.search === initialPath)) {
-      history.back();
-    }
 
     feedItemActive = false;
   }
