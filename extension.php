@@ -98,7 +98,7 @@ class YoulagExtension extends Minz_Extension {
         $this->yl_video_labels_enabled = ($labelsEnabled === null) ? true : $labelsEnabled;
 
         $unreadBadgeEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_unread_badge_enabled');
-        $this->yl_video_unread_badge_enabled = ($unreadBadgeEnabled === null) ? true : $unreadBadgeEnabled;
+        $this->yl_video_unread_badge_enabled = ($unreadBadgeEnabled === null) ? false : $unreadBadgeEnabled;
 
         $sortModifiedEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_sort_modified_enabled');
         $this->yl_video_sort_modified_enabled = ($sortModifiedEnabled === null) ? false : $sortModifiedEnabled;
@@ -512,7 +512,7 @@ class YoulagExtension extends Minz_Extension {
             FreshRSS_Context::userConf()->_attribute('yl_video_labels_enabled', $labelsEnabled);
 
             // "New" badge for unwatched videos
-            $unreadBadgeEnabled = Minz_Request::paramBoolean('yl_video_unread_badge_enabled', true);
+            $unreadBadgeEnabled = Minz_Request::paramBoolean('yl_video_unread_badge_enabled', false);
             FreshRSS_Context::userConf()->_attribute('yl_video_unread_badge_enabled', $unreadBadgeEnabled);
 
             // Sort by modified date for Watch later/Playlists

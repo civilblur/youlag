@@ -108,7 +108,7 @@ declare(strict_types=1);
       </label>
       <label for="yl_video_unread_badge_enabled" class="flex">
         <input type="checkbox" id="yl_video_unread_badge_enabled" name="yl_video_unread_badge_enabled" value="1" class="mb-auto"
-          <?php echo (FreshRSS_Context::$user_conf->yl_video_unread_badge_enabled === null || FreshRSS_Context::$user_conf->yl_video_unread_badge_enabled) ? ' checked="checked"' : ''; ?>>
+          <?php echo (FreshRSS_Context::$user_conf->yl_video_unread_badge_enabled) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Show "New" badge for unwatched videos
           <div class="yl-form-group-help">
