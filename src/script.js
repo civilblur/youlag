@@ -1584,7 +1584,6 @@ function updateVideoAuthorPlacement() {
       // Move author element after title element.
       title.parentNode.insertBefore(author, title.nextSibling);
       card.classList.add('yl-modified--author');
-      console.log('Moved author element for feed item:', card);
     }
   });
 }
