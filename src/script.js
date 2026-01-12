@@ -493,36 +493,6 @@ function createModalVideo(data) {
       closeModalVideo();
     }
   });
-
-  window.addEventListener('popstate', function popstateHandler(e) {
-    // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
-
-    if (isHashUrl(lastPathnameSearch)) {
-      // Ignore popstate if only the hash changed
-      return;
-    }
-
-    if (modeFullscreen && getModalVideo()) {
-      // Video in fullscreen mode should be closed on popstate and not navigate back a page.
-      youlagModalNavigatingBack = false;
-      closeModalVideo();
-      return;
-    }
-
-    if (youlagModalPopstateIgnoreNext) {
-      youlagModalPopstateIgnoreNext = false;
-      youlagModalNavigatingBack = false;
-      return;
-    }
-
-    if (modePip && youlagActive) {
-      // Allow normal browser navigation when in pip mode.
-      this.alert('youlag-active: pip mode navigation');
-      youlagModalPopstateIgnoreNext = true;
-      history.back();
-      return;
-    }
-  });
 }
 
 function toggleFavorite(url, container, feedItemEl) {
@@ -725,6 +695,35 @@ function setupClickListener() {
             }
           });
           observer.observe(target, { attributes: true, attributeFilter: ['class'] });
+        }
+      });
+      
+      window.addEventListener('popstate', function popstateHandler(e) {
+        // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
+
+        if (isHashUrl(lastPathnameSearch)) {
+          // Ignore popstate if only the hash changed
+          return;
+        }
+
+        if (modeFullscreen && getModalVideo()) {
+          // Video in fullscreen mode should be closed on popstate and not navigate back a page.
+          youlagModalNavigatingBack = false;
+          closeModalVideo();
+          return;
+        }
+
+        if (youlagModalPopstateIgnoreNext) {
+          youlagModalPopstateIgnoreNext = false;
+          youlagModalNavigatingBack = false;
+          return;
+        }
+
+        if (modePip) {
+          // Allow normal browser navigation when in pip mode.
+          youlagModalPopstateIgnoreNext = true;
+          history.back();
+          return;
         }
       });
     }
