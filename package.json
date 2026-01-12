@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",
-    "sass": "^1.83.1",
+    "sass": "^1.97.2",
     "terser": "^5.44.1"
   },
   "scripts": {
