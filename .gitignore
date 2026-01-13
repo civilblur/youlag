@@ -19,3 +19,6 @@ Thumbs.db
 
 # Ignore zip files in dist
 /dist/*.zip
+
+# Temp build folder for version-injected files
+.tmp/

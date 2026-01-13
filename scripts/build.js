@@ -1,5 +1,6 @@
 // Package Youlag for distribution. Outputs files in the `dist` folder.
-// `npm run package`
+// `npm run build`
+
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
@@ -7,15 +8,19 @@ const archiver = require('archiver');
 const metadata = require('../metadata.json');
 const version = metadata.version;
 const distDir = path.resolve(__dirname, '../dist');
+const tempDir = path.resolve(__dirname, '../.tmp');
+fs.mkdirSync(tempDir, { recursive: true });
+const scriptSrc = path.resolve(__dirname, '../static/script.min.js');
+const scriptTempDest = path.join(tempDir, 'script.min.js');
+fs.copyFileSync(scriptSrc, scriptTempDest);
+
 const extensionFiles = [
-  { src: '../static/script.min.js', dest: 'static/script.min.js' },
+  { src: path.relative(__dirname, scriptTempDest), dest: 'static/script.min.js' },
   { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
   { src: '../extension.php', dest: 'extension.php' },
   { src: '../configure.phtml', dest: 'configure.phtml' },
   { src: '../metadata.json', dest: 'metadata.json' }
 ];
-
-fs.mkdirSync(path.join(distDir, 'static'), { recursive: true });
 
 extensionFiles.forEach(({ src, dest }) => {
   const srcPath = path.resolve(__dirname, src);
@@ -42,3 +47,5 @@ extensionFiles.forEach(({ dest }) => {
 });
 
 archive.finalize();
+
+fs.rmSync(tempDir, { recursive: true, force: true });

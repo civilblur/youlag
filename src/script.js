@@ -1,3 +1,4 @@
+let YOULAG_VERSION = ''; // Assigned during build.
 let youlagModalNavigatingBack = false; // Prevent multiple history.back() triggers
 let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
 let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
@@ -26,7 +27,6 @@ const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
 const modalTagsManageIdName = `youlagTagsManage`;
 const modalTagsContainerIdName = `youlagTagsModal`;
-
 
 /*****************************************
  * BEGIN: "YOULAG EXTENSION SETTINGS PAGE"
@@ -1357,6 +1357,7 @@ function setupSidenavStateListener() {
 }
 
 function setBodyPageClass() {
+  document.body.setAttribute('data-youlag-version', YOULAG_VERSION);
   getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
   setupSidenavStateListener();
   currentPageParams = new URLSearchParams(window.location.search).get('get');
