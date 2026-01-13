@@ -90,7 +90,7 @@ class YoulagExtension extends Minz_Extension {
 
         $val = FreshRSS_Context::userConf()->attributeArray('yl_category_whitelist');
         $attributes = is_array(FreshRSS_Context::$user_conf->_attributes) ? FreshRSS_Context::$user_conf->_attributes : [];
-        // If user has never set, default to ['all']
+        // Default video mode to ['all'] when Youlag is activated for the first time.
         if (!is_array($val) || (is_array($val) && count($val) === 0 && !array_key_exists('yl_category_whitelist', $attributes))) {
             $this->yl_category_whitelist = ['all'];
         }
@@ -508,8 +508,8 @@ class YoulagExtension extends Minz_Extension {
             if (!is_array($catWhitelist)) {
                 $catWhitelist = [];
             }
-            // If user submits with none checked, store ['none']
             if (count($catWhitelist) === 0) {
+                // Allow disabling video mode for all categories and pages, by unchecking all checkboxes.
                 $catWhitelist = ['none'];
             }
             FreshRSS_Context::userConf()->_attribute('yl_category_whitelist', $catWhitelist);
