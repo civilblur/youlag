@@ -10,40 +10,62 @@ const version = metadata.version;
 const distDir = path.resolve(__dirname, '../dist');
 const tempDir = path.resolve(__dirname, '../.tmp');
 fs.mkdirSync(tempDir, { recursive: true });
-const scriptSrc = path.resolve(__dirname, '../static/script.min.js');
+
+const srcScriptPath = path.resolve(__dirname, '../src/script.js');
 const scriptTempDest = path.join(tempDir, 'script.min.js');
-fs.copyFileSync(scriptSrc, scriptTempDest);
+const minifyAndInjectVersion = async () => {
+  const terser = require('terser');
+  let srcContent = fs.readFileSync(srcScriptPath, 'utf8')
+    .replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
+  fs.mkdirSync(tempDir, { recursive: true });
+  try {
+    const { code, error } = await terser.minify(srcContent, {
+      compress: true,
+      mangle: { reserved: ['YOULAG_VERSION'] }
+    });
+    if (error || !code) throw error || new Error('No code output');
+    fs.writeFileSync(scriptTempDest, code);
+    return true;
+  } catch (err) {
+    console.error('Terser error:', err);
+    return false;
+  }
+};
 
-const extensionFiles = [
-  { src: path.relative(__dirname, scriptTempDest), dest: 'static/script.min.js' },
-  { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
-  { src: '../extension.php', dest: 'extension.php' },
-  { src: '../configure.phtml', dest: 'configure.phtml' },
-  { src: '../metadata.json', dest: 'metadata.json' }
-];
+(async () => {
+  await minifyAndInjectVersion();
 
-extensionFiles.forEach(({ src, dest }) => {
-  const srcPath = path.resolve(__dirname, src);
-  const destPath = path.join(distDir, dest);
-  fs.mkdirSync(path.dirname(destPath), { recursive: true });
-  fs.copyFileSync(srcPath, destPath);
-});
+  const extensionFiles = [
+    { src: path.relative(__dirname, scriptTempDest), dest: 'static/script.min.js' },
+    { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
+    { src: '../extension.php', dest: 'extension.php' },
+    { src: '../configure.phtml', dest: 'configure.phtml' },
+    { src: '../metadata.json', dest: 'metadata.json' }
+  ];
 
-const zipName = `youlag-${version}.zip`;
-const zipPath = path.join(distDir, zipName);
-const output = fs.createWriteStream(zipPath);
-const archive = archiver('zip', { zlib: { level: 9 } });
+  extensionFiles.forEach(({ src, dest }) => {
+    const srcPath = path.resolve(__dirname, src);
+    const destPath = path.join(distDir, dest);
+    fs.mkdirSync(path.dirname(destPath), { recursive: true });
+    fs.copyFileSync(srcPath, destPath);
+  });
 
-output.on('close', () => {
-  const sizeMB = (archive.pointer() / (1024 * 1024)).toFixed(2);
-  console.log('\x1b[32m%s\x1b[0m', `v${version} build ready at: ${zipPath} (${sizeMB} MB)`);
-});
+  const zipName = `youlag-${version}.zip`;
+  const zipPath = path.join(distDir, zipName);
+  const output = fs.createWriteStream(zipPath);
+  const archive = archiver('zip', { zlib: { level: 9 } });
 
-archive.on('error', err => { throw err; });
-archive.pipe(output);
+  output.on('close', () => {
+    const sizeMB = (archive.pointer() / (1024 * 1024)).toFixed(2);
+    console.log('\x1b[32m%s\x1b[0m', `v${version} build ready at: ${zipPath} (${sizeMB} MB)`);
+  });
 
-extensionFiles.forEach(({ dest }) => {
-  archive.file(path.join(distDir, dest), { name: path.join('xExtension-Youlag', dest) });
-});
+  archive.on('error', err => { throw err; });
+  archive.pipe(output);
 
-archive.finalize();
+  extensionFiles.forEach(({ dest }) => {
+    archive.file(path.join(distDir, dest), { name: path.join('xExtension-Youlag', dest) });
+  });
+
+  archive.finalize();
+})();
