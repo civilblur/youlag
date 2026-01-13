@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 <div class="yl-extension-settings-container" id="yl-settings-root">
 
-  <form class="yl-extension-settings-form" action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
+  <form class="yl-extension-settings-form" action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post" data-auto-leave-validation="1">
     <input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 
     <h2>Youlag settings</h2>
@@ -169,7 +169,7 @@ declare(strict_types=1);
                     <?= !$this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
                   >
                   <div class="group-controls">
-                    <input type="text" value="https://youtube.com" data-leave-validation="1" readonly>
+                    <input type="text" value="https://youtube.com" readonly>
                   </div>
                 </div>
               </div>
@@ -186,7 +186,7 @@ declare(strict_types=1);
                     <?= $this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
                   >
                   <div class="group-controls">
-                    <input type="text" id="yl_invidious_url_1" name="yl_invidious_url_1" placeholder="https://" value="<?php echo FreshRSS_Context::$user_conf->yl_invidious_url_1; ?>" data-leave-validation="1">
+                    <input type="text" id="yl_invidious_url_1" name="yl_invidious_url_1" placeholder="https://" value="<?php echo FreshRSS_Context::$user_conf->yl_invidious_url_1; ?>">
                   </div>
                 </div>
               </div>
