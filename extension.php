@@ -89,7 +89,14 @@ class YoulagExtension extends Minz_Extension {
         }
 
         $val = FreshRSS_Context::userConf()->attributeArray('yl_category_whitelist');
-        $this->yl_category_whitelist = is_array($val) ? $val : ['all'];
+        $attributes = is_array(FreshRSS_Context::$user_conf->_attributes) ? FreshRSS_Context::$user_conf->_attributes : [];
+        // If user has never set, default to ['all']
+        if (!is_array($val) || (is_array($val) && count($val) === 0 && !array_key_exists('yl_category_whitelist', $attributes))) {
+            $this->yl_category_whitelist = ['all'];
+        }
+        else {
+            $this->yl_category_whitelist = $val;
+        }
 
         $miniPlayerSwipeEnabled = FreshRSS_Context::userConf()->attributeBool('yl_mini_player_swipe_enabled');
         $this->yl_mini_player_swipe_enabled = ($miniPlayerSwipeEnabled === null) ? true : $miniPlayerSwipeEnabled;
@@ -111,7 +118,7 @@ class YoulagExtension extends Minz_Extension {
      * @return array
      */
     public function getCategoryWhitelist() {
-        return (empty($this->yl_category_whitelist) ? ['all'] : $this->yl_category_whitelist);
+        return $this->yl_category_whitelist;
     }
 
     /**
@@ -500,6 +507,10 @@ class YoulagExtension extends Minz_Extension {
             $catWhitelist = Minz_Request::paramArray('yl_category_whitelist', true);
             if (!is_array($catWhitelist)) {
                 $catWhitelist = [];
+            }
+            // If user submits with none checked, store ['none']
+            if (count($catWhitelist) === 0) {
+                $catWhitelist = ['none'];
             }
             FreshRSS_Context::userConf()->_attribute('yl_category_whitelist', $catWhitelist);
 

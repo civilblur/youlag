@@ -28,7 +28,7 @@ declare(strict_types=1);
           <?php $whitelist = $this->getCategoryWhitelist(); ?>
           <!-- Place checkbox outside of label to utilize the checked="checked" state for visual statemanagement via css. -->
           <input id="yl_category_all" type="checkbox" name="yl_category_whitelist[]" value="all"
-            <?php echo (empty($whitelist) || in_array('all', $whitelist)) ? ' checked="checked"' : ''; ?>>
+            <?php echo ((empty($whitelist) || in_array('all', $whitelist)) && !in_array('none', $whitelist)) ? ' checked="checked"' : ''; ?>>
           <label for="yl_category_all" class="inline-block">
             All pages and categories
           </label>
