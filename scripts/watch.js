@@ -22,6 +22,7 @@ async function minifyAndInjectVersion() {
   const terser = require('terser');
   let srcContent = fs.readFileSync(srcScriptPath, 'utf8')
     .replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
+  fs.mkdirSync(tempDir, { recursive: true });
   try {
     const { code, error } = await terser.minify(srcContent, {
       compress: true,
@@ -57,12 +58,20 @@ function syncFiles() {
     console.log('\x1b[34m%s\x1b[0m', 'Skipping file sync, enable it in .env');
     return;
   }
+  // Ensure .tmp exists before copying any files from it
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+  }
   extensionFiles.forEach(({ src, dest }) => {
     const srcPath = path.resolve(__dirname, src);
     const destPath = path.join(freshrssDevFolder, dest);
     fs.mkdirSync(path.dirname(destPath), { recursive: true });
-    fs.copyFileSync(srcPath, destPath);
-    console.log('\x1b[32m%s\x1b[0m', `Synced: ${path.basename(srcPath)}`);
+    if (fs.existsSync(srcPath)) {
+      fs.copyFileSync(srcPath, destPath);
+      console.log('\x1b[32m%s\x1b[0m', `Synced: ${path.basename(srcPath)}`);
+    } else {
+      console.log('\x1b[33m%s\x1b[0m', `Skipped: ${path.basename(srcPath)} (not found)`);
+    }
   });
 }
 

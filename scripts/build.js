@@ -47,5 +47,3 @@ extensionFiles.forEach(({ dest }) => {
 });
 
 archive.finalize();
-
-fs.rmSync(tempDir, { recursive: true, force: true });
