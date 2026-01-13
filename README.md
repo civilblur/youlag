@@ -47,6 +47,8 @@ Optimized for both watching videos and reading articles.
 
 ## Install
 
+Before installing Youlag, please make sure to update FreshRSS to `1.28.0` or higher.
+
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
 
 1. Unzip the file and you'll find a folder named `xExtension-Youlag`.
