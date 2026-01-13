@@ -58,7 +58,6 @@ function syncFiles() {
     console.log('\x1b[34m%s\x1b[0m', 'Skipping file sync, enable it in .env');
     return;
   }
-  // Ensure .tmp exists before copying any files from it
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
   }
