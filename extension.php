@@ -496,8 +496,6 @@ class YoulagExtension extends Minz_Extension {
     public function handleConfigureAction() {
         $this->loadConfigValues();
 
-        $_SESSION['ext_categories'] = $this->getUserCategories();
-
         if (Minz_Request::isPost()) {
             // Invidious settings
             FreshRSS_Context::userConf()->_attribute('yl_invidious_enabled', Minz_Request::paramBoolean('yl_invidious_enabled'));
@@ -534,6 +532,12 @@ class YoulagExtension extends Minz_Extension {
             FreshRSS_Context::userConf()->_attribute('yl_block_youtube_shorts', Minz_Request::paramBoolean('yl_block_youtube_shorts', true));
 
             FreshRSS_Context::$user_conf->save();
+
+            $this->loadConfigValues();
+            $_SESSION['ext_categories'] = $this->getUserCategories();
+        } 
+        else {
+            $_SESSION['ext_categories'] = $this->getUserCategories();
         }
     }
 
