@@ -830,8 +830,12 @@ function setupClickListener() {
         }
         else if (!youlagActive) {
           // youlag-inactive: Article context.
-          const openArticle = document.querySelector('#stream div[data-feed].active.current');
-          if (openArticle) {
+
+          // TODO: FreshRSS apparently has a native Escape key handler that closes the article, and ends up closing 
+          // the article before `openedArticle` can be queried, thus never calling for `closeArticle()`.
+          // This behavior is hard to replicate in local, but is apparent in production. 
+          const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+          if (openedArticle) {
             closeArticle(event);
           }
         }
