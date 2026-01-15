@@ -87,22 +87,35 @@ if (require.main === module) {
     if (folderSync) {
       const scriptWatcher = chokidar.watch(srcScriptPath, { ignoreInitial: true });
       const metaWatcher = chokidar.watch(path.resolve(__dirname, '../metadata.json'), { ignoreInitial: true });
+      const configureWatcher = chokidar.watch(path.resolve(__dirname, '../configure.phtml'), { ignoreInitial: true });
+      const extensionWatcher = chokidar.watch(path.resolve(__dirname, '../extension.php'), { ignoreInitial: true });
+
       const onScriptOrMetaChange = async () => {
         if (await minifyAndInjectVersion()) {
           await syncFiles();
-          console.log('\x1b[32m%s\x1b[0m', 'Script/version synced to dev folder.');
+          console.log('\x1b[32m%s\x1b[0m', 'Script/minified version/metadata synced to dev folder.');
         } else {
           console.log('\x1b[31m%s\x1b[0m', 'Minification failed, skipping sync.');
         }
       };
+
+      const onConfigureOrExtensionChange = async (file) => {
+        await syncFiles();
+        console.log('\x1b[32m%s\x1b[0m', `${path.basename(file)} synced to dev folder.`);
+      };
+
       scriptWatcher.on('change', onScriptOrMetaChange);
       metaWatcher.on('change', onScriptOrMetaChange);
+      configureWatcher.on('change', (file) => onConfigureOrExtensionChange(file));
+      extensionWatcher.on('change', (file) => onConfigureOrExtensionChange(file));
+
       // Watch `static/theme.min.css` for changes and sync
       const cssWatcher = chokidar.watch(path.resolve(__dirname, '../static/theme.min.css'), { ignoreInitial: true });
       cssWatcher.on('change', () => {
         syncFiles();
         console.log('\x1b[32m%s\x1b[0m', 'CSS synced to dev folder.');
       });
+
       process.on('exit', () => {
         fs.rmSync(tempDir, { recursive: true, force: true });
       });

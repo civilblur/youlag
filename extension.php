@@ -7,6 +7,11 @@ class YoulagExtension extends Minz_Extension {
      */
     protected $yl_category_whitelist = ['all'];
     /**
+     * Set related videos suggestion source
+     * @var string
+     */
+    protected $yl_related_videos = 'watch_later';
+    /**
      * Enable swipe-to-mini-player by default
      * @var bool
      */
@@ -49,6 +54,7 @@ class YoulagExtension extends Minz_Extension {
         $this->registerHook('nav_entries', array($this, 'setVideoUnreadBadge'), 12);
         $this->registerHook('nav_entries', array($this, 'setMiniPlayerSwipeEnabled'), 13);
         $this->registerHook('nav_entries', array($this, 'setVideoSortModifiedEnabled'), 14);
+        $this->registerHook('nav_entries', array($this, 'setRelatedVideosSource'), 15);
 
         // Add Youlag theme and script to all extension pages
         Minz_View::appendStyle($this->getFileUrl('theme.min.css'));
@@ -77,6 +83,11 @@ class YoulagExtension extends Minz_Extension {
     public function loadConfigValues() {
         if (!class_exists('FreshRSS_Context', false) || null === FreshRSS_Context::$user_conf) {
             return;
+        }
+
+        $yl_related_videos = FreshRSS_Context::userConf()->attributeString('yl_related_videos');
+        if ($yl_related_videos !== null) {
+            $this->yl_related_videos = $yl_related_videos;
         }
 
         $yl_invidious_enabled = FreshRSS_Context::userConf()->attributeBool('yl_invidious_enabled');
@@ -135,14 +146,10 @@ class YoulagExtension extends Minz_Extension {
         return '<div id="yl_category_whitelist"' . $dataAttr . '></div>';
     }
 
-    /**
-     * Returns whether swipe-to-mini-player is enabled or not.
-     * @return bool
-     */
-    public function isMiniPlayerSwipeEnabled() {
-        return $this->yl_mini_player_swipe_enabled;
+    public function setRelatedVideosSource() {
+        $source = htmlspecialchars($this->yl_related_videos, ENT_QUOTES);
+        return '<div id="yl_related_videos_source" data-yl-related-videos-source="' . $source . '"></div>';
     }
-
 
     /**
      * Pass the mini player swipe setting to be read in the DOM via nav_entries hook.
@@ -172,14 +179,6 @@ class YoulagExtension extends Minz_Extension {
     }
 
     /**
-     * Returns whether "New" badge for unwatched videos is enabled or not.
-     * @return bool
-     */
-    public function isVideoUnreadBadgeEnabled() {
-        return $this->yl_video_unread_badge_enabled;
-    }
-
-    /**
      * Pass the "New" badge setting for unwatched videos state to be read in the DOM via nav_entries hook.
      * The `script.js` handles the behavior based on this the value in `data-yl-video-unread-badge`.
      * @param bool $enabled
@@ -187,14 +186,6 @@ class YoulagExtension extends Minz_Extension {
     public function setVideoUnreadBadge() {
         $enabled = $this->yl_video_unread_badge_enabled ? 'true' : 'false';
         return '<div id="yl_video_unread_badge" data-yl-video-unread-badge="' . $enabled . '"></div>';
-    }
-
-    /**
-     * Returns whether sorting by modified date is enabled or not.
-     * @return bool
-     */
-    public function isVideoSortModifiedEnabled() {
-        return $this->yl_video_sort_modified_enabled;
     }
 
     /**
@@ -223,7 +214,6 @@ class YoulagExtension extends Minz_Extension {
     public function isInvidiousSet() {
         return $this->instance != '';
     }
-
 
     public function embedVideoIframe($entry) {
         $this->loadConfigValues();
@@ -511,6 +501,10 @@ class YoulagExtension extends Minz_Extension {
                 $catWhitelist = ['none'];
             }
             FreshRSS_Context::userConf()->_attribute('yl_category_whitelist', $catWhitelist);
+
+            // Related videos source
+            $relatedVideosSource = Minz_Request::paramString('yl_related_videos', 'watch_later');
+            FreshRSS_Context::userConf()->_attribute('yl_related_videos', $relatedVideosSource);
 
             // Mini player swipe
             $miniPlayerSwipeEnabled = Minz_Request::paramBoolean('yl_mini_player_swipe_enabled', true);

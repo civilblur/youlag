@@ -4371,6 +4371,7 @@ a.yl-video-action-button[href=""] {
     &--collapsed {
       position: relative;
       max-height: 100px;
+      box-sizing: border-box;
       overflow: hidden;
       cursor: pointer;
 
@@ -5016,7 +5017,8 @@ body.youlag-tags-modal-open {
 [data-yl-video-labels],
 [data-yl-video-unread-badge],
 [data-yl-mini-player-swipe-enabled],
-[data-yl-video-sort-modified] {
+[data-yl-video-sort-modified],
+[data-yl-related-videos-source] {
   /**
    * Elements containing user extension settings rendered in frontend.
    * This exposes the Youlag extension settings to allow `script.js`

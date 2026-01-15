@@ -18,10 +18,10 @@ let modePip = false;
 let modeFullscreen = true;
 let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.
 const breakpoints = {
-  mobile_sm_max: 600,   // <= 600px
-  mobile_max: 840,      // 601px - 840px
-  desktop_min: 841,      // >= 841px
-  desktop_md_max: 960,  // <= 960px
+  mobile_sm_max: 600,
+  mobile_max: 840,
+  desktop_min: 841,
+  desktop_md_max: 960,
 };
 const youlagModalVideoRootIdName = `youlagTheaterModal`;
 const modalVideoContainerClassName = `youlag-theater-modal-container`;
@@ -222,6 +222,7 @@ function sanitizeExtractedVideoUrl(content) {
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
   const entryId = feedItem.getAttribute('data-entry')?.match(/([0-9]+)$/);
+  const authorId = feedItem.querySelector('.item.website a.item-element[href*="get=f_"]')?.getAttribute('href')?.match(/get=f_([0-9]+)/);
   let extractedVideoUrl = feedItem.querySelector('.item.titleAuthorSummaryDate a[href*="youtube"], .item.titleAuthorSummaryDate a[href*="/watch?v="]')?.href || '';
   if (!extractedVideoUrl) {
     // Fallback to see if user has installed the YouTube video feed/Invidious video feed extension, as they create a different DOM structure.
@@ -255,6 +256,7 @@ function extractFeedItemData(feedItem) {
 
   const videoObject = {
     entryId: entryId ? entryId[1] : null,
+    authorId: authorId ? authorId[1] : null,
     author: authorElement?.getAttribute('data-article-authors') || '',
     author_filter_url: authorFilterElement?.href || '',
     favicon: feedItem.querySelector('img.favicon')?.src || '',
@@ -469,6 +471,7 @@ function createModalVideo(data) {
   // Determine device (viewport size), to collapse video description on mobile.
   const isMobile = window.innerWidth <= breakpoints.desktop_md_max; 
   const isArticle = !data.youtubeId;
+  const shouldCollapseDescription = isMobile && !isArticle && getRelatedVideoSetting() !== 'none';
 
   setPageTitle(data.title);
 
@@ -547,7 +550,8 @@ function createModalVideo(data) {
 
 
         <div id="${modalVideoMoreContentContainerIdName}">
-          <div class="youlag-video-description-container ${isMobile && !isArticle ? 'youlag-video-description-container--collapsed' : ''}">
+          <div
+            class="youlag-video-description-container ${shouldCollapseDescription ? 'youlag-video-description-container--collapsed' : ''}">
             ${data.video_description}
           </div>
           <div id="${modalRelatedVideosContainerIdName}" class="youlag-video-related-container display-none">
@@ -562,6 +566,19 @@ function createModalVideo(data) {
 
     </div>
   `;
+
+    const videoDescContainer = modal.querySelector('.youlag-video-description-container');
+  if (videoDescContainer && videoDescContainer.offsetHeight <= 90) {
+    // Once the video description has been populated, check if the height is small enough to not need collapsing.
+    videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
+  }
+
+  function getRelatedVideoSetting() {
+    // Return e.g. 'none', 'watch_later' (favorites), 'subscriptions', 'author'.
+    // This defined the category that related videos will fetch entries from.
+    const relatedVideosSource = document.querySelector('#yl_related_videos_source')?.getAttribute('data-yl-related-videos-source') || 'none';
+    return relatedVideosSource;
+  }
 
   function templateRelatedVideos(relatedVideoObj) {
     // The HTML template for a related video item.
@@ -583,24 +600,38 @@ function createModalVideo(data) {
     `
   };
 
-  function appendRelatedVideos(currentEntryId) {
+  function appendRelatedVideos(currentEntryId, currentAuthorId) {
     // Append related videos to the video modal.
+    const relatedVideosSource = getRelatedVideoSetting();
+    if (relatedVideosSource === 'none' || relatedVideosSource === '') return;
 
     const currentlyViewing = currentEntryId;
-
     const relatedVideosContainer = container.querySelector(`#${modalRelatedVideosContainerIdName}`);
     if (!relatedVideosContainer) return;
 
-    const relatedVideos = fetchRelatedItems('favorites', 'rand', 30);
+    let relatedVideosPromise;
 
-    relatedVideos.then(videos => {
+    switch (relatedVideosSource) {
+      case 'watch_later':
+        relatedVideosPromise = fetchRelatedItems(relatedVideosSource, 'rand', 10);
+        break;
+      case 'subscriptions':
+        relatedVideosPromise = fetchRelatedItems(relatedVideosSource, '', 10);
+        break;
+      case 'author':
+        relatedVideosPromise = fetchRelatedItems(`f_${currentAuthorId}`, '', 10);
+        break;
+      default:
+        relatedVideosPromise = Promise.resolve([]);
+    }
+
+    relatedVideosPromise.then(videos => {
       if (!Array.isArray(videos) || videos.length === 0) return;
       videos.forEach(video => {
         const videoHtml = templateRelatedVideos(video);
         if (video.entryId === currentlyViewing) return; // Skip currently viewing video.
         relatedVideosContainer.insertAdjacentHTML('beforeend', videoHtml);
       });
-      
       // Display the related videos container once appended.
       relatedVideosContainer.classList.remove('display-none');
     });
@@ -642,7 +673,7 @@ function createModalVideo(data) {
     modal.classList.remove('youlag-modal-feed-item--text');
   }
 
-  appendRelatedVideos(data.entryId);
+  appendRelatedVideos(data.entryId, data.authorId);
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModalVideo);
   container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
@@ -657,17 +688,16 @@ function createModalVideo(data) {
     createTagsModal(data.entryId, await getItemTags(data.entryId));
   });
 
-  if (isMobile && !isArticle) {
+  if (shouldCollapseDescription && videoDescContainer.offsetHeight > 90) {
     // Setup the click listener to expand description only once
-    const descContainer = modal.querySelector('.youlag-video-description-container');
-    if (descContainer) {
+    if (videoDescContainer) {
       const descExpand = function () {
-        descContainer.classList.remove('youlag-video-description-container--collapsed');
-        descContainer.removeEventListener('click', descExpand);
+        videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
+        videoDescContainer.removeEventListener('click', descExpand);
       };
-      descContainer.addEventListener('click', descExpand);
+      videoDescContainer.addEventListener('click', descExpand);
       modal._videoModalListeners.push({
-        el: descContainer,
+        el: videoDescContainer,
         type: 'click',
         handler: descExpand
       });
@@ -1868,7 +1898,7 @@ function observeStreamNewItems() {
   observer.observe(stream, { childList: true, subtree: true });
 }
 
-async function fetchRelatedItems(category = 'favorites', order = 'rand', limit = 10) {
+async function fetchRelatedItems(category = 'watch_later', order = 'rand', limit = 10) {
   // Fetch related entries to show up e.g. in the Youlag "Related/random videos" section in the video modal.
 
   /**
@@ -1881,12 +1911,17 @@ async function fetchRelatedItems(category = 'favorites', order = 'rand', limit =
 
   const getParamMap = {
     'subscriptions': '', // Home
-    'favorites': 'get=s',
+    'watch_later': 'get=s',
     'playlists': 'get=T',
   };
 
+  let getParam = getParamMap[category] || '';
+  if (typeof category === 'string' && category.startsWith('f_')) {
+    getParam = `get=${category}`;
+  }
+
   try {
-    const response = await fetch(`/i/?a=normal&${getParamMap[category] || ''}&sort=${order}`);
+    const response = await fetch(`/i/?a=normal&${getParam}&sort=${order}`);
     if (!response.ok) {
       throw new Error('HTTP ' + response.status);
     }

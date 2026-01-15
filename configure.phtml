@@ -36,29 +36,29 @@ declare(strict_types=1);
             <hr>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="home"
-                <?php echo in_array('home', $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array('home', $whitelist) ? ' checked="checked"' : ''; ?>>
               Subscriptions
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="important"
-                <?php echo in_array('important', $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array('important', $whitelist) ? ' checked="checked"' : ''; ?>>
               Important
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="watch_later"
-                <?php echo in_array('watch_later', $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array('watch_later', $whitelist) ? ' checked="checked"' : ''; ?>>
                 <span class="yl-form-category__original-label">Favorites</span>
                 <span class="yl-form-category__video-label">Watch later</span>
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="playlists"
-                <?php echo in_array('playlists', $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array('playlists', $whitelist) ? ' checked="checked"' : ''; ?>>
                 <span class="yl-form-category__original-label">My Labels</span>
                 <span class="yl-form-category__video-label">Playlists</span>
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="search_results"
-                <?php echo in_array('search_results', $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array('search_results', $whitelist) ? ' checked="checked"' : ''; ?>>
               Search results
             </label>
             <label>
@@ -69,7 +69,7 @@ declare(strict_types=1);
                   type="checkbox"
                   name="yl_category_whitelist[]"
                   value="<?php echo 'c_' . htmlspecialchars($catId); ?>"
-                  <?php echo in_array('c_' . $catId, $whitelist) ? ' checked="checked"' : ''; ?>>
+                    <?php echo in_array('c_' . $catId, $whitelist) ? ' checked="checked"' : ''; ?>>
                 <?php echo htmlspecialchars((string)$cat->name()); ?>
               </label>
             <?php endforeach; ?>
@@ -83,8 +83,8 @@ declare(strict_types=1);
         Mini player
       </h4>
       <label for="yl_mini_player_swipe_enabled" class="flex">
-        <input type="checkbox" id="yl_mini_player_swipe_enabled" name="yl_mini_player_swipe_enabled" value="1" class="mb-auto"
-          <?php echo (FreshRSS_Context::$user_conf->yl_mini_player_swipe_enabled === null || FreshRSS_Context::$user_conf->yl_mini_player_swipe_enabled) ? ' checked="checked"' : ''; ?>>
+          <input type="checkbox" id="yl_mini_player_swipe_enabled" name="yl_mini_player_swipe_enabled" value="1" class="mb-auto"
+            <?php echo ($this->yl_mini_player_swipe_enabled) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Swipe down in video mode to activate mini player
           <div class="yl-form-group-help">
@@ -94,11 +94,58 @@ declare(strict_types=1);
       </label>
 
       <h4 class="mb-0">
+        Watch more suggestions
+
+        <div class="yl-form-group-help">
+          The "Watch more" section appears in the video modal and suggests entries from your subscriptions.
+        </div>
+      </h4>
+          <?php 
+            $yl_related_videos = isset($this->yl_related_videos) ? $this->yl_related_videos : null;
+          ?>
+        <label for="yl_related_videos_watch_later" class="flex">
+          <input type="radio" id="yl_related_videos_watch_later" name="yl_related_videos" value="watch_later" class="mb-auto"
+            <?php echo ($yl_related_videos === null || $yl_related_videos === "watch_later") ? ' checked="checked"' : ''; ?>>
+          <div class="inline-block">
+            Random from 
+            <span class="yl-form-category__original-label">Favorites</span>
+            <span class="yl-form-category__video-label">Watch later</span>
+          </div>
+        </label>
+        <label for="yl_related_videos_subscriptions" class="flex">
+          <input type="radio" id="yl_related_videos_subscriptions" name="yl_related_videos" value="subscriptions" class="mb-auto"
+            <?php echo ($yl_related_videos === 'subscriptions') ? ' checked="checked"' : ''; ?>>
+          <div class="inline-block">
+            Latest from Subscriptions
+          </div>
+        </label>
+        <label for="yl_related_videos_author" class="flex">
+          <input type="radio" id="yl_related_videos_author" name="yl_related_videos" value="author" class="mb-auto"
+            <?php echo ($yl_related_videos === 'author') ? ' checked="checked"' : ''; ?>>
+          <div class="inline-block">
+            Latest from author
+          </div>
+        </label>
+        <label for="yl_related_videos_disabled" class="flex">
+          <input type="radio" id="yl_related_videos_disabled" name="yl_related_videos" value="none" class="mb-auto"
+            <?php echo ($yl_related_videos === 'none') ? ' checked="checked"' : ''; ?>>
+          <div class="inline-block">
+            Disable
+            <div class="yl-form-group-help">
+              Escape the doom scrolling
+            </div>
+          </div>
+        </label>
+
+    
+
+
+      <h4 class="mb-0">
         Labels
       </h4>
       <label for="yl_video_labels_enabled" class="flex">
-        <input type="checkbox" id="yl_video_labels_enabled" name="yl_video_labels_enabled" value="1" class="mb-auto"
-          <?php echo (FreshRSS_Context::$user_conf->yl_video_labels_enabled === null || FreshRSS_Context::$user_conf->yl_video_labels_enabled) ? ' checked="checked"' : ''; ?>>
+          <input type="checkbox" id="yl_video_labels_enabled" name="yl_video_labels_enabled" value="1" class="mb-auto"
+            <?php echo ($this->yl_video_labels_enabled) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Use video platform labels
           <div class="yl-form-group-help">
@@ -107,8 +154,8 @@ declare(strict_types=1);
         </div>
       </label>
       <label for="yl_video_unread_badge_enabled" class="flex">
-        <input type="checkbox" id="yl_video_unread_badge_enabled" name="yl_video_unread_badge_enabled" value="1" class="mb-auto"
-          <?php echo (FreshRSS_Context::$user_conf->yl_video_unread_badge_enabled) ? ' checked="checked"' : ''; ?>>
+          <input type="checkbox" id="yl_video_unread_badge_enabled" name="yl_video_unread_badge_enabled" value="1" class="mb-auto"
+            <?php echo ($this->yl_video_unread_badge_enabled) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Show "New" badge for unwatched videos
           <div class="yl-form-group-help">
@@ -121,8 +168,8 @@ declare(strict_types=1);
         Sorting
       </h4>
       <label for="yl_video_sort_modified_enabled" class="flex">
-        <input type="checkbox" id="yl_video_sort_modified_enabled" name="yl_video_sort_modified_enabled" value="1" class="mb-auto"
-          <?php echo (FreshRSS_Context::$user_conf->yl_video_sort_modified_enabled) ? ' checked="checked"' : ''; ?>>
+          <input type="checkbox" id="yl_video_sort_modified_enabled" name="yl_video_sort_modified_enabled" value="1" class="mb-auto"
+            <?php echo ($this->yl_video_sort_modified_enabled) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Sort 
           <span class="yl-form-category__original-label">"Favorite"</span><span class="yl-form-category__video-label">"Watch later"</span> 
@@ -142,8 +189,8 @@ declare(strict_types=1);
         YouTube shorts
       </h4>
       <label for="yl_block_youtube_shorts" class="flex">
-        <input type="checkbox" id="yl_block_youtube_shorts" name="yl_block_youtube_shorts" value="1" class="mb-auto"
-          <?php echo (FreshRSS_Context::$user_conf->yl_block_youtube_shorts) ? ' checked="checked"' : ''; ?>>
+          <input type="checkbox" id="yl_block_youtube_shorts" name="yl_block_youtube_shorts" value="1" class="mb-auto"
+            <?php echo ($this->yl_block_youtube_shorts_enabled) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Block incoming YouTube shorts
           <div class="yl-form-group-help">
