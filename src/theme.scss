@@ -294,7 +294,8 @@ body {
   &.yl-page-important,
   &.yl-page-watch_later,
   &.yl-page-playlists,
-  &.yl-page-category {
+  &.yl-page-category,
+  &.yl-page-search_results {
     /* Use custom FreshRSS logo on feed pages only, where fixed sidenav is used. */
   
     #yl_freshrss_logo_container {
@@ -1305,7 +1306,8 @@ main#stream {
   &.yl-page-important,
   &.yl-page-watch_later,
   &.yl-page-playlists,
-  &.yl-page-category {
+  &.yl-page-category,
+  &.yl-page-search_results  {
     #aside_feed {
       @media (min-width: 841px) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
@@ -1332,7 +1334,8 @@ main#stream {
   &.yl-page-important,
   &.yl-page-watch_later,
   &.yl-page-playlists,
-  &.yl-page-category {
+  &.yl-page-category,
+  &.yl-page-search_results  {
     #aside_feed {
       @media (min-width: 841px) and (max-width: 1020px) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
