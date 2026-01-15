@@ -583,8 +583,10 @@ function createModalVideo(data) {
     `
   };
 
-  function appendRelatedVideos() {
+  function appendRelatedVideos(currentEntryId) {
     // Append related videos to the video modal.
+
+    const currentlyViewing = currentEntryId;
 
     const relatedVideosContainer = container.querySelector(`#${modalRelatedVideosContainerIdName}`);
     if (!relatedVideosContainer) return;
@@ -595,6 +597,7 @@ function createModalVideo(data) {
       if (!Array.isArray(videos) || videos.length === 0) return;
       videos.forEach(video => {
         const videoHtml = templateRelatedVideos(video);
+        if (video.entryId === currentlyViewing) return; // Skip currently viewing video.
         relatedVideosContainer.insertAdjacentHTML('beforeend', videoHtml);
       });
       
@@ -639,7 +642,7 @@ function createModalVideo(data) {
     modal.classList.remove('youlag-modal-feed-item--text');
   }
 
-  appendRelatedVideos();
+  appendRelatedVideos(data.entryId);
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModalVideo);
   container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
