@@ -245,6 +245,14 @@ function extractFeedItemData(feedItem) {
 
   const invidiousRedirectPrefixUrl = 'https://redirect.invidious.io/watch?v=';
 
+  // If video description is found, use it, otherwise fallback to generic description element.
+  let video_description = isVideoFeedItem && videoDescriptionExists ?
+    appendUrl(feedItem.querySelector('.enclosure-description')?.innerHTML.trim()) :
+    feedItem.querySelector('article div.text')?.innerHTML.trim() ||
+    '';
+  video_description = appendOriginalSrc(video_description);
+  
+
   const videoObject = {
     entryId: entryId ? entryId[1] : null,
     author: authorElement?.getAttribute('data-article-authors') || '',
@@ -263,17 +271,47 @@ function extractFeedItemData(feedItem) {
     video_invidious_instance_1: invidiousInstance1 || '',
     video_source_default: videoSourceDefault || 'youtube',
     video_description:
-      // If video description is found, use it, otherwise fallback to generic description element.
       `<div class="youlag-video-description-content">
-        ${isVideoFeedItem && videoDescriptionExists ? appendUrl(feedItem.querySelector('.enclosure-description')?.innerHTML.trim()) :
-        feedItem.querySelector('article div.text')?.innerHTML.trim() || ''
-      }
+        ${video_description}
       </div>`,
     video_youtube_url: youtubeUrl,
     video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
   };
 
   return videoObject;
+}
+
+function appendOriginalSrc(element) {
+  // Update lazyloaded content, where `data-original` stores the original src.
+  // This is required as the content may not have been fully loaded during extraction for modal usage. 
+
+  if (!element) return element;
+
+  let root;
+  if (typeof element === 'string') {
+    const temp = document.createElement('div');
+    temp.innerHTML = element;
+    root = temp;
+  }
+  else if (element instanceof Element) {
+    root = element.cloneNode(true);
+  }
+  else {
+    return element;
+  }
+
+  const elementsLazyloaded = root.querySelectorAll('[data-original]');
+  elementsLazyloaded.forEach(el => {
+    const srcOriginal = el.getAttribute('data-original');
+    if (srcOriginal) {
+      el.setAttribute('src', srcOriginal);
+    }
+  });
+
+  if (typeof element === 'string') {
+    return root.innerHTML;
+  }
+  return root;
 }
 
 function setVideoQueue(videoObject) {
