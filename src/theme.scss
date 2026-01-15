@@ -4354,6 +4354,10 @@ a.yl-video-action-button[href=""] {
   gap: var(--yl-m-sm) var(--yl-m-2xs);
   margin-bottom: var(--yl-m-lg);
 
+  @media (max-width: 960px) {
+    flex-direction: column;
+  }
+
   .youlag-video-description-container {
     background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
     padding: var(--yl-p-sm);
@@ -4443,7 +4447,7 @@ a.yl-video-action-button[href=""] {
       }
 
       &__thumbnail {
-        width: 150px;
+        width: 145px;
         flex-shrink: 0;
         overflow: hidden;
         border-radius: 8px;
@@ -4466,6 +4470,68 @@ a.yl-video-action-button[href=""] {
         max-width: 230px;
       }
     }
+
+    @media (min-width: 1400px) {
+      #youlagVideoMoreContentContainer {
+        gap: var(--yl-m-sm) var(--yl-m-sm);
+      }
+
+      .yl-form-category__video-label {
+        font-size: var(--yl-text-md);
+      }
+
+      .youlag-related-video-item {
+
+        &__thumbnail {
+          width: 240px;
+        }
+
+        &__metadata {
+          max-width: 300px;
+        }
+
+        &__title,
+        &__author {
+          font-size: var(--yl-text-sm);
+        }
+
+        &__date {
+          font-size: var(--yl-text-xs);
+        }
+      }
+
+    }
+
+    @media (min-width: 560px) and (max-width: 960px) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--yl-m-xs);
+
+      .youlag-video-related-title {
+        grid-column: 1 / -1;
+        padding-left: 0;
+      }
+
+      .youlag-related-video-item {
+        flex-direction: column;
+
+        &__thumbnail {
+          width: 100%;
+        }
+
+        &__metadata {
+          max-width: 100%;
+        }
+      }
+    }
+
+    @media (max-width: 560px) {
+      .youlag-related-video-item__metadata {
+        min-width: auto;
+        max-width: 100%;
+      }
+    }
+
   }
 }
 
