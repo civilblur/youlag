@@ -5,6 +5,7 @@ let youladModalPopstateAdded = false; // The popstate for video modal is only re
 let youlagScriptLoaded = false;
 let youlagNavMenuInitialized = false;
 let youlagClickListenersInitialized = false;
+let youlagTouchListenersInitialized = false;
 let youlagRestoreVideoQueueRan = false;
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
@@ -16,6 +17,12 @@ let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item
 let modePip = false;
 let modeFullscreen = true;
 let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.
+const breakpoints = {
+  mobile_sm_max: 600,   // <= 600px
+  mobile_max: 840,      // 601px - 840px
+  desktop_min: 841,      // >= 841px
+  desktop_md_max: 960,  // <= 960px
+};
 const youlagModalVideoRootIdName = `youlagTheaterModal`;
 const modalVideoContainerClassName = `youlag-theater-modal-container`;
 const modalVideoContentClassName = `youlag-theater-modal-content`;
@@ -328,7 +335,8 @@ function restoreVideoQueue() {
     'yl-page-important',
     'yl-page-watch_later',
     'yl-page-playlists',
-    'yl-page-category'
+    'yl-page-category',
+    'yl-page-search_results'
   ].some(cls => bodyClasses.contains(cls));
   if (!isVideoPage) return;
 
@@ -366,7 +374,7 @@ function getModalVideo() {
 
 function createModalVideo(data) {
   // Create custom modal
-  let modal = document.getElementById(youlagModalVideoRootIdName);
+  let modal = getModalVideo();
 
   if (!modal) {
     modal = document.createElement('div');
@@ -377,6 +385,14 @@ function createModalVideo(data) {
     if (!modePip && modeFullscreen) {
       feedItemActive = true;
     }
+  }
+  
+  if (!modal._videoModalListeners) {
+    // Track modal event listeners for later removal
+    modal._videoModalListeners = [];
+  }
+  else {
+    modal._videoModalListeners.length = 0;
   }
 
   // Add content to modal
@@ -401,7 +417,8 @@ function createModalVideo(data) {
     // Helper to get the correct embed URL for a given source
     if (source === 'invidious_1' && data.video_invidious_instance_1 && data.youtubeId) {
       return `${data.video_invidious_instance_1.replace(/\/$/, '')}/embed/${data.youtubeId}`;
-    } else if (source === 'youtube') {
+    }
+    else if (source === 'youtube') {
       return data.youtube_embed_url;
     }
     return '';
@@ -410,6 +427,10 @@ function createModalVideo(data) {
   // Determine the initial video source (default)
   const videoSourceDefaultNormalized = videoSourceDefault === 'invidious_1' ? 'invidious_1' : 'youtube';
   const defaultEmbedUrl = getEmbedUrl(videoSourceDefaultNormalized);
+
+  // Determine device (viewport size), to collapse video description on mobile.
+  const isMobile = window.innerWidth <= breakpoints.desktop_md_max; 
+  const isArticle = !data.youtubeId;
 
   setPageTitle(data.title);
 
@@ -488,7 +509,7 @@ function createModalVideo(data) {
 
 
         <div id="${modalVideoMoreContentContainerIdName}">
-          <div class="youlag-video-description-container">
+          <div class="youlag-video-description-container ${isMobile && !isArticle ? 'youlag-video-description-container--collapsed' : ''}">
             ${data.video_description}
           </div>
           <div id="${modalRelatedVideosContainerIdName}" class="youlag-video-related-container display-none">
@@ -567,7 +588,7 @@ function createModalVideo(data) {
     });
   }
 
-  if (!data.youtubeId) {
+  if (isArticle) {
     // Handle non-video feed items, such as text-based articles.
     modal.classList.add('youlag-modal-feed-item--text');
     let iframeContainer = document.querySelector('.youlag-iframe-container');
@@ -593,6 +614,35 @@ function createModalVideo(data) {
     // Open tags (playlists) modal.
     e.preventDefault();
     createTagsModal(data.entryId, await getItemTags(data.entryId));
+  });
+
+  if (isMobile && !isArticle) {
+    // Setup the click listener to expand description only once
+    const descContainer = modal.querySelector('.youlag-video-description-container');
+    if (descContainer) {
+      const descExpand = function () {
+        descContainer.classList.remove('youlag-video-description-container--collapsed');
+        descContainer.removeEventListener('click', descExpand);
+      };
+      descContainer.addEventListener('click', descExpand);
+      modal._videoModalListeners.push({
+        el: descContainer,
+        type: 'click',
+        handler: descExpand
+      });
+    }
+  }
+
+  const escHandler = (event) => {
+    if (event.key === 'Escape' && modeFullscreen) {
+      closeModalVideo();
+    }
+  };
+  document.addEventListener('keydown', escHandler);
+  modal._videoModalListeners.push({
+    el: document,
+    type: 'keydown',
+    handler: escHandler
   });
 
   // Push a new state to the history, to allow modal close when routing back.
@@ -643,8 +693,18 @@ function toggleFavorite(url, container, feedItemEl) {
 }
 
 function closeModalVideo() {
-  const modal = document.getElementById(youlagModalVideoRootIdName);
+  const modal = getModalVideo();
+
+  // Remove all modal-specific listeners before removing the modal element
+  if (modal && modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
+    for (const {el, type, handler} of modal._videoModalListeners) {
+      el.removeEventListener(type, handler);
+    }
+    modal._videoModalListeners.length = 0;
+  }
+  
   if (modal) modal.remove();
+
   youladModalPopstateAdded = false;
   if (!youlagModalNavigatingBack && history.state && history.state.modalOpen && (modeFullscreen || !modePip)) {
     // Only trigger history.back() once, and set the ignore flags.
@@ -740,6 +800,8 @@ function setModeFullscreen(state) {
 
 function setupSwipeToPipMode(modal) {
   // Allow video modal overscroll to enter pip mode on touch devices.
+  if (youlagTouchListenersInitialized) return;
+
   let touchStartY = null;
   let overscrollActive = false;
   
@@ -770,6 +832,8 @@ function setupSwipeToPipMode(modal) {
     touchStartY = null;
     overscrollActive = false;
   }, { passive: false });
+
+  youlagTouchListenersInitialized = true;
 }
 
 function setupClickListener() {
