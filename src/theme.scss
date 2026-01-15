@@ -4047,6 +4047,9 @@ body {
         .youlag-video-thumbnail {
           position: static !important;
           transform: none !important;
+          object-fit: cover;
+          max-height: 50vh;
+          object-position: 0% 20%;
         }
       }
     }
