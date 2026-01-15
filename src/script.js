@@ -1719,8 +1719,29 @@ function updateVideoAuthorPlacement() {
   });
 }
 
+function updateVideoDateFormat() {
+  // youlag-active: On video cards, update to use relative date.
+  const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--date)');
+  feedCards.forEach(card => {
+    const date = card.querySelector('.flux_header .item.titleAuthorSummaryDate .date time');
+    if (date) {
+      const datetime = date.getAttribute('datetime');
+      if (datetime) {
+        const relativeDate = typeof getRelativeDate === 'function' ? getRelativeDate(datetime) : (typeof getRelativeTime === 'function' ? getRelativeTime(datetime) : null);
+        if (relativeDate) {
+          date.textContent = relativeDate;
+          card.classList.add('yl-modified--date');
+        }
+      }
+    }
+  });
+}
+
 function observeStreamNewItems() {
   // Run actions based on if there's new items added to the feed stream.
+
+  // TODO: Refactor to use event listener 'freshrss:load-more' instead.
+
   const stream = document.getElementById('stream');
   if (!stream) return;
   const observer = new MutationObserver((mutationsList) => {
@@ -1732,7 +1753,11 @@ function observeStreamNewItems() {
       }
     }
     if (hasNewFeedItems) {
-      if (youlagActive) updateVideoAuthorPlacement(); // Only update the author placement for video mode
+      if (youlagActive) {
+        // Only affect youlag-active (video) pages.
+        updateVideoAuthorPlacement();
+        updateVideoDateFormat();
+      }
     }
   });
   observer.observe(stream, { childList: true, subtree: true });
@@ -1806,7 +1831,10 @@ function init() {
     setupClickListener();
     setupTagsDropdownOverride();
     setupNavMenu();
-    if (youlagActive) updateVideoAuthorPlacement();
+    if (youlagActive) {
+      updateVideoAuthorPlacement();
+      updateVideoDateFormat();
+    }
     observeStreamNewItems()
     restoreVideoQueue();
   }
