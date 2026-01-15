@@ -3845,8 +3845,7 @@ body:has(.tree-folder.category.favorites.active) {
 
 /*****************************************
  *
- * BEGIN "
- * - YOULAG THEATER VIEW MODAL"
+ * BEGIN "ANIMATION KEYFRAMES"
  *
  ****************************************/
 
@@ -3887,21 +3886,6 @@ body:has(.tree-folder.category.favorites.active) {
   overflow: hidden;
 }
 
-.youlag-mode--pip {
-  overflow: auto;
-
-  #youlagTheaterModal {
-    transition: .2s; /* Time to minimize to mini player */
-  }
-
-  @media (max-width: 840px) {
-    &:has(#nav_entries) #youlagTheaterModal {
-      /* Mobile: Place pip video above bottom navigation bar. */
-      bottom: calc(4.5rem + var(--yl-m-sm)); /* 4.5rem = height of bottom navigation bar */
-    }
-  }
-}
- 
 body {
   /* Youlag loading spinner */
   &:has(#global main#stream):before {
@@ -4266,33 +4250,6 @@ body {
   }  
 }
 
-
-
-.youlag-video-description-container {
-  background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
-  margin-bottom: var(--yl-m-lg);
-  padding: var(--yl-p-sm);
-  border-radius: 1rem;
-
-  .youlag-video-description-content {
-    font-size: var(--yl-text-sm);
-    word-break: break-word;
-    max-width: 700px;
-
-    a {
-      color: #dadada;
-      box-shadow: #fff 0 -1px 0 inset;
-    }
-  }
-
-  &:has(.youlag-video-description-content:empty) {
-    /* Hide description container if no description within content. */
-    display: none;
-  }
-}
-
-
-
 a.yl-video-action-button {
   display: inline-flex;
   align-items: center;
@@ -4320,7 +4277,6 @@ a.yl-video-action-button {
     filter: brightness(2);
   }
 }
-
 
 .yl-video-action-button-group {
   /* For placing related buttons into one group */
@@ -4388,6 +4344,111 @@ a.yl-video-action-button[href=""] {
   font-size: var(--yl-text-md);
 }
 
+#youlagVideoMoreContentContainer {
+  // Container surrounding the video description and related videos.
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--yl-m-2xs);
+  margin-bottom: var(--yl-m-lg);
+
+  .youlag-video-description-container {
+    background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
+    padding: var(--yl-p-sm);
+    border-radius: 1rem;
+    flex: 1;
+    min-width: min(450px, 90%);
+
+    .youlag-video-description-content {
+      font-size: var(--yl-text-sm);
+      word-break: break-word;
+      max-width: 700px;
+
+      a {
+        color: #dadada;
+        box-shadow: #fff 0 -1px 0 inset;
+      }
+    }
+
+    &:has(.youlag-video-description-content:empty) {
+      /* Hide description container if no description within content. */
+      display: none;
+    }
+  }
+
+
+  #youlagRelatedVideosContainer {
+    // Related videos container
+
+    .youlag-video-related-title,
+    .youlag-related-video-item {
+      margin-top: 0;
+      padding-left: var(--yl-p-2xs);
+      padding-right: var(--yl-p-2xs);
+    }
+
+    .youlag-related-video-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--yl-m-2xs);
+      border-radius: 8px;
+      padding-top: var(--yl-p-2xs);
+      padding-bottom: var(--yl-p-2xs);
+
+      &:hover {
+        cursor: pointer;
+        background: var(--yl-color-gradient-surface-3);
+      }
+
+      &__title {
+        color: var(--yl-color-text-default-emphasis);
+        font-size: var(--yl-text-xs);
+        line-height: 1.4;
+        font-weight: bold;
+        margin-bottom: var(--yl-m-3xs);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-clamp: 2;
+        overflow: hidden;
+      }
+
+      &__author {
+        font-size: var(--yl-text-xs);
+      }
+
+      &__author,
+      &__date {
+        color: var(--yl-color-text-default);
+        opacity: 0.8;
+      }
+
+      &__thumbnail {
+        width: 150px;
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 8px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 8px;
+          aspect-ratio: 16 / 9;
+          object-fit: cover;
+          transform: scale(1.1); // Some videos have letterboxing, zoom in to hide black bars.
+        }
+      }
+
+      &__metadata {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 200px;
+        max-width: 230px;
+      }
+    }
+  }
+}
+
 /*****************************************
  * END "YOULAG THEATER VIEW MODAL"
  ****************************************/
@@ -4399,9 +4460,21 @@ a.yl-video-action-button[href=""] {
  * Picture-in-picture mode
  ****************************************/
 
+.youlag-mode--pip {
+  overflow: auto; // Allow scrolling the body when in pip mode.
+
+  @media (max-width: 840px) {
+    &:has(#nav_entries) #youlagTheaterModal {
+      /* Mobile: Place pip video above bottom navigation bar. */
+      bottom: calc(4.5rem + var(--yl-m-sm)); /* 4.5rem = height of bottom navigation bar */
+    }
+  }
+}
+
 .youlag-mode--pip #youlagTheaterModal {
   overflow: hidden;
   z-index: 50;
+  transition: .2s; /* Time to minimize to mini player */
 
   & {
     width: var(--yl-video-pip-width);

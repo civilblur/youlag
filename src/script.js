@@ -27,6 +27,31 @@ const modalToggleFavoriteIdName = `youlagToggleFavorite`;
 const modalFavoriteClassName = `youlag-favorited`;
 const modalTagsManageIdName = `youlagTagsManage`;
 const modalTagsContainerIdName = `youlagTagsModal`;
+const modalVideoMoreContentContainerIdName = `youlagVideoMoreContentContainer`;
+const modalRelatedVideosContainerIdName = `youlagRelatedVideosContainer`;
+const videoObjectType = {
+  // Workaround for lack of TypeScript types in vanilla js.
+  entryId: null,
+  author: '',
+  author_filter_url: '',
+  favicon: '',
+  favorite_toggle_url: '',
+  favorited: false,
+  thumbnail: '',
+  title: '',
+  external_link: '',
+  date: '',
+  isVideoFeedItem: false,
+  youtubeId: '',
+  youtube_embed_url: '',
+  video_embed_url: '',
+  video_invidious_instance_1: '',
+  video_source_default: 'youtube',
+  video_description: '<div class="youlag-video-description-content"></div>',
+  video_youtube_url: '',
+  video_invidious_redirect_url: ''
+};
+
 
 /*****************************************
  * BEGIN: "YOULAG EXTENSION SETTINGS PAGE"
@@ -64,8 +89,34 @@ function getAttrValue(attr, element) {
   return value;
 }
 
+function getRelativeDate(date) {
+  // Convert e.g. `2025-12-26T20:31:19+01:00` to a relative date string like "2 days ago".
+  // NOTE: FreshRSS provides attr `datetime` in the DOM.
+
+  const now = new Date();
+  const past = new Date(date);
+  const diffInSeconds = Math.floor((now - past) / 1000);
+  const intervals = [
+    { label: 'year', seconds: 31536000 },
+    { label: 'month', seconds: 2592000 },
+    { label: 'week', seconds: 604800 },
+    { label: 'day', seconds: 86400 },
+    { label: 'hour', seconds: 3600 },
+    { label: 'minute', seconds: 60 },
+    { label: 'second', seconds: 1 }
+  ];
+  for (const interval of intervals) {
+    const count = Math.floor(diffInSeconds / interval.seconds);
+    if (count >= 1) {
+      return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
+    }
+  }
+  return 'Just now';
+}
+
 function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) {
-  // Handles both DOM event/element and direct video object.
+  // Handles activation of a feed item (video or article) and opens the video modal.
+  
   previousFeedItemScrollTop = 0;
   let data;
 
@@ -115,7 +166,6 @@ function getBaseUrl(url) {
     return '';
   }
 }
-
 
 function matchURL(text) {
   // Find URLs in e.g. video description.
@@ -378,7 +428,7 @@ function createModalVideo(data) {
 
       <div class="youlag-video-container">
         <div class="youlag-thumbnail-container">
-          <img src="${data.thumbnail}" class="youlag-video-thumbnail" />
+          <img src="${data.thumbnail}" class="youlag-video-thumbnail" loading="lazy" />
         </div>
         <div class="youlag-iframe-container">
           <iframe class="youlag-iframe"
@@ -437,15 +487,76 @@ function createModalVideo(data) {
         </div>
 
 
-
-        <div class="youlag-video-description-container">
-          ${data.video_description}
+        <div id="${modalVideoMoreContentContainerIdName}">
+          <div class="youlag-video-description-container">
+            ${data.video_description}
+          </div>
+          <div id="${modalRelatedVideosContainerIdName}" class="youlag-video-related-container display-none">
+            <h3 class="youlag-video-related-title">
+              <span class="yl-form-category__original-label">More from favorites</span>
+              <span class="yl-form-category__video-label">Watch more</span>
+            </h3>
+          </div>
         </div>
         
       </div>
 
     </div>
   `;
+
+  function templateRelatedVideos(relatedVideoObj) {
+    // The HTML template for a related video item.
+
+    const relativeDate = getRelativeDate(relatedVideoObj.date);
+
+    return `
+      <div class="youlag-related-video-item" data-yl-feed="${relatedVideoObj.entryId}">
+        <div class="youlag-related-video-item__feed-item-container display-none">
+          ${relatedVideoObj.feedItem.outerHTML}
+        </div>
+        <div class="youlag-related-video-item__thumbnail"><img src="${relatedVideoObj.thumbnail}" loading="lazy" ></div>
+        <div class="youlag-related-video-item__metadata">
+          <div class="youlag-related-video-item__title">${relatedVideoObj.title}</div>
+          <div class="youlag-related-video-item__author">${relatedVideoObj.author}</div>
+          <div class="youlag-related-video-item__date">${relativeDate}</div>
+        </div>
+      </div>
+    `
+  };
+
+  function appendRelatedVideos() {
+    // Append related videos to the video modal.
+
+    const relatedVideosContainer = container.querySelector(`#${modalRelatedVideosContainerIdName}`);
+    if (!relatedVideosContainer) return;
+
+    const relatedVideos = fetchRelatedItems('favorites', 'rand', 30);
+
+    relatedVideos.then(videos => {
+      if (!Array.isArray(videos) || videos.length === 0) return;
+      videos.forEach(video => {
+        const videoHtml = templateRelatedVideos(video);
+        relatedVideosContainer.insertAdjacentHTML('beforeend', videoHtml);
+      });
+      
+      // Display the related videos container once appended.
+      relatedVideosContainer.classList.remove('display-none');
+    });
+
+    relatedVideosContainer.addEventListener('click', function (e) {
+      const relatedItem = e.target.closest('.youlag-related-video-item');
+      if (!relatedItem) return;
+      const feedItem = relatedItem.querySelector('.youlag-related-video-item__feed-item-container > div[data-feed]');
+      if (feedItem) {
+        const modal = getModalVideo();
+        if (modal) {
+          modal.scrollTo({ top: 0 });
+        }
+        handleActiveItemVideoMode(feedItem);
+      }
+    });
+
+  }
 
   // Only update iframe src if the user interacts with the select (not on initial render).
   const videoSourceSelect = container.querySelector(`#${modalVideoSourceIdName}`);
@@ -468,6 +579,8 @@ function createModalVideo(data) {
     // When article is in pip mode, and the next triggered item is a video, ensure the text class is removed.
     modal.classList.remove('youlag-modal-feed-item--text');
   }
+
+  appendRelatedVideos();
 
   container.querySelector(`#${modalCloseIdName}`)?.addEventListener('click', closeModalVideo);
   container.querySelector(`#${modalMinimizeIdName}`)?.addEventListener('click', togglePipMode);
@@ -1623,6 +1736,67 @@ function observeStreamNewItems() {
     }
   });
   observer.observe(stream, { childList: true, subtree: true });
+}
+
+async function fetchRelatedItems(category = 'favorites', order = 'rand', limit = 10) {
+  // Fetch related entries to show up e.g. in the Youlag "Related/random videos" section in the video modal.
+
+  /**
+   * HACK: This fetches the entire feed page, parses the HTML, and manually structures it into a JSON object.
+   * This is a workaround due to having issues setting up a custom extension api endpoint.
+   * By default, only 10 items are returned.
+   */
+
+  limit = Math.min(Math.max(limit, 1), 10);
+
+  const getParamMap = {
+    'subscriptions': '', // Home
+    'favorites': 'get=s',
+    'playlists': 'get=T',
+  };
+
+  try {
+    const response = await fetch(`/i/?a=normal&${getParamMap[category] || ''}&sort=${order}`);
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const stream = doc.querySelector('#global #stream');
+
+    if (!stream) {
+      console.warn('Fetching related entries: #stream not found');
+      return;
+    }
+
+    const items = Array.from(stream.querySelectorAll('div[data-feed]')).slice(0, limit);
+    const mapped = items.map((item) => {
+      const entryId = item.getAttribute('data-entry') || '';
+      return {
+        ...videoObjectType, // Sets default values for the other non-assigned properties in videoObject
+        feedItem: item, // Original DOM element reference, utilized later by `extractFeedItemData()` when clicked.
+        
+        // The minimal data is used for displaying related videos.
+        entryId,
+        author: item.querySelector('.titleAuthorSummaryDate .author')?.textContent?.trim() || '',
+        thumbnail: item.querySelector('.thumbnail img')?.src || '',
+        title: item.querySelector('.title')?.textContent?.trim() || '',
+        date: item.querySelector('.titleAuthorSummaryDate .date time')?.getAttribute('datetime') || '',
+        external_link: item.querySelector('.titleAuthorSummaryDate a')?.href || '',
+      };
+    });
+    const uniqueEntryIds = new Set();
+    const videoObjects = mapped.filter(entry => {
+      // Remove potential duplicates when using 'rand' order, and the feed has limited amount of entries.
+      if (!entry.entryId || uniqueEntryIds.has(entry.entryId)) return false;
+      uniqueEntryIds.add(entry.entryId);
+      return true;
+    });
+    return videoObjects;
+  } catch (e) {
+    console.error('Fetching related entries error:', e);
+  }
 }
 
 function init() {
