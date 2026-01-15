@@ -4534,6 +4534,10 @@ a.yl-video-action-button[href=""] {
     }
 
     @media (max-width: 560px) {
+      .youlag-video-related-title {
+        padding-left: 0;
+      }
+
       .youlag-related-video-item__metadata {
         min-width: auto;
         max-width: 100%;
