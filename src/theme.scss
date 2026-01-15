@@ -4458,7 +4458,6 @@ a.yl-video-action-button[href=""] {
           border-radius: 8px;
           aspect-ratio: 16 / 9;
           object-fit: cover;
-          transform: scale(1.1); // Some videos have letterboxing, zoom in to hide black bars.
         }
       }
 
@@ -4504,7 +4503,7 @@ a.yl-video-action-button[href=""] {
 
     @media (min-width: 560px) and (max-width: 960px) {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: var(--yl-m-xs);
 
       .youlag-video-related-title {
@@ -4523,6 +4522,10 @@ a.yl-video-action-button[href=""] {
           max-width: 100%;
         }
       }
+    }
+
+    @media (min-width: 560px) and (max-width: 840px) {
+      grid-template-columns: 1fr 1fr;
     }
 
     @media (max-width: 560px) {
@@ -4604,7 +4607,7 @@ a.yl-video-action-button[href=""] {
     }
 
     .youlag-video-actions-container,
-    .youlag-video-description-container {
+    #youlagVideoMoreContentContainer {
       /* Hide rest of the content that may peak up when article is in pip mode. */
       display: none;
     }
