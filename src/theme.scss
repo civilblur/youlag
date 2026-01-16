@@ -28,7 +28,7 @@
  * - Reader view page
  * - Animation keyframes
  * - Youlag theater view modal
- * - Youlag theater pip view
+ * - Youlag theater miniplayer view
  * - Youlag tags (playlists) modal
  * - Youlag extension settings page
  * - Youlag helper classes
@@ -138,7 +138,7 @@
   --yl-favicon-avatar-size: 34px;
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
-  --yl-video-pip-width: min(460px, 60%);
+  --yl-video-miniplayer-width: min(460px, 60%);
   --yl-article-thumbnail-width: 120px;
   --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
   --yl-feed-nav-menu-height: 61px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
@@ -4600,16 +4600,16 @@ a.yl-video-action-button[href=""] {
 
 
 /*****************************************
- * BEGIN "YOULAG THEATER PIP VIEW"
+ * BEGIN "YOULAG THEATER MINIPLAYER VIEW"
  * Picture-in-picture mode
  ****************************************/
 
 .youlag-mode--miniplayer {
-  overflow: auto; // Allow scrolling the body when in pip mode.
+  overflow: auto; // Allow scrolling the body when in miniplayer mode.
 
   @media (max-width: 840px) {
     &:has(#nav_entries) #youlagTheaterModal {
-      /* Mobile: Place pip video above bottom navigation bar. */
+      /* Mobile: Place miniplayer video above bottom navigation bar. */
       bottom: calc(4.5rem + var(--yl-m-sm)); /* 4.5rem = height of bottom navigation bar */
     }
   }
@@ -4621,7 +4621,7 @@ a.yl-video-action-button[href=""] {
   transition: .2s; /* Time to minimize to mini player */
 
   & {
-    width: var(--yl-video-pip-width);
+    width: var(--yl-video-miniplayer-width);
     bottom: var(--yl-m-sm);
     right: var(--yl-m-sm);
     aspect-ratio: 16 / 9;
@@ -4632,7 +4632,7 @@ a.yl-video-action-button[href=""] {
   }
 
   .youlag-video-header {
-    position: absolute; /* Header overlaps video instead of sticky, to not occupying vertical space in pip mode. */
+    position: absolute; /* Header overlaps video instead of sticky, to not occupying vertical space in miniplayer mode. */
     left: auto;
     right: 0;
     padding: 3px;
@@ -4652,7 +4652,7 @@ a.yl-video-action-button[href=""] {
   }
 
   .youlag-video-details {
-    display: none; /* For videos, hide description from pip mode. */
+    display: none; /* For videos, hide description from miniplayer mode. */
   }
 
   &.youlag-modal-feed-item--text {
@@ -4663,7 +4663,7 @@ a.yl-video-action-button[href=""] {
 
     .youlag-video-actions-container,
     #youlagVideoMoreContentContainer {
-      /* Hide rest of the content that may peak up when article is in pip mode. */
+      /* Hide rest of the content that may peak up when article is in miniplayer mode. */
       display: none;
     }
 
@@ -4711,7 +4711,7 @@ a.yl-video-action-button[href=""] {
 }
 
 /*****************************************
- * END "YOULAG THEATER PIP VIEW"
+ * END "YOULAG THEATER MINIPLAYER VIEW"
  ****************************************/
 
 

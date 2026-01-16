@@ -441,7 +441,7 @@ function setModeMiniplayer(state, prevState) {
       let transitionRan = false;
       const onTransitionEnd = () => {
         transitionRan = true;
-        // Scroll back to previous position when exiting pip mode.
+        // Scroll back to previous position when exiting miniplayer mode.
         modal.scrollTo({ top: app.state.modal.miniplayerScrollTop, behavior: 'smooth' });
       };
       modal.addEventListener('transitionend', onTransitionEnd, { once: true });
@@ -568,8 +568,8 @@ function createTagsModal(entryId, tags) {
 }
 
 function setupSwipeToMiniplayer(modal) {
-  // Allow video modal overscroll to enter pip mode on touch devices.
-  if (modal._swipeToPipInitialized) return;
+  // Allow video modal overscroll to enter miniplayer mode on touch devices.
+  if (modal._swipeToMiniplayer) return;
 
   let touchStartY = null;
   let overscrollActive = false;
@@ -594,7 +594,7 @@ function setupSwipeToMiniplayer(modal) {
     if (touchStartY !== null && overscrollActive && e.changedTouches.length === 1) {
       const endY = e.changedTouches[0].clientY;
       if (endY - touchStartY > 40 && modal.scrollTop === 0) {
-        // Overscroll (pull-down) detected at top, toggle pip mode.
+        // Overscroll (pull-down) detected at top, toggle miniplayer mode.
         toggleModeMiniplayer(true);
       }
     }
@@ -602,7 +602,7 @@ function setupSwipeToMiniplayer(modal) {
     overscrollActive = false;
   }, { passive: false });
 
-  modal._swipeToPipInitialized = true;
+  modal._swipeToMiniplayer = true;
 }
 
 function setupClickListener() {
@@ -666,7 +666,7 @@ function setupClickListener() {
         }
 
         if (app.state.modal.mode === 'miniplayer') {
-          // Allow normal browser navigation when in pip mode.
+          // Allow normal browser navigation when in miniplayer mode.
           app.state.popstate.ignoreNext = true;
           history.back();
           return;
@@ -905,7 +905,7 @@ function clearVideoQueue() {
 }
 
 function restoreVideoQueue() {
-  // Restore video queue from localStorage on page load, only if pip mode was active.
+  // Restore video queue from localStorage on page load, only if miniplayer mode was active.
   if (app.state.youlag.restoreVideoInit) return;
 
   const stored = localStorage.getItem(app.modal.queue.localStorageKey);
