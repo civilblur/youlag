@@ -584,7 +584,7 @@ function createModalVideo(data) {
   `;
 
   const videoDescContainer = modal.querySelector('.youlag-video-description-container');
-  if (videoDescContainer && videoDescContainer.offsetHeight > 0 && videoDescContainer.offsetHeight <= 90) {
+  if (videoDescContainer && videoDescContainer.offsetHeight <= 90 && !modePip) {
     // Once the video description has been populated, check if the height is small enough to not need collapsing.
     // Height is 0 when video is restored into pip mode, thus, ignore that state and keep as is.
     videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
@@ -705,8 +705,9 @@ function createModalVideo(data) {
     createTagsModal(data.entryId, await getItemTags(data.entryId));
   });
 
-  if (shouldCollapseDescription && videoDescContainer.offsetHeight > 90) {
-    // Setup the click listener to expand description only once
+  if (shouldCollapseDescription && videoDescContainer.offsetHeight > 90 || shouldCollapseDescription && modePip) {
+    // Setup the click listener to expand description only once.
+
     if (videoDescContainer) {
       const descExpand = function () {
         videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
