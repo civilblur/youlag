@@ -72,17 +72,17 @@ app.state = {
   },
   page: {
     layout: null, // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
-    titlePrevious: null,
+    titlePrev: null,
   },
   popstate: {
     allowBack: true, // Prevent multiple history.back() triggers
     ignoreNext: false, // Prevent infinite popstate loop for modal
-    added: false // The popstate for video modal is only required to be added once to allow closing the modal via the back button.
+    added: false, // The popstate for video modal is only required to be added once to allow closing the modal via the back button.
+    pathPrev: window.location.pathname + window.location.search // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
   }
 };
 
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
-let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
+// let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
 let youtubeId;
-// let previousFeedItemScrollTop = 0; // Keep scroll position of miniplayer feed item when collapsing.

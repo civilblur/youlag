@@ -645,7 +645,7 @@ function setupClickListener() {
       window.addEventListener('popstate', function popstateHandler(e) {
         // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
 
-        if (isHashUrl(lastPathnameSearch)) {
+        if (isHashUrl(app.state.popstate.pathPrev)) {
           // Ignore popstate if only the hash changed
           return;
         }
@@ -944,23 +944,23 @@ function restoreVideoQueue() {
 
 function setPageTitle(title) {
   if (typeof title === 'string' && title.length > 0) {
-    if (app.state.page.titlePrevious === null) {
-      app.state.page.titlePrevious = document.title;
+    if (app.state.page.titlePrev === null) {
+      app.state.page.titlePrev = document.title;
     }
     // Set new title
     document.title = title;
   }
-  else if (app.state.page.titlePrevious !== null) {
+  else if (app.state.page.titlePrev !== null) {
     // Restore previous title
-    document.title = app.state.page.titlePrevious;
-    app.state.page.titlePrevious = null;
+    document.title = app.state.page.titlePrev;
+    app.state.page.titlePrev = null;
   }
 }
 
 function isHashUrl() {
   const currentPathnameSearch = window.location.pathname + window.location.search;
-  const isHash = lastPathnameSearch === currentPathnameSearch && window.location.hash;
-  lastPathnameSearch = currentPathnameSearch;
+  const isHash = app.state.popstate.pathPrev === currentPathnameSearch && window.location.hash;
+  app.state.popstate.pathPrev = currentPathnameSearch;
   return isHash;
 }
 
