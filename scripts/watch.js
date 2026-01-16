@@ -33,7 +33,7 @@ async function minifyAndInjectVersion() {
   const metadata = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../metadata.json'), 'utf8'));
   const version = metadata.version;
   let srcContent = srcFiles.map(f => fs.readFileSync(path.resolve(__dirname, f), 'utf8')).join('\n');
-  srcContent = srcContent.replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
+  srcContent = srcContent.replace(/(app\.metadata\s*=\s*\{[^}]*version:\s*)['\"][^'\"]*['\"]/, `$1'${version}'`);
   fs.mkdirSync(tempDir, { recursive: true });
   try {
     let code;
@@ -42,8 +42,7 @@ async function minifyAndInjectVersion() {
     }
     else {
       const result = await terser.minify(srcContent, {
-        compress: true,
-        mangle: { reserved: ['YOULAG_VERSION'] }
+        compress: true
       });
       if (result.error || !result.code) throw result.error || new Error('No code output');
       code = result.code;

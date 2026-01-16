@@ -1,5 +1,3 @@
-console.log('Helpers: 3');
-
 async function getItemTags(itemId) {
   // Fetch tags for a given feed item ID.
 

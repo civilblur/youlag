@@ -1,5 +1,3 @@
-console.log('UI: 4');
-
 function createModalVideo(data) {
   // Create custom modal
   let modal = getModalVideo();

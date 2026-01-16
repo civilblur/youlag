@@ -1,5 +1,3 @@
-console.log('Global: 1');
-
 window.app = window.app || {};
 
 app.state = {
@@ -58,7 +56,10 @@ app.types = {
   }
 };
 
-let YOULAG_VERSION = ''; // Assigned during build.
+app.metadata = {
+  version: 'X.Y.Z' // Assigned during build.
+}
+
 let youlagModalNavigatingBack = false; // Prevent multiple history.back() triggers
 let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
 let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 

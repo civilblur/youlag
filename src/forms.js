@@ -1,5 +1,3 @@
-console.log('Forms: 5');
-
 function youlagSettingsPageEventListeners() {
 
   // Set "required" to Invidious URL input field if it's selected.

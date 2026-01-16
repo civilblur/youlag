@@ -1,6 +1,3 @@
-console.log('Events: 6');
-
-
 function getCurrentPage() {
   // Notate the current page through css class on the body element.
   // E.g. yl-page-home, yl-page-important, yl-page-category, etc.
@@ -240,8 +237,8 @@ function setUnreadBadgeClass() {
   }
 }
 
-// Update body classes based on sidenav state (expanded/collapsed)
 function setSidenavState() {
+  // Update body classes based on sidenav state (expanded/collapsed)
   const sidenav = document.getElementById('aside_feed');
   if (!sidenav) return;
   const expanded = sidenav.classList.contains('visible');
@@ -281,7 +278,7 @@ function setBodyPageClass() {
   setCategoryWhitelistClass();
   setUnreadBadgeClass();
   setPageSortingClass();
-  document.body.setAttribute('data-youlag-version', YOULAG_VERSION);
+  document.body.setAttribute('data-youlag-version', app.metadata.version);
 }
 
 function isFeedPage() {

@@ -24,12 +24,11 @@ const scriptTempDest = path.join(tempDir, 'script.min.js');
 const minifyAndInjectVersion = async () => {
   const terser = require('terser');
   let srcContent = srcFiles.map(f => fs.readFileSync(path.resolve(__dirname, f), 'utf8')).join('\n');
-  srcContent = srcContent.replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
+  srcContent = srcContent.replace(/(app\.metadata\s*=\s*\{[^}]*version:\s*)['\"][^'\"]*['\"]/, `$1'${version}'`);
   fs.mkdirSync(tempDir, { recursive: true });
   try {
     const { code, error } = await terser.minify(srcContent, {
-      compress: true,
-      mangle: { reserved: ['YOULAG_VERSION'] }
+      compress: true
     });
     if (error || !code) throw error || new Error('No code output');
     fs.writeFileSync(scriptTempDest, code);
