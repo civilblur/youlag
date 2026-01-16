@@ -31,7 +31,10 @@ app.modal = {
     content: 'youlag-theater-modal-content',
     descContainer: 'youlag-video-description-container',
     descContainerCollapsed: 'youlag-video-description-container--collapsed',
-    favorite: 'youlag-favorited'
+    favorite: 'youlag-favorited',
+    typeArticle: 'youlag-modal-feed-item--text',
+    iframe: 'youlag-iframe',
+    iframeContainer: 'youlag-iframe-container'
   },
   queue: {
     queue: null,
@@ -86,6 +89,7 @@ app.state = {
   },
   modal: {
     active: false,              // Whether an article/video is currently active. Miniplayer does not count as active.
+    activeType: null,           // {'video' || 'article' || null}
     mode: null,                 // {'fullscreen' || 'miniplayer' || null}
     miniplayerScrollTop: 0,     // Store scroll position of miniplayer before collapsing.
     youtubeId: null

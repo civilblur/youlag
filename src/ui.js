@@ -244,7 +244,7 @@ function createModalVideo(videoObject) {
 
   // Only update iframe src if the user interacts with the select (not on initial render).
   const videoSourceSelect = container.querySelector(`#${app.modal.id.source}`);
-  const iframe = container.querySelector('.youlag-iframe');
+  const iframe = container.querySelector(`.${app.modal.class.iframe}`);
   if (videoSourceSelect && iframe) {
     videoSourceSelect.addEventListener('change', function () {
       iframe.src = getEmbedUrl(videoSourceSelect.value);
@@ -253,15 +253,17 @@ function createModalVideo(videoObject) {
 
   if (isArticle) {
     // Handle non-video feed items, such as text-based articles.
-    modal.classList.add('youlag-modal-feed-item--text');
-    let iframeContainer = document.querySelector('.youlag-iframe-container');
+    app.state.modal.activeType = 'article';
+    modal.classList.add(app.modal.class.typeArticle);
+    let iframeContainer = document.querySelector(`.${app.modal.class.iframeContainer}`);
     if (iframeContainer) {
-      document.querySelector('.youlag-iframe-container').remove();
+      document.querySelector(`.${app.modal.class.iframeContainer}`).remove();
     }
   }
   else {
     // When article is in miniplayer mode, and the next triggered item is a video, ensure the text class is removed.
-    modal.classList.remove('youlag-modal-feed-item--text');
+    app.state.modal.activeType = 'video';
+    modal.classList.remove(app.modal.class.typeArticle);
   }
 
   appendRelatedVideos(videoObject.entryId, videoObject.authorId);
@@ -426,7 +428,9 @@ function setModeMiniplayer(state, prevState) {
   const modal = getModalVideo();
 
   if (state === true) {
-    modal ? (app.state.modal.miniplayerScrollTop = modal.scrollTop) : null;
+    if (app.state.modal.activeType === 'article') {
+      modal ? (app.state.modal.miniplayerScrollTop = modal.scrollTop) : null;
+    }
     document.body.classList.add(app.modal.class.modeMiniplayer);
     app.state.modal.mode = 'miniplayer';
     app.state.modal.active = false; // Miniplayer mode is not considered active.
@@ -697,6 +701,7 @@ function setupClickListener() {
         const scrollToTarget = () => {
           const rect = target.getBoundingClientRect();
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          console.log('rect.top:', rect.top, 'scrollTop:', scrollTop);
           let offset = 0;
           if (window.getComputedStyle) {
             const root = document.documentElement;
