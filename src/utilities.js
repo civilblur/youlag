@@ -129,14 +129,14 @@ async function fetchRelatedItems(category = 'watch_later', order = 'rand', limit
     const html = await response.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    const stream = doc.querySelector('#global #stream');
+    const stream = doc.querySelector(`${app.frss.el.feedRoot}`);
 
     if (!stream) {
       console.warn('Fetching related entries: #stream not found');
       return;
     }
 
-    const items = Array.from(stream.querySelectorAll('div[data-feed]')).slice(0, limit);
+    const items = Array.from(stream.querySelectorAll(app.frss.el.entry)).slice(0, limit);
     const mapped = items.map((item) => {
       const entryId = item.getAttribute('data-entry') || '';
       return {

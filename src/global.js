@@ -54,7 +54,7 @@ app.frss = {
   // FreshRSS selectors
   el: {
     feedRoot: '#stream',
-    current: '#stream div[data-feed].active.current', // Currently opened feed entry in the stream.
+    current: '#stream div[data-entry].active.current', // Currently opened feed entry in the stream.
     entry: 'div[data-entry]', // Feed entries general selector.
   }
 }
