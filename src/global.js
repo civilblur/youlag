@@ -33,6 +33,11 @@ app.modal = {
     descContainerCollapsed: 'youlag-video-description-container--collapsed',
     favorite: 'youlag-favorited'
   },
+  queue: {
+    queue: null,
+    activeIndex: -1,
+    localStorageKey: 'youlagVideoQueue'
+  }
 };
 
 app.frss = {
@@ -68,7 +73,7 @@ app.types = {
     video_invidious_redirect_url: '',
     // Video queue
     queue: null,
-    queueActiveIndex: -1
+    queue_active_index: -1
   }
 };
 

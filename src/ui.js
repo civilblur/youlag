@@ -452,11 +452,11 @@ function setModeMiniplayer(state, prevState) {
     app.state.modal.mode = prevState || null;
   }
   try {
-    const stored = localStorage.getItem('youlagVideoQueue');
+    const stored = localStorage.getItem(app.modal.queue.localStorageKey);
     if (stored) {
       const obj = JSON.parse(stored);
-      obj.isPipMode = !!state;
-      localStorage.setItem('youlagVideoQueue', JSON.stringify(obj));
+      obj.isMiniplayer = !!state;
+      localStorage.setItem(app.modal.queue.localStorageKey, JSON.stringify(obj));
     }
   } catch (e) { }
 }
@@ -840,15 +840,11 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
   let videoObject;
 
   if (isVideoObject) {
-    // Use only the data from localStorage, do not rely on DOM
-    const videoObject = targetOrEventOrVideo;
-    const activeVideo = videoObject.queue[videoObject.queueActiveIndex];
-    videoObject = {
-      ...activeVideo,
-      queue: videoObject.queue,
-      queueActiveIndex: videoObject.queueActiveIndex
-    };
-  } 
+    let queueObj = targetOrEventOrVideo;
+    const activeVideo = queueObj.queue[queueObj.queue_active_index];
+    if (!activeVideo) return;
+    videoObject = { ...activeVideo };
+  }
   else {
     // Extract the feed item from the DOM event/element
     const feedItem = (targetOrEventOrVideo instanceof Event)
@@ -874,13 +870,13 @@ function setVideoQueue(videoObject) {
   // The video object is defined in `extractFeedItemData()`.
 
   let queue = [];
-  let queueActiveIndex = 0;
+  let queue_active_index = 0;
   try {
-    const stored = localStorage.getItem('youlagVideoQueue');
+    const stored = localStorage.getItem(app.modal.queue.localStorageKey);
     if (stored) {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed.queue)) queue = parsed.queue;
-      if (typeof parsed.queueActiveIndex === 'number') queueActiveIndex = parsed.queueActiveIndex;
+      if (typeof parsed.queue_active_index === 'number') queue_active_index = parsed.queue_active_index;
     }
   } catch (e) { }
 
@@ -889,26 +885,26 @@ function setVideoQueue(videoObject) {
   const isMiniplayer = document.body.classList.contains(app.modal.class.modeMiniplayer);
   if (foundIndex === -1) {
     queue.push(videoObject);
-    queueActiveIndex = queue.length - 1;
+    queue_active_index = queue.length - 1;
   }
   else {
     queue.splice(foundIndex, 1);
     queue.push(videoObject);
-    queueActiveIndex = queue.length - 1;
+    queue_active_index = queue.length - 1;
   }
 
-  localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, queueActiveIndex, isMiniplayer }));
+  localStorage.setItem(app.modal.queue.localStorageKey, JSON.stringify({ queue, queue_active_index, isMiniplayer }));
 }
 
 function clearVideoQueue() {
-  localStorage.removeItem('youlagVideoQueue');
+  localStorage.removeItem(app.modal.queue.localStorageKey);
 }
 
 function restoreVideoQueue() {
   // Restore video queue from localStorage on page load, only if pip mode was active.
   if (app.state.youlag.restoreVideoInit) return;
 
-  const stored = localStorage.getItem('youlagVideoQueue');
+  const stored = localStorage.getItem(app.modal.queue.localStorageKey);
   let queueObj = null;
   if (stored) {
     try {
@@ -932,7 +928,7 @@ function restoreVideoQueue() {
   ].some(cls => bodyClasses.contains(cls));
   if (!isVideoPage) return;
 
-  if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.queueActiveIndex === 'number' && queueObj.queue.length > 0) {
+  if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.queue_active_index === 'number' && queueObj.queue.length > 0) {
     setModeMiniplayer(true); // Restored video queue always opens in miniplayer mode.
     handleActiveItemVideoMode(queueObj, true);
   }
