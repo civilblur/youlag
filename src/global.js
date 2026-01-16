@@ -54,7 +54,10 @@ app.types = {
     video_source_default: 'youtube',
     video_description: '<div class="youlag-video-description-content"></div>',
     video_youtube_url: '',
-    video_invidious_redirect_url: ''
+    video_invidious_redirect_url: '',
+    // Video queue
+    queue: null,
+    queueActiveIndex: -1
   }
 };
 
