@@ -290,4 +290,3 @@ function appendOriginalSrc(element) {
   }
   return root;
 }
-
