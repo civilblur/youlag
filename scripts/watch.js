@@ -14,7 +14,15 @@ const version = metadata.version;
 const tempDir = path.resolve(__dirname, '../.tmp');
 fs.mkdirSync(tempDir, { recursive: true });
 
-const srcScriptPath = path.resolve(__dirname, '../src/script.js');
+
+const srcFiles = [
+  '../src/global.js',
+  '../src/utilities.js',
+  '../src/helpers.js',
+  '../src/ui.js',
+  '../src/events.js',
+  '../src/script.js' // Remove once refactoring is done
+];
 const minScriptPath = path.resolve(__dirname, '../static/script.min.js');
 const scriptTempDest = path.join(tempDir, 'script.min.js');
 
@@ -22,8 +30,9 @@ async function minifyAndInjectVersion() {
   const terser = require('terser');
   const metadata = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../metadata.json'), 'utf8'));
   const version = metadata.version;
-  let srcContent = fs.readFileSync(srcScriptPath, 'utf8')
-    .replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
+  let srcContent = srcFiles.map(f => fs.readFileSync(path.resolve(__dirname, f), 'utf8')).join('\n');
+  // Only replace YOULAG_VERSION in script.js (last file)
+  srcContent = srcContent.replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
   fs.mkdirSync(tempDir, { recursive: true });
   try {
     const { code, error } = await terser.minify(srcContent, {
@@ -85,7 +94,7 @@ if (require.main === module) {
       await syncFiles();
     }
     if (folderSync) {
-      const scriptWatcher = chokidar.watch(srcScriptPath, { ignoreInitial: true });
+      const scriptWatcher = chokidar.watch(srcFiles.map(f => path.resolve(__dirname, f)), { ignoreInitial: true });
       const metaWatcher = chokidar.watch(path.resolve(__dirname, '../metadata.json'), { ignoreInitial: true });
       const configureWatcher = chokidar.watch(path.resolve(__dirname, '../configure.phtml'), { ignoreInitial: true });
       const extensionWatcher = chokidar.watch(path.resolve(__dirname, '../extension.php'), { ignoreInitial: true });
