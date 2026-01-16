@@ -73,10 +73,10 @@ function extractFeedItemData(feedItem) {
   const isVideoFeedItem = extractedVideoUrl !== '';
   const videoDescriptionExists = feedItem.querySelector('.enclosure-description') !== null;
   const videoBaseUrl = isVideoFeedItem ? getBaseUrl(extractedVideoUrl) : '';
-  youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
-  const youtubeUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
-  const youtubeEmbedUrl = youtubeId ? `https://www.youtube.com/embed/${youtubeId}` : '';
-  const videoEmbedUrl = youtubeId ? `${videoBaseUrl}/embed/${youtubeId}` : '';
+  app.state.modal.youtubeId = extractedVideoUrl ? getVideoIdFromUrl(extractedVideoUrl) : '';
+  const youtubeUrl = app.state.modal.youtubeId ? `https://www.youtube.com/watch?v=${app.state.modal.youtubeId}` : '';
+  const youtubeEmbedUrl = app.state.modal.youtubeId ? `https://www.youtube.com/embed/${app.state.modal.youtubeId}` : '';
+  const videoEmbedUrl = app.state.modal.youtubeId ? `${videoBaseUrl}/embed/${app.state.modal.youtubeId}` : '';
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
   const invidiousInstanceElemenet = feedItem.querySelector('.content div.text span[data-yl-invidious-instance]');
@@ -108,7 +108,7 @@ function extractFeedItemData(feedItem) {
     external_link: feedItem.querySelector('.item-element.title')?.href || '',
     date: feedItem.querySelector('.flux_content .date')?.textContent.trim() || '',
     isVideoFeedItem: isVideoFeedItem,
-    youtubeId: youtubeId,
+    youtubeId: app.state.modal.youtubeId,
     youtube_embed_url: youtubeEmbedUrl,
     video_embed_url: videoEmbedUrl,
     video_invidious_instance_1: invidiousInstance1 || '',
@@ -118,7 +118,7 @@ function extractFeedItemData(feedItem) {
         ${video_description}
       </div>`,
     video_youtube_url: youtubeUrl,
-    video_invidious_redirect_url: `${youtubeId ? invidiousRedirectPrefixUrl + youtubeId : ''}`
+    video_invidious_redirect_url: `${app.state.modal.youtubeId ? invidiousRedirectPrefixUrl + app.state.modal.youtubeId : ''}`
   };
 
   return videoObject;
