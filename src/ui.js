@@ -944,16 +944,16 @@ function restoreVideoQueue() {
 
 function setPageTitle(title) {
   if (typeof title === 'string' && title.length > 0) {
-    if (previousPageTitle === null) {
-      previousPageTitle = document.title;
+    if (app.state.page.titlePrevious === null) {
+      app.state.page.titlePrevious = document.title;
     }
     // Set new title
     document.title = title;
   }
-  else if (previousPageTitle !== null) {
+  else if (app.state.page.titlePrevious !== null) {
     // Restore previous title
-    document.title = previousPageTitle;
-    previousPageTitle = null;
+    document.title = app.state.page.titlePrevious;
+    app.state.page.titlePrevious = null;
   }
 }
 
