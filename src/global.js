@@ -86,9 +86,6 @@ let youlagModalNavigatingBack = false; // Prevent multiple history.back() trigge
 let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
 let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
 
-// let modePip = false;
-// let modeFullscreen = true;
-let feedItemActive = false; // Whether an article/video is currently active. Miniplayer mode does not count as active.
 
 
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.

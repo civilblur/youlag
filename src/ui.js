@@ -347,7 +347,7 @@ function closeModalVideo() {
   else {
     history.replaceState(null, '', location.href);
   }
-  feedItemActive = false;
+  app.state.modal.active = false;
   setModeMiniplayer(false);
   setModeFullscreen(false);
   setPageTitle();
@@ -393,7 +393,7 @@ function closeArticle(event) {
       disableStickyTransitionTitle = false;
     }, 50);
 
-    feedItemActive = false;
+    app.state.modal.active = false;
   }
 }
 
@@ -426,7 +426,7 @@ function setModeMiniplayer(state, prevState) {
     modal ? (previousFeedItemScrollTop = modal.scrollTop) : null;
     document.body.classList.add(app.modal.class.modeMiniplayer);
     app.state.modal.mode = 'miniplayer';
-    feedItemActive = false; // Pip mode is not considered active.
+    app.state.modal.active = false; // Miniplayer mode is not considered active.
     modal ? modal.scrollTo({ top: 0 }) : null;
   }
   else if (state === false) {
@@ -463,12 +463,12 @@ function setModeFullscreen(state, prevState) {
     document.body.classList.add(app.modal.class.modeFullscreen);
     document.body.classList.remove(app.modal.class.modeMiniplayer);
     app.state.modal.mode = 'fullscreen';
-    feedItemActive = true;
+    app.state.modal.active = true;
   }
   else if (state === false) {
     document.body.classList.remove(app.modal.class.modeFullscreen);
     app.state.modal.mode = prevState || null;
-    feedItemActive = false;
+    app.state.modal.active = false;
   }
 }
 
@@ -685,9 +685,9 @@ function setupClickListener() {
         ].join(', ');
         if (event.target.closest(actionButtons)) return;
 
-        if (!feedItemActive) {
+        if (!app.state.modal.active) {
           handleActiveItemArticle(event);
-          feedItemActive = true;
+          app.state.modal.active = true;
         }
 
         // Scroll to top of the article when opened.
