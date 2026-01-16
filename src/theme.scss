@@ -4163,6 +4163,7 @@ body {
       font-size: 1.4rem;
       line-height: 1.4;
       margin-bottom: var(--yl-m-sm);
+      max-width: max(750px, 80%);
     }
 
     .youlag-video-metadata-favicon {
@@ -4538,6 +4539,15 @@ a.yl-video-action-button[href=""] {
         padding-left: 0;
       }
 
+      .youlag-related-video-item {
+        padding-left: 0;
+        padding-right: 0;
+
+        &:hover {
+          background: none;
+        }
+      }
+
       .youlag-related-video-item__metadata {
         min-width: auto;
         max-width: 100%;
@@ -4631,6 +4641,7 @@ a.yl-video-action-button[href=""] {
       -webkit-box-orient: vertical;
       line-clamp: 2;
       overflow: hidden;
+      max-width: 100%;
       padding-right: var(--yl-p-xl);
 
       @media (max-width: 600px) {
