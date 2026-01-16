@@ -1,8 +1,9 @@
 window.app = window.app || {};
 
-app.state = {
-  // TODO
-};
+app.metadata = {
+  version: 'X.Y.Z' // Assigned during build.
+}
+
 
 app.breakpoints = {
   mobile_sm_max: 600,
@@ -56,24 +57,47 @@ app.types = {
   }
 };
 
-app.metadata = {
-  version: 'X.Y.Z' // Assigned during build.
-}
+
+
+app.state = {
+  youlag: {
+    loaded: false // Whether the Youlag script has finished loading.
+  },
+  modal: {
+    active: false, // Whether an article/video is currently active. Mini player does not count as active.
+    modeFullscreen: false,
+    modeMiniPlayer: false, // Previously referred to as "modePip"
+    miniPlayerScrollTop: 0 // Keep scroll position of pip-mode feed item when collapsing.
+  },
+  page: {
+    layout: null, // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
+    titlePrevious: null,
+  },
+  popstate: {
+    allowBack: true, // Prevent multiple history.back() triggers
+    ignoreNext: false, // Prevent infinite popstate loop for modal
+    added: false // The popstate for video modal is only required to be added once to allow closing the modal via the back button.
+  }
+};
+
 
 let youlagModalNavigatingBack = false; // Prevent multiple history.back() triggers
 let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
 let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
-let youlagScriptLoaded = false;
+
+let modePip = false;
+let modeFullscreen = true;
+let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.
+// let youlagActive = false; // Whether Youlag is active on this page based on user category whitelist setting.
+
+
 let youlagNavMenuInitialized = false;
 let youlagClickListenersInitialized = false;
 let youlagRestoreVideoQueueRan = false;
-let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
+
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
 let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
 let youtubeId;
 let previousPageTitle = null;
 let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
-let modePip = false;
-let modeFullscreen = true;
-let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.

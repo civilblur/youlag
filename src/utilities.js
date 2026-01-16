@@ -93,7 +93,7 @@ function onNewFeedItems() {
   // Run actions based on if there's new items added to the feed stream.
 
   document.addEventListener('freshrss:load-more', function () {
-    if (youlagActive) {
+    if (app.state.page.layout === 'video') {
       updateVideoAuthor();
       updateVideoDateFormat();
     }

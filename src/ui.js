@@ -597,7 +597,7 @@ function setupClickListener() {
   if (youlagClickListenersInitialized) return;
   const streamContainer = document.querySelector('#stream');
 
-  if (youlagActive) {
+  if (app.state.page.layout === 'video') {
     if (streamContainer) {
       streamContainer.addEventListener('click', (event) => {
 
@@ -661,7 +661,7 @@ function setupClickListener() {
       });
     }
   }
-  else if (!youlagActive) {
+  else if (app.state.page.layout === 'article') {
     // youlag-inactive: Article context.
     if (streamContainer) {
       streamContainer.addEventListener('click', function (event) {
@@ -754,14 +754,14 @@ function setupClickListener() {
 
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
-        if (youlagActive) {
+        if (app.state.page.layout === 'video') {
           // youlag-active: Video modal context.
           const modal = getModalVideo();
           if (modal) {
             closeModalVideo();
           }
         }
-        else if (!youlagActive) {
+        else if (app.state.page.layout === 'article') {
           // youlag-inactive: Article context.
 
           // TODO: FreshRSS apparently has a native Escape key handler that closes the article, and ends up closing 

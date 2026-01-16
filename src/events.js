@@ -163,7 +163,7 @@ function setCategoryWhitelistClass() {
 
   const currentPageClass = getCurrentPage();
   const isWhitelisted = isPageWhitelisted(localStorageWhitelist, currentPageClass);
-  youlagActive = isWhitelisted;
+  app.state.page.layout = isWhitelisted ? 'video' : 'article';
 
   // Apply class based on localStorage
   document.body.classList.toggle('youlag-active', isWhitelisted);
@@ -172,7 +172,7 @@ function setCategoryWhitelistClass() {
   // Sync with actual whitelist from the user settings exposed in the DOM.
   const whitelist = getCategoryWhitelist();
   const isWhitelistedUserSetting = isPageWhitelisted(whitelist, currentPageClass);
-  youlagActive = isWhitelistedUserSetting;
+  app.state.page.layout = isWhitelistedUserSetting ? 'video' : 'article';
 
   // If the actual whitelist status differs from localStorage, update class and localStorage.
   if (isWhitelistedUserSetting !== isWhitelisted) {
@@ -483,7 +483,7 @@ function init() {
     setupClickListener();
     setupTagsDropdownOverride();
     setupNavMenu();
-    if (youlagActive) {
+    if (app.state.page.layout === 'video') {
       updateVideoAuthor();
       updateVideoDateFormat();
     }
@@ -498,7 +498,7 @@ function init() {
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
   removeYoulagLoadingState();
-  youlagScriptLoaded = true;
+  app.state.youlag.loaded = true;
 }
 
 function removeYoulagLoadingState() {
@@ -508,7 +508,7 @@ function removeYoulagLoadingState() {
 }
 
 function initFallback() {
-  if (document.readyState === 'complete' || document.readyState === 'interactive' || youlagScriptLoaded === true) {
+  if (document.readyState === 'complete' || document.readyState === 'interactive' || app.state.youlag.loaded === true) {
     init();
   }
   else {
@@ -519,7 +519,7 @@ function initFallback() {
 
 // Fallback interval check
 const checkInitInterval = setInterval(() => {
-  if (document.readyState === 'complete' || youlagScriptLoaded === true) {
+  if (document.readyState === 'complete' || app.state.youlag.loaded === true) {
     init();
     clearInterval(checkInitInterval);
   }
