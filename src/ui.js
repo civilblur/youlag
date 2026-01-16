@@ -490,16 +490,16 @@ function createTagsModal(entryId, tags) {
   },]
   */
 
-  if (document.getElementById(modalTagsContainerIdName)) {
+  if (document.getElementById(`${app.modal.id.tagsContainer}`)) {
     // Remove existing modal if present
-    document.getElementById(modalTagsContainerIdName).remove();
+    document.getElementById(`${app.modal.id.tagsContainer}`).remove();
   }
 
   let container = document.createElement('div');
   const useVideoLabels = document.querySelector('body.youlag-video-labels') ? true : false;
   const modalTitle = useVideoLabels ? 'Save to...' : 'Tags';
-  container.id = modalTagsContainerIdName;
-  container.classList.add('youlag-tags-modal');
+  container.id = `${app.modal.id.tagsContainer}`;
+  container.classList.add(app.modal.class.tagsModalRoot);
   container.innerHTML = `
     <forms class="yl-tags-content">
       <h3 class="yl-tags-modal-title">
@@ -523,11 +523,11 @@ function createTagsModal(entryId, tags) {
   `
 
   document.body.appendChild(container);
-  document.body.classList.add('youlag-tags-modal-open');
+  document.body.classList.add(app.modal.class.tagsModalOpen);
 
 
   // Event listener for tags (playlists) items.
-  const checkboxes = container.querySelectorAll('.yl-tags-list-item input[type="checkbox"]');
+  const checkboxes = container.querySelectorAll(`.${app.modal.class.tagsModalItem} input[type="checkbox"]`);
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function () {
       const tagId = this.getAttribute('data-tag-id');
@@ -538,14 +538,14 @@ function createTagsModal(entryId, tags) {
   });
 
   function closeTagsModal() {
-    const modal = document.getElementById(modalTagsContainerIdName);
+    const modal = document.getElementById(`${app.modal.id.tagsContainer}`);
     if (modal) modal.remove();
-    document.body.classList.remove('youlag-tags-modal-open');
+    document.body.classList.remove(app.modal.class.tagsModalOpen);
     document.removeEventListener('keydown', tagsModalEscHandler, true);
   }
 
   // Close button
-  const closeButton = container.querySelector('#yl-tags-modal-close');
+  const closeButton = container.querySelector(`#${app.modal.id.tagsClose}`);
   closeButton.addEventListener('click', closeTagsModal);
 
   // Close on Esc key
@@ -559,7 +559,7 @@ function createTagsModal(entryId, tags) {
 
   // Close onblur
   container.addEventListener('mousedown', function (event) {
-    const content = container.querySelector('.yl-tags-content');
+    const content = container.querySelector(`.${app.modal.class.tagsModalContent}`);
     if (content && !content.contains(event.target)) {
       closeTagsModal();
     }

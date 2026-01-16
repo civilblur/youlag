@@ -21,20 +21,25 @@ app.modal = {
     favorite: 'youlagToggleFavorite',
     tags: 'youlagTagsManage',
     tagsContainer: 'youlagTagsModal',
+    tagsClose: 'yl-tags-modal-close',
     moreContainer: 'youlagVideoMoreContentContainer',
     relatedContainer: 'youlagRelatedVideosContainer'
   },
   class: {
+    typeArticle: 'youlag-modal-feed-item--text',
     modeMiniplayer: 'youlag-mode--miniplayer',
     modeFullscreen: 'youlag-mode--fullscreen',
     container: 'youlag-theater-modal-container',
     content: 'youlag-theater-modal-content',
     descContainer: 'youlag-video-description-container',
     descContainerCollapsed: 'youlag-video-description-container--collapsed',
-    favorite: 'youlag-favorited',
-    typeArticle: 'youlag-modal-feed-item--text',
+    tagsModalRoot: 'youlag-tags-modal',
+    tagsModalItem: 'yl-tags-list-item',
+    tagsModalOpen: 'youlag-tags-modal-open',
+    tagsModalContent: 'yl-tags-content',
     iframe: 'youlag-iframe',
-    iframeContainer: 'youlag-iframe-container'
+    iframeContainer: 'youlag-iframe-container',
+    favorite: 'youlag-favorited',
   },
   queue: {
     queue: null,
