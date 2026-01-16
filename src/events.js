@@ -315,8 +315,8 @@ function setVideoLabelsTitle(pageClass, newTitle) {
 }
 
 function setupNavMenu() {
-  if (youlagNavMenuInitialized) return;
-  youlagNavMenuInitialized = true;
+  if (app.state.youlag.navMenuInit) return;
+  app.state.youlag.navMenuInit = true;
 
   const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
@@ -498,7 +498,7 @@ function init() {
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
   removeYoulagLoadingState();
-  app.state.youlag.loaded = true;
+  app.state.youlag.init = true;
 }
 
 function removeYoulagLoadingState() {
@@ -508,7 +508,7 @@ function removeYoulagLoadingState() {
 }
 
 function initFallback() {
-  if (document.readyState === 'complete' || document.readyState === 'interactive' || app.state.youlag.loaded === true) {
+  if (document.readyState === 'complete' || document.readyState === 'interactive' || app.state.youlag.init === true) {
     init();
   }
   else {
@@ -519,7 +519,7 @@ function initFallback() {
 
 // Fallback interval check
 const checkInitInterval = setInterval(() => {
-  if (document.readyState === 'complete' || app.state.youlag.loaded === true) {
+  if (document.readyState === 'complete' || app.state.youlag.init === true) {
     init();
     clearInterval(checkInitInterval);
   }

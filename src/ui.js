@@ -594,7 +594,7 @@ function setupSwipeToPipMode(modal) {
 
 function setupClickListener() {
   // youlag-active: Video mode
-  if (youlagClickListenersInitialized) return;
+  if (app.state.youlag.clickListenerInit) return;
   const streamContainer = document.querySelector('#stream');
 
   if (app.state.page.layout === 'video') {
@@ -775,7 +775,7 @@ function setupClickListener() {
       }
     });
   }
-  youlagClickListenersInitialized = true;
+  app.state.youlag.clickListenerInit = true;
 }
 
 function setupTagsDropdownOverride() {
@@ -897,8 +897,7 @@ function clearVideoQueue() {
 
 function restoreVideoQueue() {
   // Restore video queue from localStorage on page load, only if pip mode was active.
-  if (youlagRestoreVideoQueueRan) return;
-  youlagRestoreVideoQueueRan = true;
+  if (app.state.youlag.restoreVideoInit) return;
 
   const stored = localStorage.getItem('youlagVideoQueue');
   let queueObj = null;
@@ -928,6 +927,8 @@ function restoreVideoQueue() {
     setModePip(true); // Restored video queue always opens in PiP mode.
     handleActiveItemVideoMode(queueObj, true);
   }
+
+  app.state.youlag.restoreVideoInit = true;
 }
 
 function setPageTitle(title) {

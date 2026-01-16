@@ -61,7 +61,10 @@ app.types = {
 
 app.state = {
   youlag: {
-    loaded: false // Whether the Youlag script has finished loading.
+    init: false, // Whether the Youlag script has finished loading.
+    navMenuInit: false, // The nav_menu displaying the feed view options.
+    clickListenerInit: false,
+    restoreVideoInit: false, // If mini player was restored after page refresh.
   },
   modal: {
     active: false, // Whether an article/video is currently active. Mini player does not count as active.
@@ -88,12 +91,7 @@ let youladModalPopstateAdded = false; // The popstate for video modal is only re
 let modePip = false;
 let modeFullscreen = true;
 let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.
-// let youlagActive = false; // Whether Youlag is active on this page based on user category whitelist setting.
 
-
-let youlagNavMenuInitialized = false;
-let youlagClickListenersInitialized = false;
-let youlagRestoreVideoQueueRan = false;
 
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
 let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
