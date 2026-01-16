@@ -4369,21 +4369,23 @@ a.yl-video-action-button[href=""] {
     flex: 1;
     min-width: min(450px, 90%);
 
-    &--collapsed {
-      position: relative;
-      max-height: 100px;
-      box-sizing: border-box;
-      overflow: hidden;
-      cursor: pointer;
-
-      &:before {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 65%;
-        background: linear-gradient(to bottom, transparent 0%, var(--yl-color-body-background) 100%);
+    @media (max-width: 960px) {
+      &--collapsed {
+        position: relative;
+        max-height: 100px;
+        box-sizing: border-box;
+        overflow: hidden;
+        cursor: pointer;
+  
+        &:before {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 65%;
+          background: linear-gradient(to bottom, transparent 0%, var(--yl-color-body-background) 100%);
+        }
       }
     }
 
