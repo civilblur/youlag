@@ -2116,6 +2116,11 @@ html {
     color: var(--yl-color-text-default);
   }
 
+  figure {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
   iframe {
     width: 100%;
     height: auto;

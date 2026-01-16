@@ -40,6 +40,7 @@ const videoObjectType = {
   entryId: null,
   author: '',
   author_filter_url: '',
+  website_name: '',
   favicon: '',
   favorite_toggle_url: '',
   favorited: false,
@@ -275,6 +276,7 @@ function extractFeedItemData(feedItem) {
     author: authorElement?.getAttribute('data-article-authors') || '',
     author_filter_url: authorFilterElement?.href || '',
     favicon: feedItem.querySelector('img.favicon')?.src || '',
+    website_name: feedItem.querySelector('.website .websiteName')?.textContent.trim() || '',
     favorite_toggle_url: feedItem.querySelector('a.item-element.bookmark')?.href || '',
     favorited: !feedItem.querySelector('.bookmark img[src*="non-starred"]'),
     thumbnail: feedItem.querySelector('.thumbnail img')?.src || '',
@@ -527,7 +529,7 @@ function createModalVideo(data) {
 
               <div class="yl-flex yl-flex-col">
                 <div class="youlag-video-metadata-author">
-                  <a href="${data.author_filter_url}">${data.author}</a>
+                  <a href="${data.author_filter_url}">${data.website_name}</a>
                 </div>
                 <div class="youlag-video-metadata-date">${data.date}</div>
               </div>
@@ -609,7 +611,7 @@ function createModalVideo(data) {
         <div class="youlag-related-video-item__thumbnail"><img src="${relatedVideoObj.thumbnail}" loading="lazy" ></div>
         <div class="youlag-related-video-item__metadata">
           <div class="youlag-related-video-item__title">${relatedVideoObj.title}</div>
-          <div class="youlag-related-video-item__author">${relatedVideoObj.author}</div>
+          <div class="youlag-related-video-item__author">${relatedVideoObj.website_name}</div>
           <div class="youlag-related-video-item__date">${relativeDate}</div>
         </div>
       </div>
@@ -1876,15 +1878,20 @@ function updateSidenavLinks() {
   }
 }
 
-function updateVideoAuthorPlacement() {
+function updateVideoAuthor() {
   // youlag-active: On video cards, use move out the `.author` element outside of the video title.
   // This prevents the author from being truncated in the title line, and is always displayed regardless of title length.
   const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--author)');
   feedCards.forEach(card => {
     const author = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title .author');
     const title = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title');
+    const websiteName = card.querySelector('.flux_header .item.website .websiteName');
     if (author && title && title.parentNode) {
-      // Move author element after title element.
+      if (websiteName) {
+        // Use website name instead of author name.
+        author.textContent = `${websiteName.textContent.trim()}`;
+      }
+      // Move author (website name) element after title element.
       title.parentNode.insertBefore(author, title.nextSibling);
       card.classList.add('yl-modified--author');
     }
@@ -1914,7 +1921,7 @@ function onNewFeedItems() {
 
   document.addEventListener('freshrss:load-more', function () {
     if (youlagActive) {
-      updateVideoAuthorPlacement();
+      updateVideoAuthor();
       updateVideoDateFormat();
     }
   }, false);
@@ -1966,7 +1973,7 @@ async function fetchRelatedItems(category = 'watch_later', order = 'rand', limit
         
         // The minimal data is used for displaying related videos.
         entryId,
-        author: item.querySelector('.titleAuthorSummaryDate .author')?.textContent?.trim() || '',
+        website_name: item.querySelector('.website .websiteName')?.textContent?.trim() || '',
         thumbnail: item.querySelector('.thumbnail img')?.src || '',
         title: item.querySelector('.title')?.textContent?.trim() || '',
         date: item.querySelector('.titleAuthorSummaryDate .date time')?.getAttribute('datetime') || '',
@@ -1994,7 +2001,7 @@ function init() {
     setupTagsDropdownOverride();
     setupNavMenu();
     if (youlagActive) {
-      updateVideoAuthorPlacement();
+      updateVideoAuthor();
       updateVideoDateFormat();
     }
     onNewFeedItems()
