@@ -190,7 +190,7 @@ declare(strict_types=1);
       </h4>
       <label for="yl_block_youtube_shorts" class="flex">
           <input type="checkbox" id="yl_block_youtube_shorts" name="yl_block_youtube_shorts" value="1" class="mb-auto"
-            <?php echo ($this->yl_block_youtube_shorts_enabled) ? ' checked="checked"' : ''; ?>>
+          <?php echo (FreshRSS_Context::$user_conf->yl_block_youtube_shorts) ? ' checked="checked"' : ''; ?>>
         <div class="inline-block">
           Block incoming YouTube shorts
           <div class="yl-form-group-help">
