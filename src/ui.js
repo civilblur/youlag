@@ -359,7 +359,7 @@ function closeModalVideo() {
 }
 
 function closeArticle(event) {
-  const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+  const openedArticle = document.querySelector(app.frss.el.current);
 
   if (openedArticle) {
     // Focus closed article, to easier visually navigate where one last left off. 
@@ -604,7 +604,7 @@ function setupSwipeToMiniplayer(modal) {
 function setupClickListener() {
   // youlag-active: Video mode
   if (app.state.youlag.clickListenerInit) return;
-  const streamContainer = document.querySelector('#stream');
+  const streamContainer = document.querySelector(app.frss.el.feedRoot);
 
   if (app.state.page.layout === 'video') {
     if (streamContainer) {
@@ -739,7 +739,7 @@ function setupClickListener() {
 
     window.addEventListener('popstate', function (event) {
       function getOpenArticle() {
-        return document.querySelector('#stream div[data-feed].active.current');
+        return document.querySelector(app.frss.el.current);
       }
 
       if (isHashUrl()) {
@@ -776,7 +776,7 @@ function setupClickListener() {
           // TODO: FreshRSS apparently has a native Escape key handler that closes the article, and ends up closing 
           // the article before `openedArticle` can be queried, thus never calling for `closeArticle()`.
           // This behavior is hard to replicate in local, but is apparent in production. 
-          const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+          const openedArticle = document.querySelector(app.frss.el.current);
           if (openedArticle) {
             closeArticle(event);
           }
@@ -789,11 +789,11 @@ function setupClickListener() {
 
 function setupTagsDropdownOverride() {
   // Delegated eventlistener to override tags (playlists) dropdown click
-  const streamContainer = document.querySelector('#stream');
+  const streamContainer = document.querySelector(app.frss.el.feedRoot);
   if (!streamContainer) return;
 
   streamContainer.addEventListener('click', async function (event) {
-    const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
+    const entryItem = event.target.closest(`${app.frss.el.entry} .flux_header li.labels`);
     const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle') : null;
     const entryItemFooterDropdown = event.target.closest('.item.labels a.dropdown-toggle[href^="#dropdown-labels-"]');
 
@@ -852,8 +852,8 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
   else {
     // Extract the feed item from the DOM event/element
     const feedItem = (targetOrEventOrVideo instanceof Event)
-      ? targetOrEventOrVideo.target.closest('div[data-feed]')
-      : targetOrEventOrVideo.closest('div[data-feed]');
+      ? targetOrEventOrVideo.target.closest(app.frss.el.entry)
+      : targetOrEventOrVideo.closest(app.frss.el.entry);
     if (!feedItem) return;
 
     videoObject = extractFeedItemData(feedItem);

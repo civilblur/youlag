@@ -32,8 +32,17 @@ app.modal = {
     descContainer: 'youlag-video-description-container',
     descContainerCollapsed: 'youlag-video-description-container--collapsed',
     favorite: 'youlag-favorited'
-  }
+  },
 };
+
+app.frss = {
+  // FreshRSS selectors
+  el: {
+    feedRoot: '#stream',
+    current: '#stream div[data-feed].active.current', // Currently opened feed entry in the stream.
+    entry: 'div[data-entry]', // Feed entries general selector.
+  }
+}
 
 app.types = {
   videoObject: {
