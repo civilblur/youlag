@@ -237,6 +237,7 @@ body.youlag-active:not(.reader) main#stream {
 
   @media (max-width: 840px) {
     grid-template-columns: minmax(200px, 1fr);
+    gap: var(--yl-m-xs);
   }
 
   @media (min-width: 600px) {
