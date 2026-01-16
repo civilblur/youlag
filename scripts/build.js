@@ -17,14 +17,13 @@ const srcFiles = [
   '../src/utilities.js',
   '../src/helpers.js',
   '../src/ui.js',
+  '../src/forms.js',
   '../src/events.js',
-  '../src/script.js' // Remove once refactoring is done
 ];
 const scriptTempDest = path.join(tempDir, 'script.min.js');
 const minifyAndInjectVersion = async () => {
   const terser = require('terser');
   let srcContent = srcFiles.map(f => fs.readFileSync(path.resolve(__dirname, f), 'utf8')).join('\n');
-  // Only replace YOULAG_VERSION in script.js (last file)
   srcContent = srcContent.replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
   fs.mkdirSync(tempDir, { recursive: true });
   try {

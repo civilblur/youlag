@@ -318,3 +318,672 @@ function createModalVideo(data) {
     }
   });
 }
+
+function closeModalVideo() {
+  const modal = getModalVideo();
+
+  // Remove all modal-specific listeners before removing the modal element
+  if (modal && modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
+    for (const {el, type, handler} of modal._videoModalListeners) {
+      el.removeEventListener(type, handler);
+    }
+    modal._videoModalListeners.length = 0;
+  }
+  
+  if (modal) modal.remove();
+
+  youladModalPopstateAdded = false;
+  if (!youlagModalNavigatingBack && history.state && history.state.modalOpen && (modeFullscreen || !modePip)) {
+    // Only trigger history.back() once, and set the ignore flags.
+    youlagModalNavigatingBack = true;
+    youlagModalPopstateIgnoreNext = true;
+    history.back();
+  }
+  else {
+    history.replaceState(null, '', location.href);
+  }
+  feedItemActive = false;
+  setModePip(false);
+  setModeFullscreen(false);
+  setPageTitle();
+  clearVideoQueue();
+}
+
+function closeArticle(event) {
+  const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+
+  if (openedArticle) {
+    // Focus closed article, to easier visually navigate where one last left off. 
+    openedArticle.setAttribute('tabindex', '-1');
+    openedArticle.focus({ preventScroll: true });
+
+    // Close the article
+    openedArticle.classList.remove('active', 'current');
+    const rect = openedArticle.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    let offset = 0;
+
+    if (window.getComputedStyle) {
+      const root = document.documentElement;
+      const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+      if (val) {
+        offset = parseInt(val.trim(), 10) || 0;
+      }
+    }
+
+    // Prevent sticky transition title from showing when auto-scrolling.
+    const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
+    disableStickyTransitionTitle = true;
+    ylCategoryToolbar.classList.remove('sticky-visible');
+    ylCategoryToolbar.classList.add('sticky-hidden');
+
+    // Scroll to the top of the closed article, offset by `var(--yl-topnav-height)`.
+    const targetScroll = rect.top + scrollTop - offset;
+    window.scrollTo({
+      top: Math.max(0, targetScroll)
+    });
+    event?.stopPropagation?.();
+
+    setTimeout(() => {
+      disableStickyTransitionTitle = false;
+    }, 50);
+
+    feedItemActive = false;
+  }
+}
+
+function togglePipMode() {
+  if (modePip) {
+    setModePip(false);
+    setModeFullscreen(true);
+
+    if (!youladModalPopstateAdded) {
+      /**
+       * When `restoreVideoQueue()` opens in pip mode, the popstate is not yet added.
+       * Thus, if expanding back to fullscreen mode, we need to add it here to avoid routing back a page,
+       * and instead just close the modal.
+       */
+      history.pushState({ modalOpen: true }, '', '');
+      youladModalPopstateAdded = true;
+    }
+  }
+  else {
+    setModePip(true);
+    setModeFullscreen(false);
+  }
+}
+
+function setModePip(state) {
+  const modal = getModalVideo();
+
+  if (state === true) {
+    modal ? (previousFeedItemScrollTop = modal.scrollTop) : null;
+    document.body.classList.add('youlag-mode--pip');
+    modePip = true;
+    modeFullscreen = false;
+    feedItemActive = false; // Pip mode is not considered active.
+    modal ? modal.scrollTo({ top: 0 }) : null;
+  }
+  else if (state === false) {
+    if (modal) {
+      let transitionRan = false;
+      const onTransitionEnd = () => {
+        transitionRan = true;
+        // Scroll back to previous position when exiting pip mode.
+        modal.scrollTo({ top: previousFeedItemScrollTop, behavior: 'smooth' });
+      };
+      modal.addEventListener('transitionend', onTransitionEnd, { once: true });
+      setTimeout(() => {
+        // Fallback if transition event is not detected.
+        if (!transitionRan) {
+          modal.scrollTo({ top: previousFeedItemScrollTop, behavior: 'smooth' });
+        }
+      }, 500);
+    }
+    document.body.classList.remove('youlag-mode--pip');
+    modePip = false;
+  }
+  try {
+    const stored = localStorage.getItem('youlagVideoQueue');
+    if (stored) {
+      const obj = JSON.parse(stored);
+      obj.isPipMode = !!state;
+      localStorage.setItem('youlagVideoQueue', JSON.stringify(obj));
+    }
+  } catch (e) { }
+}
+
+function setModeFullscreen(state) {
+  if (state === true) {
+    document.body.classList.add('youlag-mode--fullscreen');
+    document.body.classList.remove('youlag-mode--pip');
+    modeFullscreen = true;
+    modePip = false;
+    feedItemActive = true;
+  }
+  else if (state === false) {
+    document.body.classList.remove('youlag-mode--fullscreen');
+    modeFullscreen = false;
+    feedItemActive = false;
+  }
+}
+
+function createTagsModal(entryId, tags) {
+  // Opens modal to manage tags (playlists) for feed item (entryId).
+  /**
+   * Example tags object:
+  [{
+    "id": 2,
+    "name": "Some playlist name",
+    "checked": true
+  },]
+  */
+
+  if (document.getElementById(modalTagsContainerIdName)) {
+    // Remove existing modal if present
+    document.getElementById(modalTagsContainerIdName).remove();
+  }
+
+  let container = document.createElement('div');
+  const useVideoLabels = document.querySelector('body.youlag-video-labels') ? true : false;
+  const modalTitle = useVideoLabels ? 'Save to...' : 'Tags';
+  container.id = modalTagsContainerIdName;
+  container.classList.add('youlag-tags-modal');
+  container.innerHTML = `
+    <forms class="yl-tags-content">
+      <h3 class="yl-tags-modal-title">
+        ${modalTitle}
+
+        <a href="./?c=tag" target="_blank"><img class="icon" src="../themes/Mapco/icons/configure.svg" loading="lazy" alt="⚙️"></a>
+      </h3>
+      <div class="yl-tags-list">
+        ${tags.map(tag => `
+            <div class="yl-tags-list-item">
+              <input type="checkbox" id="yl-tag-${tag.id}" data-tag-id="${tag.id}" data-entry-id="${entryId}" ${tag.checked ? 'checked' : ''} />
+              <label for="yl-tag-${tag.id}">${tag.name}</label>
+            </div>
+          `).join('')
+    }
+      </div>
+      <div class="yl-tags-modal-actions">
+        <button id="yl-tags-modal-close" class="btn">Done</button>
+      </div>
+    </forms>
+  `
+
+  document.body.appendChild(container);
+  document.body.classList.add('youlag-tags-modal-open');
+
+
+  // Event listener for tags (playlists) items.
+  const checkboxes = container.querySelectorAll('.yl-tags-list-item input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+      const tagId = this.getAttribute('data-tag-id');
+      const entryId = this.getAttribute('data-entry-id');
+      const checked = this.checked;
+      setItemTag(entryId, { id: tagId, checked: checked });
+    });
+  });
+
+  function closeTagsModal() {
+    const modal = document.getElementById(modalTagsContainerIdName);
+    if (modal) modal.remove();
+    document.body.classList.remove('youlag-tags-modal-open');
+    document.removeEventListener('keydown', tagsModalEscHandler, true);
+  }
+
+  // Close button
+  const closeButton = container.querySelector('#yl-tags-modal-close');
+  closeButton.addEventListener('click', closeTagsModal);
+
+  // Close on Esc key
+  function tagsModalEscHandler(event) {
+    if (event.key === 'Escape') {
+      closeTagsModal();
+      event.stopPropagation(); // Prevent bubbling to other modals
+    }
+  }
+  document.addEventListener('keydown', tagsModalEscHandler, true);
+
+  // Close onblur
+  container.addEventListener('mousedown', function (event) {
+    const content = container.querySelector('.yl-tags-content');
+    if (content && !content.contains(event.target)) {
+      closeTagsModal();
+    }
+  });
+
+}
+
+function setupSwipeToPipMode(modal) {
+  // Allow video modal overscroll to enter pip mode on touch devices.
+  if (modal._swipeToPipInitialized) return;
+
+  let touchStartY = null;
+  let overscrollActive = false;
+
+  modal.addEventListener('touchstart', function (e) {
+    if (modal.scrollTop === 0 && e.touches.length === 1) {
+      touchStartY = e.touches[0].clientY;
+      overscrollActive = false;
+    }
+  }, { passive: false });
+  modal.addEventListener('touchmove', function (e) {
+    if (touchStartY !== null && modal.scrollTop === 0 && e.touches.length === 1) {
+      const moveY = e.touches[0].clientY;
+      if (moveY - touchStartY > 0) {
+        // Touch is moving downward while scroll is at the very top; start tracking overscroll gesture
+        overscrollActive = true;
+        e.preventDefault(); // Prevent native scroll bounce to allow custom overscroll detection
+      }
+    }
+  }, { passive: false });
+  modal.addEventListener('touchend', function (e) {
+    if (touchStartY !== null && overscrollActive && e.changedTouches.length === 1) {
+      const endY = e.changedTouches[0].clientY;
+      if (endY - touchStartY > 40 && modal.scrollTop === 0) {
+        // Overscroll (pull-down) detected at top, toggle pip mode.
+        togglePipMode(true);
+      }
+    }
+    touchStartY = null;
+    overscrollActive = false;
+  }, { passive: false });
+
+  modal._swipeToPipInitialized = true;
+}
+
+function setupClickListener() {
+  // youlag-active: Video mode
+  if (youlagClickListenersInitialized) return;
+  const streamContainer = document.querySelector('#stream');
+
+  if (youlagActive) {
+    if (streamContainer) {
+      streamContainer.addEventListener('click', (event) => {
+
+        const target = event.target.closest('div[data-feed]');
+        if (!target) return;
+        
+        // Do not expand video modal if clicking on the card action buttons.
+        const actionButtons = [
+          'li.manage',
+          'li.labels',
+          'li.share',
+          'li.link',
+          '.website a[href^="./?get=f_"]'
+        ].join(', ');
+        if (event.target.closest(actionButtons)) return;
+  
+        handleActiveItemVideoMode(event);
+        // Ensure the native freshrss view does not expand the feed item when clicked.
+        if (target.classList.contains('active')) {
+          collapseBackgroundFeedItem(target);
+        }
+        else {
+          // Otherwise, observe until it's active, then collapse it.
+          const observer = new MutationObserver((mutationsList, observer) => {
+            if (target.classList.contains('active')) {
+              collapseBackgroundFeedItem(target);
+              observer.disconnect();
+            }
+          });
+          observer.observe(target, { attributes: true, attributeFilter: ['class'] });
+        }
+      });
+      
+      window.addEventListener('popstate', function popstateHandler(e) {
+        // youlag-active: Only handle video modal if in fullscreen mode, otherwise allow normal browser navigation.
+
+        if (isHashUrl(lastPathnameSearch)) {
+          // Ignore popstate if only the hash changed
+          return;
+        }
+
+        if (modeFullscreen && getModalVideo()) {
+          // Video in fullscreen mode should be closed on popstate and not navigate back a page.
+          youlagModalNavigatingBack = false;
+          closeModalVideo();
+          return;
+        }
+
+        if (youlagModalPopstateIgnoreNext) {
+          youlagModalPopstateIgnoreNext = false;
+          youlagModalNavigatingBack = false;
+          return;
+        }
+
+        if (modePip) {
+          // Allow normal browser navigation when in pip mode.
+          youlagModalPopstateIgnoreNext = true;
+          history.back();
+          return;
+        }
+      });
+    }
+  }
+  else if (!youlagActive) {
+    // youlag-inactive: Article context.
+    if (streamContainer) {
+      streamContainer.addEventListener('click', function (event) {
+        const target = event.target.closest('div[data-feed]');
+        if (!target) return;
+
+        // Do not expand article and perform e.g. auto-scroll if clicking on the card action buttons.
+        const actionButtons = [
+          '.flux_header li.manage',
+          '.flux_header li.labels',
+          '.flux_header li.share',
+          '.flux_header li.link',
+          '.flux_header li.website',
+          '.flux_content',
+        ].join(', ');
+        if (event.target.closest(actionButtons)) return;
+
+        if (!feedItemActive) {
+          handleActiveItemArticle(event);
+          feedItemActive = true;
+        }
+
+        // Scroll to top of the article when opened.
+        const scrollToTarget = () => {
+          const rect = target.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          let offset = 0;
+          if (window.getComputedStyle) {
+            const root = document.documentElement;
+            const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+            offset = parseInt(val, 10) || 0;
+          }
+          return rect.top + scrollTop - offset;
+        };
+
+        // Prevent sticky category title from showing when auto-scrolling.
+        const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
+        disableStickyTransitionTitle = true;
+        ylCategoryToolbar.classList.remove('sticky-visible');
+        ylCategoryToolbar.classList.add('sticky-hidden');
+
+        let attempts = 0;
+        const maxAttempts = 4;
+        const scroll = () => {
+          const targetScroll = scrollToTarget();
+          window.scrollTo({
+            top: targetScroll,
+          });
+          const assessScrollPosition = () => {
+            attempts++;
+            const newTargetScroll = scrollToTarget();
+            if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
+              window.requestAnimationFrame(scroll);
+            }
+            else {
+              setTimeout(() => {
+                disableStickyTransitionTitle = false;
+              }, 50);
+            }
+          };
+          window.setTimeout(assessScrollPosition, 180);
+        };
+        scroll();
+      });
+    }
+
+    window.addEventListener('popstate', function (event) {
+      function getOpenArticle() {
+        return document.querySelector('#stream div[data-feed].active.current');
+      }
+
+      if (isHashUrl()) {
+        // Ignore hash-only routes, e.g. when clicking dropdown menus that routes to e.g. `#dropdown-configure`.
+        return;
+      }
+      if (modePip && getOpenArticle()) {
+        closeArticle(event);
+        return;
+      }
+      if (modePip && !getOpenArticle()) {
+        history.back();
+      }
+      else {
+        if (getOpenArticle()) {
+          // Close the open article if one is open when navigating back.
+          closeArticle(event);
+        }
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        if (youlagActive) {
+          // youlag-active: Video modal context.
+          const modal = getModalVideo();
+          if (modal) {
+            closeModalVideo();
+          }
+        }
+        else if (!youlagActive) {
+          // youlag-inactive: Article context.
+
+          // TODO: FreshRSS apparently has a native Escape key handler that closes the article, and ends up closing 
+          // the article before `openedArticle` can be queried, thus never calling for `closeArticle()`.
+          // This behavior is hard to replicate in local, but is apparent in production. 
+          const openedArticle = document.querySelector('#stream div[data-feed].active.current');
+          if (openedArticle) {
+            closeArticle(event);
+          }
+        }
+      }
+    });
+  }
+  youlagClickListenersInitialized = true;
+}
+
+function setupTagsDropdownOverride() {
+  // Delegated eventlistener to override tags (playlists) dropdown click
+  const streamContainer = document.querySelector('#stream');
+  if (!streamContainer) return;
+
+  streamContainer.addEventListener('click', async function (event) {
+    const entryItem = event.target.closest('div[data-feed] .flux_header li.labels');
+    const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle') : null;
+    const entryItemFooterDropdown = event.target.closest('.item.labels a.dropdown-toggle[href^="#dropdown-labels-"]');
+
+    if (entryItemDropdown || entryItemFooterDropdown) {
+      // Prevent default tag dropdown behavior
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      let entryId = null;
+      let entryIdRegex = '([0-9]+)$';
+      let iconImg = null;
+      if (entryItemDropdown) {
+        entryId = entryItem.querySelector('.dropdown-target')?.id;
+        entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
+        entryId = entryId ? entryId[1] : null;
+        iconImg = entryItemDropdown.closest('li.labels')?.querySelector('img.icon');
+      }
+      if (entryItemFooterDropdown) {
+        entryId = entryItemFooterDropdown.href;
+        entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
+        entryId = entryId ? entryId[1] : null;
+        iconImg = entryItemFooterDropdown.closest('li.labels, .item.labels')?.querySelector('img.icon');
+      }
+      let prevSrc = null;
+      if (iconImg) {
+        prevSrc = iconImg.src;
+        iconImg.classList.add('loading');
+        iconImg.src = '../themes/icons/spinner.svg';
+      }
+      let tags = await getItemTags(entryId);
+      if (iconImg) {
+        iconImg.classList.remove('loading');
+        iconImg.src = prevSrc;
+      }
+      // Open custom tags modal
+      createTagsModal(entryId, tags);
+    }
+  }, true);
+}
+
+function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) {
+  // Handles activation of a feed item (video or article) and opens the video modal.
+  
+  previousFeedItemScrollTop = 0;
+  let data;
+
+  if (isVideoObject) {
+    // Use only the data from localStorage, do not rely on DOM
+    const videoObject = targetOrEventOrVideo;
+    const activeVideo = videoObject.queue[videoObject.activeIndex];
+    data = {
+      ...activeVideo,
+      queue: videoObject.queue,
+      activeIndex: videoObject.activeIndex
+    };
+  } 
+  else {
+    // Extract the feed item from the DOM event/element
+    const feedItem = (targetOrEventOrVideo instanceof Event)
+      ? targetOrEventOrVideo.target.closest('div[data-feed]')
+      : targetOrEventOrVideo.closest('div[data-feed]');
+    if (!feedItem) return;
+
+    data = extractFeedItemData(feedItem);
+    data.feedItemEl = feedItem;
+    setVideoQueue(data);
+  }
+
+  if (!modePip) setModeFullscreen(true);
+  createModalVideo(data);
+}
+
+function handleActiveItemArticle(event) {
+  history.pushState({ articleOpen: true }, '', '');
+}
+
+function setVideoQueue(videoObject) {
+  // Store the videoObject in localStorage.youlagVideoQueue.
+  // The video object is defined in `extractFeedItemData()`.
+
+  let queue = [];
+  let activeIndex = 0;
+  try {
+    const stored = localStorage.getItem('youlagVideoQueue');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed.queue)) queue = parsed.queue;
+      if (typeof parsed.activeIndex === 'number') activeIndex = parsed.activeIndex;
+    }
+  } catch (e) { }
+
+  const entryId = videoObject.entryId;
+  const foundIndex = queue.findIndex(v => v.entryId === entryId);
+  const isPipMode = document.body.classList.contains('youlag-mode--pip');
+  if (foundIndex === -1) {
+    queue.push(videoObject);
+    activeIndex = queue.length - 1;
+  }
+  else {
+    queue.splice(foundIndex, 1);
+    queue.push(videoObject);
+    activeIndex = queue.length - 1;
+  }
+
+  localStorage.setItem('youlagVideoQueue', JSON.stringify({ queue, activeIndex, isPipMode }));
+}
+
+function clearVideoQueue() {
+  localStorage.removeItem('youlagVideoQueue');
+}
+
+function restoreVideoQueue() {
+  // Restore video queue from localStorage on page load, only if pip mode was active.
+  if (youlagRestoreVideoQueueRan) return;
+  youlagRestoreVideoQueueRan = true;
+
+  const stored = localStorage.getItem('youlagVideoQueue');
+  let queueObj = null;
+  if (stored) {
+    try {
+      queueObj = JSON.parse(stored);
+    }
+    catch (e) {
+      console.error('Error parsing youlagVideoQueue from localStorage:', e);
+    }
+  }
+  if (!queueObj || queueObj.isPipMode !== true) return;
+
+  // Only restore video queue on pages that don't get blocked by Content-Security-Policy. 
+  const bodyClasses = document.body.classList;
+  const isVideoPage = [
+    'yl-page-home',
+    'yl-page-important',
+    'yl-page-watch_later',
+    'yl-page-playlists',
+    'yl-page-category',
+    'yl-page-search_results'
+  ].some(cls => bodyClasses.contains(cls));
+  if (!isVideoPage) return;
+
+  if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.activeIndex === 'number' && queueObj.queue.length > 0) {
+    setModePip(true); // Restored video queue always opens in PiP mode.
+    handleActiveItemVideoMode(queueObj, true);
+  }
+}
+
+function setPageTitle(title) {
+  if (typeof title === 'string' && title.length > 0) {
+    if (previousPageTitle === null) {
+      previousPageTitle = document.title;
+    }
+    // Set new title
+    document.title = title;
+  }
+  else if (previousPageTitle !== null) {
+    // Restore previous title
+    document.title = previousPageTitle;
+    previousPageTitle = null;
+  }
+}
+
+function isHashUrl() {
+  const currentPathnameSearch = window.location.pathname + window.location.search;
+  const isHash = lastPathnameSearch === currentPathnameSearch && window.location.hash;
+  lastPathnameSearch = currentPathnameSearch;
+  return isHash;
+}
+
+function toggleFavorite(url, container, feedItemEl) {
+  const favoriteButton = container.querySelector(`#${modalToggleFavoriteIdName}`);
+  if (!favoriteButton) return;
+
+  fetch(url, { method: 'GET' })
+    .then(response => {
+      if (response.ok) {
+        // Toggle favorite classes and icons.
+        const currentlyTrue = favoriteButton.classList.contains(`${modalFavoriteClassName}--true`);
+        favoriteButton.classList.remove(`${modalFavoriteClassName}--${currentlyTrue}`);
+        favoriteButton.classList.add(`${modalFavoriteClassName}--${!currentlyTrue}`);
+
+        // Only update DOM if feedItemEl exists (i.e., not restoring from localStorage).
+        if (feedItemEl) {
+          const bookmarkIcon = feedItemEl.querySelector('.item-element.bookmark img.icon');
+          if (currentlyTrue) {
+            feedItemEl.classList.remove('favorite');
+            if (bookmarkIcon) {
+              bookmarkIcon.src = '../themes/Mapco/icons/non-starred.svg';
+            }
+          } else {
+            feedItemEl.classList.add('favorite');
+            if (bookmarkIcon) {
+              bookmarkIcon.src = '../themes/Mapco/icons/starred.svg';
+            }
+          }
+        }
+      } else {
+        console.error('Failed to toggle favorite status');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}

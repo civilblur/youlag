@@ -2,7 +2,7 @@
   "name": "youlag",
   "version": "1.0.0",
   "description": "Youlag Theme for FreshRSS",
-  "main": "script.js",
+  "main": "events.js",
   "dependencies": {
     "archiver": "^7.0.1",
     "chokidar": "^5.0.0",

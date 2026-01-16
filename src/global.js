@@ -57,3 +57,22 @@ app.types = {
     video_invidious_redirect_url: ''
   }
 };
+
+let YOULAG_VERSION = ''; // Assigned during build.
+let youlagModalNavigatingBack = false; // Prevent multiple history.back() triggers
+let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
+let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
+let youlagScriptLoaded = false;
+let youlagNavMenuInitialized = false;
+let youlagClickListenersInitialized = false;
+let youlagRestoreVideoQueueRan = false;
+let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
+let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
+let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
+let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
+let youtubeId;
+let previousPageTitle = null;
+let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
+let modePip = false;
+let modeFullscreen = true;
+let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.

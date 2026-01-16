@@ -2,6 +2,8 @@
 // The automatic syncing of files allows for easier development and testing.
 // `npm run watch`
 
+const debug = true; // Disable minification
+
 const fs = require('fs');
 const path = require('path');
 const chokidar = require('chokidar');
@@ -20,8 +22,8 @@ const srcFiles = [
   '../src/utilities.js',
   '../src/helpers.js',
   '../src/ui.js',
-  '../src/events.js',
-  '../src/script.js' // Remove once refactoring is done
+   '../src/forms.js',
+   '../src/events.js',
 ];
 const minScriptPath = path.resolve(__dirname, '../static/script.min.js');
 const scriptTempDest = path.join(tempDir, 'script.min.js');
@@ -31,15 +33,21 @@ async function minifyAndInjectVersion() {
   const metadata = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../metadata.json'), 'utf8'));
   const version = metadata.version;
   let srcContent = srcFiles.map(f => fs.readFileSync(path.resolve(__dirname, f), 'utf8')).join('\n');
-  // Only replace YOULAG_VERSION in script.js (last file)
   srcContent = srcContent.replace(/let YOULAG_VERSION\s*=\s*['"].*?['"];?/, `let YOULAG_VERSION = '${version}';`);
   fs.mkdirSync(tempDir, { recursive: true });
   try {
-    const { code, error } = await terser.minify(srcContent, {
-      compress: true,
-      mangle: { reserved: ['YOULAG_VERSION'] }
-    });
-    if (error || !code) throw error || new Error('No code output');
+    let code;
+    if (debug) {
+      code = srcContent; // Output unminified for debugging
+    }
+    else {
+      const result = await terser.minify(srcContent, {
+        compress: true,
+        mangle: { reserved: ['YOULAG_VERSION'] }
+      });
+      if (result.error || !result.code) throw result.error || new Error('No code output');
+      code = result.code;
+    }
     fs.writeFileSync(minScriptPath, code);
     fs.writeFileSync(scriptTempDest, code);
     return true;
