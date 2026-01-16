@@ -73,6 +73,7 @@ app.state = {
   page: {
     layout: null, // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
     titlePrev: null,
+    navMenuSticky: true, // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
   },
   popstate: {
     allowBack: true, // Prevent multiple history.back() triggers
@@ -83,6 +84,5 @@ app.state = {
 };
 
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
-let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
-// let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
+// let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
 let youtubeId;
