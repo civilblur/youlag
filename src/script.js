@@ -583,9 +583,10 @@ function createModalVideo(data) {
     </div>
   `;
 
-    const videoDescContainer = modal.querySelector('.youlag-video-description-container');
-  if (videoDescContainer && videoDescContainer.offsetHeight <= 90) {
+  const videoDescContainer = modal.querySelector('.youlag-video-description-container');
+  if (videoDescContainer && videoDescContainer.offsetHeight > 0 && videoDescContainer.offsetHeight <= 90) {
     // Once the video description has been populated, check if the height is small enough to not need collapsing.
+    // Height is 0 when video is restored into pip mode, thus, ignore that state and keep as is.
     videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
   }
 
