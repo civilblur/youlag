@@ -137,8 +137,20 @@ declare(strict_types=1);
           </div>
         </label>
 
-    
 
+      <h4 class="mb-0">
+        Feed view
+      </h4>
+      <label for="yl_feed_view_mobile_grid_enabled" class="flex">
+          <input type="checkbox" id="yl_feed_view_mobile_grid_enabled" name="yl_feed_view_mobile_grid_enabled" value="1" class="mb-auto"
+            <?php echo ($this->yl_feed_view_mobile_grid_enabled) ? ' checked="checked"' : ''; ?>>
+        <div class="inline-block">
+          Use grid layout on mobile
+          <div class="yl-form-group-help">
+            Mobile: Use a compact two-column grid layout to display more entries at once.
+          </div>
+        </div>
+      </label>
 
       <h4 class="mb-0">
         Labels

@@ -1567,27 +1567,31 @@ function setVideoLabelsClass() {
    * The setting is stored in localStorage for faster access.
    * When active, labels like "My Labels" changes to "Playlists", and "Favorites" to "Watch Later".
    */
-  const localStorageSetting = localStorage.getItem('youlagVideoLabels') || false;
+  const localStorageSetting = localStorage.getItem('youlagVideoLabels') === 'true';
   const userSettingElement = document.querySelector('#yl_video_labels');
-  let userSetting = undefined;
+  let userSetting;
 
   if (userSettingElement) {
-    userSetting = userSettingElement.getAttribute('data-yl-video-labels');
+    userSetting = userSettingElement.getAttribute('data-yl-video-labels') === 'true';
   }
 
-  if (userSetting === 'true') {
+  if (userSetting) {
     document.body.classList.add('youlag-video-labels');
     localStorage.setItem('youlagVideoLabels', 'true');
+    return true;
   }
-  else if (userSetting === 'false') {
+  else if (userSetting === false) {
     document.body.classList.remove('youlag-video-labels');
     localStorage.setItem('youlagVideoLabels', 'false');
+    return false;
   }
-  else if (localStorageSetting === 'true') {
+  else if (localStorageSetting) {
     document.body.classList.add('youlag-video-labels');
+    return true;
   }
   else {
     document.body.classList.remove('youlag-video-labels');
+    return false;
   }
 }
 
@@ -1595,15 +1599,17 @@ function setUnreadBadgeClass() {
   // Adds css class 'youlag-video-unread-badge' to body if video unread badge setting is enabled.
   // If enabled, videos will show badge "New" for unwatched videos.
   const userSettingElement = document.querySelector('#yl_video_unread_badge');
-  let userSetting = undefined;
+  let userSetting;
   if (userSettingElement) {
-    userSetting = userSettingElement.getAttribute('data-yl-video-unread-badge');
+    userSetting = userSettingElement.getAttribute('data-yl-video-unread-badge') === 'true';
   }
-  if (userSetting === 'true') {
+  if (userSetting) {
     document.body.classList.add('youlag-video-unread-badge');
+    return true;
   }
   else {
     document.body.classList.remove('youlag-video-unread-badge');
+    return false;
   }
 }
 
@@ -1625,16 +1631,30 @@ function setupSidenavStateListener() {
   observer.observe(sidenav, { attributes: true, attributeFilter: ['class'] });
 }
 
+function setMobileLayoutGrid() {
+  // Determine if mobile layout should use grid view based on user setting.
+  const userSettingElement = document.querySelector('#yl_feed_view_mobile_grid_enabled');
+  const userSetting = userSettingElement?.getAttribute('data-yl-feed-view-mobile-grid-enabled') === 'true';
+  if (userSetting) {
+    document.body.classList.add('youlag-mobile-layout--grid');
+  }
+  else {
+    document.body.classList.remove('youlag-mobile-layout--grid');
+  }
+  return userSetting;
+}
+
 function setBodyPageClass() {
-  document.body.setAttribute('data-youlag-version', YOULAG_VERSION);
   getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
-  setupSidenavStateListener();
   currentPageParams = new URLSearchParams(window.location.search).get('get');
+  setMobileLayoutGrid();
+  setupSidenavStateListener();
   getSubpageParentId(currentPageParams) && (document.body.className += ' yl-page-' + getSubpageParentId(currentPageParams));
   setVideoLabelsClass();
-  setUnreadBadgeClass();
   setCategoryWhitelistClass();
+  setUnreadBadgeClass();
   setPageSortingClass();
+  document.body.setAttribute('data-youlag-version', YOULAG_VERSION);
 }
 
 function isFeedPage() {

@@ -2044,6 +2044,39 @@ body.youlag-active:not(.reader) main#stream {
   }
 }
 
+/* Mobile, setting: Card grid view enabled */
+body.youlag-active:not(.reader).youlag-mobile-layout--grid {
+  @media (max-width: 600px) {
+    main#stream {
+      grid-template-columns: repeat(2, minmax(140px, 1fr));
+      grid-column-gap: var(--yl-m-xs);
+      padding: var(--yl-m-2xs);
+    }    
+
+    div.flux .flux_header .item {      
+      &.website a.item-element {
+        display: none !important;
+      }
+  
+      &.titleAuthorSummaryDate {
+        padding-left: 0 !important;
+
+        a.item-element.title {
+          font-size: var(--yl-text-xs) !important;
+          line-height: 1.2;
+          padding: 0 !important;
+        }
+        
+        span.item-element.date {
+          font-size: var(--yl-text-2xs) !important;
+          line-height: 1.2;
+        }
+      }
+      
+    }
+  }
+}
+
 /*****************************************
  * END "CARD"
  ****************************************/
@@ -5035,7 +5068,8 @@ body.youlag-tags-modal-open {
 [data-yl-video-unread-badge],
 [data-yl-mini-player-swipe-enabled],
 [data-yl-video-sort-modified],
-[data-yl-related-videos-source] {
+[data-yl-related-videos-source],
+[data-yl-feed-view-mobile-grid-enabled] {
   /**
    * Elements containing user extension settings rendered in frontend.
    * This exposes the Youlag extension settings to allow `script.js`

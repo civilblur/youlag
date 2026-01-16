@@ -12,6 +12,11 @@ class YoulagExtension extends Minz_Extension {
      */
     protected $yl_related_videos = 'watch_later';
     /**
+    * Set two-column grid layout on viewport width ≤ 600px.
+     * @var bool
+     */
+    protected $yl_feed_view_mobile_grid_enabled = false;
+    /**
      * Enable swipe-to-mini-player by default
      * @var bool
      */
@@ -55,6 +60,7 @@ class YoulagExtension extends Minz_Extension {
         $this->registerHook('nav_entries', array($this, 'setMiniPlayerSwipeEnabled'), 13);
         $this->registerHook('nav_entries', array($this, 'setVideoSortModifiedEnabled'), 14);
         $this->registerHook('nav_entries', array($this, 'setRelatedVideosSource'), 15);
+        $this->registerHook('nav_entries', array($this, 'setFeedViewLayoutMobileGrid'), 16);
 
         // Add Youlag theme and script to all extension pages
         Minz_View::appendStyle($this->getFileUrl('theme.min.css'));
@@ -112,6 +118,9 @@ class YoulagExtension extends Minz_Extension {
         $miniPlayerSwipeEnabled = FreshRSS_Context::userConf()->attributeBool('yl_mini_player_swipe_enabled');
         $this->yl_mini_player_swipe_enabled = ($miniPlayerSwipeEnabled === null) ? true : $miniPlayerSwipeEnabled;
 
+        $feedViewMobileGridEnabled = FreshRSS_Context::userConf()->attributeBool('yl_feed_view_mobile_grid_enabled');
+        $this->yl_feed_view_mobile_grid_enabled = ($feedViewMobileGridEnabled === null) ? false : $feedViewMobileGridEnabled;
+
         $labelsEnabled = FreshRSS_Context::userConf()->attributeBool('yl_video_labels_enabled');
         $this->yl_video_labels_enabled = ($labelsEnabled === null) ? true : $labelsEnabled;
 
@@ -146,9 +155,23 @@ class YoulagExtension extends Minz_Extension {
         return '<div id="yl_category_whitelist"' . $dataAttr . '></div>';
     }
 
+    /**
+     * Pass the related videos source to be read in the DOM via nav_entries hook.
+     * The `script.js` handles the behavior based on this the value in `data-yl-related-videos-source`.
+     * @return string
+     */
     public function setRelatedVideosSource() {
         $source = htmlspecialchars($this->yl_related_videos, ENT_QUOTES);
         return '<div id="yl_related_videos_source" data-yl-related-videos-source="' . $source . '"></div>';
+    }
+
+    /**
+     * Pass the mobile grid layout setting to be read in the DOM via nav_entries hook.
+     * The `script.js` handles the behavior based on this the value in `data-yl-feed-view-mobile-grid-enabled`.
+     */
+    public function setFeedViewLayoutMobileGrid() {
+        $enabled = $this->yl_feed_view_mobile_grid_enabled ? 'true' : 'false';
+        return '<div id="yl_feed_view_mobile_grid_enabled" data-yl-feed-view-mobile-grid-enabled="' . $enabled . '"></div>';
     }
 
     /**
@@ -505,6 +528,10 @@ class YoulagExtension extends Minz_Extension {
             // Related videos source
             $relatedVideosSource = Minz_Request::paramString('yl_related_videos', 'watch_later');
             FreshRSS_Context::userConf()->_attribute('yl_related_videos', $relatedVideosSource);
+
+            // Feed view mobile grid layout
+            $feedViewMobileGridEnabled = Minz_Request::paramBoolean('yl_feed_view_mobile_grid_enabled', false);
+            FreshRSS_Context::userConf()->_attribute('yl_feed_view_mobile_grid_enabled', $feedViewMobileGridEnabled);
 
             // Mini player swipe
             $miniPlayerSwipeEnabled = Minz_Request::paramBoolean('yl_mini_player_swipe_enabled', true);
