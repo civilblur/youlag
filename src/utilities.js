@@ -38,6 +38,7 @@ function updateSidenavLinks() {
   // Update sidenav links for custom links.
 
   // Sort 'Watch later' by 'User modified 9→1': most recently added/modified feed items first.
+  // TODO: refactor hardcoded classList.contains
   isWatchLaterSortModified = document.body.classList.contains('youlag-sort-watch_later--user-modified');
 
   if (!isWatchLaterSortModified) return;
@@ -53,6 +54,8 @@ function updateSidenavLinks() {
 function updateVideoAuthor() {
   // youlag-active: On video cards, use move out the `.author` element outside of the video title.
   // This prevents the author from being truncated in the title line, and is always displayed regardless of title length.
+  
+  // TODO: refactor hardcoded querySelectorAll 
   const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--author)');
   feedCards.forEach(card => {
     const author = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title .author');
@@ -72,6 +75,8 @@ function updateVideoAuthor() {
 
 function updateVideoDateFormat() {
   // youlag-active: On video cards, update to use relative date.
+
+  // TODO: refactor hardcoded querySelectorAl
   const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--date)');
   feedCards.forEach(card => {
     const date = card.querySelector('.flux_header .item.titleAuthorSummaryDate .date time');
