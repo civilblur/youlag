@@ -4,7 +4,6 @@ app.metadata = {
   version: 'X.Y.Z' // Assigned during build.
 }
 
-
 app.breakpoints = {
   mobile_sm_max: 600,
   mobile_max: 840,
@@ -26,6 +25,8 @@ app.modal = {
     relatedContainer: 'youlagRelatedVideosContainer'
   },
   class: {
+    modeMiniplayer: 'youlag-mode--miniplayer',
+    modeFullscreen: 'youlag-mode--fullscreen',
     container: 'youlag-theater-modal-container',
     content: 'youlag-theater-modal-content',
     favorite: 'youlag-favorited'
@@ -57,8 +58,6 @@ app.types = {
   }
 };
 
-
-
 app.state = {
   youlag: {
     init: false, // Whether the Youlag script has finished loading.
@@ -68,9 +67,8 @@ app.state = {
   },
   modal: {
     active: false, // Whether an article/video is currently active. Mini player does not count as active.
-    modeFullscreen: false,
-    modeMiniPlayer: false, // Previously referred to as "modePip"
-    miniPlayerScrollTop: 0 // Keep scroll position of pip-mode feed item when collapsing.
+    mode: null, // 'fullscreen' || 'miniplayer' || null
+    miniplayerScrollTop: 0 // Keep scroll position of miniplayer feed item when collapsing.
   },
   page: {
     layout: null, // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
@@ -88,9 +86,9 @@ let youlagModalNavigatingBack = false; // Prevent multiple history.back() trigge
 let youlagModalPopstateIgnoreNext = false; // Prevent infinite popstate loop for modal
 let youladModalPopstateAdded = false; // The popstate for video modal is only required to be added once to allow closing the modal via the back button. 
 
-let modePip = false;
-let modeFullscreen = true;
-let feedItemActive = false; // Whether an article/video is currently active. Pip mode does not count as active.
+// let modePip = false;
+// let modeFullscreen = true;
+let feedItemActive = false; // Whether an article/video is currently active. Miniplayer mode does not count as active.
 
 
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
@@ -98,4 +96,4 @@ let disableStickyTransitionTitle = false; // Use for temporarily disable the sti
 let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
 let youtubeId;
 let previousPageTitle = null;
-let previousFeedItemScrollTop = 0; // Keep scroll position of pip-mode feed item when collapsing.
+let previousFeedItemScrollTop = 0; // Keep scroll position of miniplayer feed item when collapsing.

@@ -4604,7 +4604,7 @@ a.yl-video-action-button[href=""] {
  * Picture-in-picture mode
  ****************************************/
 
-.youlag-mode--pip {
+.youlag-mode--miniplayer {
   overflow: auto; // Allow scrolling the body when in pip mode.
 
   @media (max-width: 840px) {
@@ -4615,7 +4615,7 @@ a.yl-video-action-button[href=""] {
   }
 }
 
-.youlag-mode--pip #youlagTheaterModal {
+.youlag-mode--miniplayer #youlagTheaterModal {
   overflow: hidden;
   z-index: 50;
   transition: .2s; /* Time to minimize to mini player */

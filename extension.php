@@ -20,7 +20,7 @@ class YoulagExtension extends Minz_Extension {
      * Enable swipe-to-mini-player by default
      * @var bool
      */
-    protected $yl_mini_player_swipe_enabled = true;
+    protected $yl_miniplayer_swipe_enabled = true;
     /**
      * Use video platform labels (Favorite → Watch later, Tags → Playlists)
      * @var bool
@@ -58,7 +58,7 @@ class YoulagExtension extends Minz_Extension {
         $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
         $this->registerHook('nav_entries', array($this, 'setVideoLabels'), 11);
         $this->registerHook('nav_entries', array($this, 'setVideoUnreadBadge'), 12);
-        $this->registerHook('nav_entries', array($this, 'setMiniPlayerSwipeEnabled'), 13);
+        $this->registerHook('nav_entries', array($this, 'setMiniplayerSwipeEnabled'), 13);
         $this->registerHook('nav_entries', array($this, 'setVideoSortModifiedEnabled'), 14);
         $this->registerHook('nav_entries', array($this, 'setRelatedVideosSource'), 15);
         $this->registerHook('nav_entries', array($this, 'setFeedViewLayoutMobileGrid'), 16);
@@ -116,8 +116,8 @@ class YoulagExtension extends Minz_Extension {
             $this->yl_category_whitelist = $val;
         }
 
-        $miniPlayerSwipeEnabled = FreshRSS_Context::userConf()->attributeBool('yl_mini_player_swipe_enabled');
-        $this->yl_mini_player_swipe_enabled = ($miniPlayerSwipeEnabled === null) ? true : $miniPlayerSwipeEnabled;
+        $miniplayerSwipeEnabled = FreshRSS_Context::userConf()->attributeBool('yl_miniplayer_swipe_enabled');
+        $this->yl_miniplayer_swipe_enabled = ($miniplayerSwipeEnabled === null) ? true : $miniplayerSwipeEnabled;
 
         $feedViewMobileGridEnabled = FreshRSS_Context::userConf()->attributeBool('yl_feed_view_mobile_grid_enabled');
         $this->yl_feed_view_mobile_grid_enabled = ($feedViewMobileGridEnabled === null) ? false : $feedViewMobileGridEnabled;
@@ -179,9 +179,9 @@ class YoulagExtension extends Minz_Extension {
      * Pass the mini player swipe setting to be read in the DOM via nav_entries hook.
      * The `script.js` handles the behavior based on this the value in `data-yl-mini-player-swipe-enabled`.
      */
-    public function setMiniPlayerSwipeEnabled() {
-        $enabled = $this->yl_mini_player_swipe_enabled ? 'true' : 'false';
-        return '<div id="yl_mini_player_swipe_enabled" data-yl-mini-player-swipe-enabled="' . $enabled . '"></div>';
+    public function setMiniplayerSwipeEnabled() {
+        $enabled = $this->yl_miniplayer_swipe_enabled ? 'true' : 'false';
+        return '<div id="yl_miniplayer_swipe_enabled" data-yl-mini-player-swipe-enabled="' . $enabled . '"></div>';
     }
 
     /**
@@ -535,8 +535,8 @@ class YoulagExtension extends Minz_Extension {
             FreshRSS_Context::userConf()->_attribute('yl_feed_view_mobile_grid_enabled', $feedViewMobileGridEnabled);
 
             // Mini player swipe
-            $miniPlayerSwipeEnabled = Minz_Request::paramBoolean('yl_mini_player_swipe_enabled', true);
-            FreshRSS_Context::userConf()->_attribute('yl_mini_player_swipe_enabled', $miniPlayerSwipeEnabled);
+            $miniplayerSwipeEnabled = Minz_Request::paramBoolean('yl_miniplayer_swipe_enabled', true);
+            FreshRSS_Context::userConf()->_attribute('yl_miniplayer_swipe_enabled', $miniplayerSwipeEnabled);
 
             // Video platform labels
             $labelsEnabled = Minz_Request::paramBoolean('yl_video_labels_enabled', true);

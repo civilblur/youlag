@@ -8,8 +8,8 @@ function createModalVideo(data) {
     modal.innerHTML = `<div class="${app.modal.class.container}"></div>`;
     document.body.appendChild(modal);
 
-    if (!modePip && modeFullscreen) {
-      feedItemActive = true;
+    if (app.state.modal.mode === 'fullscreen') {
+      app.state.modal.active = true;
     }
   }
   
@@ -32,11 +32,11 @@ function createModalVideo(data) {
     ? modal.classList.add('youlag-modal-feed-item--has-thumbnail')
     : modal.classList.add('youlag-modal-feed-item--no-thumbnail');
 
-  // Check if user settings allow swipe-to-pip mode, setup if enabled.
-  const miniPlayerSwipeEnabledElement = document.querySelector('#yl_mini_player_swipe_enabled');
-  const miniPlayerSwipeEnabled = miniPlayerSwipeEnabledElement?.getAttribute('data-yl-mini-player-swipe-enabled') === 'true';
-  if (miniPlayerSwipeEnabled) {
-    setupSwipeToPipMode(modal);
+  // Check if user settings allow swipe-to-miniplayer mode, setup if enabled.
+  const miniplayerSwipeEnabledElement = document.querySelector('#yl_miniplayer_swipe_enabled');
+  const miniplayerSwipeEnabled = miniplayerSwipeEnabledElement?.getAttribute('data-yl-mini-player-swipe-enabled') === 'true';
+  if (miniplayerSwipeEnabled) {
+    setupSwipeToMiniplayer(modal);
   }
 
   function getEmbedUrl(source) {
@@ -58,6 +58,7 @@ function createModalVideo(data) {
   const isMobile = window.innerWidth <= app.breakpoints.desktop_md_max; 
   const isArticle = !data.youtubeId;
   const shouldCollapseDescription = isMobile && !isArticle && getRelatedVideoSetting() !== 'none';
+  console.log('shouldCollapseDescription:', shouldCollapseDescription);
 
   setPageTitle(data.title);
 
@@ -154,9 +155,13 @@ function createModalVideo(data) {
   `;
 
   const videoDescContainer = modal.querySelector('.youlag-video-description-container');
-  if (videoDescContainer && videoDescContainer.offsetHeight <= 90 && !modePip) {
+  if (
+      videoDescContainer && 
+      videoDescContainer.offsetHeight <= 90 &&
+      app.state.modal.mode !== 'miniplayer'
+    ) {
     // Once the video description has been populated, check if the height is small enough to not need collapsing.
-    // Height is 0 when video is restored into pip mode, thus, ignore that state and keep as is.
+    // Height is 0 when video is restored into miniplayer mode, thus, ignore that state and keep as is.
     videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
   }
 
@@ -256,14 +261,14 @@ function createModalVideo(data) {
     }
   }
   else {
-    // When article is in pip mode, and the next triggered item is a video, ensure the text class is removed.
+    // When article is in miniplayer mode, and the next triggered item is a video, ensure the text class is removed.
     modal.classList.remove('youlag-modal-feed-item--text');
   }
 
   appendRelatedVideos(data.entryId, data.authorId);
 
   container.querySelector(`#${app.modal.id.close}`)?.addEventListener('click', closeModalVideo);
-  container.querySelector(`#${app.modal.id.minimize}`)?.addEventListener('click', togglePipMode);
+  container.querySelector(`#${app.modal.id.minimize}`)?.addEventListener('click', toggleModeMiniplayer);
   container.querySelector(`#${app.modal.id.favorite}`)?.addEventListener('click', (e) => {
     // Toggle favorites state in background.
     e.preventDefault();
@@ -275,7 +280,9 @@ function createModalVideo(data) {
     createTagsModal(data.entryId, await getItemTags(data.entryId));
   });
 
-  if (shouldCollapseDescription && videoDescContainer.offsetHeight > 90 || shouldCollapseDescription && modePip) {
+  if (
+    shouldCollapseDescription && videoDescContainer.offsetHeight > 90 || 
+    shouldCollapseDescription && app.state.modal.mode === 'miniplayer') {
     // Setup the click listener to expand description only once.
 
     if (videoDescContainer) {
@@ -293,7 +300,7 @@ function createModalVideo(data) {
   }
 
   const escHandler = (event) => {
-    if (event.key === 'Escape' && modeFullscreen) {
+    if (event.key === 'Escape' && app.state.modal.mode === 'fullscreen') {
       closeModalVideo();
     }
   };
@@ -305,13 +312,13 @@ function createModalVideo(data) {
   });
 
   // Push a new state to the history, to allow modal close when routing back.
-  if (modeFullscreen && !youladModalPopstateAdded) {
+  if (app.state.modal.mode === 'fullscreen' && !youladModalPopstateAdded) {
     history.pushState({ modalOpen: true }, '', '');
     youladModalPopstateAdded = true;
   }
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && modeFullscreen) {
+    if (event.key === 'Escape' && app.state.modal.mode === 'fullscreen') {
       closeModalVideo();
     }
   });
@@ -331,7 +338,7 @@ function closeModalVideo() {
   if (modal) modal.remove();
 
   youladModalPopstateAdded = false;
-  if (!youlagModalNavigatingBack && history.state && history.state.modalOpen && (modeFullscreen || !modePip)) {
+  if (!youlagModalNavigatingBack && history.state && history.state.modalOpen && (app.state.modal.mode === 'fullscreen')) {
     // Only trigger history.back() once, and set the ignore flags.
     youlagModalNavigatingBack = true;
     youlagModalPopstateIgnoreNext = true;
@@ -341,7 +348,7 @@ function closeModalVideo() {
     history.replaceState(null, '', location.href);
   }
   feedItemActive = false;
-  setModePip(false);
+  setModeMiniplayer(false);
   setModeFullscreen(false);
   setPageTitle();
   clearVideoQueue();
@@ -390,14 +397,14 @@ function closeArticle(event) {
   }
 }
 
-function togglePipMode() {
-  if (modePip) {
-    setModePip(false);
+function toggleModeMiniplayer() {
+  if (app.state.modal.mode === 'miniplayer') {
+    setModeMiniplayer(false, 'fullscreen');
     setModeFullscreen(true);
 
     if (!youladModalPopstateAdded) {
       /**
-       * When `restoreVideoQueue()` opens in pip mode, the popstate is not yet added.
+       * When `restoreVideoQueue()` opens in miniplayer mode, the popstate is not yet added.
        * Thus, if expanding back to fullscreen mode, we need to add it here to avoid routing back a page,
        * and instead just close the modal.
        */
@@ -406,19 +413,19 @@ function togglePipMode() {
     }
   }
   else {
-    setModePip(true);
-    setModeFullscreen(false);
+    console.log('Collapsing to miniplayer mode');
+    setModeMiniplayer(true);
+    setModeFullscreen(false, 'miniplayer');
   }
 }
 
-function setModePip(state) {
+function setModeMiniplayer(state, prevState) {
   const modal = getModalVideo();
 
   if (state === true) {
     modal ? (previousFeedItemScrollTop = modal.scrollTop) : null;
-    document.body.classList.add('youlag-mode--pip');
-    modePip = true;
-    modeFullscreen = false;
+    document.body.classList.add(app.modal.class.modeMiniplayer);
+    app.state.modal.mode = 'miniplayer';
     feedItemActive = false; // Pip mode is not considered active.
     modal ? modal.scrollTo({ top: 0 }) : null;
   }
@@ -438,8 +445,8 @@ function setModePip(state) {
         }
       }, 500);
     }
-    document.body.classList.remove('youlag-mode--pip');
-    modePip = false;
+    document.body.classList.remove(app.modal.class.modeMiniplayer);
+    app.state.modal.mode = prevState || null;
   }
   try {
     const stored = localStorage.getItem('youlagVideoQueue');
@@ -451,17 +458,16 @@ function setModePip(state) {
   } catch (e) { }
 }
 
-function setModeFullscreen(state) {
+function setModeFullscreen(state, prevState) {
   if (state === true) {
-    document.body.classList.add('youlag-mode--fullscreen');
-    document.body.classList.remove('youlag-mode--pip');
-    modeFullscreen = true;
-    modePip = false;
+    document.body.classList.add(app.modal.class.modeFullscreen);
+    document.body.classList.remove(app.modal.class.modeMiniplayer);
+    app.state.modal.mode = 'fullscreen';
     feedItemActive = true;
   }
   else if (state === false) {
-    document.body.classList.remove('youlag-mode--fullscreen');
-    modeFullscreen = false;
+    document.body.classList.remove(app.modal.class.modeFullscreen);
+    app.state.modal.mode = prevState || null;
     feedItemActive = false;
   }
 }
@@ -554,7 +560,7 @@ function createTagsModal(entryId, tags) {
 
 }
 
-function setupSwipeToPipMode(modal) {
+function setupSwipeToMiniplayer(modal) {
   // Allow video modal overscroll to enter pip mode on touch devices.
   if (modal._swipeToPipInitialized) return;
 
@@ -582,7 +588,7 @@ function setupSwipeToPipMode(modal) {
       const endY = e.changedTouches[0].clientY;
       if (endY - touchStartY > 40 && modal.scrollTop === 0) {
         // Overscroll (pull-down) detected at top, toggle pip mode.
-        togglePipMode(true);
+        toggleModeMiniplayer(true);
       }
     }
     touchStartY = null;
@@ -639,7 +645,7 @@ function setupClickListener() {
           return;
         }
 
-        if (modeFullscreen && getModalVideo()) {
+        if (app.state.modal.mode === 'fullscreen' && getModalVideo()) {
           // Video in fullscreen mode should be closed on popstate and not navigate back a page.
           youlagModalNavigatingBack = false;
           closeModalVideo();
@@ -652,7 +658,7 @@ function setupClickListener() {
           return;
         }
 
-        if (modePip) {
+        if (app.state.modal.mode === 'miniplayer') {
           // Allow normal browser navigation when in pip mode.
           youlagModalPopstateIgnoreNext = true;
           history.back();
@@ -737,11 +743,11 @@ function setupClickListener() {
         // Ignore hash-only routes, e.g. when clicking dropdown menus that routes to e.g. `#dropdown-configure`.
         return;
       }
-      if (modePip && getOpenArticle()) {
+      if (app.state.modal.mode === 'miniplayer' && getOpenArticle()) {
         closeArticle(event);
         return;
       }
-      if (modePip && !getOpenArticle()) {
+      if (app.state.modal.mode === 'miniplayer' && !getOpenArticle()) {
         history.back();
       }
       else {
@@ -852,7 +858,7 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
     setVideoQueue(data);
   }
 
-  if (!modePip) setModeFullscreen(true);
+  if (app.state.modal.mode !== 'miniplayer') setModeFullscreen(true);
   createModalVideo(data);
 }
 
@@ -877,7 +883,7 @@ function setVideoQueue(videoObject) {
 
   const entryId = videoObject.entryId;
   const foundIndex = queue.findIndex(v => v.entryId === entryId);
-  const isPipMode = document.body.classList.contains('youlag-mode--pip');
+  const isPipMode = document.body.classList.contains(app.modal.class.modeMiniplayer);
   if (foundIndex === -1) {
     queue.push(videoObject);
     activeIndex = queue.length - 1;
@@ -924,7 +930,7 @@ function restoreVideoQueue() {
   if (!isVideoPage) return;
 
   if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.activeIndex === 'number' && queueObj.queue.length > 0) {
-    setModePip(true); // Restored video queue always opens in PiP mode.
+    setModeMiniplayer(true); // Restored video queue always opens in miniplayer mode.
     handleActiveItemVideoMode(queueObj, true);
   }
 
