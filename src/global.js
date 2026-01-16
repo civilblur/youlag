@@ -83,6 +83,3 @@ app.state = {
     pathPrev: window.location.pathname + window.location.search // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
   }
 };
-
-let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
-let youtubeId;

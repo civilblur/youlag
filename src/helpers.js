@@ -68,7 +68,6 @@ function extractFeedItemData(feedItem) {
     // Fallback to see if user has installed the YouTube video feed/Invidious video feed extension, as they create a different DOM structure.
     extractedVideoUrl = feedItem.querySelector('.enclosure-content a[href*="youtube"], .enclosure-content a[href*="/watch?v="]');
     extractedVideoUrl = sanitizeExtractedVideoUrl(extractedVideoUrl);
-    youtubeExtensionInstalled = extractedVideoUrl ? true : false;
   }
   const isVideoFeedItem = extractedVideoUrl !== '';
   const videoDescriptionExists = feedItem.querySelector('.enclosure-description') !== null;

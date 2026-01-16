@@ -10,7 +10,7 @@ function collapseBackgroundFeedItem(target) {
   let isActive = feedItem.classList.contains('active');
   const iframes = feedItem.querySelectorAll('iframe');
 
-  if (iframes || youtubeExtensionInstalled) {
+  if (iframes) {
     iframes.forEach(iframe => {
       // Disable iframes to prevent autoplay.
       const src = iframe.getAttribute('src');
