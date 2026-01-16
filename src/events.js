@@ -315,8 +315,8 @@ function setVideoLabelsTitle(pageClass, newTitle) {
 }
 
 function setupNavMenu() {
-  if (app.state.youlag.navMenuInit) return;
-  app.state.youlag.navMenuInit = true;
+  if (app.state.youlag.toolbarInit) return;
+  app.state.youlag.toolbarInit = true;
 
   const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
   const ylNavMenuContainer = document.getElementById('yl_nav_menu_container');
@@ -387,9 +387,9 @@ function setupNavMenu() {
     if (toggleBtn && document.body.contains(ylNavMenuContainer)) {
       const isOpen = ylCategoryToolbar.classList.toggle('yl-nav-menu-container--open');
       ylNavMenu.hidden = !isOpen;
-      app.state.page.navMenuSticky = true;
+      app.state.page.toolbarSticky = true;
       setTimeout(() => {
-        app.state.page.navMenuSticky = false;
+        app.state.page.toolbarSticky = false;
       }, 100);
       e.preventDefault();
       e.stopPropagation();
@@ -398,9 +398,9 @@ function setupNavMenu() {
     const menuLink = e.target.closest('#yl_nav_menu_container_content a');
     if (menuLink && document.body.contains(ylNavMenuContainer)) {
       // Allow mobile dropdown to expand without causing scroll events to hide the toolbar. 
-      app.state.page.navMenuSticky = true;
+      app.state.page.toolbarSticky = true;
       setTimeout(() => {
-        app.state.page.navMenuSticky = false;
+        app.state.page.toolbarSticky = false;
       }, 100);
     }
   });
@@ -413,7 +413,7 @@ function setupNavMenuStickyScroll(ylCategoryToolbar) {
   let ignoreNextScroll = false; // 'Configure view' toggling expands ylCategoryToolbar, causing unwanted scroll events. Prevent those.  
 
   function setStickyVisibility(show) {
-    if (app.state.page.navMenuSticky) return;
+    if (app.state.page.toolbarSticky) return;
     ylCategoryToolbar.classList.toggle('sticky-visible', show);
     ylCategoryToolbar.classList.toggle('sticky-hidden', !show);
   }

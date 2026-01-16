@@ -384,7 +384,7 @@ function closeArticle(event) {
 
     // Prevent sticky transition title from showing when auto-scrolling.
     const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
-    app.state.page.navMenuSticky = true;
+    app.state.page.toolbarSticky = true;
     ylCategoryToolbar.classList.remove('sticky-visible');
     ylCategoryToolbar.classList.add('sticky-hidden');
 
@@ -396,7 +396,7 @@ function closeArticle(event) {
     event?.stopPropagation?.();
 
     setTimeout(() => {
-      app.state.page.navMenuSticky = false;
+      app.state.page.toolbarSticky = false;
     }, 50);
 
     app.state.modal.active = false;
@@ -614,7 +614,7 @@ function setupClickListener() {
     if (streamContainer) {
       streamContainer.addEventListener('click', (event) => {
 
-        const target = event.target.closest('div[data-feed]');
+        const target = event.target.closest(app.frss.el.entry);
         if (!target) return;
         
         // Do not expand video modal if clicking on the card action buttons.
@@ -678,7 +678,7 @@ function setupClickListener() {
     // youlag-inactive: Article context.
     if (streamContainer) {
       streamContainer.addEventListener('click', function (event) {
-        const target = event.target.closest('div[data-feed]');
+        const target = event.target.closest(app.frss.el.entry);
         if (!target) return;
 
         // Do not expand article and perform e.g. auto-scroll if clicking on the card action buttons.
@@ -701,7 +701,6 @@ function setupClickListener() {
         const scrollToTarget = () => {
           const rect = target.getBoundingClientRect();
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          console.log('rect.top:', rect.top, 'scrollTop:', scrollTop);
           let offset = 0;
           if (window.getComputedStyle) {
             const root = document.documentElement;
@@ -712,8 +711,8 @@ function setupClickListener() {
         };
 
         // Prevent sticky category title from showing when auto-scrolling.
-        const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
-        app.state.page.navMenuSticky = true;
+        const ylCategoryToolbar = document.getElementById(app.modal.id.toolbar);
+        app.state.page.toolbarSticky = true;
         ylCategoryToolbar.classList.remove('sticky-visible');
         ylCategoryToolbar.classList.add('sticky-hidden');
 
@@ -732,7 +731,7 @@ function setupClickListener() {
             }
             else {
               setTimeout(() => {
-                app.state.page.navMenuSticky = false;
+                app.state.page.toolbarSticky = false;
               }, 50);
             }
           };

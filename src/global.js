@@ -13,6 +13,7 @@ app.breakpoints = {
 
 app.modal = {
   id: {
+    // TODO: Unify formatting for id and class names
     root: 'youlagTheaterModal',
     close: 'youlagCloseModal',
     minimize: 'youlagMinimizeModal',
@@ -23,7 +24,8 @@ app.modal = {
     tagsContainer: 'youlagTagsModal',
     tagsClose: 'yl-tags-modal-close',
     moreContainer: 'youlagVideoMoreContentContainer',
-    relatedContainer: 'youlagRelatedVideosContainer'
+    relatedContainer: 'youlagRelatedVideosContainer',
+    toolbar: 'yl_category_toolbar', // TODO: Not in modal, create new object for generic 'page'
   },
   class: {
     typeArticle: 'youlag-modal-feed-item--text',
@@ -88,7 +90,7 @@ app.types = {
 app.state = {
   youlag: {
     init: false,                // Whether the Youlag script has initialized.
-    navMenuInit: false,         // The nav_menu displaying the feed category title and view options.
+    toolbarInit: false,         // The toolbar (nav_menu) displaying the feed category title and view options.
     clickListenerInit: false,
     restoreVideoInit: false,    // If miniplayer was restored after page refresh.
   },
@@ -102,7 +104,7 @@ app.state = {
   page: {
     layout: null,               // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
     titlePrev: null,
-    navMenuSticky: true,        // Use for temporarily disabling the sticky nav_menu, e.g. when using programmatic scrolling.
+    toolbarSticky: true,        // Use for temporarily disabling the sticky toolbar (nav_menu), e.g. when using programmatic scrolling.
   },
   popstate: {
     allowBack: true,            // Prevent multiple history.back() triggers.
