@@ -29,6 +29,8 @@ app.modal = {
     modeFullscreen: 'youlag-mode--fullscreen',
     container: 'youlag-theater-modal-container',
     content: 'youlag-theater-modal-content',
+    descContainer: 'youlag-video-description-container',
+    descContainerCollapsed: 'youlag-video-description-container--collapsed',
     favorite: 'youlag-favorited'
   }
 };

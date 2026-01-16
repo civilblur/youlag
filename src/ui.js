@@ -137,7 +137,7 @@ function createModalVideo(videoObject) {
 
         <div id="${app.modal.id.moreContainer}">
           <div
-            class="youlag-video-description-container ${shouldCollapseDescription ? 'youlag-video-description-container--collapsed' : ''}">
+            class="${app.modal.class.descContainer} ${shouldCollapseDescription ? app.modal.class.descContainerCollapsed : ''}">
             ${videoObject.video_description}
           </div>
           <div id="${app.modal.id.relatedContainer}" class="youlag-video-related-container display-none">
@@ -153,7 +153,7 @@ function createModalVideo(videoObject) {
     </div>
   `;
 
-  const videoDescContainer = modal.querySelector('.youlag-video-description-container');
+  const videoDescContainer = modal.querySelector(`.${app.modal.class.descContainer}`);
   if (
       videoDescContainer && 
       videoDescContainer.offsetHeight <= 90 &&
@@ -161,7 +161,7 @@ function createModalVideo(videoObject) {
     ) {
     // Once the video description has been populated, check if the height is small enough to not need collapsing.
     // Height is 0 when video is restored into miniplayer mode, thus, ignore that state and keep as is.
-    videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
+    videoDescContainer.classList.remove(app.modal.class.descContainerCollapsed);
   }
 
   function getRelatedVideoSetting() {
@@ -286,7 +286,7 @@ function createModalVideo(videoObject) {
 
     if (videoDescContainer) {
       const descExpand = function () {
-        videoDescContainer.classList.remove('youlag-video-description-container--collapsed');
+        videoDescContainer.classList.remove(app.modal.class.descContainerCollapsed);
         videoDescContainer.removeEventListener('click', descExpand);
       };
       videoDescContainer.addEventListener('click', descExpand);
@@ -417,7 +417,6 @@ function toggleModeMiniplayer() {
     }
   }
   else {
-    console.log('Collapsing to miniplayer mode');
     setModeMiniplayer(true);
     setModeFullscreen(false, 'miniplayer');
   }
