@@ -57,7 +57,7 @@ function createModalVideo(data) {
   const defaultEmbedUrl = getEmbedUrl(videoSourceDefaultNormalized);
 
   // Determine device (viewport size), to collapse video description on mobile.
-  const isMobile = window.innerWidth <= breakpoints.desktop_md_max; 
+  const isMobile = window.innerWidth <= app.breakpoints.desktop_md_max; 
   const isArticle = !data.youtubeId;
   const shouldCollapseDescription = isMobile && !isArticle && getRelatedVideoSetting() !== 'none';
 

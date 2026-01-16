@@ -28,43 +28,6 @@ const breakpoints = {
   desktop_min: 841,
   desktop_md_max: 960,
 };
-// const youlagModalVideoRootIdName = `youlagTheaterModal`;
-// const modalVideoContainerClassName = `youlag-theater-modal-container`;
-// const modalVideoContentClassName = `youlag-theater-modal-content`;
-// const modalCloseIdName = `youlagCloseModal`;
-// const modalMinimizeIdName = `youlagMinimizeModal`;
-// const modalVideoSourceIdName = `youlagVideoSource`;
-// const modalVideoSourceDefaultIdName = `youlagVideoSourceDefault`;
-// const modalToggleFavoriteIdName = `youlagToggleFavorite`;
-// const modalFavoriteClassName = `youlag-favorited`;
-// const modalTagsManageIdName = `youlagTagsManage`;
-// const modalTagsContainerIdName = `youlagTagsModal`;
-// const modalVideoMoreContentContainerIdName = `youlagVideoMoreContentContainer`;
-// const modalRelatedVideosContainerIdName = `youlagRelatedVideosContainer`;
-const videoObjectType = {
-  // Workaround for lack of TypeScript types in vanilla js.
-  entryId: null,
-  author: '',
-  author_filter_url: '',
-  website_name: '',
-  favicon: '',
-  favorite_toggle_url: '',
-  favorited: false,
-  thumbnail: '',
-  title: '',
-  external_link: '',
-  date: '',
-  isVideoFeedItem: false,
-  youtubeId: '',
-  youtube_embed_url: '',
-  video_embed_url: '',
-  video_invidious_instance_1: '',
-  video_source_default: 'youtube',
-  video_description: '<div class="youlag-video-description-content"></div>',
-  video_youtube_url: '',
-  video_invidious_redirect_url: ''
-};
-
 
 /*****************************************
  * BEGIN: "YOULAG EXTENSION SETTINGS PAGE"
@@ -1654,7 +1617,7 @@ async function fetchRelatedItems(category = 'watch_later', order = 'rand', limit
     const mapped = items.map((item) => {
       const entryId = item.getAttribute('data-entry') || '';
       return {
-        ...videoObjectType, // Sets default values for the other non-assigned properties in videoObject
+        ...app.types.videoObject, // Sets default values for the other non-assigned properties in videoObject
         feedItem: item, // Original DOM element reference, utilized later by `extractFeedItemData()` when clicked.
         
         // The minimal data is used for displaying related videos.
