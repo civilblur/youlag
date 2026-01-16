@@ -5,7 +5,6 @@ let youladModalPopstateAdded = false; // The popstate for video modal is only re
 let youlagScriptLoaded = false;
 let youlagNavMenuInitialized = false;
 let youlagClickListenersInitialized = false;
-let youlagTouchListenersInitialized = false;
 let youlagRestoreVideoQueueRan = false;
 let youlagActive = true; // Whether Youlag is active on this page based on user category whitelist setting.
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
@@ -889,11 +888,11 @@ function setModeFullscreen(state) {
 
 function setupSwipeToPipMode(modal) {
   // Allow video modal overscroll to enter pip mode on touch devices.
-  if (youlagTouchListenersInitialized) return;
+  if (modal._swipeToPipInitialized) return;
 
   let touchStartY = null;
   let overscrollActive = false;
-  
+
   modal.addEventListener('touchstart', function (e) {
     if (modal.scrollTop === 0 && e.touches.length === 1) {
       touchStartY = e.touches[0].clientY;
@@ -922,7 +921,7 @@ function setupSwipeToPipMode(modal) {
     overscrollActive = false;
   }, { passive: false });
 
-  youlagTouchListenersInitialized = true;
+  modal._swipeToPipInitialized = true;
 }
 
 function setupClickListener() {
