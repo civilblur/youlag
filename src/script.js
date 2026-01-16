@@ -1909,30 +1909,15 @@ function updateVideoDateFormat() {
   });
 }
 
-function observeStreamNewItems() {
+function onNewFeedItems() {
   // Run actions based on if there's new items added to the feed stream.
 
-  // TODO: Refactor to use event listener 'freshrss:load-more' instead.
-
-  const stream = document.getElementById('stream');
-  if (!stream) return;
-  const observer = new MutationObserver((mutationsList) => {
-    let hasNewFeedItems = false;
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        hasNewFeedItems = true;
-        break;
-      }
+  document.addEventListener('freshrss:load-more', function () {
+    if (youlagActive) {
+      updateVideoAuthorPlacement();
+      updateVideoDateFormat();
     }
-    if (hasNewFeedItems) {
-      if (youlagActive) {
-        // Only affect youlag-active (video) pages.
-        updateVideoAuthorPlacement();
-        updateVideoDateFormat();
-      }
-    }
-  });
-  observer.observe(stream, { childList: true, subtree: true });
+  }, false);
 }
 
 async function fetchRelatedItems(category = 'watch_later', order = 'rand', limit = 10) {
@@ -2012,7 +1997,7 @@ function init() {
       updateVideoAuthorPlacement();
       updateVideoDateFormat();
     }
-    observeStreamNewItems()
+    onNewFeedItems()
     restoreVideoQueue();
   }
   updateSidenavLinks();

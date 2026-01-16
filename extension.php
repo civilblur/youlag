@@ -51,6 +51,7 @@ class YoulagExtension extends Minz_Extension {
      * Initialize this extension
      */
     public function init() {
+        // TODO: Refactor to pass data with `Minz_HookType::JsVars` instead.
         $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
         $this->registerHook('nav_entries', array($this, 'createFreshRssLogo'), 6);
         $this->registerHook('nav_entries', array($this, 'createCategoryTitle'), 7);
