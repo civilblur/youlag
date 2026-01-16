@@ -428,7 +428,7 @@ function setModeMiniplayer(state, prevState) {
   const modal = getModalVideo();
 
   if (state === true) {
-    modal ? (previousFeedItemScrollTop = modal.scrollTop) : null;
+    modal ? (app.state.modal.miniplayerScrollTop = modal.scrollTop) : null;
     document.body.classList.add(app.modal.class.modeMiniplayer);
     app.state.modal.mode = 'miniplayer';
     app.state.modal.active = false; // Miniplayer mode is not considered active.
@@ -440,13 +440,13 @@ function setModeMiniplayer(state, prevState) {
       const onTransitionEnd = () => {
         transitionRan = true;
         // Scroll back to previous position when exiting pip mode.
-        modal.scrollTo({ top: previousFeedItemScrollTop, behavior: 'smooth' });
+        modal.scrollTo({ top: app.state.modal.miniplayerScrollTop, behavior: 'smooth' });
       };
       modal.addEventListener('transitionend', onTransitionEnd, { once: true });
       setTimeout(() => {
         // Fallback if transition event is not detected.
         if (!transitionRan) {
-          modal.scrollTo({ top: previousFeedItemScrollTop, behavior: 'smooth' });
+          modal.scrollTo({ top: app.state.modal.miniplayerScrollTop, behavior: 'smooth' });
         }
       }, 500);
     }
@@ -838,7 +838,7 @@ function setupTagsDropdownOverride() {
 function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) {
   // Handles activation of a feed item (video or article) and opens the video modal.
   
-  previousFeedItemScrollTop = 0;
+  app.state.modal.miniplayerScrollTop = 0;
   let data;
 
   if (isVideoObject) {

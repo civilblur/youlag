@@ -85,4 +85,4 @@ let youtubeExtensionInstalled = false; // Parse content differently in case user
 let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
 let lastPathnameSearch = window.location.pathname + window.location.search; // Track last non-hash URL to ignore popstate events that are only hash changes, e.g. `#dropdown-configure`, `#close`, etc.
 let youtubeId;
-let previousFeedItemScrollTop = 0; // Keep scroll position of miniplayer feed item when collapsing.
+// let previousFeedItemScrollTop = 0; // Keep scroll position of miniplayer feed item when collapsing.
