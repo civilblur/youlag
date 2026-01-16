@@ -383,7 +383,7 @@ function closeArticle(event) {
 
     // Prevent sticky transition title from showing when auto-scrolling.
     const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
-    disableStickyTransitionTitle = true;
+    app.state.page.navMenuSticky = true;
     ylCategoryToolbar.classList.remove('sticky-visible');
     ylCategoryToolbar.classList.add('sticky-hidden');
 
@@ -395,7 +395,7 @@ function closeArticle(event) {
     event?.stopPropagation?.();
 
     setTimeout(() => {
-      disableStickyTransitionTitle = false;
+      app.state.page.navMenuSticky = false;
     }, 50);
 
     app.state.modal.active = false;
@@ -710,7 +710,7 @@ function setupClickListener() {
 
         // Prevent sticky category title from showing when auto-scrolling.
         const ylCategoryToolbar = document.getElementById('yl_category_toolbar');
-        disableStickyTransitionTitle = true;
+        app.state.page.navMenuSticky = true;
         ylCategoryToolbar.classList.remove('sticky-visible');
         ylCategoryToolbar.classList.add('sticky-hidden');
 
@@ -729,7 +729,7 @@ function setupClickListener() {
             }
             else {
               setTimeout(() => {
-                disableStickyTransitionTitle = false;
+                app.state.page.navMenuSticky = false;
               }, 50);
             }
           };

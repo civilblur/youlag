@@ -68,7 +68,8 @@ app.state = {
   modal: {
     active: false, // Whether an article/video is currently active. Mini player does not count as active.
     mode: null, // 'fullscreen' || 'miniplayer' || null
-    miniplayerScrollTop: 0 // Keep scroll position of miniplayer feed item when collapsing.
+    miniplayerScrollTop: 0, // Keep scroll position of miniplayer feed item when collapsing.
+    youtubeId: null
   },
   page: {
     layout: null, // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
@@ -84,5 +85,4 @@ app.state = {
 };
 
 let youtubeExtensionInstalled = false; // Parse content differently in case user has the FreshRSS "YouTube Video Feed" extension enabled.
-// let disableStickyTransitionTitle = false; // Use for temporarily disable the sticky transition title, e.g. when using programmatic scrolling.
 let youtubeId;
