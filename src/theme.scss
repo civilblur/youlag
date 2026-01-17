@@ -4256,6 +4256,13 @@ body {
     display: flex;
     gap: var(--yl-m-2xs);
     flex-wrap: wrap;
+
+    .icon.loading,
+    .icon.spinner {
+      background: var(--yl-loading-spinner-background-image) center center no-repeat;
+      background-size: 1rem; /* Allow `var(--yl-loading-spinner-background-image)` to size correctly for the button containers. */
+      object-position: -9999px 0; /* Hide FreshRSS' default loading icon by positioning it x-coordinate: -9999px. */
+    }
   }
 }
 
