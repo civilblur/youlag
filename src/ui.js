@@ -236,7 +236,7 @@ function createModalVideo(videoObject) {
         if (modal) {
           modal.scrollTo({ top: 0 });
         }
-        handleActiveItemVideoMode(feedItem);
+        handleActiveVideo(feedItem);
       }
     });
 
@@ -632,7 +632,7 @@ function setupClickListener() {
         ].join(', ');
         if (event.target.closest(actionButtons)) return;
   
-        handleActiveItemVideoMode(event);
+        handleActiveVideo(event);
         // Ensure the native freshrss view does not expand the feed item when clicked.
         if (target.classList.contains('active')) {
           collapseBackgroundFeedItem(target);
@@ -698,7 +698,7 @@ function setupClickListener() {
         if (event.target.closest(actionButtons)) return;
 
         if (!app.state.modal.active) {
-          handleActiveItemArticle(event);
+          handleActiveArticle(event);
           app.state.modal.active = true;
         }
 
@@ -847,7 +847,7 @@ function setupTagsDropdownOverride() {
   }, true);
 }
 
-function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) {
+function handleActiveVideo(targetOrEventOrVideo, isVideoObject = false) {
   // Handles activation of a feed item (video or article) and opens the video modal.
   
   app.state.modal.miniplayerScrollTop = 0;
@@ -875,7 +875,7 @@ function handleActiveItemVideoMode(targetOrEventOrVideo, isVideoObject = false) 
   createModalVideo(videoObject);
 }
 
-function handleActiveItemArticle(event) {
+function handleActiveArticle(event) {
   history.pushState({ articleOpen: true }, '', '');
 }
 
@@ -944,7 +944,7 @@ function restoreVideoQueue() {
 
   if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.queue_active_index === 'number' && queueObj.queue.length > 0) {
     setModeMiniplayer(true); // Restored video queue always opens in miniplayer mode.
-    handleActiveItemVideoMode(queueObj, true);
+    handleActiveVideo(queueObj, true);
   }
 
   app.state.youlag.restoreVideoInit = true;
