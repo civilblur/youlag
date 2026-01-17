@@ -965,10 +965,22 @@ function isHashUrl() {
 function toggleFavorite(url, container, feedItemEl) {
   console.log('Toggling favorite status via URL:', url);
   const favoriteButton = container.querySelector(`#${app.modal.id.favorite}`);
+  const favoriteButtonIcon = favoriteButton ? favoriteButton.querySelector('.youlag-favorited-icon') : null;
   if (!favoriteButton) return;
+
+  // Show loading spinner while processing
+  favoriteButtonIcon.style.backgroundImage = 'url("../themes/icons/spinner.svg")';
+  favoriteButtonIcon.style.filter = 'invert(1)';
+  favoriteButtonIcon.style.backgroundSize = '1.2rem';
 
   fetch(url, { method: 'GET' })
     .then(response => {
+
+      // Remove loading spinner
+      favoriteButtonIcon.style.backgroundImage = '';
+      favoriteButtonIcon.style.filter = '';
+      favoriteButtonIcon.style.backgroundSize = '';
+      
       if (response.ok) {
         // Toggle favorite classes and icons.
         const currentlyTrue = favoriteButton.classList.contains(`${app.modal.class.favorite}--true`);
@@ -996,5 +1008,13 @@ function toggleFavorite(url, container, feedItemEl) {
         console.error('Failed to toggle favorite status');
       }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+      // Remove loading spinner and filter on error
+      favoriteButton.style.backgroundImage = '';
+      favoriteButton.style.filter = '';
+      favoriteButton.style.backgroundRepeat = '';
+      favoriteButton.style.backgroundPosition = '';
+      favoriteButton.style.backgroundSize = '';
+      console.error('Error:', error);
+    });
 }
