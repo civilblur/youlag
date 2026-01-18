@@ -48,6 +48,7 @@ app.breakpoints = {
 app.modal = {
   id: {
     // TODO: Unify formatting for id and class names
+    
     root: 'youlagTheaterModal',
     close: 'youlagCloseModal',
     minimize: 'youlagMinimizeModal',
@@ -59,7 +60,7 @@ app.modal = {
     tagsClose: 'yl-tags-modal-close',
     moreContainer: 'youlagVideoMoreContentContainer',
     relatedContainer: 'youlagRelatedVideosContainer',
-    toolbar: 'yl_category_toolbar', // TODO: Not in modal, create new object for generic 'page'
+    toolbar: 'yl_category_toolbar', // TODO: Toolbar is not with the modal, create new object for generic 'page'
   },
   class: {
     typeArticle: 'youlag-modal-feed-item--text',
@@ -90,8 +91,8 @@ app.frss = {
   // FreshRSS selectors
   el: {
     feedRoot: '#stream',
-    current: '#stream div[data-entry].active.current', // Currently opened feed entry in the stream.
-    entry: 'div[data-entry]', // Feed entries general selector.
+    current: '#stream div[data-entry].active.current',    // Currently opened feed entry in the stream.
+    entry: 'div[data-entry]',                             // Feed entries general selector.
   }
 }
 

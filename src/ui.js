@@ -610,8 +610,6 @@ function storeCurrentCategoryId() {
   localStorage.setItem('youlagCategoryIdRecent', categoryId ? categoryId[1] : null);
 }
 
-
-
 /*****************************************
  * END "UI COMPONENTS"
  ****************************************/
@@ -727,7 +725,7 @@ function updateVideoAuthor() {
 function updateVideoDateFormat() {
   // youlag-active: On video cards, update to use relative date.
 
-  // TODO: refactor hardcoded querySelectorAl
+  // TODO: refactor hardcoded querySelectorAll
   const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--date)');
   feedCards.forEach(card => {
     const date = card.querySelector('.flux_header .item.titleAuthorSummaryDate .date time');
