@@ -327,10 +327,30 @@ function setModeState(mode) {
   }
 }
 
-function  getModalState(boolean) {
+function  getModalState() {
   return app.state.modal.active; // true = modal is active
 }
 
 function setModalState(boolean) {
   app.state.modal.active = boolean; // true = modal is active
+}
+
+function pushHistoryState(key = 'modalOpen', value = true) {
+  // Pushes a new state to the history for modal close/back navigation.
+  if (isModeFullscreen() && !app.state.popstate.added) {
+    const state = {};
+    state[key] = value;
+    history.pushState(state, '', '');
+    app.state.popstate.added = true;
+  }
+}
+
+function clearHistoryState(key = 'modalOpen') {
+  // Clears the history state given the assigned property key. 
+  if (app.state.popstate.added) {
+    const state = {};
+    state[key] = undefined;
+    history.pushState(state, '', '');
+    app.state.popstate.added = false;
+  }
 }

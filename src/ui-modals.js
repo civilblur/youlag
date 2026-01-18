@@ -5,7 +5,7 @@
  * such as modals and accordion/expansion panels.
  */
 
-// TODO: Popstates don't properly work after the refactoring. Abstract all modal functions and reimplement popstates.
+// TODO: Pop state handling don't properly work after the refactoring. Abstract all modal functions and reimplement popstates.
 
 function handleActiveVideo(eventOrVideoObject, isVideoObject = false) {
   // Handles activation of a feed item (video or article) and opens the video modal.
@@ -62,21 +62,11 @@ function renderModalVideo(videoObject) {
   
   handleModalDescription(videoObject);
 
-  setupModalVideoEventListeners(videoObject);
+  setupModalVideoEventListeners(videoObject); // Handles: Close, Minimize, Favorite, Tags, Escape key.
 
   renderRelatedVideos(videoObject);
 
-  // Push a new state to the history, to allow modal close when routing back.
-  if (isModeFullscreen() && !app.state.popstate.added) {
-    history.pushState({ modalOpen: true }, '', '');
-    app.state.popstate.added = true;
-  }
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && isModeFullscreen()) {
-      closeModalVideo();
-    }
-  });
+  pushHistoryState(); // Allow modal close when navigating back by adding a new history state.
 }
 
 function templateModalVideo(videoObject, elementToReturn = 'modal') {
@@ -281,6 +271,8 @@ function setModalType(videoObject) {
     modal.classList.remove(app.modal.class.typeArticle);
   }
 }
+
+
 
 function setupModalVideoEventListeners(videoObject) {
   // Modal action buttons: Close, Minimize, Favorite, Tags, Escape key.
