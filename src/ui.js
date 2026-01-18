@@ -264,7 +264,6 @@ function isHashUrl() {
 }
 
 function toggleFavorite(url, container, feedItemEl) {
-  console.log('Toggling favorite status via URL:', url);
   const favoriteButton = container.querySelector(`#${app.modal.id.favorite}`);
   const favoriteButtonIcon = favoriteButton ? favoriteButton.querySelector('.youlag-favorited-icon') : null;
   if (!favoriteButton) return;

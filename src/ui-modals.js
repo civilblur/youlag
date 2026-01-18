@@ -5,6 +5,8 @@
  * such as modals and accordion/expansion panels.
  */
 
+// TODO: Popstates don't properly work after the refactoring. Abstract all modal functions and reimplement popstates.
+
 function handleActiveVideo(eventOrVideoObject, isVideoObject = false) {
   // Handles activation of a feed item (video or article) and opens the video modal.
   
@@ -40,10 +42,7 @@ function renderModalVideo(videoObject) {
   if (!modal) {
     modal = templateModalVideo(videoObject);
     document.body.appendChild(modal);
-
-    if (app.state.modal.mode === 'fullscreen') {
-      app.state.modal.active = true;
-    }
+    if (isModeFullscreen()) setModalState(true);
   }
   
   if (!modal._videoModalListeners) {
@@ -54,27 +53,23 @@ function renderModalVideo(videoObject) {
     modal._videoModalListeners.length = 0;
   }
 
+  // If modal already exists, just update the container with new content.
   modal.querySelector(`.${app.modal.class.container}`).innerHTML = templateModalVideo(videoObject, 'container');
-
+  
   setPageTitle(videoObject.title);
 
-  const isMobile = window.innerWidth <= app.breakpoints.desktop_md_max; 
-  const isArticle = !videoObject.youtubeId;
-  const relatedVideosSource = document.querySelector('#yl_related_videos_source')?.getAttribute('data-yl-related-videos-source') || 'none';
-  const shouldCollapseDescription = isMobile && !isArticle && relatedVideosSource !== 'none';
-
+  const isArticle = !videoObject.youtubeId; // Currently, anything that doesn't have a YouTube ID is considered an article.
+  const shouldCollapseDescription = isMobile() && !isArticle && getRelatedVideosSetting() !== 'none';
 
   // Article: Apply handling of article types in modal.
   if (isArticle) {
     app.state.modal.activeType = 'article';
     modal.classList.add(app.modal.class.typeArticle);
     let iframeContainer = document.querySelector(`.${app.modal.class.iframeContainer}`);
-    if (iframeContainer) {
-      document.querySelector(`.${app.modal.class.iframeContainer}`).remove();
-    }
+    if (iframeContainer) document.querySelector(`.${app.modal.class.iframeContainer}`).remove();
   }
   else {
-    // When article is in miniplayer mode, and the next triggered item is a video, ensure the text class is removed.
+    // When article is miniplayer and next triggered is a video, ensure article class is removed.
     app.state.modal.activeType = 'video';
     modal.classList.remove(app.modal.class.typeArticle);
   }
@@ -84,7 +79,7 @@ function renderModalVideo(videoObject) {
   if (
       videoDescContainer && 
       videoDescContainer.offsetHeight <= 90 &&
-      app.state.modal.mode !== 'miniplayer'
+      !isModeMiniplayer()
     ) {
     // The description box is collapsed by default on mobile(`shouldCollapseDescription`),
     // but check if it is short enough to not need collapsing.
@@ -92,7 +87,7 @@ function renderModalVideo(videoObject) {
   }
   if (
     shouldCollapseDescription && videoDescContainer.offsetHeight > 90 || 
-    shouldCollapseDescription && app.state.modal.mode === 'miniplayer') {
+    shouldCollapseDescription && isModeMiniplayer()) {
     // Setup the click listener to expand description only once.
 
     if (videoDescContainer) {
@@ -109,46 +104,18 @@ function renderModalVideo(videoObject) {
     }
   }
 
-  modal.querySelector(`#${app.modal.id.close}`)?.addEventListener('click', closeModalVideo);
-  modal.querySelector(`#${app.modal.id.minimize}`)?.addEventListener('click', toggleModeMiniplayer);
-  modal.querySelector(`#${app.modal.id.favorite}`)?.addEventListener('click', (e) => {
-    // Toggle favorites state in background.
-    e.preventDefault();
-    toggleFavorite(videoObject.favorite_toggle_url, modal, videoObject.feedItemEl);
-  });
-  
-  modal.querySelector(`#${app.modal.id.tags}`)?.addEventListener('click', async (e) => {
-    // Open tags (playlists) modal.
-    e.preventDefault();
-    const tagsButtonIcon = modal.querySelector(`#${app.modal.id.tags} img.icon`);
-    if (tagsButtonIcon) tagsButtonIcon.classList.add('loading');
-    const tags = await getItemTags(videoObject.entryId);
-    if (tagsButtonIcon) tagsButtonIcon.classList.remove('loading');
-    renderTagsModal(videoObject.entryId, tags);
-  });
+  setupModalVideoEventListeners(modal, videoObject);
 
   renderRelatedVideos(videoObject, modal);
 
-  const escHandler = (event) => {
-    if (event.key === 'Escape' && app.state.modal.mode === 'fullscreen') {
-      closeModalVideo();
-    }
-  };
-  document.addEventListener('keydown', escHandler);
-  modal._videoModalListeners.push({
-    el: document,
-    type: 'keydown',
-    handler: escHandler
-  });
-
   // Push a new state to the history, to allow modal close when routing back.
-  if (app.state.modal.mode === 'fullscreen' && !app.state.popstate.added) {
+  if (isModeFullscreen() && !app.state.popstate.added) {
     history.pushState({ modalOpen: true }, '', '');
     app.state.popstate.added = true;
   }
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && app.state.modal.mode === 'fullscreen') {
+    if (event.key === 'Escape' && isModeFullscreen()) {
       closeModalVideo();
     }
   });
@@ -310,7 +277,81 @@ function templateModalVideo(videoObject, elementToReturn = 'modal') {
   return modal;
 }
 
+function setupModalVideoEventListeners(modal, videoObject) {
+  // Modal action buttons: Close, Minimize, Favorite, Tags, Escape key.
+  
+  // Close modal button
+  modal.querySelector(`#${app.modal.id.close}`)?.addEventListener('click', closeModalVideo);
+  
+  // Toggle modal to fullscreen/miniplayer button
+  modal.querySelector(`#${app.modal.id.minimize}`)?.addEventListener('click', toggleModeMiniplayer);
+  
+  // Toggle favorite video button
+  modal.querySelector(`#${app.modal.id.favorite}`)?.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleFavorite(videoObject.favorite_toggle_url, modal, videoObject.feedItemEl);
+  });
+  modal.querySelector(`#${app.modal.id.tags}`)?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const tagsButtonIcon = modal.querySelector(`#${app.modal.id.tags} img.icon`);
+    if (tagsButtonIcon) tagsButtonIcon.classList.add('loading');
+    const tags = await getItemTags(videoObject.entryId);
+    if (tagsButtonIcon) tagsButtonIcon.classList.remove('loading');
+    renderTagsModal(videoObject.entryId, tags);
+  });
+
+  // Escape key closes fullscreen modal
+  const escHandler = (event) => {
+    if (event.key === 'Escape' && isModeFullscreen()) {
+      closeModalVideo();
+    }
+  };
+  document.addEventListener('keydown', escHandler);
+  modal._videoModalListeners.push({
+    el: document,
+    type: 'keydown',
+    handler: escHandler
+  });
+}
+
+function closeModalVideo() {
+  const modal = getModalVideo();
+
+  // Remove all modal-specific listeners before removing the modal element
+  if (modal && modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
+    for (const {el, type, handler} of modal._videoModalListeners) {
+      el.removeEventListener(type, handler);
+    }
+    modal._videoModalListeners.length = 0;
+  }
+  
+  if (modal) modal.remove();
+
+  app.state.popstate.added = false;
+  if (
+    !app.state.popstate.allowBack && 
+    history.state && 
+    history.state.modalOpen && 
+    isModeFullscreen()
+  ) {
+    // Only trigger history.back() once, and set the ignore flags.
+    app.state.popstate.allowBack = false;
+    app.state.popstate.ignoreNext = true;
+    history.back();
+  }
+  else {
+    history.replaceState(null, '', location.href);
+  }
+  app.state.modal.active = false;
+  setModeMiniplayer(false);
+  setModeFullscreen(false);
+  setPageTitle();
+  clearVideoQueue();
+}
+
 function renderRelatedVideos(videoObject, modal) {
+  // Renders related videos in the video modal.
+
   if (!videoObject || !modal) return;
 
   let template = (videoObject) =>  `
@@ -382,41 +423,6 @@ function renderRelatedVideos(videoObject, modal) {
   }
 
   appendRelatedVideos(videoObject.entryId, videoObject.authorId);
-}
-
-function closeModalVideo() {
-  const modal = getModalVideo();
-
-  // Remove all modal-specific listeners before removing the modal element
-  if (modal && modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
-    for (const {el, type, handler} of modal._videoModalListeners) {
-      el.removeEventListener(type, handler);
-    }
-    modal._videoModalListeners.length = 0;
-  }
-  
-  if (modal) modal.remove();
-
-  app.state.popstate.added = false;
-  if (
-    !app.state.popstate.allowBack && 
-    history.state && 
-    history.state.modalOpen && 
-    (app.state.modal.mode === 'fullscreen')
-  ) {
-    // Only trigger history.back() once, and set the ignore flags.
-    app.state.popstate.allowBack = false;
-    app.state.popstate.ignoreNext = true;
-    history.back();
-  }
-  else {
-    history.replaceState(null, '', location.href);
-  }
-  app.state.modal.active = false;
-  setModeMiniplayer(false);
-  setModeFullscreen(false);
-  setPageTitle();
-  clearVideoQueue();
 }
 
 function setVideoQueue(videoObject) {

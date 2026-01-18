@@ -295,3 +295,42 @@ function appendOriginalSrc(element) {
   }
   return root;
 }
+
+function isMobile() {
+  return window.innerWidth <= app.breakpoints.desktop_md_max;
+}
+
+function getRelatedVideosSetting() {
+  return document.querySelector('#yl_related_videos_source')?.getAttribute('data-yl-related-videos-source') || 'none';
+}
+
+function getModalMode() {
+  return app.state.modal.mode; // 'miniplayer', 'fullscreen', or null
+}
+
+function isModeFullscreen() {
+  return getModalMode() === 'fullscreen';
+}
+
+function isModeMiniplayer() {
+  return getModalMode() === 'miniplayer';
+}
+
+function setModeState(mode) {
+  if (mode === 'miniplayer') {
+    const mode = app.state.modal.mode = 'miniplayer';
+    return mode;
+  }
+  else if (mode === 'fullscreen') {
+    const mode = app.state.modal.mode = 'fullscreen';
+    return mode;
+  }
+}
+
+function  getModalState(boolean) {
+  return app.state.modal.active; // true = modal is active
+}
+
+function setModalState(boolean) {
+  app.state.modal.active = boolean; // true = modal is active
+}
