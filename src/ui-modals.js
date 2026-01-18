@@ -402,8 +402,8 @@ function renderRelatedVideos(videoObject) {
   const modal = getModalVideo();
   if (!videoObject || !modal) return;
 
-  // The `youlag-related-video-item__feed-item-container` contains the original feed entry HTML,
-  // served for parsing when opening a related video.
+  // The `app.modal.class.relatedVideoEntryHTML` contains the original feed entry HTML and is not displayed 
+  // as its purpose is to be parsed when opening a the related video.
   let template = (videoObject) =>  `
     <div class="${app.modal.class.relatedVideoEntry}" data-yl-feed="${videoObject.entryId}">
       <div class="${app.modal.class.relatedVideoEntryHTML} display-none">
