@@ -58,17 +58,13 @@ function renderModalVideo(videoObject) {
   
   setPageTitle(videoObject.title);
 
-  const shouldCollapseDescription = isMobile() && !videoObject.youtubeId && getRelatedVideosSetting() !== 'none';
-
   setModalType(videoObject);
-
-  const videoDescContainer = modal.querySelector(`.${app.modal.class.descContainer}`);
   
-  handleModalDescription(modal, videoDescContainer, shouldCollapseDescription);
+  handleModalDescription(videoObject);
 
-  setupModalVideoEventListeners(modal, videoObject);
+  setupModalVideoEventListeners(videoObject);
 
-  renderRelatedVideos(videoObject, modal);
+  renderRelatedVideos(videoObject);
 
   // Push a new state to the history, to allow modal close when routing back.
   if (isModeFullscreen() && !app.state.popstate.added) {
@@ -230,8 +226,14 @@ function templateModalVideo(videoObject, elementToReturn = 'modal') {
   return modal;
 }
 
-function handleModalDescription(modal, videoDescContainer, shouldCollapseDescription) {
+function handleModalDescription(videoObject) {
   // Video: Description box collapse state handling
+  const modal = getModalVideo();
+  if (!modal || !videoObject) return;
+
+  const shouldCollapseDescription = isMobile() && !videoObject.youtubeId && getRelatedVideosSetting() !== 'none';
+
+  videoDescContainer = modal.querySelector(`.${app.modal.class.descContainer}`);
   if (
       videoDescContainer && 
       videoDescContainer.offsetHeight <= 90 &&
@@ -280,9 +282,12 @@ function setModalType(videoObject) {
   }
 }
 
-function setupModalVideoEventListeners(modal, videoObject) {
+function setupModalVideoEventListeners(videoObject) {
   // Modal action buttons: Close, Minimize, Favorite, Tags, Escape key.
   
+  const modal = getModalVideo();
+  if (!modal || !videoObject) return;
+
   // Close modal button
   modal.querySelector(`#${app.modal.id.close}`)?.addEventListener('click', closeModalVideo);
   
@@ -375,9 +380,9 @@ function closeModalVideo() {
   clearVideoQueue();
 }
 
-function renderRelatedVideos(videoObject, modal) {
+function renderRelatedVideos(videoObject) {
   // Renders related videos in the video modal.
-
+  const modal = getModalVideo();
   if (!videoObject || !modal) return;
 
   let template = (videoObject) =>  `
