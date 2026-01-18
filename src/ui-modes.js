@@ -1,5 +1,5 @@
 /**
- * UI - Modes
+ * UI: Modes
  * 
  * Handles different view modes for the video modal, such as fullscreen and miniplayer.
  */

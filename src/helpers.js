@@ -1,3 +1,9 @@
+/**
+ * Helpers
+ *
+ * Helper logic to handle feed entries.
+ */
+
 async function getItemTags(itemId) {
   // Fetch tags for a given feed item ID.
 

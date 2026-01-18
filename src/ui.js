@@ -1,5 +1,5 @@
 /**
- * UI - General
+ * UI: General
  * 
  * Handles general UI interactions, including click listeners, popstate handling, etc.
  */

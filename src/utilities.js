@@ -1,3 +1,9 @@
+/**
+ * Utilities
+ * 
+ * General utility functions that are shared across Youlag.
+ */
+
 function getModalVideo() {
   return document.getElementById(app.modal.id.root);
 }

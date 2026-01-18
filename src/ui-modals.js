@@ -1,5 +1,5 @@
 /**
- * UI - Modals
+ * UI: Modals
  * 
  * Handles disclosures for both videos and articles,
  * such as modals and accordion/expansion panels.
