@@ -3468,6 +3468,8 @@ body.youlag-inactive:not(.reader) main#stream {
         background: linear-gradient(135deg, #303030 0%, #232323 40%, #181818 100%);
         border-bottom-left-radius: 12px;
         border-bottom-right-radius: 12px;
+        border-left: 1px solid color-mix(in oklab, #fff 11%, transparent);
+        border-right: 1px solid color-mix(in oklab, #fff 11%, transparent);
         
         header {
           h1.title a {
@@ -3475,6 +3477,76 @@ body.youlag-inactive:not(.reader) main#stream {
             &:hover {
               color: var(--yl-color-text-default);
               text-decoration: underline;
+            }
+          }
+        }
+
+        & > footer {
+          & > ul {
+            // Article, active: Footer action buttons container
+            display: flex;
+            align-items: center;
+            gap: var(--yl-m-xs);
+            padding: var(--yl-m-3xs) var(--yl-m-sm);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            box-sizing: border-box;
+
+            @media (min-width: 841px) {
+              border: 1px solid color-mix(in oklab, #fff 11%, transparent);
+            }
+
+            li {
+              // Article, active: Footer action buttons
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-sizing: border-box;
+              padding: 0;
+              margin: 0;
+
+              &:empty {
+                display: none;
+              }
+
+              &.item.manage:has(.item-element.bookmark) {
+                order: -3; /* Article, active: Place favorite button to far left. */
+              }
+              &.item.manage:has(.item-element.read) {
+                order: 2; /* Article, active: Place mark as read button right. */
+              }
+              &.item.share {
+                order: 3; /* Article, active: Place share button right. */
+              }
+              &.item.date {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                flex: 1;
+                order: 4; /* Article, active: Place date to far right. */
+              }
+
+              div {
+                padding: 0;
+                margin: 0;
+              }
+
+              a {
+                padding: var(--yl-p-2xs);
+                min-width: 25px;
+                min-height: 25px;
+                border-radius: 8px;
+                --main-first: #898989; // Link color
+                filter: unset !important;
+
+                &:hover {
+                  background-color: hsla(0, 0%, 100%, .08);
+                }
+
+                img {
+                  filter: brightness(1.6) grayscale(1);
+                }
+              }
             }
           }
         }
@@ -3503,6 +3575,33 @@ body.youlag-inactive:not(.reader) main#stream {
           pre {
             background-color: rgba(255,255,255,0.1);
             border-radius: 12px;
+          }
+        }
+
+        blockquote {
+          position: relative;
+          background: linear-gradient(135deg, #3a3a3a 0%, #313131 40%, #313131 100%);
+          color: var(--yl-color-text-default);
+          opacity: 0.8;
+          border: none;
+          border-top-right-radius: 8px;
+          border-bottom-right-radius: 8px;
+          padding-bottom: var(--yl-p-sm);
+          padding-top: var(--yl-p-sm);
+          padding-left: var(--yl-p-md);
+          padding-right: var(--yl-p-md);
+          margin-top: var(--yl-m-xs);
+          margin-bottom: var(--yl-m-xs);
+
+          &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 6px;
+            background: linear-gradient(to bottom, #aaaaaa, #7d7d7d);
+            border-radius: 8px;
           }
         }
 
