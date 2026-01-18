@@ -1,4 +1,11 @@
 
+/**
+ * Events
+ * 
+ * Handles initialization and event-related functionalities.
+ */
+
+
 function init() {
   if (!app.state.youlag.init) console.log('Initializing YouLag script');
   if (app.state.youlag.init) console.log('YouLag script already initialized, skipping.');
