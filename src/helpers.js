@@ -137,13 +137,13 @@ function extractFeedItemData(feedItem) {
 function getSubpageParentId(getParam) {
   /**
    * Check parent of current subpage.
-   * Returns the parent category id for a given getParam (e.g. 't_8' or 'f_8').
-   * For 't_{n}' returns 'tags'.
-   * For 'f_{n}' returns the DOM id of the active category (e.g. 'c_2'), or null if not found.
+   * Returns the parent id for a given getParam (e.g. 'get=t_8' or 'get=f_8').
+   * For 't_{n}' returns parent id 'T', which 'playlists'.
+   * For 'f_{n}' returns the category id (e.g. 'c_2') of the active category, or null if not found.
    */
   if (/^t_\d+$/.test(getParam)) {
     // Tag (playlists) page
-    return 'playlists';
+    return 'T';
   }
   if (/^f_\d+$/.test(getParam)) {
     // Filter page, a subpage of a category.

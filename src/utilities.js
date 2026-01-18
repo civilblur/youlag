@@ -95,6 +95,23 @@ function updateSidenavLinks() {
   }
 }
 
+function updateAddFeedLink() {
+  // Add a custom query param to the 'Add new feed' with the current category id, 
+  // allowing auto-selection of the category in the 'add new feed' dropdown.
+  
+  const page = getCurrentPage();
+  if (page.name === 'category') {
+    // Use parentId if present, otherwise use id
+    const categoryIdSource = page.parentId || page.id;
+    const categoryId = categoryIdSource && categoryIdSource.startsWith('c_') ? categoryIdSource.match(/^c_(\d+)$/) : null;
+    updateAnchorLink(
+      `/i/?c=subscription&a=add&yl_category_id=${categoryId ? categoryId[1] : ''}`,
+      document.querySelector('#btn-add')
+    );
+    return;
+  }
+}
+
 function getVideoIdFromUrl(url) {
   // Match video ID without relying on base domain being "youtube"-specific, in order to support invidious and piped links.
   const regex = /(?:\/|^)(?:shorts\/|v\/|e(?:mbed)?\/|\S*?[?&]v=|\S*?[?&]id=|v=)([a-zA-Z0-9_-]{11})(?:[\/\?]|$)/;
@@ -230,16 +247,22 @@ function resetHistoryState() {
   history.replaceState(null, '', location.href);
 }
 
-function getCurrentPage(withPrefix = true) {
-  // Returns the current page name, optionally with the 'yl-page-' prefix.    
-  // E.g. 'yl-page-home', 'yl-page-important', 'yl-page-category', etc. or just 'home', 'important', ...  
+function getCurrentPage() {
+  // Returns an object with details about the current page.
   const path = window.location.pathname;
   const urlParams = new URLSearchParams(window.location.search);
   const classPrefix = 'yl-page-';
-  let pageName = '';
+  const fullUrl = window.location.href;
+  const urlPath = window.location.origin + window.location.pathname;
 
   function prefixClasses(classString) {
     return classString.split(' ').map(cls => classPrefix + cls).join(' ');
+  }
+
+  let pageObject = {
+    ...app.types.pageObject,
+    url: fullUrl,
+    urlPath: urlPath,
   }
 
   const routes = [
@@ -247,32 +270,44 @@ function getCurrentPage(withPrefix = true) {
       path: '/i/',
       match: () => urlParams.get('a') === 'normal' && urlParams.has('search'),
       className: 'search_results',
+      name: 'search_results',
+      id: null,
     },
     {
       path: '/i/',
-      // Home page: no get or c param
+      // Home page: no 'get' or 'c' param
       match: () => !urlParams.has('get') && !urlParams.has('c'),
       className: 'home',
+      name: 'home',
+      id: null,
     },
     {
       path: '/i/',
       match: () => urlParams.get('c') === 'extension',
       className: 'extension',
+      name: 'extension',
+      id: null,
     },
     {
       path: '/i/',
       match: () => urlParams.get('get') === 'i',
       className: 'important',
+      name: 'important',
+      id: () => urlParams.get('get'),
     },
     {
       path: '/i/',
       match: () => urlParams.get('get') === 's',
       className: 'watch_later',
+      name: 'watch_later',
+      id: () => urlParams.get('get'),
     },
     {
       path: '/i/',
       match: () => urlParams.get('get') === 'T',
       className: 'playlists',
+      name: 'playlists',
+      id: () => urlParams.get('get'),
     },
     {
       path: '/i/',
@@ -281,6 +316,8 @@ function getCurrentPage(withPrefix = true) {
         const n = (urlParams.get('get') || '').substring(2);
         return `playlists t_${n}`;
       },
+      name: 'playlists',
+      id: () => urlParams.get('get'),
     },
     {
       path: '/i/',
@@ -290,6 +327,8 @@ function getCurrentPage(withPrefix = true) {
         const n = urlParams.get('get').substring(2);
         return `category c_${n}`;
       },
+      name: 'category',
+      id: () => urlParams.get('get'),
     },
     {
       path: '/i/',
@@ -298,17 +337,32 @@ function getCurrentPage(withPrefix = true) {
         const n = urlParams.get('get').substring(2);
         return `category`;
       },
+      name: 'category',
+      id: () => urlParams.get('get'),
     },
   ];
 
   for (const route of routes) {
     if (path === route.path && route.match()) {
       const classString = typeof route.className === 'function' ? route.className() : route.className;
-      return withPrefix ? prefixClasses(classString) : classString;
+      const nameString = route.name || (typeof route.className === 'string' ? route.className : '');
+      const idValue = typeof route.id === 'function' ? route.id() : route.id;
+      pageObject.name = nameString;
+      pageObject.class = prefixClasses(classString);
+      pageObject.id = idValue;
+      if (
+        idValue &&
+        typeof getSubpageParentId === 'function' &&
+        (idValue.startsWith('f_') || idValue.startsWith('t_'))
+      ) {
+        const parent = getSubpageParentId(idValue);
+        pageObject.parentId = parent || '';
+      }
+      return pageObject;
     }
   }
 
-  return pageName;
+  return pageObject;
 }
 
 function isFeedPage() {

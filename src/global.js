@@ -120,6 +120,14 @@ app.types = {
     // Video queue
     queue: null,
     queue_active_index: -1
+  },
+  pageObject: {
+    name: '',
+    class: '',
+    id: '',
+    url: '',
+    urlPath: '',
+    parentId: '', // Parent id if applicable, e.g. for f_{n} (sub-page of category), t_{n} (playlist sub-page).
   }
 };
 

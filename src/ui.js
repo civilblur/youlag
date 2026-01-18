@@ -285,7 +285,7 @@ function isHashUrl() {
  ****************************************/
 
 function setBodyPageClass() {
-  getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
+  document.body.className += ' ' + getCurrentPage().class;
   currentPageParams = new URLSearchParams(window.location.search).get('get');
   setMobileLayoutGrid();
   setupSidenavStateListener();
@@ -306,7 +306,7 @@ function setCategoryWhitelistClass() {
     if (stored) localStorageWhitelist = JSON.parse(stored);
   } catch (e) { }
 
-  const currentPageClass = getCurrentPage();
+  const currentPageClass = getCurrentPage().class;
   const isWhitelisted = isPageWhitelisted(localStorageWhitelist, currentPageClass);
   app.state.page.layout = isWhitelisted ? 'video' : 'article';
 
@@ -593,6 +593,21 @@ function setToolbarSticky(toolbarElement) {
     }
   });
 }
+
+function storeCurrentCategoryId() {
+  // Store the current category ID in app.state.
+  // If current page is not a category page, the ID is cleared.
+  const page = getCurrentPage();
+  console.log('page', page);
+  let categoryId = null;
+  if (page.name === 'category' && page.id && page.id.startsWith('c_')) {
+    categoryId = page.id.match(/^c_(\d+)$/);
+  }
+  
+  localStorage.setItem('youlagCategoryIdRecent', categoryId ? categoryId[1] : null);
+}
+
+
 
 /*****************************************
  * END "UI COMPONENTS"

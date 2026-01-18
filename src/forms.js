@@ -51,7 +51,7 @@ function youlagSettingsPageEventListeners() {
 
   // Handle form validation where the Youlag settings is shown through the slider.
   const settingsSlider = document.getElementById('slider-content');
-  if (getCurrentPage(false) === 'extension' && settingsSlider) {
+  if (getCurrentPage().name === 'extension' && settingsSlider) {
     let lastSettingsRoot = null;
     const observer = new MutationObserver(() => {
       if (!document.body.contains(settingsSlider)) {
@@ -76,6 +76,27 @@ function youlagSettingsPageEventListeners() {
       if (youlagSettingsRoot) {
         lastSettingsRoot = youlagSettingsRoot;
         formValidation();
+      }
+    }
+  }
+
+}
+
+function setAddFeedCategoryValue() {
+  // Auto-select category when adding a new feed, based on the last selected category.
+  // Dependent on `updateAddFeedLink()` to add a custom param to the '+'-button ('Add new feed'-button).
+
+  const page = getCurrentPage();
+  const pathname = window.location.pathname;
+  if (page && pathname === '/i/' && page.url.includes('c=subscription') && page.url.includes('a=add')) {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryId = urlParams.get('yl_category_id');
+
+    if (categoryId) {
+      const categorySelect = document.querySelector('select#category');
+      if (categorySelect) {
+        categorySelect.value = categoryId;
       }
     }
   }

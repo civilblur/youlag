@@ -7,8 +7,6 @@
 
 
 function init() {
-  if (!app.state.youlag.init) console.log('Initializing YouLag script');
-  if (app.state.youlag.init) console.log('YouLag script already initialized, skipping.');
   if (app.state.youlag.init) return;
   
   clearPathHash();
@@ -25,13 +23,11 @@ function init() {
     restoreVideoQueue();
   }
   updateSidenavLinks();
-  // setTimeout(() => {
-  //   // HACK: Delay referencing the settings elements.
-  //   youlagSettingsPageEventListeners();
-  // }, 1500);
   youlagSettingsPageEventListeners();
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
+  updateAddFeedLink();
+  setAddFeedCategoryValue();
   removeYoulagLoadingState();
   app.state.youlag.init = true;
 }
