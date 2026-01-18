@@ -75,34 +75,8 @@ function renderModalVideo(videoObject) {
   }
 
   const videoDescContainer = modal.querySelector(`.${app.modal.class.descContainer}`);
-  // Video: Description box collapse state handling
-  if (
-      videoDescContainer && 
-      videoDescContainer.offsetHeight <= 90 &&
-      !isModeMiniplayer()
-    ) {
-    // The description box is collapsed by default on mobile(`shouldCollapseDescription`),
-    // but check if it is short enough to not need collapsing.
-    videoDescContainer.classList.remove(app.modal.class.descContainerCollapsed);
-  }
-  if (
-    shouldCollapseDescription && videoDescContainer.offsetHeight > 90 || 
-    shouldCollapseDescription && isModeMiniplayer()) {
-    // Setup the click listener to expand description only once.
-
-    if (videoDescContainer) {
-      const descExpand = function () {
-        videoDescContainer.classList.remove(app.modal.class.descContainerCollapsed);
-        videoDescContainer.removeEventListener('click', descExpand);
-      };
-      videoDescContainer.addEventListener('click', descExpand);
-      modal._videoModalListeners.push({
-        el: videoDescContainer,
-        type: 'click',
-        handler: descExpand
-      });
-    }
-  }
+  
+  handleModalDescription(modal, videoDescContainer, shouldCollapseDescription);
 
   setupModalVideoEventListeners(modal, videoObject);
 
@@ -266,6 +240,36 @@ function templateModalVideo(videoObject, elementToReturn = 'modal') {
   }
 
   return modal;
+}
+
+function handleModalDescription(modal, videoDescContainer, shouldCollapseDescription) {
+  // Video: Description box collapse state handling
+  if (
+      videoDescContainer && 
+      videoDescContainer.offsetHeight <= 90 &&
+      !isModeMiniplayer()
+    ) {
+    // The description box is collapsed by default on mobile(`shouldCollapseDescription`),
+    // but check if it is short enough to not need collapsing.
+    videoDescContainer.classList.remove(app.modal.class.descContainerCollapsed);
+  }
+  if (
+    shouldCollapseDescription && videoDescContainer && videoDescContainer.offsetHeight > 90 || 
+    shouldCollapseDescription && isModeMiniplayer()) {
+    // Setup the click listener to expand description only once.
+    const descExpand = function () {
+      videoDescContainer.classList.remove(app.modal.class.descContainerCollapsed);
+      videoDescContainer.removeEventListener('click', descExpand);
+    };
+    videoDescContainer.addEventListener('click', descExpand);
+    if (modal._videoModalListeners) {
+      modal._videoModalListeners.push({
+        el: videoDescContainer,
+        type: 'click',
+        handler: descExpand
+      });
+    }
+  }
 }
 
 function setupModalVideoEventListeners(modal, videoObject) {
