@@ -69,6 +69,8 @@ app.modal = {
     content: 'youlag-theater-modal-content',
     descContainer: 'youlag-video-description-container',
     descContainerCollapsed: 'youlag-video-description-container--collapsed',
+    relatedVideoEntryHTML: 'youlag-related-video-item__feed-item-container', // Contains original feed entry HTML for related video item, used for parsing when opening a related video.
+    relatedVideoEntry: 'youlag-related-video-item',
     tagsModalRoot: 'youlag-tags-modal',
     tagsModalItem: 'yl-tags-list-item',
     tagsModalOpen: 'youlag-tags-modal-open',

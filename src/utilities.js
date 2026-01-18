@@ -13,7 +13,7 @@
  * INDEX
  * - Modal utilities
  * - Link utilities
- * - State utilities
+ * - State & settings utilities
  * - Data utilities
  *
  ****************************************/
@@ -207,7 +207,7 @@ function appendOriginalSrc(element) {
 
 
 /*****************************************
- * BEGIN "STATE UTILITIES"
+ * BEGIN "STATE & SETTINGS UTILITIES"
  * To get and set various states.
  ****************************************/
 

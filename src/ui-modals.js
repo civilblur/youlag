@@ -70,6 +70,10 @@ function renderModalVideo(videoObject) {
 }
 
 function templateModalVideo(videoObject, elementToReturn = 'modal') {
+  // Prepare and return the video modal element.
+
+  // TODO: Refactor to abstract smaller components.
+
   // Setup DOM structure for video modal.
   let modal = document.createElement('div');
   let container = document.createElement('div');
@@ -113,7 +117,7 @@ function templateModalVideo(videoObject, elementToReturn = 'modal') {
   // Video: Description box state handling
   const isMobile = window.innerWidth <= app.breakpoints.desktop_md_max; 
   const isArticle = !videoObject.youtubeId;
-  const relatedVideosSource = document.querySelector('#yl_related_videos_source')?.getAttribute('data-yl-related-videos-source') || 'none';
+  const relatedVideosSource = getRelatedVideosSetting();
   const shouldCollapseDescription = isMobile && !isArticle && relatedVideosSource !== 'none';
 
   // Modal content
@@ -398,9 +402,11 @@ function renderRelatedVideos(videoObject) {
   const modal = getModalVideo();
   if (!videoObject || !modal) return;
 
+  // The `youlag-related-video-item__feed-item-container` contains the original feed entry HTML,
+  // served for parsing when opening a related video.
   let template = (videoObject) =>  `
-    <div class="youlag-related-video-item" data-yl-feed="${videoObject.entryId}">
-      <div class="youlag-related-video-item__feed-item-container display-none">
+    <div class="${app.modal.class.relatedVideoEntry}" data-yl-feed="${videoObject.entryId}">
+      <div class="${app.modal.class.relatedVideoEntryHTML} display-none">
         ${videoObject.feedItem.outerHTML}
       </div>
       <div class="youlag-related-video-item__thumbnail"><img src="${videoObject.thumbnail}" loading="lazy" ></div>
@@ -416,7 +422,7 @@ function renderRelatedVideos(videoObject) {
 
   function appendRelatedVideos(currentEntryId, currentAuthorId) {
     // Append related videos to the video modal.
-    const relatedVideosSource = document.querySelector('#yl_related_videos_source')?.getAttribute('data-yl-related-videos-source') || 'none';
+    const relatedVideosSource = getRelatedVideosSetting();
     if (relatedVideosSource === 'none' || relatedVideosSource === '') return;
 
     const currentlyViewing = currentEntryId;
@@ -451,9 +457,9 @@ function renderRelatedVideos(videoObject) {
     });
 
     relatedVideosContainer.addEventListener('click', function (e) {
-      const relatedItem = e.target.closest('.youlag-related-video-item');
+      const relatedItem = e.target.closest(`.${app.modal.class.relatedVideoEntry}`);
       if (!relatedItem) return;
-      const feedItem = relatedItem.querySelector('.youlag-related-video-item__feed-item-container > div[data-feed]');
+      const feedItem = relatedItem.querySelector(`.${app.modal.class.relatedVideoEntryHTML} > ${app.frss.el.entry}`);
       if (feedItem) {
         const modal = getModalVideo();
         if (modal) {
@@ -530,7 +536,7 @@ function restoreVideoQueue() {
   app.state.youlag.restoreVideoInit = true;
 }
 
-function handleActiveArticle(event) {
+function handleActiveArticle() {
   pushHistoryState('articleOpen', true);
 }
 
@@ -612,7 +618,7 @@ function renderTagsModal(entryId, tags) {
               <label for="yl-tag-${tag.id}">${tag.name}</label>
             </div>
           `).join('')
-    }
+        }
       </div>
       <div class="yl-tags-modal-actions">
         <button id="yl-tags-modal-close" class="btn">Done</button>
