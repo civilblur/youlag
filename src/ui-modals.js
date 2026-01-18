@@ -31,7 +31,7 @@ function handleActiveVideo(eventOrVideoObject, isVideoObject = false) {
     setVideoQueue(videoObject);
   }
 
-  if (app.state.modal.mode !== 'miniplayer') setModeFullscreen(true);
+  if (!isModeMiniplayer()) setModeFullscreen(true);
   renderModalVideo(videoObject);
 }
 
@@ -386,7 +386,7 @@ function closeModalVideo() {
   else {
     resetHistoryState();
   }
-  app.state.modal.active = false;
+  setModalState(false);
   setModeMiniplayer(false);
   setModeFullscreen(false);
   setPageTitle();
@@ -582,7 +582,7 @@ function closeArticle(event) {
       app.state.page.toolbarSticky = false;
     }, 50);
 
-    app.state.modal.active = false;
+    setModalState(false);
   }
 }
 

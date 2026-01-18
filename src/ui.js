@@ -25,7 +25,7 @@ function setupClickListener() {
   if (app.state.youlag.clickListenerInit) return;
   const streamContainer = document.querySelector(app.frss.el.feedRoot);
 
-  if (app.state.page.layout === 'video') {
+  if (isLayoutVideo()) {
     if (streamContainer) {
       streamContainer.addEventListener('click', (event) => {
 
@@ -67,7 +67,7 @@ function setupClickListener() {
           return;
         }
 
-        if (app.state.modal.mode === 'fullscreen' && getModalVideo()) {
+        if (isModeFullscreen() && getModalVideo()) {
           // Video in fullscreen mode should be closed on popstate and not navigate back a page.
           app.state.popstate.allowBack = false;
           closeModalVideo();
@@ -80,7 +80,7 @@ function setupClickListener() {
           return;
         }
 
-        if (app.state.modal.mode === 'miniplayer') {
+        if (isModeMiniplayer()) {
           // Allow normal browser navigation when in miniplayer mode.
           app.state.popstate.ignoreNext = true;
           history.back();
@@ -89,7 +89,7 @@ function setupClickListener() {
       });
     }
   }
-  else if (app.state.page.layout === 'article') {
+  else if (isLayoutArticle()) {
     // youlag-inactive: Article context.
     if (streamContainer) {
       streamContainer.addEventListener('click', function (event) {
@@ -165,11 +165,11 @@ function setupClickListener() {
         // Ignore hash-only routes, e.g. when clicking dropdown menus that routes to e.g. `#dropdown-configure`.
         return;
       }
-      if (app.state.modal.mode === 'miniplayer' && getOpenArticle()) {
+      if (isModeMiniplayer() && getOpenArticle()) {
         closeArticle(event);
         return;
       }
-      if (app.state.modal.mode === 'miniplayer' && !getOpenArticle()) {
+      if (isModeMiniplayer() && !getOpenArticle()) {
         history.back();
       }
       else {
@@ -182,14 +182,14 @@ function setupClickListener() {
 
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
-        if (app.state.page.layout === 'video') {
+        if (isLayoutVideo()) {
           // youlag-active: Video modal context.
           const modal = getModalVideo();
           if (modal) {
             closeModalVideo();
           }
         }
-        else if (app.state.page.layout === 'article') {
+        else if (isLayoutArticle()) {
           // youlag-inactive: Article context.
 
           // TODO: FreshRSS apparently has a native Escape key handler that closes the article, and ends up closing 
@@ -746,7 +746,7 @@ function onNewFeedItems() {
   // Run actions based on if there's new items added to the feed stream.
 
   document.addEventListener('freshrss:load-more', function () {
-    if (app.state.page.layout === 'video') {
+    if (isLayoutVideo()) {
       updateVideoAuthor();
       updateVideoDateFormat();
     }

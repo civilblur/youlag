@@ -42,14 +42,8 @@ function isModeMiniplayer() {
 }
 
 function setModeState(mode) {
-  if (mode === 'miniplayer') {
-    const mode = app.state.modal.mode = 'miniplayer';
-    return mode;
-  }
-  else if (mode === 'fullscreen') {
-    const mode = app.state.modal.mode = 'fullscreen';
-    return mode;
-  }
+  if (mode !== 'miniplayer' && mode !== 'fullscreen' && mode !== null) return;
+  return app.state.modal.mode = mode;
 }
 
 function getModalState() {
@@ -57,7 +51,7 @@ function getModalState() {
 }
 
 function setModalState(boolean) {
-  app.state.modal.active = boolean; // true = modal is active
+  return app.state.modal.active = boolean; // true = modal is active
 }
 
 /*****************************************
@@ -377,6 +371,23 @@ function isFeedPage() {
   ]);
   const page = getCurrentPage();
   return feedPageNames.has(page.name);
+}
+
+function getLayout() {
+  return app.state.page.layout; // 'video' or 'article'
+}
+
+function setLayout(layout) {
+  if (layout !== 'video' && layout !== 'article') return;
+  app.state.page.layout = layout; // 'video' or 'article'
+}
+
+function isLayoutVideo() {
+  return getLayout() === 'video';
+}
+
+function isLayoutArticle() {
+  return getLayout() === 'article';
 }
 
 function isVideoLabelsEnabled() {

@@ -15,7 +15,7 @@ function init() {
     setupClickListener();
     setupTagsDropdownOverride();
     renderToolbar();
-    if (app.state.page.layout === 'video') {
+    if (isLayoutVideo()) {
       updateVideoAuthor();
       updateVideoDateFormat();
     }

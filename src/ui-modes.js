@@ -5,7 +5,7 @@
  */
 
 function toggleModalMode() {
-  if (app.state.modal.mode === 'miniplayer') {
+  if (isModeMiniplayer()) {
     setModeMiniplayer(false, 'fullscreen');
     setModeFullscreen(true);
 
@@ -32,8 +32,8 @@ function setModeMiniplayer(state, prevState) {
       modal ? (app.state.modal.miniplayerScrollTop = modal.scrollTop) : null;
     }
     document.body.classList.add(app.modal.class.modeMiniplayer);
-    app.state.modal.mode = 'miniplayer';
-    app.state.modal.active = false; // Miniplayer mode is not considered active.
+    setModeState('miniplayer');
+    setModalState(false); // Miniplayer mode is not considered active.
     modal ? modal.scrollTo({ top: 0 }) : null;
   }
   else if (state === false) {
@@ -75,7 +75,7 @@ function setModeFullscreen(state, prevState) {
   else if (state === false) {
     document.body.classList.remove(app.modal.class.modeFullscreen);
     app.state.modal.mode = prevState || null;
-    app.state.modal.active = false;
+    setModalState(false);
   }
 }
 
