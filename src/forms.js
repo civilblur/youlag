@@ -97,6 +97,7 @@ function setAddFeedCategoryValue() {
       const categorySelect = document.querySelector('select#category');
       if (categorySelect) {
         categorySelect.value = categoryId;
+        categorySelect.removeAttribute('data-leave-validation'); // Prevent confirmation prompt on exit.
       }
     }
   }
