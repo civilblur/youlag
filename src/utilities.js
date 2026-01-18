@@ -392,7 +392,7 @@ function isLayoutArticle() {
 
 function isVideoLabelsEnabled() {
   // If user has enabled video labels setting, where "Favorites" becomes "Watch Later", and "My Labels" becomes "Playlists".
-  return document.body.classList.contains('youlag-video-labels');
+  return document.getElementById('yl_video_labels')?.getAttribute('data-yl-video-labels') === 'true';
 }
 
 function getToolbarStickyState() {

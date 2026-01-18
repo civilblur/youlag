@@ -491,7 +491,8 @@ function setVideoQueue(videoObject) {
 
   const entryId = videoObject.entryId;
   const foundIndex = queue.findIndex(v => v.entryId === entryId);
-  const isMiniplayer = document.body.classList.contains(app.modal.class.modeMiniplayer);
+  const isMiniplayer = isModeMiniplayer();
+  
   if (foundIndex === -1) {
     queue.push(videoObject);
     queue_active_index = queue.length - 1;
