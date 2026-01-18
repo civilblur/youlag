@@ -24,8 +24,8 @@ function init() {
   }
   updateSidenavLinks();
   settingsPageEventListeners();
-  setVideoLabelsTitle('yl-page-playlists', 'Playlists');
-  setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
+  setVideoLabelsTitle('playlists', 'Playlists');
+  setVideoLabelsTitle('watch_later', 'Watch later');
   updateAddFeedLink();
   setAddFeedCategoryValue();
   removeYoulagLoadingState();
