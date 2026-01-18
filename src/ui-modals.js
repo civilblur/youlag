@@ -282,7 +282,7 @@ function setupModalVideoEventListeners(videoObject) {
   modal.querySelector(`#${app.modal.id.close}`)?.addEventListener('click', closeModalVideo);
   
   // Toggle modal to fullscreen/miniplayer button
-  modal.querySelector(`#${app.modal.id.minimize}`)?.addEventListener('click', toggleModeMiniplayer);
+  modal.querySelector(`#${app.modal.id.minimize}`)?.addEventListener('click', toggleModalMode);
   
   // Toggle favorite video button
   modal.querySelector(`#${app.modal.id.favorite}`)?.addEventListener('click', (e) => {

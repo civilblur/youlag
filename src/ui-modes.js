@@ -4,7 +4,7 @@
  * Handles different view modes for the video modal, such as fullscreen and miniplayer.
  */
 
-function toggleModeMiniplayer() {
+function toggleModalMode() {
   if (app.state.modal.mode === 'miniplayer') {
     setModeMiniplayer(false, 'fullscreen');
     setModeFullscreen(true);
@@ -107,7 +107,7 @@ function setupSwipeToMiniplayer(modal) {
       const endY = e.changedTouches[0].clientY;
       if (endY - touchStartY > 40 && modal.scrollTop === 0) {
         // Overscroll (pull-down) detected at top, toggle miniplayer mode.
-        toggleModeMiniplayer(true);
+        toggleModalMode(true);
       }
     }
     touchStartY = null;
