@@ -351,8 +351,116 @@ function pushHistoryState(key, value = true) {
   }
 }
 
-
 function resetHistoryState() {
   // Fully resets the browser history state to null for the current URL.
   history.replaceState(null, '', location.href);
+}
+
+function getCurrentPage(withPrefix = true) {
+  // Returns the current page name, optionally with the 'yl-page-' prefix.    
+  // E.g. 'yl-page-home', 'yl-page-important', 'yl-page-category', etc. or just 'home', 'important', ...  
+  const path = window.location.pathname;
+  const urlParams = new URLSearchParams(window.location.search);
+  const classPrefix = 'yl-page-';
+  let pageName = '';
+
+  function prefixClasses(classString) {
+    return classString.split(' ').map(cls => classPrefix + cls).join(' ');
+  }
+
+  const routes = [
+    {
+      path: '/i/',
+      match: () => urlParams.get('a') === 'normal' && urlParams.has('search'),
+      className: 'search_results',
+    },
+    {
+      path: '/i/',
+      // Home page: no get or c param
+      match: () => !urlParams.has('get') && !urlParams.has('c'),
+      className: 'home',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('c') === 'extension',
+      className: 'extension',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('get') === 'i',
+      className: 'important',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('get') === 's',
+      className: 'watch_later',
+    },
+    {
+      path: '/i/',
+      match: () => urlParams.get('get') === 'T',
+      className: 'playlists',
+    },
+    {
+      path: '/i/',
+      match: () => /^t_\d+$/.test(urlParams.get('get') || ''),
+      className: () => {
+        const n = (urlParams.get('get') || '').substring(2);
+        return `playlists t_${n}`;
+      },
+    },
+    {
+      path: '/i/',
+      // Category page: get param starts with c_
+      match: () => urlParams.get('get') && urlParams.get('get').startsWith('c_'),
+      className: () => {
+        const n = urlParams.get('get').substring(2);
+        return `category c_${n}`;
+      },
+    },
+    {
+      path: '/i/',
+      match: () => (urlParams.get('get') && urlParams.get('get').startsWith('f_')),
+      className: () => {
+        const n = urlParams.get('get').substring(2);
+        return `category`;
+      },
+    },
+  ];
+
+  for (const route of routes) {
+    if (path === route.path && route.match()) {
+      const classString = typeof route.className === 'function' ? route.className() : route.className;
+      return withPrefix ? prefixClasses(classString) : classString;
+    }
+  }
+
+  return pageName;
+}
+
+function isFeedPage() {
+  // Determine if the current page is a feed page, and not e.g. settings or extensions page.
+  const feedPageClasses = [
+    'yl-page-home',
+    'yl-page-important',
+    'yl-page-watch_later',
+    'yl-page-playlists',
+    'yl-page-category',
+    'yl-page-search_results',
+  ];
+  // Check body if classes exist
+  const isFeedPage = feedPageClasses.some(feedPage => document.body.classList.contains(feedPage));
+  return isFeedPage;
+}
+
+function isVideoLabelsEnabled() {
+  // If user has enabled video labels setting, where "Favorites" becomes "Watch Later", and "My Labels" becomes "Playlists".
+  return document.body.classList.contains('youlag-video-labels');
+}
+
+function getToolbarStickyState() {
+  return app.state.page.toolbarSticky;
+}
+
+function setToolbarStickyState(state) {
+  app.state.page.toolbarSticky = state;
 }

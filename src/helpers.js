@@ -128,3 +128,77 @@ function extractFeedItemData(feedItem) {
 
   return videoObject;
 }
+
+function getSubpageParentId(getParam) {
+  /**
+   * Check parent of current subpage.
+   * Returns the parent category id for a given getParam (e.g. 't_8' or 'f_8').
+   * For 't_{n}' returns 'tags'.
+   * For 'f_{n}' returns the DOM id of the active category (e.g. 'c_2'), or null if not found.
+   */
+  if (/^t_\d+$/.test(getParam)) {
+    // Tag (playlists) page
+    return 'playlists';
+  }
+  if (/^f_\d+$/.test(getParam)) {
+    // Filter page, a subpage of a category.
+    const activeElem = document.querySelector('#sidebar .tree-folder.category.active');
+    if (activeElem && activeElem.id) {
+      return activeElem.id; // e.g. 'c_{n}'
+    }
+    return null;
+  }
+  return null;
+}
+
+function getCategoryWhitelist() {
+  // Retrieve the category whitelist.
+  // `setCategoryWhitelist()` in `extension.php` outputs the user data to the DOM.
+  const el = document.querySelector('#yl_category_whitelist');
+  if (!el) return [];
+
+  const data = el.getAttribute('data-yl-category-whitelist');
+  if (!data) return ['all'];
+  const whitelist = data.split(',').map(s => s.trim()).filter(Boolean);
+
+  try {
+    localStorage.setItem('youlagCategoryWhitelist', JSON.stringify(whitelist));
+  } catch (e) { }
+
+  return whitelist;
+}
+
+function isPageWhitelisted(whitelist, currentPageClass) {
+  if (!Array.isArray(whitelist) || !currentPageClass) return false;
+
+  // If 'all' is included, it means every page and category will use the Youlag interface.
+  if (whitelist.includes('all')) return true;
+
+  // Check if parent pages are whitelisted.
+  const pageTypes = ['home', 'important', 'watch_later', 'playlists', 'search_results'];
+  for (const pt of pageTypes) {
+    if (currentPageClass === `yl-page-${pt}` && whitelist.includes(pt)) {
+      return true;
+    }
+  }
+
+  // Check if category pages are whitelisted.
+  if (currentPageClass.startsWith('yl-page-category')) {
+    const match = currentPageClass.match(/c_(\d+)/);
+    if (match && whitelist.includes('c_' + match[1])) {
+      return true;
+    }
+  }
+
+  // Check if subpage parent category is whitelisted.
+  const urlParams = new URLSearchParams(window.location.search);
+  const getParam = urlParams.get('get');
+  if (getParam) {
+    const parentId = getSubpageParentId(getParam);
+    if (parentId && whitelist.includes(parentId)) {
+      return true;
+    }
+  }
+
+  return false;
+}

@@ -4,6 +4,22 @@
  * Handles general UI interactions, including click listeners, popstate handling, etc.
  */
 
+/*****************************************
+ *
+ * INDEX
+ * - Event listeners
+ * - UI class handlers
+ * - UI components
+ * - UI utilities
+ *
+ ****************************************/
+
+
+/*****************************************
+ * BEGIN "EVENT LISTENERS"
+ * Related to click listeners and popstate handling.
+ ****************************************/
+
 function setupClickListener() {
   // youlag-active: Video mode
   if (app.state.youlag.clickListenerInit) return;
@@ -241,6 +257,354 @@ function setupTagsDropdownOverride() {
   }, true);
 }
 
+function setupSidenavStateListener() {
+  // Listen for class changes on #aside_feed and update body classes
+  const sidenav = document.getElementById('aside_feed');
+  if (!sidenav) return;
+  setSidenavState();
+  const observer = new MutationObserver(setSidenavState);
+  observer.observe(sidenav, { attributes: true, attributeFilter: ['class'] });
+}
+
+function isHashUrl() {
+  const currentPathnameSearch = window.location.pathname + window.location.search;
+  const isHash = app.state.popstate.pathPrev === currentPathnameSearch && window.location.hash;
+  app.state.popstate.pathPrev = currentPathnameSearch;
+  return isHash;
+}
+
+/*****************************************
+ * END "EVENT LISTENERS"
+ ****************************************/
+
+
+
+/*****************************************
+ * BEGIN "UI CLASS HANDLERS"
+ * Adding/removing classes based on user settings and page state.
+ ****************************************/
+
+function setBodyPageClass() {
+  getCurrentPage() && (document.body.className += ' ' + getCurrentPage());
+  currentPageParams = new URLSearchParams(window.location.search).get('get');
+  setMobileLayoutGrid();
+  setupSidenavStateListener();
+  getSubpageParentId(currentPageParams) && (document.body.className += ' yl-page-' + getSubpageParentId(currentPageParams));
+  setVideoLabelsClass();
+  setCategoryWhitelistClass();
+  setUnreadBadgeClass();
+  setPageSortingClass();
+  document.body.setAttribute('data-youlag-version', app.metadata.version);
+}
+
+function setCategoryWhitelistClass() {
+  // Quickly apply youlag-category-whitelist class based on localStorage to reduce layout shifts.
+
+  let localStorageWhitelist = [];
+  try {
+    const stored = localStorage.getItem('youlagCategoryWhitelist');
+    if (stored) localStorageWhitelist = JSON.parse(stored);
+  } catch (e) { }
+
+  const currentPageClass = getCurrentPage();
+  const isWhitelisted = isPageWhitelisted(localStorageWhitelist, currentPageClass);
+  app.state.page.layout = isWhitelisted ? 'video' : 'article';
+
+  // Apply class based on localStorage
+  document.body.classList.toggle('youlag-active', isWhitelisted);
+  document.body.classList.toggle('youlag-inactive', !isWhitelisted);
+
+  // Sync with actual whitelist from the user settings exposed in the DOM.
+  const whitelist = getCategoryWhitelist();
+  const isWhitelistedUserSetting = isPageWhitelisted(whitelist, currentPageClass);
+  app.state.page.layout = isWhitelistedUserSetting ? 'video' : 'article';
+
+  // If the actual whitelist status differs from localStorage, update class and localStorage.
+  if (isWhitelistedUserSetting !== isWhitelisted) {
+    document.body.classList.toggle('youlag-active', isWhitelistedUserSetting);
+    document.body.classList.toggle('youlag-inactive', !isWhitelistedUserSetting);
+    try {
+      localStorage.setItem('youlagCategoryWhitelist', JSON.stringify(whitelist));
+    } catch (e) { }
+    return isWhitelistedUserSetting;
+  }
+  return isWhitelisted;
+}
+
+function setVideoLabelsClass() {
+  /* Adds css class 'youlag-video-labels' to body if video labels setting is enabled.
+   * The setting is stored in localStorage for faster access.
+   * When active, labels like "My Labels" changes to "Playlists", and "Favorites" to "Watch Later".
+   */
+  const localStorageSetting = localStorage.getItem('youlagVideoLabels') === 'true';
+  const userSettingElement = document.querySelector('#yl_video_labels');
+  let userSetting;
+
+  if (userSettingElement) {
+    userSetting = userSettingElement.getAttribute('data-yl-video-labels') === 'true';
+  }
+
+  if (userSetting) {
+    document.body.classList.add('youlag-video-labels');
+    localStorage.setItem('youlagVideoLabels', 'true');
+    return true;
+  }
+  else if (userSetting === false) {
+    document.body.classList.remove('youlag-video-labels');
+    localStorage.setItem('youlagVideoLabels', 'false');
+    return false;
+  }
+  else if (localStorageSetting) {
+    document.body.classList.add('youlag-video-labels');
+    return true;
+  }
+  else {
+    document.body.classList.remove('youlag-video-labels');
+    return false;
+  }
+}
+
+function setUnreadBadgeClass() {
+  // Adds css class 'youlag-video-unread-badge' to body if video unread badge setting is enabled.
+  // If enabled, videos will show badge "New" for unwatched videos.
+  const userSettingElement = document.querySelector('#yl_video_unread_badge');
+  let userSetting;
+  if (userSettingElement) {
+    userSetting = userSettingElement.getAttribute('data-yl-video-unread-badge') === 'true';
+  }
+  if (userSetting) {
+    document.body.classList.add('youlag-video-unread-badge');
+    return true;
+  }
+  else {
+    document.body.classList.remove('youlag-video-unread-badge');
+    return false;
+  }
+}
+
+function setPageSortingClass() {
+  // Adds css class e.g. `youlag-sort-watch_later--user-modified`.
+  // Used as a reference for determining the user settings, and run functions based on that.
+  if (getAttrValue('data-yl-video-sort-modified') === 'true') {
+    document.body.classList.add('youlag-sort-watch_later--user-modified');
+  }
+}
+
+function setMobileLayoutGrid() {
+  // Determine if mobile layout should use grid view based on user setting.
+  const userSettingElement = document.querySelector('#yl_feed_view_mobile_grid_enabled');
+  const userSetting = userSettingElement?.getAttribute('data-yl-feed-view-mobile-grid-enabled') === 'true';
+  if (userSetting) {
+    document.body.classList.add('youlag-mobile-layout--grid');
+  }
+  else {
+    document.body.classList.remove('youlag-mobile-layout--grid');
+  }
+  return userSetting;
+}
+
+function setVideoLabelsTitle(pageClass, newTitle) {
+  if (document.body.classList.contains(pageClass) && isVideoLabelsEnabled()) {
+    // Replace the middle text of the tab title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
+    // Primarily for 'Playlists' and 'Watch Later' pages.
+    const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/);
+    if (titleMatch) {
+      const countPart = titleMatch[1] ? titleMatch[1] : '';
+      const customSuffix = titleMatch[4] ? titleMatch[4] : ''; // In case the user has rename their FreshRSS instance.
+      document.title = `${countPart}${newTitle} · ${customSuffix}`;
+    }
+  }
+}
+
+function setSidenavState() {
+  // Update body classes based on sidenav state (expanded/collapsed)
+  const sidenav = document.getElementById('aside_feed');
+  if (!sidenav) return;
+  const expanded = sidenav.classList.contains('visible');
+  document.body.classList.toggle('youlag-sidenav--expanded', expanded);
+  document.body.classList.toggle('youlag-sidenav--collapsed', !expanded);
+}
+
+/*****************************************
+ * END "UI CLASS HANDLERS"
+ ****************************************/
+
+
+
+/*****************************************
+ * BEGIN "UI COMPONENTS"
+ * Handling of UI components like toolbars.
+ ****************************************/
+
+function renderToolbar() {
+  // Creates a sticky toolbar to contains the category title and 'configure view' button. 
+  if (app.state.youlag.toolbarInit) return;
+  app.state.youlag.toolbarInit = true;
+
+  const toolbar = document.getElementById('yl_category_toolbar');
+  const menuContainer = document.getElementById('yl_nav_menu_container');
+  const menuContent = menuContainer?.querySelector('#yl_nav_menu_container_content');
+  const menuToggle = toolbar?.querySelector('#yl_nav_menu_container_toggle');
+
+  const frssToggleSearch = document?.querySelector('#dropdown-search-wrapper');
+  const frssMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
+
+  // Fail gracefully 
+  if (!menuContainer || !menuContent || !menuToggle || !frssMenu || !toolbar) {
+    const missing = [];
+    if (!menuContainer) missing.push('menuContainer');
+    if (!menuContent) missing.push('menuContent');
+    if (!menuToggle) missing.push('menuToggle');
+    if (!frssMenu) missing.push('frssMenu');
+    if (!toolbar) missing.push('toolbar');
+    console.warn('Failed to setup sticky nav menu, missing elements:', missing);
+    return;
+  }
+
+  menuContent.hidden = true; // `#yl_nav_menu_container_content` is hidden by default.
+  menuContent.classList.add('nav_menu'); 
+
+  toolbar.classList.add('yl-category-toolbar--sticky');
+
+  // Place `#yl_category_toolbar` after `#new-article` notification.
+  const domLocation = document.querySelector('#stream #new-article');
+  if (domLocation && toolbar) {
+    if (domLocation.nextSibling) {
+      domLocation.parentNode.insertBefore(toolbar, domLocation.nextSibling);
+    }
+    else {
+      domLocation.parentNode.appendChild(toolbar);
+    }
+  }
+
+  if (frssToggleSearch) {
+    // Break out search from the FreshRSS `.nav_menu` container, to keep it independent for styling.
+    if (toolbar.nextSibling) {
+      toolbar.parentNode.insertBefore(frssToggleSearch, toolbar.nextSibling);
+    } 
+  }
+
+  if (frssMenu && menuContent) {
+    // Move FreshRSS `.nav_menu` items inside Youlag's own `.nav_menu` content, `menuContent` (child of `menuContainer`).
+    const navMenuChildren = Array.from(frssMenu.children);
+    navMenuChildren.forEach(child => {
+      if (child.id !== 'nav_menu_toggle_aside') {
+        // Exclude the sidebar toggle button, as that its position placement is handled via css already.
+        menuContent.appendChild(child);
+      }
+    });
+
+    // Create shortcut button to Youlag settings page.
+    const settingsShortcut = document.createElement('div');
+    settingsShortcut.id = 'yl_nav_menu_settings_shortcut';
+    settingsShortcut.innerHTML = `<a href="/i/?c=extension&a=configure&e=Youlag" class="btn" target="_blank" rel="noopener noreferrer">
+                                    More settings
+                                  </a>`;
+    menuContent.appendChild(settingsShortcut);
+  }
+  
+  // Make the toolbar sticky on scroll.
+  setToolbarSticky(toolbar);
+
+  document.addEventListener('click', function (e) {
+    // Allow toggling the view options via 'Configure view' button in the toolbar.
+    console.log('click detected for toolbar toggle');
+    const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
+    if (toggleBtn && toolbar) {
+      const isOpen = toolbar.classList.toggle('yl-nav-menu-container--open');
+      menuContent.hidden = !isOpen;
+      setToolbarStickyState(true);
+      setTimeout(() => {
+        setToolbarStickyState(false);
+      }, 100);
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    const menuLink = e.target.closest('#yl_nav_menu_container_content a');
+    if (menuLink && toolbar) {
+      // Allow mobile dropdown to expand without causing scroll events to hide the toolbar. 
+      setToolbarStickyState(true);
+      setTimeout(() => {
+        setToolbarStickyState(false);
+      }, 100);
+    }
+  });
+}
+
+function setToolbarSticky(toolbarElement) {
+  // Setup scroll listener to show/hide the Youlag `.nav_menu`. Visible while scrolling up, hidden while scrolling down.
+  const toolbar = toolbarElement;
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  let ignoreNextScroll = false; // 'Configure view' toggling expands `toolbarElement`, causing unwanted scroll events. Prevent those.  
+
+  function setStickyVisibility(show) {
+    if (getToolbarStickyState() === true) {
+      // Allow temporarily forcing the toolbar to be visible, e.g. while toggling 'configure view'.
+      toolbar.classList.add('sticky-visible');
+      toolbar.classList.remove('sticky-hidden');
+      return;
+    }
+
+    // Default behavior: Toggle based on scroll direction.
+    toolbar.classList.toggle('sticky-visible', show);
+    toolbar.classList.toggle('sticky-hidden', !show);
+  }
+
+  function setStickyVisibilitySidenavToggle(show) {
+    const sidenavToggle = document.getElementById('nav_menu_toggle_aside');
+    if (sidenavToggle) {
+      // Desktop: Hide show the sidenav toggle button based on scroll direction.
+      sidenavToggle.classList.toggle('sticky-visible--sidenav-toggle', show);
+      sidenavToggle.classList.toggle('sticky-hidden--sidenav-toggle', !show);
+    }
+  }
+
+  function onScroll() {
+    if (ignoreNextScroll) {
+      ignoreNextScroll = false;
+      lastScrollY = window.scrollY;
+      return;
+    }
+    const currentScrollY = window.scrollY;
+    if (currentScrollY <= 0) {
+      setStickyVisibility(true);
+      setStickyVisibilitySidenavToggle(true);
+    }
+    else if (currentScrollY > lastScrollY + 2) {
+      setStickyVisibility(false);
+      setStickyVisibilitySidenavToggle(false);
+    }
+    else if (currentScrollY < lastScrollY - 2) {
+      setStickyVisibility(true);
+      setStickyVisibilitySidenavToggle(true);
+    }
+    lastScrollY = currentScrollY;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        onScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+}
+
+/*****************************************
+ * END "UI COMPONENTS"
+ ****************************************/
+
+
+
+/*****************************************
+ * BEGIN "UI UTILITIES"
+ * General utility functions for UI handling.
+ ****************************************/
+
 function setPageTitle(title) {
   if (typeof title === 'string' && title.length > 0) {
     if (app.state.page.titlePrev === null) {
@@ -254,13 +618,6 @@ function setPageTitle(title) {
     document.title = app.state.page.titlePrev;
     app.state.page.titlePrev = null;
   }
-}
-
-function isHashUrl() {
-  const currentPathnameSearch = window.location.pathname + window.location.search;
-  const isHash = app.state.popstate.pathPrev === currentPathnameSearch && window.location.hash;
-  app.state.popstate.pathPrev = currentPathnameSearch;
-  return isHash;
 }
 
 function toggleFavorite(url, container, feedItemEl) {
@@ -318,3 +675,15 @@ function toggleFavorite(url, container, feedItemEl) {
       console.error('Error:', error);
     });
 }
+
+function clearPathHash() {
+  // Clear the URL hash to prevent dropdown menus from opening on page load.
+  // Related to the css hacks used in: "Dropdown custom mobile behavior hacks".
+  if (window.location.hash) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+}
+
+/*****************************************
+ * END "UI UTILITIES"
+ ****************************************/
