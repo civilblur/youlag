@@ -58,21 +58,9 @@ function renderModalVideo(videoObject) {
   
   setPageTitle(videoObject.title);
 
-  const isArticle = !videoObject.youtubeId; // Currently, anything that doesn't have a YouTube ID is considered an article.
-  const shouldCollapseDescription = isMobile() && !isArticle && getRelatedVideosSetting() !== 'none';
+  const shouldCollapseDescription = isMobile() && !videoObject.youtubeId && getRelatedVideosSetting() !== 'none';
 
-  // Article: Apply handling of article types in modal.
-  if (isArticle) {
-    app.state.modal.activeType = 'article';
-    modal.classList.add(app.modal.class.typeArticle);
-    let iframeContainer = document.querySelector(`.${app.modal.class.iframeContainer}`);
-    if (iframeContainer) document.querySelector(`.${app.modal.class.iframeContainer}`).remove();
-  }
-  else {
-    // When article is miniplayer and next triggered is a video, ensure article class is removed.
-    app.state.modal.activeType = 'video';
-    modal.classList.remove(app.modal.class.typeArticle);
-  }
+  setModalType(videoObject);
 
   const videoDescContainer = modal.querySelector(`.${app.modal.class.descContainer}`);
   
@@ -269,6 +257,26 @@ function handleModalDescription(modal, videoDescContainer, shouldCollapseDescrip
         handler: descExpand
       });
     }
+  }
+}
+
+function setModalType(videoObject) {
+  const modal = getModalVideo();
+  if (!modal || !videoObject) return;
+
+  // Currently, anything that doesn't have a YouTube ID is considered an article.
+  const isArticle = !videoObject.youtubeId;
+
+  if (isArticle) {
+    app.state.modal.activeType = 'article';
+    modal.classList.add(app.modal.class.typeArticle);
+    let iframeContainer = document.querySelector(`.${app.modal.class.iframeContainer}`);
+    if (iframeContainer) document.querySelector(`.${app.modal.class.iframeContainer}`).remove();
+  }
+  else {
+    // When article is miniplayer and next triggered is a video, ensure article class is removed.
+    app.state.modal.activeType = 'video';
+    modal.classList.remove(app.modal.class.typeArticle);
   }
 }
 
