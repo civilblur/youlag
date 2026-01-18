@@ -22,6 +22,8 @@ const srcFiles = [
   '../src/utilities.js',
   '../src/helpers.js',
   '../src/ui.js',
+  '../src/ui-modals.js',
+  '../src/ui-modes.js',
    '../src/forms.js',
    '../src/events.js',
 ];
