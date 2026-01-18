@@ -335,7 +335,7 @@ function setModalState(boolean) {
   app.state.modal.active = boolean; // true = modal is active
 }
 
-function pushHistoryState(key = 'modalOpen', value = true) {
+function pushHistoryState(key, value = true) {
   // Pushes a new state to the history for modal close/back navigation.
   if (isModeFullscreen() && !app.state.popstate.added) {
     const state = {};
@@ -345,12 +345,8 @@ function pushHistoryState(key = 'modalOpen', value = true) {
   }
 }
 
-function clearHistoryState(key = 'modalOpen') {
-  // Clears the history state given the assigned property key. 
-  if (app.state.popstate.added) {
-    const state = {};
-    state[key] = undefined;
-    history.pushState(state, '', '');
-    app.state.popstate.added = false;
-  }
+
+function resetHistoryState() {
+  // Fully resets the browser history state to null for the current URL.
+  history.replaceState(null, '', location.href);
 }

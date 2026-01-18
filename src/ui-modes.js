@@ -15,8 +15,7 @@ function toggleModeMiniplayer() {
        * Thus, if expanding back to fullscreen mode, we need to add it here to avoid routing back a page,
        * and instead just close the modal.
        */
-      history.pushState({ modalOpen: true }, '', '');
-      app.state.popstate.added = true;
+      pushHistoryState('modalOpen', true);
     }
   }
   else {

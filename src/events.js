@@ -1,9 +1,10 @@
-function getCurrentPage() {
-  // Notate the current page through css class on the body element.
-  // E.g. yl-page-home, yl-page-important, yl-page-category, etc.
+function getCurrentPage(withPrefix = true) {
+  // Returns the current page name, optionally with the 'yl-page-' prefix.    
+  // E.g. 'yl-page-home', 'yl-page-important', 'yl-page-category', etc. or just 'home', 'important', ...  
   const path = window.location.pathname;
   const urlParams = new URLSearchParams(window.location.search);
   const classPrefix = 'yl-page-';
+  let pageName = '';
 
   function prefixClasses(classString) {
     return classString.split(' ').map(cls => classPrefix + cls).join(' ');
@@ -71,11 +72,11 @@ function getCurrentPage() {
   for (const route of routes) {
     if (path === route.path && route.match()) {
       const classString = typeof route.className === 'function' ? route.className() : route.className;
-      return prefixClasses(classString);
+      return withPrefix ? prefixClasses(classString) : classString;
     }
   }
 
-  return '';
+  return pageName;
 }
 
 function getSubpageParentId(getParam) {
@@ -477,6 +478,10 @@ function clearPathHash() {
 }
 
 function init() {
+  if (!app.state.youlag.init) console.log('Initializing YouLag script');
+  if (app.state.youlag.init) console.log('YouLag script already initialized, skipping.');
+  if (app.state.youlag.init) return;
+  
   clearPathHash();
   setBodyPageClass();
   if (isFeedPage()) {
@@ -491,10 +496,11 @@ function init() {
     restoreVideoQueue();
   }
   updateSidenavLinks();
-  setTimeout(() => {
-    // HACK: Delay referencing the settings elements.
-    youlagSettingsPageEventListeners();
-  }, 1500);
+  // setTimeout(() => {
+  //   // HACK: Delay referencing the settings elements.
+  //   youlagSettingsPageEventListeners();
+  // }, 1500);
+  youlagSettingsPageEventListeners();
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
   removeYoulagLoadingState();
@@ -508,6 +514,7 @@ function removeYoulagLoadingState() {
 }
 
 function initFallback() {
+  // NOTE: Using FreshRSS' `freshrss:globalContextLoaded` event hasn't been reliable, thus this fallback method.
   if (document.readyState === 'complete' || document.readyState === 'interactive' || app.state.youlag.init === true) {
     init();
   }

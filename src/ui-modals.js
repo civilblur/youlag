@@ -66,7 +66,7 @@ function renderModalVideo(videoObject) {
 
   renderRelatedVideos(videoObject);
 
-  pushHistoryState(); // Allow modal close when navigating back by adding a new history state.
+  pushHistoryState('modalOpen', true); // Allow modal close when navigating back by adding a new history state.
 }
 
 function templateModalVideo(videoObject, elementToReturn = 'modal') {
@@ -272,8 +272,6 @@ function setModalType(videoObject) {
   }
 }
 
-
-
 function setupModalVideoEventListeners(videoObject) {
   // Modal action buttons: Close, Minimize, Favorite, Tags, Escape key.
   
@@ -363,7 +361,7 @@ function closeModalVideo() {
     history.back();
   }
   else {
-    history.replaceState(null, '', location.href);
+    resetHistoryState();
   }
   app.state.modal.active = false;
   setModeMiniplayer(false);
@@ -520,7 +518,7 @@ function restoreVideoQueue() {
 }
 
 function handleActiveArticle(event) {
-  history.pushState({ articleOpen: true }, '', '');
+  pushHistoryState('articleOpen', true);
 }
 
 function closeArticle(event) {
