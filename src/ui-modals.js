@@ -520,16 +520,7 @@ function restoreVideoQueue() {
   if (!queueObj || queueObj.isMiniplayer !== true) return;
 
   // Only restore video queue on pages that don't get blocked by Content-Security-Policy. 
-  const bodyClasses = document.body.classList;
-  const isVideoPage = [
-    'yl-page-home',
-    'yl-page-important',
-    'yl-page-watch_later',
-    'yl-page-playlists',
-    'yl-page-category',
-    'yl-page-search_results'
-  ].some(cls => bodyClasses.contains(cls));
-  if (!isVideoPage) return;
+  if (!isFeedPage()) return;
 
   if (queueObj && Array.isArray(queueObj.queue) && typeof queueObj.queue_active_index === 'number' && queueObj.queue.length > 0) {
     setModeMiniplayer(true); // Restored video queue always opens in miniplayer mode.
