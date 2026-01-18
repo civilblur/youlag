@@ -5,8 +5,6 @@
  */
 
 function setupClickListener() {
-  console.log('Setting up global click listener for feed items...');
-
   // youlag-active: Video mode
   if (app.state.youlag.clickListenerInit) return;
   const streamContainer = document.querySelector(app.frss.el.feedRoot);
@@ -238,7 +236,7 @@ function setupTagsDropdownOverride() {
         iconImg.src = prevSrc;
       }
       // Open custom tags modal
-      createTagsModal(entryId, tags);
+      renderTagsModal(entryId, tags);
     }
   }, true);
 }
