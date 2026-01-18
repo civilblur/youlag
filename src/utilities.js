@@ -1,7 +1,11 @@
 /**
  * Utilities
- * 
- * General utility functions that are shared across Youlag.
+ *
+ * General-purpose, cross-cutting utility functions.
+ *
+ * - Used for app-wide operations, data fetching, DOM and state utilities, and helpers that are not specific to a single feed entry or tag.
+ * - Functions here are not tightly coupled to the UI handling.
+ * - Examples: modal state, link parsing, global data fetchers, date formatting, etc.
  */
 
 /*****************************************

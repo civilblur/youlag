@@ -1,7 +1,11 @@
 /**
  * Helpers
  *
- * Helper logic to handle feed entries.
+ * Functions for handling, extracting, and mutating individual feed entries and their tags in Youlag.
+ *
+ * - Focused on per-feed-item logic, and DOM parsing.
+ * - Used when you need to extract, mutate, or manage data for a feed entry, which is distinct from general utilities.
+ * - Examples: extracting entry data, getting/setting tags, category whitelist checks, etc.
  */
 
 async function getItemTags(itemId) {
@@ -67,6 +71,7 @@ async function setItemTag(entryId, tag) {
 
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
+
   const entryId = feedItem.getAttribute('data-entry')?.match(/([0-9]+)$/);
   const authorId = feedItem.querySelector('.item.website a.item-element[href*="get=f_"]')?.getAttribute('href')?.match(/get=f_([0-9]+)/);
   let extractedVideoUrl = feedItem.querySelector('.item.titleAuthorSummaryDate a[href*="youtube"], .item.titleAuthorSummaryDate a[href*="/watch?v="]')?.href || '';
@@ -154,6 +159,7 @@ function getSubpageParentId(getParam) {
 function getCategoryWhitelist() {
   // Retrieve the category whitelist.
   // `setCategoryWhitelist()` in `extension.php` outputs the user data to the DOM.
+
   const el = document.querySelector('#yl_category_whitelist');
   if (!el) return [];
 
@@ -169,9 +175,12 @@ function getCategoryWhitelist() {
 }
 
 function isPageWhitelisted(whitelist, currentPageClass) {
+  // Check if the current page/category is whitelisted.
+  // Whitelisted pages/categories will use the video mode.
+
   if (!Array.isArray(whitelist) || !currentPageClass) return false;
 
-  // If 'all' is included, it means every page and category will use the Youlag interface.
+  // If 'all' is included, it means every page and category will use the video mode.
   if (whitelist.includes('all')) return true;
 
   // Check if parent pages are whitelisted.
