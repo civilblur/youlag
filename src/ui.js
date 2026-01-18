@@ -284,7 +284,9 @@ function isHashUrl() {
  * Adding/removing classes based on user settings and page state.
  ****************************************/
 
-function setBodyPageClass() {
+function setBodyClass() {
+  // TODO: Shorten class name prefix from 'youlag-' to 'yl-' as the amount of classes have grown.
+
   document.body.className += ' ' + getCurrentPage().class;
   currentPageParams = new URLSearchParams(window.location.search).get('get');
   setMobileLayoutGrid();

@@ -10,7 +10,7 @@ function init() {
   if (app.state.youlag.init) return;
   
   clearPathHash();
-  setBodyPageClass();
+  setBodyClass();
   if (isFeedPage()) {
     setupClickListener();
     setupTagsDropdownOverride();
@@ -23,7 +23,7 @@ function init() {
     restoreVideoQueue();
   }
   updateSidenavLinks();
-  youlagSettingsPageEventListeners();
+  settingsPageEventListeners();
   setVideoLabelsTitle('yl-page-playlists', 'Playlists');
   setVideoLabelsTitle('yl-page-watch_later', 'Watch later');
   updateAddFeedLink();

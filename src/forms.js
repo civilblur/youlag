@@ -5,7 +5,7 @@
  */
 
 
-function youlagSettingsPageEventListeners() {
+function settingsPageEventListeners() {
 
   function formValidation() {
     const settingsRoot = document.getElementById('yl-settings-root');
