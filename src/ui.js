@@ -508,8 +508,10 @@ function renderToolbar() {
 
   document.addEventListener('click', function (e) {
     // Allow toggling the view options via 'Configure view' button in the toolbar.
-    console.log('click detected for toolbar toggle');
     const toggleBtn = e.target.closest('#yl_nav_menu_container_toggle');
+    const menuLink = e.target.closest('#yl_nav_menu_container_content a');
+    if (!(toggleBtn && toolbar) && !(menuLink && toolbar)) return;
+
     if (toggleBtn && toolbar) {
       const isOpen = toolbar.classList.toggle('yl-nav-menu-container--open');
       menuContent.hidden = !isOpen;
@@ -519,15 +521,15 @@ function renderToolbar() {
       }, 100);
       e.preventDefault();
       e.stopPropagation();
+      return;
     }
-
-    const menuLink = e.target.closest('#yl_nav_menu_container_content a');
     if (menuLink && toolbar) {
       // Allow mobile dropdown to expand without causing scroll events to hide the toolbar. 
       setToolbarStickyState(true);
       setTimeout(() => {
         setToolbarStickyState(false);
       }, 100);
+      return;
     }
   });
 }
@@ -598,7 +600,6 @@ function storeCurrentCategoryId() {
   // Store the current category ID in app.state.
   // If current page is not a category page, the ID is cleared.
   const page = getCurrentPage();
-  console.log('page', page);
   let categoryId = null;
   if (page.name === 'category' && page.id && page.id.startsWith('c_')) {
     categoryId = page.id.match(/^c_(\d+)$/);

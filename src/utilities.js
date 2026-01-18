@@ -366,18 +366,17 @@ function getCurrentPage() {
 }
 
 function isFeedPage() {
-  // Determine if the current page is a feed page, and not e.g. settings or extensions page.
-  const feedPageClasses = [
-    'yl-page-home',
-    'yl-page-important',
-    'yl-page-watch_later',
-    'yl-page-playlists',
-    'yl-page-category',
-    'yl-page-search_results',
-  ];
-  // Check body if classes exist
-  const isFeedPage = feedPageClasses.some(feedPage => document.body.classList.contains(feedPage));
-  return isFeedPage;
+  // Determine if the current page is a feed page.
+  const feedPageNames = new Set([
+    'home',
+    'important',
+    'watch_later',
+    'playlists',
+    'category',
+    'search_results',
+  ]);
+  const page = getCurrentPage();
+  return feedPageNames.has(page.name);
 }
 
 function isVideoLabelsEnabled() {

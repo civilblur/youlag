@@ -315,9 +315,7 @@ function setupModalVideoEventListeners(videoObject) {
   const videoSourceSelect = modal.querySelector(`#${app.modal.id.source}`);
   const iframe = modal.querySelector(`.${app.modal.class.iframe}`);
   if (videoSourceSelect && iframe) {
-    console.log('changing video source selection listener added');
     videoSourceSelect.addEventListener('change', function () {
-      console.log('Video source changed to:', videoSourceSelect.value);
       iframe.src = getEmbedUrl(videoSourceSelect.value);
     });
   }
@@ -453,7 +451,6 @@ function renderRelatedVideos(videoObject) {
     });
 
     relatedVideosContainer.addEventListener('click', function (e) {
-      console.log('Related video clicked');
       const relatedItem = e.target.closest('.youlag-related-video-item');
       if (!relatedItem) return;
       const feedItem = relatedItem.querySelector('.youlag-related-video-item__feed-item-container > div[data-feed]');
