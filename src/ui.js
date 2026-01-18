@@ -45,13 +45,13 @@ function setupClickListener() {
         handleActiveVideo(event);
         // Ensure the native freshrss view does not expand the feed item when clicked.
         if (target.classList.contains('active')) {
-          collapseBackgroundFeedItem(target);
+          forceFrssEntryToCollapse(target);
         }
         else {
           // Otherwise, observe until it's active, then collapse it.
           const observer = new MutationObserver((mutationsList, observer) => {
             if (target.classList.contains('active')) {
-              collapseBackgroundFeedItem(target);
+              forceFrssEntryToCollapse(target);
               observer.disconnect();
             }
           });
@@ -682,6 +682,59 @@ function clearPathHash() {
   if (window.location.hash) {
     history.replaceState(null, '', window.location.pathname + window.location.search);
   }
+}
+
+function updateVideoAuthor() {
+  // youlag-active: On video cards, use move out the `.author` element outside of the video title.
+  // This prevents the author from being truncated in the title line, and is always displayed regardless of title length.
+  
+  // TODO: refactor hardcoded querySelectorAll 
+  const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--author)');
+  feedCards.forEach(card => {
+    const author = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title .author');
+    const title = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title');
+    const websiteName = card.querySelector('.flux_header .item.website .websiteName');
+    if (author && title && title.parentNode) {
+      if (websiteName) {
+        // Use website name instead of author name.
+        author.textContent = `${websiteName.textContent.trim()}`;
+      }
+      // Move author (website name) element after title element.
+      title.parentNode.insertBefore(author, title.nextSibling);
+      card.classList.add('yl-modified--author');
+    }
+  });
+}
+
+function updateVideoDateFormat() {
+  // youlag-active: On video cards, update to use relative date.
+
+  // TODO: refactor hardcoded querySelectorAl
+  const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--date)');
+  feedCards.forEach(card => {
+    const date = card.querySelector('.flux_header .item.titleAuthorSummaryDate .date time');
+    if (date) {
+      const datetime = date.getAttribute('datetime');
+      if (datetime) {
+        const relativeDate = typeof getRelativeDate === 'function' ? getRelativeDate(datetime) : (typeof getRelativeTime === 'function' ? getRelativeTime(datetime) : null);
+        if (relativeDate) {
+          date.textContent = relativeDate;
+          card.classList.add('yl-modified--date');
+        }
+      }
+    }
+  });
+}
+
+function onNewFeedItems() {
+  // Run actions based on if there's new items added to the feed stream.
+
+  document.addEventListener('freshrss:load-more', function () {
+    if (app.state.page.layout === 'video') {
+      updateVideoAuthor();
+      updateVideoDateFormat();
+    }
+  }, false);
 }
 
 /*****************************************

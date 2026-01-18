@@ -335,6 +335,31 @@ function setupModalVideoEventListeners(videoObject) {
 
 }
 
+function forceFrssEntryToCollapse(target) {
+  // HACK: Collapse the expanded entry triggered by FreshRSS click event, as Youlag presents the content in a modal.
+
+  const feedItem = target;
+  let isActive = feedItem.classList.contains('active');
+  const iframes = feedItem.querySelectorAll('iframe');
+
+  if (iframes) {
+    iframes.forEach(iframe => {
+      // Disable iframes to prevent autoplay.
+      const src = iframe.getAttribute('src');
+      if (src) {
+        iframe.setAttribute('data-original', src);
+        iframe.setAttribute('src', '');
+      }
+    });
+  }
+
+  if (isActive) {
+    // Collapse the feed item
+    feedItem.classList.remove('active');
+    feedItem.classList.remove('current');
+  }
+}
+
 function closeModalVideo() {
   const modal = getModalVideo();
 
