@@ -1,3 +1,10 @@
+/**
+ * Global
+ * 
+ * Stores global app state, metadata, breakpoints, and type definitions.
+ */
+
+
 window.app = window.app || {};
 
 app.metadata = {

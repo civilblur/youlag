@@ -1,3 +1,10 @@
+/**
+ * Forms
+ * 
+ * Handles form-related functionalities. Primarily used for the Youlag settings page.
+ */
+
+
 function youlagSettingsPageEventListeners() {
 
   function formValidation() {
