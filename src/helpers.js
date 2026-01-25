@@ -186,7 +186,12 @@ function isPageWhitelisted(whitelist, currentPageClass) {
   // Check if parent pages are whitelisted.
   const pageTypes = ['home', 'important', 'watch_later', 'playlists', 'search_results'];
   for (const pt of pageTypes) {
-    if (currentPageClass === `yl-page-${pt}` && whitelist.includes(pt)) {
+    const className = `yl-page-${pt}`;
+    if (
+      (currentPageClass === className ||
+        currentPageClass.split(/\s+/).includes(className)) &&
+      whitelist.includes(pt)
+    ) {
       return true;
     }
   }
@@ -198,6 +203,7 @@ function isPageWhitelisted(whitelist, currentPageClass) {
       return true;
     }
   }
+
 
   // Check if subpage parent category is whitelisted.
   const urlParams = new URLSearchParams(window.location.search);
