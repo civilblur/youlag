@@ -126,11 +126,12 @@ function setupClickListener() {
         };
 
         // Prevent sticky category title from showing when auto-scrolling.
-        const ylCategoryToolbar = document.getElementById(app.modal.id.toolbar);
-        app.state.page.toolbarSticky = true;
-        ylCategoryToolbar.classList.remove('sticky-visible');
-        ylCategoryToolbar.classList.add('sticky-hidden');
+        const toolbar = document.getElementById(app.modal.id.toolbar);
+        setToolbarStickyState(true);
+        toolbar.classList.remove('sticky-visible');
+        toolbar.classList.add('sticky-hidden');
 
+        // Scroll to article, retry to ensure correct position due to the element expanding.
         let attempts = 0;
         const maxAttempts = 4;
         const scroll = () => {
@@ -146,7 +147,7 @@ function setupClickListener() {
             }
             else {
               setTimeout(() => {
-                app.state.page.toolbarSticky = false;
+                setToolbarStickyState(false);
               }, 50);
             }
           };
@@ -414,7 +415,6 @@ function setVideoLabelsTitle(pageName, newTitle) {
   // Primarily for 'Playlists' and 'Watch Later' pages.
   const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/);
   if (titleMatch) {
-    console.log('title match:', titleMatch);
     const countPart = titleMatch[1] ? titleMatch[1] : '';
     const customSuffix = titleMatch[4] ? titleMatch[4] : ''; // In case the user has rename their FreshRSS instance.
     document.title = `${countPart}${newTitle} · ${customSuffix}`;
@@ -545,7 +545,7 @@ function setToolbarSticky(toolbarElement) {
   let lastScrollY = window.scrollY;
   let ticking = false;
   let ignoreNextScroll = false; // 'Configure view' toggling expands `toolbarElement`, causing unwanted scroll events. Prevent those.  
-
+  
   function setStickyVisibility(show) {
     if (getToolbarStickyState() === true) {
       // Allow temporarily forcing the toolbar to be visible, e.g. while toggling 'configure view'.
@@ -572,6 +572,9 @@ function setToolbarSticky(toolbarElement) {
     if (ignoreNextScroll) {
       ignoreNextScroll = false;
       lastScrollY = window.scrollY;
+      return;
+    }
+    if (getToolbarStickyState() === true) {
       return;
     }
     const currentScrollY = window.scrollY;

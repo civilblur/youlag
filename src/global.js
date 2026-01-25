@@ -28,7 +28,7 @@ app.state = {
   page: {
     layout: null,               // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
     titlePrev: null,
-    toolbarSticky: true,        // Use for temporarily disabling the sticky toolbar (nav_menu), e.g. when using programmatic scrolling.
+    toolbarSticky: false,       // true: forced sticky. false: dynamic, based on scroll. Use for temporarily disabling the sticky toolbar (nav_menu), e.g. when using programmatic scrolling.
   },
   popstate: {
     allowBack: true,            // Prevent multiple history.back() triggers.
