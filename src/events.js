@@ -28,7 +28,9 @@ function init() {
   setVideoLabelsTitle('watch_later', 'Watch later');
   updateAddFeedLink();
   setAddFeedCategoryValue();
+  setMissingLogo();
   removeYoulagLoadingState();
+  
   app.state.youlag.init = true;
 }
 

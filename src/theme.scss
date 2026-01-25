@@ -522,6 +522,12 @@ body {
       font-size: var(--yl-text-sm);
       color: var(--yl-color-text-default);
       font-weight: bold;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      line-clamp: 1;
+      overflow: hidden;
+      word-break: break-all;
     }
   }
 
@@ -4616,6 +4622,12 @@ a.yl-video-action-button[href=""] {
 
       &__author {
         font-size: var(--yl-text-xs);
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        line-clamp: 1;
+        overflow: hidden;
+        word-break: break-all;
       }
 
       &__author,

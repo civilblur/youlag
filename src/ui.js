@@ -616,6 +616,27 @@ function storeCurrentCategoryId() {
   localStorage.setItem('youlagCategoryIdRecent', categoryId ? categoryId[1] : null);
 }
 
+function setMissingLogo() {
+  // For search results with no result, the FreshRSS logo is not rendered 
+  // due to relying on the `registerHook('nav_entries'...)` in `extensions.php`, which only renders if there's a feed.
+  // This function adds the logo back in such cases.
+
+  if (document.getElementById(app.frss.id.logo)) return;
+
+  let pageContainer;
+  let frssGlobal = document.querySelector(app.frss.el.global);
+  pageContainer = frssGlobal ? frssGlobal : document.body;
+
+  const logo = document.createElement('div');
+  logo.id = app.frss.id.logo;
+  logo.innerHTML = `
+    <a href="/i/">
+      <img id="${app.frss.id.logoImg}" src="../themes/icons/FreshRSS-logo.svg" alt="FreshRSS" loading="lazy">
+    </a>
+  `;
+  pageContainer.appendChild(logo);
+}
+
 /*****************************************
  * END "UI COMPONENTS"
  ****************************************/

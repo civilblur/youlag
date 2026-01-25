@@ -89,10 +89,15 @@ app.modal = {
 
 app.frss = {
   // FreshRSS selectors
+  id: {
+    logo: 'yl_freshrss_logo_container',
+    logoImg: 'yl_freshrss_logo',   
+  },
   el: {
     feedRoot: '#stream',
     current: '#stream div[data-entry].active.current',    // Currently opened feed entry in the stream.
-    entry: 'div[data-entry]',                             // Feed entries general selector.
+    entry: 'div[data-entry]',   
+    global: '#global',                     // Feed entries general selector.
   }
 }
 
