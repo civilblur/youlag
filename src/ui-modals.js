@@ -225,7 +225,7 @@ function handleModalDescription(videoObject) {
   const modal = getModalVideo();
   if (!modal || !videoObject) return;
 
-  const shouldCollapseDescription = isMobile() && !videoObject.youtubeId && getRelatedVideosSetting() !== 'none';
+  const shouldCollapseDescription = isMobile() && videoObject.youtubeId && getRelatedVideosSetting() !== 'none';
 
   videoDescContainer = modal.querySelector(`.${app.modal.class.descContainer}`);
   if (
