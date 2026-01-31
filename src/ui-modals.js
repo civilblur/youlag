@@ -375,7 +375,8 @@ function closeModalVideo() {
   
   if (modal) modal.remove();
 
-  app.state.popstate.added = false;
+  setHistoryPopstate(false); // Signal that a new pop state can be pushed for the next video
+
   if (
     !app.state.popstate.allowBack && 
     history.state && 
@@ -581,6 +582,7 @@ function closeArticle(event) {
     }, 50);
 
     setModalState(false);
+    setHistoryPopstate(false); // Signal that a new pop state can be pushed for the next article
   }
 }
 

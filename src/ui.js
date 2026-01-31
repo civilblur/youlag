@@ -21,7 +21,7 @@
  ****************************************/
 
 function setupClickListener() {
-  // youlag-active: Video mode
+  // Handle video feed entry click events. For video layout.
   if (app.state.youlag.clickListenerInit) return;
   const streamContainer = document.querySelector(app.frss.el.feedRoot);
 
@@ -90,7 +90,7 @@ function setupClickListener() {
     }
   }
   else if (isLayoutArticle()) {
-    // youlag-inactive: Article context.
+    // Handle article feed entry click events. For non-video layout.  
     if (streamContainer) {
       streamContainer.addEventListener('click', function (event) {
         const target = event.target.closest(app.frss.el.entry);
@@ -107,9 +107,10 @@ function setupClickListener() {
         ].join(', ');
         if (event.target.closest(actionButtons)) return;
 
-        if (!app.state.modal.active) {
+        if (!getModalState()) {
+          setModalState(true);
+          // Only push history state after modal is set to open
           handleActiveArticle(event);
-          app.state.modal.active = true;
         }
 
         // Scroll to top of the article when opened.
@@ -159,7 +160,8 @@ function setupClickListener() {
 
     window.addEventListener('popstate', function (event) {
       function getOpenArticle() {
-        return document.querySelector(app.frss.el.current);
+        // Function alias: primarily for clarity, that getModalState() checks for an open article and not an actual modal.
+        return getModalState();
       }
 
       if (isHashUrl()) {
@@ -173,9 +175,12 @@ function setupClickListener() {
       if (isModeMiniplayer() && !getOpenArticle()) {
         history.back();
       }
+      if (!getOpenArticle()) {
+        history.back();
+      }
       else {
         if (getOpenArticle()) {
-          // Close the open article if one is open when navigating back.
+          // If an article is open, close it when navigating back.
           closeArticle(event);
         }
       }

@@ -226,13 +226,22 @@ function getRelatedVideosSetting() {
   return document.querySelector('#yl_related_videos_source')?.getAttribute('data-yl-related-videos-source') || 'none';
 }
 
+function getHistoryPopstate() {
+  return app.state.popstate.added; // true = history state for modal/article has been added
+}
+
+function setHistoryPopstate(state) {
+  state = !!state;
+  return app.state.popstate.added = state; // true = history state for modal/article has been added
+}
+
 function pushHistoryState(key, value = true) {
   // Pushes a new state to the history for modal close/back navigation.
-  if (isModeFullscreen() && !app.state.popstate.added) {
+  if (getModalState() && !getHistoryPopstate()) {
     const state = {};
     state[key] = value;
     history.pushState(state, '', '');
-    app.state.popstate.added = true;
+    setHistoryPopstate(true);
   }
 }
 

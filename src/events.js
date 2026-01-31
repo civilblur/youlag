@@ -19,7 +19,7 @@ function init() {
       updateVideoAuthor();
       updateVideoDateFormat();
     }
-    onNewFeedItems()
+    onNewFeedItems();
     restoreVideoQueue();
   }
   updateSidenavLinks();
@@ -30,7 +30,7 @@ function init() {
   setAddFeedCategoryValue();
   setMissingLogo();
   removeYoulagLoadingState();
-  
+
   app.state.youlag.init = true;
 }
 

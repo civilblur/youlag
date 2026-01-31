@@ -9,7 +9,7 @@ function toggleModalMode() {
     setModeMiniplayer(false, 'fullscreen');
     setModeFullscreen(true);
 
-    if (!app.state.popstate.added) {
+    if (!getHistoryPopstate()) {
       /**
        * When `restoreVideoQueue()` opens in miniplayer mode, the popstate is not yet added.
        * Thus, if expanding back to fullscreen mode, we need to add it here to avoid routing back a page,
@@ -69,8 +69,8 @@ function setModeFullscreen(state, prevState) {
   if (state === true) {
     document.body.classList.add(app.modal.class.modeFullscreen);
     document.body.classList.remove(app.modal.class.modeMiniplayer);
-    app.state.modal.mode = 'fullscreen';
-    app.state.modal.active = true;
+    setModeState('fullscreen');
+    setModalState(true);
   }
   else if (state === false) {
     document.body.classList.remove(app.modal.class.modeFullscreen);
