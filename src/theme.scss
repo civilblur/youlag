@@ -3579,9 +3579,7 @@ body.youlag-inactive:not(.reader) main#stream {
         .subtitle {
           .author {
             --light-font-color: #AAAAAA;
-            /* youlag-inactive: add spacing between 'By:' and 'author name'. */
-            display: inline-flex;
-            gap: 4px;
+            font-size: var(--yl-text-xs);
           }
         }
 
@@ -4992,6 +4990,12 @@ body.youlag-tags-modal-open {
  * BEGIN "YOULAG EXTENSION SETTINGS PAGE"
  * Style for the extension settings page.
  ****************************************/
+
+#yl-update-notice,
+#yl-update-howto {
+  margin-left: var(--yl-space-2xs);
+  filter: brightness(1.4);
+}
 
 .yl-extension-settings-container {
   #yl_check_updates {

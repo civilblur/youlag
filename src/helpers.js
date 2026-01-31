@@ -217,3 +217,9 @@ function isPageWhitelisted(whitelist, currentPageClass) {
 
   return false;
 }
+
+function isVideoLabelsEnabled() {
+  // Check if video platform label setting is enabled.
+  // TODO: Refactor this once `Minz_HookType::JsVars` is implemented.
+  return document.body.classList.contains('youlag-video-labels');
+}

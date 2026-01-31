@@ -29,6 +29,7 @@ function init() {
   updateAddFeedLink();
   setAddFeedCategoryValue();
   setMissingLogo();
+  showUpdateAvailableNotice();
   removeYoulagLoadingState();
 
   app.state.youlag.init = true;
