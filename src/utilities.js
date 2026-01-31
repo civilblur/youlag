@@ -382,6 +382,10 @@ function isFeedPage() {
   return feedPageNames.has(page.name);
 }
 
+function getFeedRoot() {
+  return document.querySelector(app.frss.el.feedRoot);
+}
+
 function getLayout() {
   return app.state.page.layout; // 'video' or 'article'
 }
