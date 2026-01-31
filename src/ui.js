@@ -479,6 +479,72 @@ function renderToolbar() {
                                     More settings
                                   </a>`;
     menuContent.appendChild(settingsShortcut);
+
+    // Create shortcut to the current feed's manage page, if it's a sub-page (e.g "get=f_9")
+    const page = getCurrentPage();
+    const feedIdNumberMatch = page.id ? page.id.match(/^f_(\d+)$/) : null;
+    const feedIdNumber = feedIdNumberMatch ? feedIdNumberMatch[1] : null;
+    const categoryIdNumberMatch = page.parentId ? page.parentId.match(/^c_(\d+)$/) : null;
+    const categoryIdNumber = categoryIdNumberMatch ? categoryIdNumberMatch[1] : null;
+    const FrssCloseSlider = document.getElementById('close-slider');
+    let manageFeed = null;
+    if (page.id && /^f_\d+$/.test(page.id)) {
+      manageFeed = document.createElement('a');
+      manageFeed.id = 'yl_nav_menu_manage_current_feed';
+      manageFeed.href = `/i/?c=subscription&a=feed&id=${feedIdNumber}`;
+      manageFeed.target = '_blank';
+      manageFeed.rel = 'noopener noreferrer';
+      manageFeed.textContent = isVideoLabelsEnabled() && isLayoutVideo() ? 'Manage channel' : 'Manage feed';
+      menuToggle.parentNode.insertBefore(manageFeed, menuToggle);
+    }
+
+    if (feedIdNumber && categoryIdNumber && FrssCloseSlider && manageFeed) {
+      manageFeed.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        fetchManageFeedOptions(feedIdNumber, categoryIdNumber) .then(options => {
+          if (options && options.length > 0) {
+            const slider = document.getElementById('slider');
+            const sliderContent = document.getElementById('slider-content');
+
+            if (sliderContent) {
+              sliderContent.innerHTML = options;
+
+              // Intercept form submissions in the slider modal
+              // Avoid being redirected to the incorrect page, and instead, just reload the current page.
+              const form = sliderContent.querySelectorAll('form');
+              form.forEach(form => {
+                form.addEventListener('submit', function (event) {
+                  event.preventDefault();
+                  fetch(form.action, {
+                    method: form.method || 'POST',
+                    body: new FormData(form),
+                  }).finally(() => {
+                    window.location.reload();
+                  });
+                });
+              });
+            }
+
+            if (slider) {
+              // FreshRSS CSS classes for slider
+              slider.classList.add('sliding', 'active');
+              document.documentElement.classList.add('slider-active'); // FreshRSS class to block page scroll
+            }
+
+            window.location.hash = 'slider'; // FreshRSS uses this to expand the slider
+          }
+        }).catch(error => {
+          console.error('Error fetching manage feed options:', error);
+        });
+      });
+
+      FrssCloseSlider.addEventListener('click', function () {
+        // The FreshRSS onblur close cleans up most parts, except the `slider-active` css class on the HTML element. 
+        document.documentElement.classList.remove('slider-active');
+      });
+       
+    }
   }
   
   // Make the toolbar sticky on scroll.

@@ -513,6 +513,7 @@ body {
     display: flex;
     align-items: center;
     width: 100%;
+    gap: var(--yl-m-2xs);
 
     #yl_category_title {
       display: flex;
@@ -532,7 +533,8 @@ body {
     }
   }
 
-  #yl_nav_menu_container_toggle {
+  #yl_nav_menu_container_toggle,
+  #yl_nav_menu_manage_current_feed {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -541,9 +543,12 @@ body {
     border-radius: 12px;  background-color: rgba(255, 255, 255, 0.04);
     cursor: pointer;
     font-size: var(--yl-text-xs);
+    color: var(--yl-color-text-default);
+    line-height: 1.6;
 
     &:hover {
       background-color: hsla(0, 0%, 100%, .08);
+      text-decoration: none;
     }
   }
 
