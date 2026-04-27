@@ -159,14 +159,10 @@
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
   --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(#2761d5, #1b51bb)};
   --yl-color-text-default: #dedee4;
-  --main-font-color: var(--yl-color-text-default); /* Replace FreshRSS default font color */
   --yl-color-text-default-emphasis: #f8f8fb; /* Stronger contrast than default text color, e.g. for titles */
   --yl-color-text-read: #c0c0c0; /* Read feed item text color */
 
   --yl-loading-spinner-background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23fff' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
-  --frss-loading-image: var(--yl-loading-spinner-background-image); /* Replace FreshRSS loading spinner icon. */
-
-  --frss-noThumbnailImage-background-color: #4d4d4d; /* FreshRSS striped background color, when image is not yet loaded */
 }
 
 @media (max-width: 840px) {
@@ -289,7 +285,7 @@ body.youlag-active:not(.reader) main#stream {
  *
  ****************************************/
 
-html {
+html.theme_Mapco {
   .alert-warn {
     @include yl-gradient-bg(#fbb324, #b97d0d, false);
     color: var(--yl-color-text-default);
@@ -627,6 +623,7 @@ body {
 
 
 
+html.theme_Mapco {
 nav.aside.aside_feed {
   /* Position and adjust behavior of "Subscriptions management" button */
   text-align: unset;
@@ -888,6 +885,9 @@ nav.aside.aside_feed {
   }
 }
 
+}
+
+html.theme_Mapco {
 @media (max-width: 840px) {
 
   header.header {
@@ -960,6 +960,9 @@ nav.aside.aside_feed {
 
 }
 
+}
+
+html.theme_Mapco {
 .header {
   --sid-bg: transparent; /* Header background color */
   height: var(--yl-topnav-height);
@@ -1091,6 +1094,9 @@ nav.aside.aside_feed {
 
 }
 
+}
+
+html.theme_Mapco {
 @media (max-width: 840px) {
 
   header.header {
@@ -1152,6 +1158,8 @@ nav.aside.aside_feed {
   }
 
 
+
+}
 
 }
 
@@ -1226,6 +1234,7 @@ main#stream #stream-footer,
   }
 }
 
+html.theme_Mapco {
 #nav_entries {
   /* Bottom navigation to navigate between feed items.
      Buttons: Previous item, Scroll to top, Next item. */
@@ -1239,6 +1248,8 @@ main#stream #stream-footer,
     width: var(--yl-sidenav-width);
     z-index: 50; /* Desktop: Place bottom navigation on top of sidenav. */
   }
+}
+
 }
 
 #load_more {
@@ -1294,6 +1305,7 @@ main#stream #stream-footer,
 
 }
 
+html.theme_Mapco {
 main#stream {
   .transition {
     /* Global: Date transition in feeds, only the first one. */
@@ -1336,6 +1348,8 @@ main#stream {
       }
     }
   }
+
+}
 
 }
 
@@ -1401,6 +1415,7 @@ main#stream {
   }
 }
 
+html.theme_Mapco {
 nav.nav_menu {
   padding: 0;
 
@@ -1454,6 +1469,8 @@ nav.nav_menu {
   }
 }
 
+}
+
 a.signout img.icon {
   display: none;
 }
@@ -1470,6 +1487,7 @@ a.signout img.icon {
  ****************************************/
 
 /* Cards default state in feed */
+html.theme_Mapco {
 body.youlag-active:not(.reader) main#stream div.flux {
   display: flex;
   flex-direction: column;
@@ -1692,7 +1710,10 @@ body.youlag-active:not(.reader) main#stream div.flux {
 
 }
 
+}
+
 /* Card expanded state in feed */
+html.theme_Mapco {
 body.youlag-active:not(.reader) main#stream div.flux.active.current {
 
   /* Card expanded header, serves as a top panel. */
@@ -1771,7 +1792,10 @@ body.youlag-active:not(.reader) main#stream div.flux.active.current {
   }
 }
 
+}
+
 /* Card icons and button behavior */
+html.theme_Mapco {
 body.youlag-active:not(.reader) main#stream {
   div.flux {
     position: relative;
@@ -2123,6 +2147,8 @@ body.youlag-active:not(.reader) main#stream {
   }
 }
 
+}
+
 /* Mobile, setting: Card grid view enabled */
 body.youlag-active:not(.reader).youlag-mobile-layout--grid {
   @media (max-width: 600px) {
@@ -2210,7 +2236,7 @@ body {
  * BEGIN "Dark mode: Global styles"
  * ==================================== */
 
-html {
+html.theme_Mapco {
   background-color: var(--yl-color-body-background); /* Display background color for macOS overscroll effect, otherwise white color is shown. */
   min-height: 100%;
 
@@ -2458,6 +2484,7 @@ html {
  * ==================================== */
 
 
+html.theme_Mapco {
 .dropdown-menu {
   list-style: none;
   overflow: auto;
@@ -3971,6 +3998,8 @@ main#stream,
     border-radius: 12px;
   }
 }
+
+} /* html.theme_Mapco */
 
 /* ====================================
  * END "Dark mode: Card"

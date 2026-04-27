@@ -122,6 +122,13 @@ function setupArticleClickListener() {
       '.flux_content',
     ].join(', ');
     if (event.target.closest(actionButtons)) return;
+
+    // Auto-detect if item is a video and open in video modal if so
+    if (target.getAttribute('data-yl-is-video') === 'true') {
+      handleActiveVideo(event);
+      return;
+    }
+
     if (!getModalState()) {
       setModalState(true);
       handleActiveArticle(event);

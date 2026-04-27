@@ -74,6 +74,12 @@ class YoulagExtension extends Minz_Extension
    */
   public $yl_update_check_enabled = true;
 
+  /**
+   * Enable auto-detection of video feeds
+   * @var bool
+   */
+  public $yl_auto_detect_video_feeds = true;
+
   protected array $csp_policies = [
     'connect-src' => "'self' https://sponsor.ajay.app/ https://api.github.com/",
   ];
@@ -111,7 +117,7 @@ class YoulagExtension extends Minz_Extension
 
     // Required user settings to properly render Youlag styling
     // See FreshRSS `config-user.php` and the html form fields with `for="{setting_name}"` in settings for reference. This is not in the official documentation.
-    FreshRSS_Context::userConf()->theme = 'Mapco';
+    // FreshRSS_Context::userConf()->theme = 'Mapco'; // Removed: allow user to choose their own FreshRSS theme
     FreshRSS_Context::userConf()->topline_website = 'full';
     FreshRSS_Context::userConf()->topline_thumbnail = 'landscape';
     FreshRSS_Context::userConf()->topline_summary = true;
@@ -188,6 +194,9 @@ class YoulagExtension extends Minz_Extension
 
     $updateCheckEnabled = FreshRSS_Context::userConf()->attributeBool('yl_update_check_enabled');
     $this->yl_update_check_enabled = ($updateCheckEnabled === null) ? true : $updateCheckEnabled;
+
+    $autoDetectVideoFeeds = FreshRSS_Context::userConf()->attributeBool('yl_auto_detect_video_feeds');
+    $this->yl_auto_detect_video_feeds = ($autoDetectVideoFeeds === null) ? true : $autoDetectVideoFeeds;
   }
 
   /**
@@ -211,6 +220,17 @@ class YoulagExtension extends Minz_Extension
     if (!empty($whitelist)) {
       $dataAttr = ' data-yl-category-whitelist="' . htmlspecialchars(string: implode(separator: ', ', array: $whitelist)) . '"';
     }
+
+    // Auto-detect if current feed is a YouTube/video feed
+    $isVideoFeed = 'false';
+    if ($this->yl_auto_detect_video_feeds && class_exists(class: 'FreshRSS_Context', autoload: false) && isset(FreshRSS_Context::$feed)) {
+      $feedUrl = FreshRSS_Context::$feed->url();
+      if (preg_match('#youtube\.com|youtu\.be|invidious|piped#i', $feedUrl)) {
+        $isVideoFeed = 'true';
+      }
+    }
+    $dataAttr .= ' data-yl-is-video-feed="' . $isVideoFeed . '"';
+
     return '<div id="yl_category_whitelist"' . $dataAttr . '></div>';
   }
 
@@ -774,6 +794,10 @@ class YoulagExtension extends Minz_Extension
       // Youlag update check
       $updateCheckEnabled = Minz_Request::paramBoolean('yl_update_check_enabled', true);
       FreshRSS_Context::userConf()->_attribute('yl_update_check_enabled', $updateCheckEnabled);
+
+      // Auto-detect video feeds
+      $autoDetectVideoFeeds = Minz_Request::paramBoolean('yl_auto_detect_video_feeds', true);
+      FreshRSS_Context::userConf()->_attribute('yl_auto_detect_video_feeds', $autoDetectVideoFeeds);
 
       FreshRSS_Context::$user_conf->save();
 

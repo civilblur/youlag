@@ -366,6 +366,12 @@ function isPageWhitelisted(whitelist, currentPageClass) {
 
   if (!Array.isArray(whitelist) || !currentPageClass) return false;
 
+  // Auto-detect: If current page is a video feed, automatically return true.
+  const el = document.querySelector('#yl_category_whitelist');
+  if (el && el.getAttribute('data-yl-is-video-feed') === 'true') {
+    return true;
+  }
+
   // If 'all' is included, it means every page and category will use the video mode.
   if (whitelist.includes('all')) return true;
 

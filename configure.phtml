@@ -23,6 +23,16 @@ declare(strict_types=1);
           Select the pages and categories whose feeds will be displayed in Youlag's video interface.
         </div>
       </h4>
+      <label for="yl_auto_detect_video_feeds" class="flex mb-1">
+        <input type="checkbox" id="yl_auto_detect_video_feeds" name="yl_auto_detect_video_feeds" value="1" class="mb-auto"
+          <?php echo ($this->yl_auto_detect_video_feeds) ? ' checked="checked"' : ''; ?>>
+        <div class="inline-block">
+          Auto-detect video feeds
+          <div class="yl-form-group-help">
+            Automatically use video mode for YouTube, Invidious, and Piped feeds.
+          </div>
+        </div>
+      </label>
       <?php if (!empty($categories)): ?>
         <div class="yl-form-category-container">
           <?php $whitelist = $this->getCategoryWhitelist(); ?>
