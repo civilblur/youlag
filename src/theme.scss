@@ -148,6 +148,7 @@
   --yl-feed-day-title-font-size: 1.7rem;
   --yl-video-miniplayer-width: min(460px, 60%);
   --yl-article-thumbnail-width: 120px;
+  --yl-article-thumbnail-height: 90px;
   --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
   --yl-feed-nav-menu-height: 61px; /* Desktop: Youlag custom feed `.nav_menu` default height */ 
   --yl-sidenav-width: 280px;
@@ -3572,7 +3573,7 @@ body.youlag-inactive:not(.reader) main#stream {
           padding: 0;
           position: relative;
           width: var(--yl-article-thumbnail-width);
-          height: 90px;
+          height: var(--yl-article-thumbnail-height);
           background: rgb(255 255 255 / 7%);
           border-radius: 8px;
           overflow: hidden;
@@ -4216,6 +4217,8 @@ body:has(.tree-folder.category.favorites.active) {
     
     #stream {
       overflow: auto;
+      --yl-article-thumbnail-width: 80px;
+      --yl-article-thumbnail-height: 70px;
     
       .flux,
       #stream-footer {
@@ -4231,7 +4234,7 @@ body:has(.tree-folder.category.favorites.active) {
       div.flux {
         margin-bottom: 0;
         border-radius: 0;
-        --yl-article-thumbnail-width: 80px;
+
       
         & > ul.flux_header {
           border-radius: 0;
@@ -4260,7 +4263,7 @@ body:has(.tree-folder.category.favorites.active) {
 
           .item.thumbnail {
             margin-bottom: var(--yl-m-2xs) !important;
-            height: 70px !important;
+            height: var(--yl-article-thumbnail-height) !important;
           }
         }
       }
