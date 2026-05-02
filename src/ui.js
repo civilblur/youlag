@@ -180,6 +180,38 @@ function setupArticleClickListener() {
     subtree: true
   });
 
+  if (isArticleSplitViewEnabled()) {
+
+    if (isMarkReadOnScrollEnabled()) {
+      // Mark article as read when scrolling past, if FreshRSS `auto_mark_scroll` setting is enabled
+      onArticleEntryVisibility({
+        onLeave: (articleEntry) => {
+          if (articleEntry.classList.contains('not_read')) {
+            const entryId = articleEntry.getAttribute('data-entry');
+            if (entryId) {
+              send_mark_read_queue([entryId], true, null); // Native FreshRSS function.
+            }
+          }
+        }
+      });
+    }
+
+    if (isArticleNavEnabled() && document.body.classList.contains('youlag-inactive')) {
+      // Remap article navigation "Up" (scroll to top) button.
+      // Scroll to of article stream instead of the body.
+      const articleNav = isArticleNavEnabled();
+      const articleNavUp = articleNav ? articleNav.querySelector('.up') : null;
+      if (articleNavUp) {
+        articleNavUp.addEventListener('click', (event) => {
+          if (event.target.closest('.up')) {
+            event.preventDefault();
+            streamContainer.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      }
+    }
+  }
+
   streamContainer.addEventListener('click', function (event) {
     const target = event.target.closest(app.frss.el.entry);
     if (!target) return;
@@ -233,6 +265,45 @@ function setupArticleClickListener() {
     }
   });
 
+}
+
+function onArticleEntryVisibility({onEnter, onLeave} = {}) {
+  /**
+   * Tracks when article entries enter and leave the viewport.
+   * 
+   * Reimplement FreshRSS' `onScroll() { if (context.auto_mark_scroll){...} }` for "article split view"
+   * due to fixed body height and overflow, which results in FreshRSS' native `onScroll()` not being triggered.
+   */
+  const streamContainer = getFeedRoot();
+  if (!streamContainer) return;
+
+  const visibleStates = new WeakMap();
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const articleEntry = entry.target;
+      const wasVisible = visibleStates.get(articleEntry) || false;
+      const isVisible = entry.isIntersecting;
+
+      if (isVisible && !wasVisible && onEnter) {
+        onEnter(articleEntry, entry);
+      }
+      else if (!isVisible && wasVisible && onLeave) {
+        onLeave(articleEntry, entry);
+      }
+
+      visibleStates.set(articleEntry, isVisible);
+    }
+  }, {
+    threshold: 0
+  });
+
+  const articleEntries = streamContainer.querySelectorAll(app.frss.el.entry);
+  for (const entry of articleEntries) {
+    observer.observe(entry);
+  }
+
+  return observer;
 }
 
 function setupTagsDropdownOverride() {

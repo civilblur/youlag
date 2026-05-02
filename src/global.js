@@ -127,7 +127,8 @@ app.frss = {
     current: '#stream div[data-entry].active.current',    // Currently opened feed entry in the stream.
     entry: 'div[data-entry]',                             // Feed entry element in the stream.
     global: '#global',
-    sidebar: '#aside_feed',                                   
+    sidebar: '#aside_feed',   
+    articleNav: '#nav_entries',                                
   },
   img: {
     spinner: '../themes/icons/spinner.svg',

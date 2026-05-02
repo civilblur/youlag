@@ -678,6 +678,16 @@ function isArticleSplitViewActive() {
   return document.getElementById(app.modal.id.splitPaneContent)?.style.display !== 'none';
 }
 
+function isMarkReadOnScrollEnabled() {
+  // Native FreshRSS setting: "Mark an article as read… while scrolling (except for important feeds)"
+  return context.auto_mark_scroll;
+}
+
+function isArticleNavEnabled() {
+  // Native FreshRSS setting: "Show the navigation buttons"
+  return document.querySelector(app.frss.el.articleNav);
+}
+
 function isHideDescriptionIntroEnabled() {
   // Hides first intro of YouTube video descriptions, which often contains sponsored content above the fold.
   return document.getElementById('yl_description_hide_intro_enabled')?.getAttribute('data-yl-description-hide-intro-enabled') === 'true';
@@ -864,7 +874,6 @@ async function checkForUpdates() {
   // If not time to check, do nothing
   return { updateAvailable: false };
 }
-
 
 /*****************************************
  * END "DATA UTILITIES"
