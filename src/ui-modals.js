@@ -912,10 +912,11 @@ function handleActiveArticle() {
 }
 
 function closeArticle(event) {
+  if (isArticleSplitViewActive()) return; // Closing an article does not apply for split view mode.
   const openedArticle = document.querySelector(app.frss.el.current);
 
   if (openedArticle) {
-    // Focus closed article, to easier visually navigate where one last left off. 
+    // Focus closed article, to visually make it easier to navigate where one last left off. 
     openedArticle.setAttribute('tabindex', '-1');
     openedArticle.focus({ preventScroll: true });
 

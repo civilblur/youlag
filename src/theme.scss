@@ -4202,10 +4202,6 @@ body:has(.tree-folder.category.favorites.active) {
     #yl_category_toolbar {
       padding-left: var(--yl-p-sm);
       padding-right: var(--yl-p-sm);
-      /* TEST: Force visibility */
-      transform: unset;
-      opacity: 1 !important;
-      pointer-events: all !important;
     }
     
     #stream {

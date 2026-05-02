@@ -108,7 +108,10 @@ function setupArticleClickListener() {
   const streamContainer = getFeedRoot();
   
   if (!streamContainer) return;
-  autoLoadMoreArticlesOnScroll();
+
+  if (isArticleSplitViewEnabled()) {
+    autoLoadMoreArticlesOnScroll(); // Custom auto-load for split view
+  }
 
   streamContainer.addEventListener('click', function (event) {
     const target = event.target.closest(app.frss.el.entry);
@@ -131,43 +134,48 @@ function setupArticleClickListener() {
       setModalState(true);
       handleActiveArticle(event);
     }
-    const scrollToTarget = () => {
-      const rect = target.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      let offset = 0;
-      if (window.getComputedStyle) {
-        const root = document.documentElement;
-        const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
-        offset = parseInt(val, 10) || 0;
-      }
-      return rect.top + scrollTop - offset;
-    };
 
-    const toolbar = document.getElementById(app.ui.id.toolbar);
-    setToolbarStickyState(true);
-    toolbar.classList.remove('sticky-visible');
-    toolbar.classList.add('sticky-hidden');
+    if (!isArticleSplitViewActive()) {
+      // Auto-scroll article to the top when clicked, only when split view is not active.
 
-    // Scroll to article top position
-    let attempts = 0;
-    const maxAttempts = 4;
-    const scroll = () => {
-      const targetScroll = scrollToTarget();
-      window.scrollTo({ top: targetScroll });
-      const assessScrollPosition = () => {
-        // Ensure correct position after layout shifts, due to expanding article content.
-        attempts++;
-        const newTargetScroll = scrollToTarget();
-        if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
-          window.requestAnimationFrame(scroll);
+      const scrollToTarget = () => {
+        const rect = target.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        let offset = 0;
+        if (window.getComputedStyle) {
+          const root = document.documentElement;
+          const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+          offset = parseInt(val, 10) || 0;
         }
-        else {
-          setTimeout(() => { setToolbarStickyState(false); }, 50);
-        }
+        return rect.top + scrollTop - offset;
       };
-      window.setTimeout(assessScrollPosition, 180);
-    };
-    scroll();
+
+      // Scroll to article top position
+      let attempts = 0;
+      const maxAttempts = 4;
+      const scroll = () => {
+        const targetScroll = scrollToTarget();
+        window.scrollTo({ top: targetScroll });
+        const assessScrollPosition = () => {
+          // Ensure correct position after layout shifts, due to expanding article content.
+          attempts++;
+          const newTargetScroll = scrollToTarget();
+          if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
+            window.requestAnimationFrame(scroll);
+          }
+          else {
+            setTimeout(() => { setToolbarStickyState(false); }, 50);
+          }
+        };
+        window.setTimeout(assessScrollPosition, 180);
+      };
+      scroll();
+
+      const toolbar = document.getElementById(app.ui.id.toolbar);
+      setToolbarStickyState(true);
+      toolbar.classList.remove('sticky-visible');
+      toolbar.classList.add('sticky-hidden');
+    }
   });
 
   window.addEventListener('popstate', function (event) {
@@ -267,18 +275,18 @@ function setupSidenavStateListener() {
 }
 
 function handleArticleSplitView() {
-  // Copy the active article content into the `#yl_article_split_pane`.
+  // Actions to take when clicking an article while article split view is enabled.
   const splitPane = document.getElementById('yl_article_split_pane');
   if (!splitPane) return;
-
-  // Helper function to find and copy active article content
+  
+  // Copy the active article content into the `#yl_article_split_pane`.
   function copyActiveArticleContent() {
     const activeArticle = document.querySelector(app.frss.el.current);
     if (activeArticle) {
       const activeArticleContent = activeArticle.querySelector('article.flux_content');
       if (activeArticleContent) {
-        console.log('Updating split pane content for active article...');
         splitPane.innerHTML = activeArticleContent.innerHTML;
+        splitPane.scrollTop = 0;
         return true;
       }
     }
@@ -288,8 +296,12 @@ function handleArticleSplitView() {
   // MutationObserver to display the article once active
   const timeout = setTimeout(() => {
     if (observer) observer.disconnect();
-    splitPane.innerHTML = 'Article could not be loaded.'; // TODO: Create a more informative error state.
-  }, 10000); // 10 second timeout
+    splitPane.innerHTML = '';
+    const errorState = document.createElement('div');
+    errorState.className = 'yl-article-split-view__empty-state-content';
+    errorState.textContent = 'Article could not be loaded.';
+    splitPane.appendChild(errorState);
+  }, 10000); // Timeout
 
   let observer = null;
   

@@ -672,6 +672,12 @@ function isArticleSplitViewEnabled() {
   return (getAttrValue('data-yl-article-split-view-enabled') === 'true');
 }
 
+function isArticleSplitViewActive() {
+  // When split view is enabled and the current view is eligble to display split view (i.e. desktop viewport size).
+  // Check if  `#yl_article_split_pane` is currently display: none
+  return isArticleSplitViewEnabled() && document.getElementById('yl_article_split_pane')?.style.display !== 'none';
+}
+
 function isHideDescriptionIntroEnabled() {
   // Hides first intro of YouTube video descriptions, which often contains sponsored content above the fold.
   return document.getElementById('yl_description_hide_intro_enabled')?.getAttribute('data-yl-description-hide-intro-enabled') === 'true';
