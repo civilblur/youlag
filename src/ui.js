@@ -276,17 +276,34 @@ function setupSidenavStateListener() {
 
 function handleArticleSplitView() {
   // Actions to take when clicking an article while article split view is enabled.
-  const splitPane = document.getElementById('yl_article_split_pane');
-  if (!splitPane) return;
+  const articleContentPane = document.getElementById('yl_article_split_pane');
+  if (!articleContentPane) return;
   
-  // Copy the active article content into the `#yl_article_split_pane`.
+  articleContentPane.innerHTML = '';
+  articleContentPane.classList.remove('loading');
+  
+  const activeArticle = document.querySelector(app.frss.el.current);
+  if (activeArticle) {
+    const activeArticleContent = activeArticle.querySelector('article.flux_content');
+    if (activeArticleContent) {
+      articleContentPane.innerHTML = activeArticleContent.innerHTML;
+      articleContentPane.scrollTop = 0;
+      return;
+    }
+  }
+  
+  // Article not found yet, display loading spinner.
+  articleContentPane.classList.add('loading');
+  
+  // Copy article content to the content pane
   function copyActiveArticleContent() {
     const activeArticle = document.querySelector(app.frss.el.current);
     if (activeArticle) {
       const activeArticleContent = activeArticle.querySelector('article.flux_content');
       if (activeArticleContent) {
-        splitPane.innerHTML = activeArticleContent.innerHTML;
-        splitPane.scrollTop = 0;
+        articleContentPane.classList.remove('loading');
+        articleContentPane.innerHTML = activeArticleContent.innerHTML;
+        articleContentPane.scrollTop = 0;
         return true;
       }
     }
@@ -296,11 +313,12 @@ function handleArticleSplitView() {
   // MutationObserver to display the article once active
   const timeout = setTimeout(() => {
     if (observer) observer.disconnect();
-    splitPane.innerHTML = '';
+    articleContentPane.classList.remove('loading');
+    articleContentPane.innerHTML = '';
     const errorState = document.createElement('div');
     errorState.className = 'yl-article-split-view__empty-state-content';
     errorState.textContent = 'Article could not be loaded.';
-    splitPane.appendChild(errorState);
+    articleContentPane.appendChild(errorState);
   }, 10000); // Timeout
 
   let observer = null;
@@ -328,15 +346,13 @@ function handleArticleSplitView() {
     });
   }
 
-  // Also try on next animation frame in case DOM updates happen synchronously
+  // Fallback: try to load the article on the next animation frame in case it's available, to reduce loading time.
   requestAnimationFrame(() => {
     if (copyActiveArticleContent()) {
       if (observer) observer.disconnect();
       clearTimeout(timeout);
     }
   });
-
-
 }
 
 function handleSliderHashChange() {

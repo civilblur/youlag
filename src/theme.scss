@@ -4269,6 +4269,11 @@ body:has(.tree-folder.category.favorites.active) {
       overflow: auto;
       z-index: 1;
       border-left: 1px solid color-mix(in oklab, #fff 11%, transparent);
+
+      &.loading {
+        background: var(--yl-loading-spinner-background-image) center center no-repeat;
+        background-size: 64px 64px;
+      }
     
       .content {
         padding-top: 0;
