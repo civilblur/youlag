@@ -116,6 +116,7 @@ class YoulagExtension extends Minz_Extension
     FreshRSS_Context::userConf()->topline_website = 'full';
     FreshRSS_Context::userConf()->topline_thumbnail = 'landscape';
     FreshRSS_Context::userConf()->topline_summary = true;
+    FreshRSS_Context::userConf()->topline_display_authors = true;
     FreshRSS_Context::userConf()->topline_date = true;
     FreshRSS_Context::userConf()->sticky_post = false; // Option to auto-scroll to article top. Youlag handles this itself for articles. Videos should not auto scroll.
     FreshRSS_Context::userConf()->show_feed_name = 'a';
