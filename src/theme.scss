@@ -4144,7 +4144,6 @@ body:has(.tree-folder.category.favorites.active) {
 @media (min-width: 1200px) {
   .youlag-inactive:not(.reader).yl-article-split-view {
     /* Article: Split pane view */
-    --yl-article-split-ratio: 0.4;
     max-height: 100vh;
     overflow: hidden;
 
