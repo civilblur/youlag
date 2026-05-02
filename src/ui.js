@@ -114,7 +114,9 @@ function setupArticleClickListener() {
     const target = event.target.closest(app.frss.el.entry);
     if (!target) return;
 
-    handleArticleSplitView();
+    if (isArticleSplitViewEnabled()) {
+      handleArticleSplitView();
+    }
 
     const actionButtons = [
       '.flux_header li.manage',
