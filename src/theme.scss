@@ -3358,6 +3358,14 @@ body:not(.normal) {
     margin: var(--yl-m-lg) 0 var(--yl-m-xs) 0;
   }
 
+  ul {
+    margin-bottom: var(--yl-m-xs);
+
+    li {
+      margin-bottom: var(--yl-m-3xs);
+    }
+  }
+
   .content {
     & > header > h1.title {
       margin-top: 0;
