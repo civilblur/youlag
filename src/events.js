@@ -26,6 +26,9 @@ function init() {
         setWatchLaterCategoryFilter();
       }
     }
+    if (isLayoutArticle()) {
+      setupArticleSplitView();
+    }
     handleFeedDearrowFeatures();
     onNewFeedItems();
     isUpdateCheckEnabled() && checkForUpdates();

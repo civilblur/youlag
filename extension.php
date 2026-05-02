@@ -95,14 +95,15 @@ class YoulagExtension extends Minz_Extension
     $this->registerHook('nav_entries', array($this, 'setDescriptionHideIntroEnabled'), 16);
     $this->registerHook('nav_entries', array($this, 'setVideoSortModifiedEnabled'), 17);
     $this->registerHook('nav_entries', array($this, 'setRelatedVideosSource'), 18);
-    $this->registerHook('nav_entries', array($this, 'setFeedViewLayoutMobileGrid'), 19);
-    $this->registerHook('nav_entries', array($this, 'setFeedThumbnailScreencapEnabled'), 20);
-    $this->registerHook('nav_entries', array($this, 'setWatchLaterCategoryFilterEnabled'), 21);
-    $this->registerHook('nav_entries', array($this, 'setUpdateCheckEnabled'), 22);
-    $this->registerHook('nav_entries', array($this, 'setBaseUrl'), 23);
+    $this->registerHook('nav_entries', array($this, 'setArticleSplitView'), 19);
+    $this->registerHook('nav_entries', array($this, 'setFeedViewLayoutMobileGrid'), 20);
+    $this->registerHook('nav_entries', array($this, 'setFeedThumbnailScreencapEnabled'), 21);
+    $this->registerHook('nav_entries', array($this, 'setWatchLaterCategoryFilterEnabled'), 22);
+    $this->registerHook('nav_entries', array($this, 'setUpdateCheckEnabled'), 23);
+    $this->registerHook('nav_entries', array($this, 'setBaseUrl'), 24);
     if (Minz_Request::paramString('get', '') === 's') {
       // Watch later page: add category filter
-      $this->registerHook('nav_entries', array($this, 'createWatchLaterCategoryFilter'), 23);
+      $this->registerHook('nav_entries', array($this, 'createWatchLaterCategoryFilter'), 25);
     }
 
     // Add Youlag theme and script to all extension pages
@@ -168,6 +169,9 @@ class YoulagExtension extends Minz_Extension
     $descriptionHideIntroEnabled = FreshRSS_Context::userConf()->attributeBool('yl_description_hide_intro_enabled');
     $this->yl_description_hide_intro_enabled = ($descriptionHideIntroEnabled === null) ? false : $descriptionHideIntroEnabled;
 
+    $ylArticleSplitViewEnabled = FreshRSS_Context::userConf()->attributeBool('yl_article_split_view_enabled');
+    $this->yl_article_split_view_enabled = ($ylArticleSplitViewEnabled === null) ? false : $ylArticleSplitViewEnabled;
+
     $feedViewMobileGridEnabled = FreshRSS_Context::userConf()->attributeBool('yl_feed_view_mobile_grid_enabled');
     $this->yl_feed_view_mobile_grid_enabled = ($feedViewMobileGridEnabled === null) ? false : $feedViewMobileGridEnabled;
 
@@ -223,6 +227,12 @@ class YoulagExtension extends Minz_Extension
   {
     $source = htmlspecialchars(string: $this->yl_related_videos, flags: ENT_QUOTES);
     return '<div id="yl_related_videos_source" data-yl-related-videos-source="' . $source . '"></div>';
+  }
+
+  public function setArticleSplitView(): string
+  {
+    $enabled = $this->yl_article_split_view_enabled ? 'true' : 'false';
+    return '<div id="yl_article_split_view_enabled" data-yl-article-split-view-enabled="' . $enabled . '"></div>';
   }
 
   /**
@@ -731,6 +741,10 @@ class YoulagExtension extends Minz_Extension
       // Related videos source
       $relatedVideosSource = Minz_Request::paramString('yl_related_videos', 'watch_later');
       FreshRSS_Context::userConf()->_attribute('yl_related_videos', $relatedVideosSource);
+
+      // Article split view
+      $articleSplitViewEnabled = Minz_Request::paramBoolean('yl_article_split_view_enabled', false);
+      FreshRSS_Context::userConf()->_attribute('yl_article_split_view_enabled', $articleSplitViewEnabled);
 
       // Feed view mobile grid layout
       $feedViewMobileGridEnabled = Minz_Request::paramBoolean('yl_feed_view_mobile_grid_enabled', false);

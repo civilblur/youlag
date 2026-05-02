@@ -667,6 +667,11 @@ function isMiniplayerAutoplayEnabled() {
   return document.getElementById('yl_miniplayer_autoplay_enabled')?.getAttribute('data-yl-miniplayer-autoplay-enabled') === 'true';
 }
 
+function isArticleSplitViewEnabled() {
+  // Whether article uses split pane view.
+  return (getAttrValue('data-yl-article-split-view-enabled') === 'true');
+}
+
 function isHideDescriptionIntroEnabled() {
   // Hides first intro of YouTube video descriptions, which often contains sponsored content above the fold.
   return document.getElementById('yl_description_hide_intro_enabled')?.getAttribute('data-yl-description-hide-intro-enabled') === 'true';

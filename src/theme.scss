@@ -26,6 +26,7 @@
  * - Card expanded - Inline view mode (2)
  * - Favorites page
  * - Reader view page
+ * - Article split view mode
  * - Animation keyframes
  * - Youlag theater view modal
  * - Youlag theater miniplayer view
@@ -154,6 +155,12 @@
   --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
   --yl-sidenav-icon-size: 16px;
   --yl-sidenav-icon-label-gap: var(--yl-space-sm);
+
+  /* Article split view */
+  --yl-article-split-ratio: 0.4;
+  --yl-article-split-entry-width: calc((100% - var(--yl-sidenav-width)) * var(--yl-article-split-ratio));
+  --yl-article-split-content-width: calc((100% - var(--yl-sidenav-width)) * (1 - var(--yl-article-split-ratio)));
+
 
   --yl-color-body-background: #19191a;
   --yl-color-gradient-surface-3: linear-gradient(135deg, #303030 0%, #3a3d3f 40%, #2d2d2d 100%);
@@ -3193,6 +3200,207 @@ body:not(.normal) {
  * BEGIN "Dark mode: Card"
  * ==================================== */
 
+%article-typography {
+  
+  header {
+    h1.title a {
+
+      &:hover {
+        color: var(--yl-color-text-default);
+        text-decoration: underline;
+      }
+    }
+
+    a {
+      color: var(--yl-color-text-default);
+    }
+
+    .website a {
+      color: var(--yl-color-text-default-emphasis);
+    }
+  }
+
+  & > footer {
+    & > ul {
+      /* Article, active: Footer action buttons container */
+      display: flex;
+      align-items: center;
+      gap: var(--yl-m-xs);
+      padding: var(--yl-m-3xs) var(--yl-m-sm);
+      box-sizing: border-box;
+
+      @media (min-width: 841px) {
+        border: 1px solid color-mix(in oklab, #fff 11%, transparent);
+        border-left: 0;
+        border-right: 0;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+      }
+
+      li {
+        /* Article, active: Footer action buttons */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+
+        &:empty {
+          display: none;
+        }
+
+        &.item.manage:has(.item-element.bookmark) {
+          order: -3; /* Article, active: Place favorite button to far left. */
+        }
+        &.item.manage:has(.item-element.read) {
+          order: 2; /* Article, active: Place mark as read button right. */
+        }
+        &.item.share {
+          order: 3; /* Article, active: Place share button right. */
+        }
+        &.item.date {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          flex: 1;
+          order: 4; /* Article, active: Place date to far right. */
+        }
+
+        div {
+          padding: 0;
+          margin: 0;
+        }
+
+        a {
+          padding: var(--yl-p-2xs);
+          min-width: 25px;
+          min-height: 25px;
+          border-radius: 8px;
+          --main-first: #898989; /* Link color */
+          filter: unset !important;
+
+          &:hover {
+            background-color: hsla(0, 0%, 100%, .08);
+          }
+
+          img {
+            filter: brightness(1.6) grayscale(1);
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    h1.title {
+      /* Mobile: Reduce title size to reduce vertical space */
+      line-height: 1.2;
+
+      a {
+        font-size: var(--yl-text-md);
+      }
+    }
+  }
+
+  .subtitle {
+    .author {
+      --light-font-color: #AAAAAA;
+      font-size: var(--yl-text-xs);
+    }
+  }
+
+  .text {
+    pre {
+      background-color: rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+  }
+
+  blockquote {
+    position: relative;
+    background: linear-gradient(135deg, #3a3a3a 0%, #313131 40%, #313131 100%);
+    color: var(--yl-color-text-default);
+    opacity: 0.8;
+    border: none;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding-bottom: var(--yl-p-sm);
+    padding-top: var(--yl-p-sm);
+    padding-left: var(--yl-p-md);
+    padding-right: var(--yl-p-md);
+    margin-top: var(--yl-m-xs);
+    margin-bottom: var(--yl-m-xs);
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 6px;
+      background: linear-gradient(to bottom, #aaaaaa, #7d7d7d);
+      border-radius: 8px;
+    }
+  }
+
+  video {
+    height: auto;
+  }
+
+  hr {
+    margin: var(--yl-m-xs) 0;
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: var(--yl-m-lg) 0 var(--yl-m-xs) 0;
+  }
+
+  .content {
+    & > header > h1.title {
+      margin-top: 0;
+    }
+
+    .text a {
+      /* youlag-inactive: article content links. */
+      color: var(--yl-color-text-default);
+      box-shadow: var(--yl-color-text-default) 0 -1px 0 inset;
+    }
+    header .author a,
+    footer .link-tag {
+      /* youlag-inactive: article author and tags links. */
+      color: #898989;
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--yl-color-text-default);
+        text-decoration: none;;
+      }
+    }
+    footer .link-tag {
+      /* youlag-inactive: article tags links. */
+      box-shadow: #898989 0 -1px 0 inset;
+    }
+  }
+
+  footer ul.horizontal-list.bottom,
+  .content header .subtitle {
+    a {
+      /* youlag-inactive: Increase legibilty of blue-colored links in opened articles. */
+      filter: brightness(1.6);
+    }
+  }
+
+  footer .tags {
+    align-items: center;
+
+    & > img.icon {
+      display: none;
+    }
+  }
+}
+
 body.youlag-active.youlag-video-unread-badge:not(.reader) main#stream {
 
   div.flux {
@@ -3235,7 +3443,6 @@ body.youlag-inactive:not(.reader) {
   }
 
 }
-
 
 body.youlag-inactive:not(.reader) main#stream {
   margin: 0 auto;
@@ -3574,199 +3781,10 @@ body.youlag-inactive:not(.reader) main#stream {
         border-bottom-right-radius: 12px;
         border-left: 1px solid color-mix(in oklab, #fff 11%, transparent);
         border-right: 1px solid color-mix(in oklab, #fff 11%, transparent);
-        
-        header {
-          h1.title a {
 
-            &:hover {
-              color: var(--yl-color-text-default);
-              text-decoration: underline;
-            }
-          }
-        }
-
-        & > footer {
-          & > ul {
-            /* Article, active: Footer action buttons container */
-            display: flex;
-            align-items: center;
-            gap: var(--yl-m-xs);
-            padding: var(--yl-m-3xs) var(--yl-m-sm);
-            box-sizing: border-box;
-
-            @media (min-width: 841px) {
-              border: 1px solid color-mix(in oklab, #fff 11%, transparent);
-              border-left: 0;
-              border-right: 0;
-              border-bottom-left-radius: 12px;
-              border-bottom-right-radius: 12px;
-            }
-
-            li {
-              /* Article, active: Footer action buttons */
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              box-sizing: border-box;
-              padding: 0;
-              margin: 0;
-
-              &:empty {
-                display: none;
-              }
-
-              &.item.manage:has(.item-element.bookmark) {
-                order: -3; /* Article, active: Place favorite button to far left. */
-              }
-              &.item.manage:has(.item-element.read) {
-                order: 2; /* Article, active: Place mark as read button right. */
-              }
-              &.item.share {
-                order: 3; /* Article, active: Place share button right. */
-              }
-              &.item.date {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                flex: 1;
-                order: 4; /* Article, active: Place date to far right. */
-              }
-
-              div {
-                padding: 0;
-                margin: 0;
-              }
-
-              a {
-                padding: var(--yl-p-2xs);
-                min-width: 25px;
-                min-height: 25px;
-                border-radius: 8px;
-                --main-first: #898989; /* Link color */
-                filter: unset !important;
-
-                &:hover {
-                  background-color: hsla(0, 0%, 100%, .08);
-                }
-
-                img {
-                  filter: brightness(1.6) grayscale(1);
-                }
-              }
-            }
-          }
-        }
-
-        @media (max-width: 600px) {
-          h1.title {
-            /* Mobile: Reduce title size to reduce vertical space */
-            line-height: 1.2;
-
-            a {
-              font-size: var(--yl-text-md);
-            }
-          }
-        }
-
-        .subtitle {
-          .author {
-            --light-font-color: #AAAAAA;
-            font-size: var(--yl-text-xs);
-          }
-        }
-
-        .text {
-          pre {
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 12px;
-          }
-        }
-
-        blockquote {
-          position: relative;
-          background: linear-gradient(135deg, #3a3a3a 0%, #313131 40%, #313131 100%);
-          color: var(--yl-color-text-default);
-          opacity: 0.8;
-          border: none;
-          border-top-right-radius: 8px;
-          border-bottom-right-radius: 8px;
-          padding-bottom: var(--yl-p-sm);
-          padding-top: var(--yl-p-sm);
-          padding-left: var(--yl-p-md);
-          padding-right: var(--yl-p-md);
-          margin-top: var(--yl-m-xs);
-          margin-bottom: var(--yl-m-xs);
-
-          &::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 6px;
-            background: linear-gradient(to bottom, #aaaaaa, #7d7d7d);
-            border-radius: 8px;
-          }
-        }
-
-        video {
-          height: auto;
-        }
-
-        hr {
-          margin: var(--yl-m-xs) 0;
-          border-color: rgba(255,255,255,0.15);
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-          margin: var(--yl-m-lg) 0 var(--yl-m-xs) 0;
-        }
-      }
-
-      .content {
-        & > header > h1.title {
-          margin-top: 0;
-        }
-
-        .text a {
-          /* youlag-inactive: article content links. */
-          color: var(--yl-color-text-default);
-          box-shadow: var(--yl-color-text-default) 0 -1px 0 inset;
-        }
-        header .author a,
-        footer .link-tag {
-          /* youlag-inactive: article author and tags links. */
-          color: #898989;
-          transition: color 0.2s;
-
-          &:hover {
-            color: var(--yl-color-text-default);
-            text-decoration: none;;
-          }
-        }
-        footer .link-tag {
-          /* youlag-inactive: article tags links. */
-          box-shadow: #898989 0 -1px 0 inset;
-        }
-      }
-
-      footer ul.horizontal-list.bottom,
-      .content header .subtitle {
-        a {
-          /* youlag-inactive: Increase legibilty of blue-colored links in opened articles. */
-          filter: brightness(1.6);
-        }
-      }
-
-      footer .tags {
-        align-items: center;
-
-        & > img.icon {
-          display: none;
-        }
+        @extend %article-typography;
       }
     }
-
   }
 }
 
@@ -4110,6 +4128,173 @@ body:has(.tree-folder.category.favorites.active) {
 
 
 
+/*****************************************
+ *
+ * BEGIN "ARTICLE SPLIT VIEW MODE"
+ *
+ ****************************************/
+
+@media (min-width: 1200px) {
+  
+  .youlag-inactive:not(.reader).yl-article-split-view {
+    /* Article: Split pane view */
+    --yl-article-split-ratio: 0.4;
+    max-height: 100vh;
+    overflow: hidden;
+
+    .yl-article-split-view__empty-state-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      font-size: var(--yl-text-sm);
+      text-align: center;
+      padding: var(--yl-p-lg);
+      box-sizing: border-box;
+      opacity: 0.6;
+    }
+  
+    #stream,
+    #yl_article_split_pane {
+      box-sizing: border-box;
+      height: calc(100vh - var(--yl-topnav-height));
+      scrollbar-width: thin;
+    }
+  
+    &.youlag-sidenav--collapsed {
+      #stream {
+        padding-left: 0;
+        width: calc(100% * var(--yl-article-split-ratio));
+        margin: 0;
+        padding-right: 0;
+      }
+
+      #yl_article_split_pane {
+        left: calc(100% * var(--yl-article-split-ratio));
+        width: calc(100% * (1 - var(--yl-article-split-ratio)));
+      }
+    }
+  
+    &.youlag-sidenav--expanded {
+      #stream {
+        width: calc((100% - var(--yl-sidenav-width)) * var(--yl-article-split-ratio));
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: var(--yl-sidenav-width);
+      }
+
+      #yl_article_split_pane {
+        left: calc((100% - var(--yl-sidenav-width)) * var(--yl-article-split-ratio) + var(--yl-sidenav-width));
+        width: calc((100% - var(--yl-sidenav-width)) * (1 - var(--yl-article-split-ratio)));
+      }
+    }
+  
+    #yl_category_toolbar {
+      padding-left: var(--yl-p-sm);
+      padding-right: var(--yl-p-sm);
+      /* TEST: Force visibility */
+      transform: unset;
+      opacity: 1 !important;
+      pointer-events: all !important;
+    }
+    
+    #stream {
+      overflow: auto;
+    
+      .flux,
+      #stream-footer {
+        box-sizing: border-box;
+        width: 100%;
+      }
+    
+      #stream-footer {
+        padding-left: var(--yl-p-sm);
+        padding-right: var(--yl-p-sm);
+      }
+    
+      div.flux {
+        margin-bottom: 0;
+        border-radius: 0;
+        --yl-article-thumbnail-width: 80px;
+      
+        & > ul.flux_header {
+          border-radius: 0;
+          border-left: none;
+          border-bottom: none;
+          border-right: none;
+
+          .titleAuthorSummaryDate {
+            flex-basis: calc(100% - var(--yl-article-thumbnail-width) - var(--yl-m-2xs) * 2) !important;
+
+            .summary {
+              padding-right: var(--yl-p-2xs) !important;
+              -webkit-line-clamp: 1 !important;
+               line-clamp: 1 !important;
+            }
+          }
+
+          .title {
+            font-size: calc(var(--yl-text-sm)/1.3) !important;
+          }
+
+          .date {
+            order: 2 !important;
+            padding-bottom: var(--yl-p-2xs) !important;
+          }
+
+          .item.thumbnail {
+            margin-bottom: var(--yl-m-2xs) !important;
+            height: 70px !important;
+          }
+        }
+      }
+    
+      .flux.active.current article {
+        /* Hide the default view article content */
+        display: none;
+      }
+    }
+  
+  
+    #yl_article_split_pane {
+      position: fixed;
+      top: var(--yl-topnav-height);
+      width: var(--yl-article-split-content-width);
+      overflow: auto;
+      z-index: 1;
+      border-left: 1px solid color-mix(in oklab, #fff 11%, transparent);
+    
+      .content {
+        padding-top: 0;
+        max-width: unset;
+  
+        header, .text, .footer {
+          padding: 0 1rem;
+        }
+      }
+
+      & > footer {
+        /* TODO 2026-05-02: Hide footer for now. Click events have to be rehydrated for it to properly work. */
+        display: none;
+      }
+    }
+  
+    &.youlag-sidenav--collapsed {
+      --yl-sidenav-width: 0;
+    }
+  
+  }
+}
+
+#yl_article_split_pane {
+  @extend %article-typography;
+}
+
+/*****************************************
+ * END "ARTICLE SPLIT VIEW MODE"
+ ****************************************/
+
 
 
 /*****************************************
@@ -4435,14 +4620,14 @@ body {
 
 .yl-video-blur-backdrop-effect {
   --yl-effect: 60px;
-@supports (-webkit-hyphens: auto) and ((-webkit-line-clamp: unset)) {
-    /* SAFARI HACK: Prevent premature clipping of blur caused by CJK character titles on `youlag-video-metadata-title` by increasing the blur effect size. */
-    --yl-effect: 100px;
-  } 
-
   position: absolute;
   left: 0;
   z-index: -1;
+  
+  @supports (-webkit-hyphens: auto) and ((-webkit-line-clamp: unset)) {
+    /* SAFARI HACK: Prevent premature clipping of blur caused by CJK character titles on `youlag-video-metadata-title` by increasing the blur effect size. */
+    --yl-effect: 100px;
+  }
 
   &__image {
     width: 100vw;

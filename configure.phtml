@@ -169,6 +169,20 @@ declare(strict_types=1);
           </div>
         </label>
 
+      <h4 class="mb-0">
+        Article mode
+      </h4>
+      <label for="yl_article_split_view_enabled" class="flex">
+          <input type="checkbox" id="yl_article_split_view_enabled" name="yl_article_split_view_enabled" value="1" class="mb-auto"
+            <?php echo ($this->yl_article_split_view_enabled) ? ' checked="checked"' : ''; ?>>
+        <div class="inline-block">
+          Split pane view
+          <div class="yl-form-group-help">
+            Desktop: Display article entries and its content side by side.
+          </div>
+        </div>
+      </label>
+
 
       <h4 class="mb-0">
         Feed view

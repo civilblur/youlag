@@ -106,12 +106,15 @@ function setupVideoClickListener() {
 
 function setupArticleClickListener() {
   const streamContainer = getFeedRoot();
-
+  
   if (!streamContainer) return;
+  autoLoadMoreArticlesOnScroll();
+
   streamContainer.addEventListener('click', function (event) {
     const target = event.target.closest(app.frss.el.entry);
-
     if (!target) return;
+
+    handleArticleSplitView();
 
     const actionButtons = [
       '.flux_header li.manage',
@@ -198,7 +201,6 @@ function setupArticleClickListener() {
     }
   });
 
-
 }
 
 function setupTagsDropdownOverride() {
@@ -262,6 +264,67 @@ function setupSidenavStateListener() {
   observer.observe(sidenav, { attributes: true, attributeFilter: ['class'] });
 }
 
+function handleArticleSplitView() {
+  // Copy the active article content into the `#yl_article_split_pane`.
+  const splitPane = document.getElementById('yl_article_split_pane');
+  if (!splitPane) return;
+
+  // Helper function to find and copy active article content
+  function copyActiveArticleContent() {
+    const activeArticle = document.querySelector(app.frss.el.current);
+    if (activeArticle) {
+      const activeArticleContent = activeArticle.querySelector('article.flux_content');
+      if (activeArticleContent) {
+        console.log('Updating split pane content for active article...');
+        splitPane.innerHTML = activeArticleContent.innerHTML;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // MutationObserver to display the article once active
+  const timeout = setTimeout(() => {
+    if (observer) observer.disconnect();
+    splitPane.innerHTML = 'Article could not be loaded.'; // TODO: Create a more informative error state.
+  }, 10000); // 10 second timeout
+
+  let observer = null;
+  
+  observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        if (copyActiveArticleContent()) {
+          observer.disconnect();
+          clearTimeout(timeout);
+          return;
+        }
+      }
+    }
+  });
+
+  const stream = document.getElementById('stream');
+  if (!stream) return;
+  if (stream) {
+    observer.observe(stream, {
+      attributes: true,
+      attributeFilter: ['class'],
+      subtree: true,
+      attributeOldValue: false
+    });
+  }
+
+  // Also try on next animation frame in case DOM updates happen synchronously
+  requestAnimationFrame(() => {
+    if (copyActiveArticleContent()) {
+      if (observer) observer.disconnect();
+      clearTimeout(timeout);
+    }
+  });
+
+
+}
+
 function handleSliderHashChange() {
   // Temporary fix for page scroll being locked after closing a slider via browser's back navigation.
   // FreshRSS/FreshRSS/issues/8488
@@ -276,6 +339,46 @@ function handleSliderHashChange() {
   };
   window.addEventListener('hashchange', sliderHandler);
   app.state.youlag.sliderListeners.push({ el: window, type: 'hashchange', handler: sliderHandler });
+}
+
+function autoLoadMoreArticlesOnScroll() {
+  /* 
+   * Custom wrapper for FreshRSS' `load_more_posts()` to auto-load article.
+   *
+   * This is useful when custom layouts like "Article split view" is used, 
+   * as that layout never triggers the native `load_more_posts()` due to fixed body height and overflow.
+  */
+  const streamFooter = document.getElementById('stream-footer');
+  if (!streamFooter) return;
+
+  let isLoading = false;
+  let debounceTimeout = null;
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting && !isLoading) {
+        // Clear any pending debounce timeout
+        if (debounceTimeout) {
+          clearTimeout(debounceTimeout);
+          debounceTimeout = null;
+        }
+
+        isLoading = true;
+        load_more_posts();
+        
+        debounceTimeout = setTimeout(() => {
+          isLoading = false;
+          debounceTimeout = null;
+        }, 500); // Debounce duration
+      }
+    }
+  }, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.2 // Trigger when at least 20% of the footer is visible
+  });
+
+  observer.observe(streamFooter);
 }
 
 function isHashUrl() {
@@ -309,6 +412,7 @@ function setBodyClass() {
 
   document.body.className += ' ' + getCurrentPage().class;
   currentPageParams = new URLSearchParams(window.location.search).get('get');
+  setArticleSplitViewClass();
   setMobileLayoutGrid();
   setupSidenavStateListener();
   getSubpageParentId(currentPageParams) && (document.body.className += ' yl-page-' + getSubpageParentId(currentPageParams));
@@ -410,6 +514,12 @@ function setPageSortingClass() {
   // Used as a reference for determining the user settings, and run functions based on that.
   if (getAttrValue('data-yl-video-sort-modified') === 'true') {
     document.body.classList.add('youlag-sort-watch_later--user-modified');
+  }
+}
+
+function setArticleSplitViewClass() {
+  if (isArticleSplitViewEnabled()) {
+    document.body.classList.add('yl-article-split-view');
   }
 }
 
@@ -878,6 +988,25 @@ function setToolbarSticky(toolbarElement) {
       ticking = true;
     }
   });
+}
+
+function setupArticleSplitView() {
+  // Adds a pane on the right of the article entries.
+  if (!isArticleSplitViewEnabled()) return;
+
+  const feedRoot = getFeedRoot();
+  if (!feedRoot) return;
+
+const splitViewPane = document.createElement('div');
+  splitViewPane.id = 'yl_article_split_pane';
+  
+  // Add initial placeholder text
+  const placeholder = document.createElement('div');
+  placeholder.className = 'yl-article-split-view__empty-state-content';
+  placeholder.textContent = 'Select an article to start reading';
+  splitViewPane.appendChild(placeholder);
+  
+  feedRoot.parentNode.insertBefore(splitViewPane, feedRoot.nextSibling);
 }
 
 function storeCurrentCategoryId() {
