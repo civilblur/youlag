@@ -4135,7 +4135,7 @@ body:has(.tree-folder.category.favorites.active) {
  ****************************************/
 
 .youlag-inactive:not(.reader).yl-article-split-view {
-  #yl_article_split_pane {
+  #ylArticleSplitPane {
     display: none;
   }
 }
@@ -4147,7 +4147,7 @@ body:has(.tree-folder.category.favorites.active) {
     max-height: 100vh;
     overflow: hidden;
 
-    #yl_article_split_pane {
+    #ylArticleSplitPane {
       display: block;
     }
 
@@ -4163,9 +4163,19 @@ body:has(.tree-folder.category.favorites.active) {
       box-sizing: border-box;
       opacity: 0.6;
     }
+
+    #yl_category_toolbar {
+      // TODO: FreshRSS' 'navigation' feature that has the 'scroll to top' button
+      // Causes the show/hide of the toolbar to trigger as it scroll the body.
+      // Temporarily force the toolbar to be always visible, to avoid a in the article split view where it is hidden.
+      // The fix is essentially to override FreshRSS' navigation button with custom logic.
+      pointer-events: all !important;
+      transform: unset !important;
+      opacity: 1 !important
+    }
   
     #stream,
-    #yl_article_split_pane {
+    #ylArticleSplitPane {
       box-sizing: border-box;
       height: calc(100vh - var(--yl-topnav-height));
       scrollbar-width: thin;
@@ -4179,7 +4189,7 @@ body:has(.tree-folder.category.favorites.active) {
         padding-right: 0;
       }
 
-      #yl_article_split_pane {
+      #ylArticleSplitPane {
         left: calc(100% * var(--yl-article-split-ratio));
         width: calc(100% * (1 - var(--yl-article-split-ratio)));
       }
@@ -4193,7 +4203,7 @@ body:has(.tree-folder.category.favorites.active) {
         margin-left: var(--yl-sidenav-width);
       }
 
-      #yl_article_split_pane {
+      #ylArticleSplitPane {
         left: calc((100% - var(--yl-sidenav-width)) * var(--yl-article-split-ratio) + var(--yl-sidenav-width));
         width: calc((100% - var(--yl-sidenav-width)) * (1 - var(--yl-article-split-ratio)));
       }
@@ -4262,7 +4272,7 @@ body:has(.tree-folder.category.favorites.active) {
     }
   
   
-    #yl_article_split_pane {
+    #ylArticleSplitPane {
       position: fixed;
       top: var(--yl-topnav-height);
       width: var(--yl-article-split-content-width);
@@ -4297,7 +4307,7 @@ body:has(.tree-folder.category.favorites.active) {
   }
 }
 
-#yl_article_split_pane {
+#ylArticleSplitPane {
   @extend %article-typography;
 }
 

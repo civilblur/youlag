@@ -674,8 +674,8 @@ function isArticleSplitViewEnabled() {
 
 function isArticleSplitViewActive() {
   // When split view is enabled and the current view is eligble to display split view (i.e. desktop viewport size).
-  // Check if  `#yl_article_split_pane` is currently display: none
-  return isArticleSplitViewEnabled() && document.getElementById('yl_article_split_pane')?.style.display !== 'none';
+  // Check if  `#ylArticleSplitPane` is currently display: none
+  return document.getElementById(app.modal.id.splitPaneContent)?.style.display !== 'none';
 }
 
 function isHideDescriptionIntroEnabled() {

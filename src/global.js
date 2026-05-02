@@ -79,6 +79,7 @@ app.modal = {
     chapterCurrent: 'ylVideoChapterCurrent',
     moreContainer: 'youlagVideoMoreContentContainer',
     relatedContainer: 'youlagRelatedVideosContainer',
+    splitPaneContent: 'ylArticleSplitPane',
   },
   class: {
     typeArticle: 'youlag-modal-feed-item--text',

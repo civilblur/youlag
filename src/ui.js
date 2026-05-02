@@ -113,13 +113,76 @@ function setupArticleClickListener() {
     autoLoadMoreArticlesOnScroll(); // Custom auto-load for split view
   }
 
+  // Set up continuous observer for article selection changes, to accommodate FreshRSS' article navigation feature.
+  let splitViewDebounceTimer = null;
+  const activeArticle = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        const target = mutation.target;
+        if (target.matches(app.frss.el.entry) && target.matches(app.frss.el.current)) {
+          clearTimeout(splitViewDebounceTimer);
+          splitViewDebounceTimer = setTimeout(() => {
+            if (isArticleSplitViewEnabled()) {
+              handleArticleSplitView();
+            }
+
+            if (!!isArticleSplitViewActive()) {
+              // Auto-scroll article to the top when clicked, only when split view is not active.
+
+              const scrollToTarget = () => {
+                const rect = target.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                let offset = 0;
+                if (window.getComputedStyle) {
+                  const root = document.documentElement;
+                  const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+                  offset = parseInt(val, 10) || 0;
+                }
+                return rect.top + scrollTop - offset;
+              };
+
+              // Scroll to article top position
+              let attempts = 0;
+              const maxAttempts = 4;
+              const scroll = () => {
+                const targetScroll = scrollToTarget();
+                window.scrollTo({ top: targetScroll });
+                const assessScrollPosition = () => {
+                  // Ensure correct position after layout shifts, due to expanding article content.
+                  attempts++;
+                  const newTargetScroll = scrollToTarget();
+                  if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
+                    window.requestAnimationFrame(scroll);
+                  }
+                  else {
+                    setTimeout(() => { setToolbarStickyState(false); }, 50);
+                  }
+                };
+                window.setTimeout(assessScrollPosition, 180);
+              };
+              scroll();
+
+              const toolbar = document.getElementById(app.ui.id.toolbar);
+              setToolbarStickyState(true);
+              toolbar.classList.remove('sticky-visible');
+              toolbar.classList.add('sticky-hidden');
+            }
+          }, 100); // Debounce
+          break;
+        }
+      }
+    }
+  });
+
+  activeArticle.observe(streamContainer, {
+    attributes: true,
+    attributeFilter: ['class'],
+    subtree: true
+  });
+
   streamContainer.addEventListener('click', function (event) {
     const target = event.target.closest(app.frss.el.entry);
     if (!target) return;
-
-    if (isArticleSplitViewEnabled()) {
-      handleArticleSplitView();
-    }
 
     const actionButtons = [
       '.flux_header li.manage',
@@ -135,47 +198,6 @@ function setupArticleClickListener() {
       handleActiveArticle(event);
     }
 
-    if (!isArticleSplitViewActive()) {
-      // Auto-scroll article to the top when clicked, only when split view is not active.
-
-      const scrollToTarget = () => {
-        const rect = target.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        let offset = 0;
-        if (window.getComputedStyle) {
-          const root = document.documentElement;
-          const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
-          offset = parseInt(val, 10) || 0;
-        }
-        return rect.top + scrollTop - offset;
-      };
-
-      // Scroll to article top position
-      let attempts = 0;
-      const maxAttempts = 4;
-      const scroll = () => {
-        const targetScroll = scrollToTarget();
-        window.scrollTo({ top: targetScroll });
-        const assessScrollPosition = () => {
-          // Ensure correct position after layout shifts, due to expanding article content.
-          attempts++;
-          const newTargetScroll = scrollToTarget();
-          if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
-            window.requestAnimationFrame(scroll);
-          }
-          else {
-            setTimeout(() => { setToolbarStickyState(false); }, 50);
-          }
-        };
-        window.setTimeout(assessScrollPosition, 180);
-      };
-      scroll();
-
-      const toolbar = document.getElementById(app.ui.id.toolbar);
-      setToolbarStickyState(true);
-      toolbar.classList.remove('sticky-visible');
-      toolbar.classList.add('sticky-hidden');
-    }
   });
 
   window.addEventListener('popstate', function (event) {
@@ -276,34 +298,53 @@ function setupSidenavStateListener() {
 
 function handleArticleSplitView() {
   // Actions to take when clicking an article while article split view is enabled.
-  const articleContentPane = document.getElementById('yl_article_split_pane');
+  const articleContentPane = document.getElementById(app.modal.id.splitPaneContent);
   if (!articleContentPane) return;
   
-  articleContentPane.innerHTML = '';
-  articleContentPane.classList.remove('loading');
+  const streamContainer = document.getElementById('stream');
+  if (!streamContainer) return;
   
   const activeArticle = document.querySelector(app.frss.el.current);
-  if (activeArticle) {
-    const activeArticleContent = activeArticle.querySelector('article.flux_content');
-    if (activeArticleContent) {
-      articleContentPane.innerHTML = activeArticleContent.innerHTML;
-      articleContentPane.scrollTop = 0;
-      return;
+  articleContentPane.classList.add('loading');
+  
+  // Check if artice article entry is visible within its container
+  function isArticleEntryVisible(element, container) {
+    const elementRect = element.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    return (
+      elementRect.top >= containerRect.top &&
+      elementRect.bottom <= containerRect.bottom
+    );
+  }
+  
+  // If active article entry isn't fully visible, scroll the stream container.
+  // Especially useful when using FreshRSS' article navigation feature.
+  function scrollToActiveArticle(element, container) {
+    const elementRect = element.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    if (elementRect.top < containerRect.top) {
+      container.scrollTop -= (containerRect.top - elementRect.top + 60);
+    }
+    else if (elementRect.bottom > containerRect.bottom) {
+      container.scrollTop += (elementRect.bottom - containerRect.bottom + 10);
     }
   }
   
-  // Article not found yet, display loading spinner.
-  articleContentPane.classList.add('loading');
-  
   // Copy article content to the content pane
-  function copyActiveArticleContent() {
-    const activeArticle = document.querySelector(app.frss.el.current);
-    if (activeArticle) {
-      const activeArticleContent = activeArticle.querySelector('article.flux_content');
+  function copyActiveArticleContent(article) {
+    if (article) {
+      const activeArticleContent = article.querySelector('article.flux_content');
       if (activeArticleContent) {
         articleContentPane.classList.remove('loading');
         articleContentPane.innerHTML = activeArticleContent.innerHTML;
         articleContentPane.scrollTop = 0;
+        
+        if (!isArticleEntryVisible(article, streamContainer)) {
+          scrollToActiveArticle(article, streamContainer);
+        }
+        
         return true;
       }
     }
@@ -326,7 +367,9 @@ function handleArticleSplitView() {
   observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-        if (copyActiveArticleContent()) {
+        // Get fresh active article on each mutation
+        const currentActiveArticle = document.querySelector(app.frss.el.current);
+        if (copyActiveArticleContent(currentActiveArticle)) {
           observer.disconnect();
           clearTimeout(timeout);
           return;
@@ -335,20 +378,16 @@ function handleArticleSplitView() {
     }
   });
 
-  const stream = document.getElementById('stream');
-  if (!stream) return;
-  if (stream) {
-    observer.observe(stream, {
-      attributes: true,
-      attributeFilter: ['class'],
-      subtree: true,
-      attributeOldValue: false
-    });
-  }
+  observer.observe(streamContainer, {
+    attributes: true,
+    attributeFilter: ['class'],
+    subtree: true,
+    attributeOldValue: false
+  });
 
   // Fallback: try to load the article on the next animation frame in case it's available, to reduce loading time.
   requestAnimationFrame(() => {
-    if (copyActiveArticleContent()) {
+    if (copyActiveArticleContent(activeArticle)) {
       if (observer) observer.disconnect();
       clearTimeout(timeout);
     }
@@ -1027,8 +1066,8 @@ function setupArticleSplitView() {
   const feedRoot = getFeedRoot();
   if (!feedRoot) return;
 
-const splitViewPane = document.createElement('div');
-  splitViewPane.id = 'yl_article_split_pane';
+  const splitViewPane = document.createElement('div');
+  splitViewPane.id = 'ylArticleSplitPane';
   
   // Add initial placeholder text
   const placeholder = document.createElement('div');
