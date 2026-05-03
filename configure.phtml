@@ -1,19 +1,24 @@
 <?php
-declare(strict_types=1);
+declare(strict_types=1)
 /** @var YoulagExtension $this */
 ?>
 
 <div class="yl-extension-settings-container" id="yl-settings-root">
 
-  <form class="yl-extension-settings-form" action="<?php echo _url('extension', 'configure', 'e', urlencode(string: $this->getName())); ?>" method="post" data-auto-leave-validation="1">
+  <form class="yl-extension-settings-form" action="<?php echo _url(
+      "extension",
+      "configure",
+      "e",
+      urlencode(string: $this->getName()),
+  ); ?>" method="post" data-auto-leave-validation="1">
     <input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 
     <h2>Youlag settings</h2>
 
     <section class="yl-form-section">
-      <?php
-      $categories = isset($_SESSION['ext_categories']) ? $_SESSION['ext_categories'] : array();
-      ?>
+      <?php $categories = isset($_SESSION["ext_categories"])
+          ? $_SESSION["ext_categories"]
+          : []; ?>
 
       <h3>Appearance & behavior</h3>
 
@@ -28,7 +33,11 @@ declare(strict_types=1);
           <?php $whitelist = $this->getCategoryWhitelist(); ?>
           <!-- Place checkbox outside of label to utilize the checked="checked" state for visual statemanagement via css. -->
           <input id="yl_category_all" type="checkbox" name="yl_category_whitelist[]" value="all"
-            <?php echo ((empty($whitelist) || in_array(needle: 'all', haystack: $whitelist)) && !in_array(needle: 'none', haystack: $whitelist)) ? ' checked="checked"' : ''; ?>>
+            <?php echo (empty($whitelist) ||
+                in_array(needle: "all", haystack: $whitelist)) &&
+            !in_array(needle: "none", haystack: $whitelist)
+                ? ' checked="checked"'
+                : ""; ?>>
           <label for="yl_category_all" class="inline-block">
             All pages and categories
           </label>
@@ -36,41 +45,62 @@ declare(strict_types=1);
             <hr>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="home"
-                 <?php echo in_array(needle: 'home', haystack: $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array(needle: "home", haystack: $whitelist)
+                     ? ' checked="checked"'
+                     : ""; ?>>
               Subscriptions
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="important"
-                 <?php echo in_array(needle: 'important', haystack: $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array(needle: "important", haystack: $whitelist)
+                     ? ' checked="checked"'
+                     : ""; ?>>
               Important
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="watch_later"
-                 <?php echo in_array(needle: 'watch_later', haystack: $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array(
+                     needle: "watch_later",
+                     haystack: $whitelist,
+                 )
+                     ? ' checked="checked"'
+                     : ""; ?>>
                 <span class="yl-form-category__original-label">Favorites</span>
                 <span class="yl-form-category__video-label">Watch later</span>
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="playlists"
-                 <?php echo in_array(needle: 'playlists', haystack: $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array(needle: "playlists", haystack: $whitelist)
+                     ? ' checked="checked"'
+                     : ""; ?>>
                 <span class="yl-form-category__original-label">My Labels</span>
                 <span class="yl-form-category__video-label">Playlists</span>
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="search_results"
-                 <?php echo in_array(needle: 'search_results', haystack: $whitelist) ? ' checked="checked"' : ''; ?>>
+                 <?php echo in_array(
+                     needle: "search_results",
+                     haystack: $whitelist,
+                 )
+                     ? ' checked="checked"'
+                     : ""; ?>>
               Search results
             </label>
             <label>
             <?php foreach ($categories as $cat): ?>
-              <?php $catId = (string)$cat->id(); ?>
+              <?php $catId = (string) $cat->id(); ?>
               <label>
                 <input
                   type="checkbox"
                   name="yl_category_whitelist[]"
-                  value="<?php echo 'c_' . htmlspecialchars(string: $catId); ?>"
-                    <?php echo in_array(needle: 'c_' . $catId, haystack: $whitelist) ? ' checked="checked"' : ''; ?>>
-                <?php echo htmlspecialchars(string: (string)$cat->name()); ?>
+                  value="<?php echo "c_" . htmlspecialchars(string: $catId); ?>"
+                    <?php echo in_array(
+                        needle: "c_" . $catId,
+                        haystack: $whitelist,
+                    )
+                        ? ' checked="checked"'
+                        : ""; ?>>
+                <?php echo htmlspecialchars(string: (string) $cat->name()); ?>
               </label>
             <?php endforeach; ?>
           </div>
@@ -84,7 +114,9 @@ declare(strict_types=1);
       </h4>
       <label for="yl_miniplayer_swipe_enabled" class="flex">
           <input type="checkbox" id="yl_miniplayer_swipe_enabled" name="yl_miniplayer_swipe_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_miniplayer_swipe_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_miniplayer_swipe_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Swipe down in video mode to activate miniplayer
           <div class="yl-form-group-help">
@@ -102,7 +134,9 @@ declare(strict_types=1);
       </h4>
       <label for="yl_chapter_progress_enabled" class="flex">
           <input type="checkbox" id="yl_chapter_progress_enabled" name="yl_chapter_progress_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_chapter_progress_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_chapter_progress_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Show chapter progress indicator
           <div class="yl-form-group-help">
@@ -116,7 +150,9 @@ declare(strict_types=1);
       </h4>
       <label for="yl_description_hide_intro_enabled" class="flex">
           <input type="checkbox" id="yl_description_hide_intro_enabled" name="yl_description_hide_intro_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_description_hide_intro_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_description_hide_intro_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Hide description intro containing links
           <div class="yl-form-group-help">
@@ -132,35 +168,44 @@ declare(strict_types=1);
           The "Watch more" section appears in the video modal and only suggests entries from your subscriptions.
         </div>
       </h4>
-          <?php 
-            $yl_related_videos = isset($this->yl_related_videos) ? $this->yl_related_videos : null;
-          ?>
+          <?php $yl_related_videos = isset($this->yl_related_videos)
+              ? $this->yl_related_videos
+              : null; ?>
         <label for="yl_related_videos_watch_later" class="flex">
           <input type="radio" id="yl_related_videos_watch_later" name="yl_related_videos" value="watch_later" class="mb-auto"
-            <?php echo ($yl_related_videos === null || $yl_related_videos === "watch_later") ? ' checked="checked"' : ''; ?>>
+            <?php echo $yl_related_videos === null ||
+            $yl_related_videos === "watch_later"
+                ? ' checked="checked"'
+                : ""; ?>>
           <div class="inline-block">
-            Random from 
+            Random from
             <span class="yl-form-category__original-label">Favorites</span>
             <span class="yl-form-category__video-label">Watch later</span>
           </div>
         </label>
         <label for="yl_related_videos_subscriptions" class="flex">
           <input type="radio" id="yl_related_videos_subscriptions" name="yl_related_videos" value="subscriptions" class="mb-auto"
-            <?php echo ($yl_related_videos === 'subscriptions') ? ' checked="checked"' : ''; ?>>
+            <?php echo $yl_related_videos === "subscriptions"
+                ? ' checked="checked"'
+                : ""; ?>>
           <div class="inline-block">
             Latest from Subscriptions
           </div>
         </label>
         <label for="yl_related_videos_author" class="flex">
           <input type="radio" id="yl_related_videos_author" name="yl_related_videos" value="author" class="mb-auto"
-            <?php echo ($yl_related_videos === 'author') ? ' checked="checked"' : ''; ?>>
+            <?php echo $yl_related_videos === "author"
+                ? ' checked="checked"'
+                : ""; ?>>
           <div class="inline-block">
             Latest from author
           </div>
         </label>
         <label for="yl_related_videos_disabled" class="flex">
           <input type="radio" id="yl_related_videos_disabled" name="yl_related_videos" value="none" class="mb-auto"
-            <?php echo ($yl_related_videos === 'none') ? ' checked="checked"' : ''; ?>>
+            <?php echo $yl_related_videos === "none"
+                ? ' checked="checked"'
+                : ""; ?>>
           <div class="inline-block">
             Disable
             <div class="yl-form-group-help">
@@ -174,9 +219,11 @@ declare(strict_types=1);
       </h4>
       <label for="yl_article_split_view_enabled" class="flex">
           <input type="checkbox" id="yl_article_split_view_enabled" name="yl_article_split_view_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_article_split_view_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_article_split_view_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
-          Split pane view
+          Split view
           <div class="yl-form-group-help">
             Desktop: Display article entries and its content side by side.
           </div>
@@ -189,7 +236,9 @@ declare(strict_types=1);
       </h4>
       <label for="yl_feed_view_mobile_grid_enabled" class="flex">
           <input type="checkbox" id="yl_feed_view_mobile_grid_enabled" name="yl_feed_view_mobile_grid_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_feed_view_mobile_grid_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_feed_view_mobile_grid_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Use grid layout on mobile
           <div class="yl-form-group-help">
@@ -199,10 +248,12 @@ declare(strict_types=1);
       </label>
       <label for="yl_custom_thumbnail_title_enabled" class="flex">
           <input type="checkbox" id="yl_custom_thumbnail_title_enabled" name="yl_custom_thumbnail_title_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_custom_thumbnail_title_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_custom_thumbnail_title_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Replace clickbait thumbnails and titles with alternatives
-          <div class="yl-badge yl-badge--warning pointer-events-none">Experimental</div> 
+          <div class="yl-badge yl-badge--warning pointer-events-none">Experimental</div>
           <div class="yl-form-group-help">
             Use DeArrow's crowd-sourced options for honest previews.
             If unavailable, fallback to low-resolution screencap, then the original content.
@@ -211,7 +262,9 @@ declare(strict_types=1);
       </label>
       <label for="yl_watch_later_category_filter_enabled" class="flex">
           <input type="checkbox" id="yl_watch_later_category_filter_enabled" name="yl_watch_later_category_filter_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_watch_later_category_filter_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_watch_later_category_filter_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Enable category filter in the
           <span class="yl-form-category__original-label">Favorites</span>
@@ -232,7 +285,9 @@ declare(strict_types=1);
       </h4>
       <label for="yl_video_labels_enabled" class="flex">
           <input type="checkbox" id="yl_video_labels_enabled" name="yl_video_labels_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_video_labels_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_video_labels_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Use video platform labels
           <div class="yl-form-group-help">
@@ -242,7 +297,9 @@ declare(strict_types=1);
       </label>
       <label for="yl_video_unread_badge_enabled" class="flex">
           <input type="checkbox" id="yl_video_unread_badge_enabled" name="yl_video_unread_badge_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_video_unread_badge_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_video_unread_badge_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
           Show "New" badge for unwatched videos
           <div class="yl-form-group-help">
@@ -256,10 +313,12 @@ declare(strict_types=1);
       </h4>
       <label for="yl_video_sort_modified_enabled" class="flex">
           <input type="checkbox" id="yl_video_sort_modified_enabled" name="yl_video_sort_modified_enabled" value="1" class="mb-auto"
-            <?php echo ($this->yl_video_sort_modified_enabled) ? ' checked="checked"' : ''; ?>>
+            <?php echo $this->yl_video_sort_modified_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
         <div class="inline-block">
-          Sort 
-          <span class="yl-form-category__original-label">"Favorite"</span><span class="yl-form-category__video-label">"Watch later"</span> 
+          Sort
+          <span class="yl-form-category__original-label">"Favorite"</span><span class="yl-form-category__video-label">"Watch later"</span>
           by recently modified
           <div class="yl-form-group-help">
             Entries will be sorted by the time they were added or read, rather than by received date.
@@ -277,7 +336,9 @@ declare(strict_types=1);
       </h4>
       <label for="yl_block_youtube_shorts" class="flex">
           <input type="checkbox" id="yl_block_youtube_shorts" name="yl_block_youtube_shorts" value="1" class="mb-auto"
-          <?php echo (FreshRSS_Context::$user_conf->yl_block_youtube_shorts) ? ' checked="checked"' : ''; ?>>
+          <?php echo FreshRSS_Context::$user_conf->yl_block_youtube_shorts
+              ? ' checked="checked"'
+              : ""; ?>>
         <div class="inline-block">
           Block incoming YouTube shorts
           <div class="yl-form-group-help">
@@ -299,8 +360,10 @@ declare(strict_types=1);
               <div class="yl-form-group--radio-input-container">
                 <label for="yl_playback_youtube">YouTube</label>
                 <div class="yl-form-control-radio-input">
-                  <input type="radio" id="yl_playback_youtube" name="yl_invidious_enabled" value="0" 
-                    <?= !$this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
+                  <input type="radio" id="yl_playback_youtube" name="yl_invidious_enabled" value="0"
+                    <?= !$this->isInvidiousEnabled()
+                        ? 'checked="checked"'
+                        : "" ?>
                   >
                   <div class="group-controls">
                     <input type="text" value="https://youtube.com" readonly>
@@ -316,16 +379,19 @@ declare(strict_types=1);
                 <label for="yl_playback_invidious">Invidious</label>
                 <div class="yl-form-group-help">The base URL of the Invidious instance.</div>
                 <div class="yl-form-control-radio-input">
-                  <input type="radio" id="yl_playback_invidious" name="yl_invidious_enabled" value="1" 
-                    <?= $this->isInvidiousEnabled() ? 'checked="checked"' : '' ?>
+                  <input type="radio" id="yl_playback_invidious" name="yl_invidious_enabled" value="1"
+                    <?= $this->isInvidiousEnabled()
+                        ? 'checked="checked"'
+                        : "" ?>
                   >
                   <div class="group-controls">
-                    <input type="text" id="yl_invidious_url_1" name="yl_invidious_url_1" placeholder="https://" value="<?php echo FreshRSS_Context::$user_conf->yl_invidious_url_1; ?>">
+                    <input type="text" id="yl_invidious_url_1" name="yl_invidious_url_1" placeholder="https://" value="<?php echo FreshRSS_Context
+                        ::$user_conf->yl_invidious_url_1; ?>">
                   </div>
                 </div>
               </div>
             </div>
-            
+
           </div>
 
         </div>
@@ -340,7 +406,9 @@ declare(strict_types=1);
       </h4>
       <label for="yl_update_check_enabled" class="flex">
           <input type="checkbox" id="yl_update_check_enabled" name="yl_update_check_enabled" value="1" class="mb-auto"
-          <?php echo ($this->yl_update_check_enabled) ? ' checked="checked"' : ''; ?>>
+          <?php echo $this->yl_update_check_enabled
+              ? ' checked="checked"'
+              : ""; ?>>
         <div class="inline-block">
           Check for new updates periodically
           <div class="yl-form-group-help">

@@ -196,11 +196,13 @@ function setupArticleClickListener() {
     }
   });
 
-  activeArticle.observe(streamContainer, {
-    attributes: true,
-    attributeFilter: ["class"],
-    subtree: true,
-  });
+  if (isArticleSplitViewEnabled()) {
+    activeArticle.observe(streamContainer, {
+      attributes: true,
+      attributeFilter: ["class"],
+      subtree: true,
+    });
+  }
 
   if (isArticleSplitViewEnabled()) {
     if (isMarkReadOnScrollEnabled()) {
