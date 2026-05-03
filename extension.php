@@ -171,7 +171,7 @@ class YoulagExtension extends Minz_Extension
     $this->yl_description_hide_intro_enabled = ($descriptionHideIntroEnabled === null) ? false : $descriptionHideIntroEnabled;
 
     $ylArticleSplitViewEnabled = FreshRSS_Context::userConf()->attributeBool('yl_article_split_view_enabled');
-    $this->yl_article_split_view_enabled = ($ylArticleSplitViewEnabled === null) ? false : $ylArticleSplitViewEnabled;
+    $this->yl_article_split_view_enabled = ($ylArticleSplitViewEnabled === null) ? true : $ylArticleSplitViewEnabled;
 
     $feedViewMobileGridEnabled = FreshRSS_Context::userConf()->attributeBool('yl_feed_view_mobile_grid_enabled');
     $this->yl_feed_view_mobile_grid_enabled = ($feedViewMobileGridEnabled === null) ? false : $feedViewMobileGridEnabled;
