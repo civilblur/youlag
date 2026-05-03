@@ -1044,15 +1044,15 @@ function setToolbarSticky(toolbarElement) {
     const currentScrollY = getScrollY();
     if (currentScrollY <= 0) {
       setStickyVisibility(true);
-      setStickyVisibilitySidenavToggle(true);
+      if (!isArticleSplitViewActive()) setStickyVisibilitySidenavToggle(true);
     }
     else if (currentScrollY > lastScrollY + 2) {
       setStickyVisibility(false);
-      setStickyVisibilitySidenavToggle(false);
+      if (!isArticleSplitViewActive()) setStickyVisibilitySidenavToggle(false);
     }
     else if (currentScrollY < lastScrollY - 2) {
       setStickyVisibility(true);
-      setStickyVisibilitySidenavToggle(true);
+      if (!isArticleSplitViewActive()) setStickyVisibilitySidenavToggle(true);
     }
     lastScrollY = currentScrollY;
   }
