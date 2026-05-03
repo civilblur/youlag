@@ -673,9 +673,10 @@ function isArticleSplitViewEnabled() {
 }
 
 function isArticleSplitViewActive() {
-  // When split view is enabled and the current view is eligble to display split view (i.e. desktop viewport size).
-  // Check if  `#ylArticleSplitPane` is currently display: none
-  return document.getElementById(app.modal.id.splitPaneContent)?.style.display !== 'none';
+  // When split view is enabled and the current view is eligible to display split view (i.e. desktop viewport size).
+  // Check if `#ylArticleSplitPane` is currently display: none
+  const paneElement = document.getElementById(app.modal?.id?.splitPaneContent);
+  return paneElement && window.getComputedStyle(paneElement).display === 'block';
 }
 
 function isMarkReadOnScrollEnabled() {

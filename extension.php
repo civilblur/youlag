@@ -732,7 +732,7 @@ class YoulagExtension extends Minz_Extension
         <div id="yl_category_title_container">
           <div id="yl_category_title" data-yl-category-title="{$categoryTitle}">{$categoryTitle}</div>
           {$filterButton}
-          <button id="yl_nav_menu_container_toggle">Configure view</button>
+          <button id="yl_nav_menu_container_toggle"><span>Configure view</span></button>
         </div>
         <div id="yl_nav_menu_container">
           <nav id="yl_nav_menu_container_content"></nav>

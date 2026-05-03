@@ -523,6 +523,17 @@ body {
     width: 100%;
     gap: var(--yl-m-2xs);
 
+    a, button {
+      overflow: hidden;
+
+      span {
+        /* Prevent wrapping text when viewport is narrow. */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
     #yl_category_title {
       display: flex;
       align-items: center;
@@ -4157,7 +4168,7 @@ body:has(.tree-folder.category.favorites.active) {
 @media (min-width: 840px) {
   .youlag-inactive:not(.reader).yl-article-split-view {
     /* Article: Split pane view */
-    max-height: 100dvh;
+    max-height: 100vh;
     overflow: hidden;
 
     #ylArticleSplitPane {
@@ -4196,7 +4207,7 @@ body:has(.tree-folder.category.favorites.active) {
     #stream,
     #ylArticleSplitPane {
       box-sizing: border-box;
-      height: calc(100dvh - var(--yl-topnav-height));
+      height: calc(100vh - var(--yl-topnav-height));
       scrollbar-width: thin;
     }
   

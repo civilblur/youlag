@@ -157,3 +157,127 @@ function setupSwipeToMiniplayer(modal) {
     );
   }
 }
+
+function handleArticleSplitView() {
+  // Actions to take when clicking an article while article split view is enabled.
+  const articleContentPane = document.getElementById(app.modal.id.splitPaneContent);
+  if (!articleContentPane) return;
+  
+  const streamContainer = document.getElementById('stream');
+  if (!streamContainer) return;
+  
+  const activeArticle = document.querySelector(app.frss.el.current);
+  articleContentPane.classList.add('loading');
+  
+  function getStickyHeights() {
+    // TODO: Extract as utility function.
+    const topNavHeight = document.querySelector('body > header')?.offsetHeight || 57;
+    const stickyHeaderHeight = document.getElementById(app.ui.id.toolbar)?.offsetHeight || 60;
+    return { topNavHeight, stickyHeaderHeight };
+  }
+  
+  function isArticleEntryVisible(element, container) {
+    // Check if article entry is fully visible within its container
+    const elementRect = element.getBoundingClientRect();
+    const { topNavHeight, stickyHeaderHeight } = getStickyHeights();
+    const visibleTop = container.getBoundingClientRect().top + topNavHeight + stickyHeaderHeight;
+
+    return (
+      elementRect.top >= visibleTop &&
+      elementRect.bottom <= window.innerHeight
+    );
+  }
+  
+  // If active article entry isn't fully visible, scroll the stream container.
+  // Especially useful when using FreshRSS' article navigation feature.
+  function scrollToActiveArticle(element, container) {
+    const elementRect = element.getBoundingClientRect();
+    const { topNavHeight, stickyHeaderHeight } = getStickyHeights();
+    
+    const offsetTop = topNavHeight + stickyHeaderHeight + 20;
+    const offsetBottom = 60; // Enough to reveal next article's headline
+    
+    // Suppress toolbar reaction (show/hide) during programmatic scroll
+    app.state.youlag.toolbarIgnoreScroll = true;
+    
+    // Element is partially covered
+    if (elementRect.top < offsetTop) {
+      const scrollAmount = offsetTop - elementRect.top;
+      container.scrollTo({
+        top: container.scrollTop - scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+    else if (elementRect.bottom > window.innerHeight) {
+      const scrollAmount = elementRect.bottom - window.innerHeight + offsetBottom;
+      container.scrollTo({
+        top: container.scrollTop + scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+    
+    setTimeout(() => { app.state.youlag.toolbarIgnoreScroll = false; }, 500);
+  }
+  
+  // Copy article content to the content pane
+  function copyActiveArticleContent(article) {
+    if (article) {
+      const activeArticleContent = article.querySelector('article.flux_content');
+      if (activeArticleContent) {
+        articleContentPane.classList.remove('loading');
+        articleContentPane.innerHTML = activeArticleContent.innerHTML;
+        articleContentPane.scrollTop = 0;
+        
+        if (!isArticleEntryVisible(article, streamContainer)) {
+          // If active article entry isn't fully visible, scroll the stream container.
+          scrollToActiveArticle(article, streamContainer);
+        }
+        
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // MutationObserver to display the article once active
+  const timeout = setTimeout(() => {
+    if (observer) observer.disconnect();
+    articleContentPane.classList.remove('loading');
+    articleContentPane.innerHTML = '';
+    const errorState = document.createElement('div');
+    errorState.className = 'yl-article-split-view__empty-state-content';
+    errorState.textContent = 'Article could not be loaded.';
+    articleContentPane.appendChild(errorState);
+  }, 10000); // Timeout
+
+  let observer = null;
+  
+  observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        // Get fresh active article on each mutation
+        const currentActiveArticle = document.querySelector(app.frss.el.current);
+        if (copyActiveArticleContent(currentActiveArticle)) {
+          observer.disconnect();
+          clearTimeout(timeout);
+          return;
+        }
+      }
+    }
+  });
+
+  observer.observe(streamContainer, {
+    attributes: true,
+    attributeFilter: ['class'],
+    subtree: true,
+    attributeOldValue: false
+  });
+
+  // Fallback: try to load the article on the next animation frame in case it's available, to reduce loading time.
+  requestAnimationFrame(() => {
+    if (copyActiveArticleContent(activeArticle)) {
+      if (observer) observer.disconnect();
+      clearTimeout(timeout);
+    }
+  });
+}
