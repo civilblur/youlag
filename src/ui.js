@@ -1115,15 +1115,8 @@ function setToolbarSticky(toolbarElement) {
   }
 
   function onScroll() {
-    if (getToolbarStickyState() === true) {
+    if (getToolbarStickyState()) {
       lastScrollY = getScrollY();
-      return;
-    }
-    if (app.state.page.toolbarSticky) {
-      lastScrollY = getScrollY();
-      return;
-    }
-    if (getToolbarStickyState() === false) {
       return;
     }
     const currentScrollY = getScrollY();
