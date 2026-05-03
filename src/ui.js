@@ -716,6 +716,7 @@ function setSidenavState() {
   const sidenav = document.getElementById('aside_feed');
   if (!sidenav) return;
   const expanded = sidenav.classList.contains('visible');
+  app.state.page.sidenavExpanded = expanded;
   document.body.classList.toggle('youlag-sidenav--expanded', expanded);
   document.body.classList.toggle('youlag-sidenav--collapsed', !expanded);
 }
@@ -817,7 +818,6 @@ async function handleFeedDearrowFeatures() {
 
 function setupSwipeSidebar() {
   // Mobile: Swipe left to right to open sidebar, and opposite to close. 
-  
   const feedRoot = getFeedRoot();
   const sidebar = getSidebar();
   if (!feedRoot || !sidebar) return;
@@ -869,7 +869,7 @@ function setupSwipeSidebar() {
     }
     
     // Close sidebar
-    else if (isSidebarVisible && deltaX < -swipeMinDistance) {
+    else if (isSidebarVisible && deltaX < -swipeMinDistance && sidebar.contains(e.target)) {
       sidebar.classList.remove('visible');
       sidebar.style.display = 'none';
       setSidenavState();
