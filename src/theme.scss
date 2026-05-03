@@ -3214,7 +3214,12 @@ body:not(.normal) {
  * ==================================== */
 
 %article-typography {
-  
+  p, a, ul, li {
+    font-size: var(--yl-text-sm);
+    line-height: 1.69;
+    letter-spacing: 1.1;
+  }
+
   header {
     h1.title a {
 
@@ -3683,7 +3688,7 @@ body.youlag-inactive:not(.reader) main#stream {
 
           .summary {
             --frss-font-color-grey-dark: #898989;
-            margin: var(--yl-m-3xs) 0 0 0;
+            margin: var(--yl-m-3xs) 0 var(--yl-m-3xs) 0;
             flex-basis: 100%;
             max-width: unset;
             padding-right: min(var(--yl-p-3xl), 10%);
@@ -3712,7 +3717,7 @@ body.youlag-inactive:not(.reader) main#stream {
             z-index: auto;
 
             @media (max-width: 840px) {
-              order: -3; /* Mobile: Place date below headline */
+              order: 0; /* Mobile: Place date below description */
               display: block; /* Force display on mobile. */
               padding-bottom: var(--yl-m-3xs);
             }
@@ -4281,10 +4286,6 @@ body:has(.tree-folder.category.favorites.active) {
             }
           }
 
-          .title {
-            font-size: calc(var(--yl-text-sm)/1.3) !important;
-          }
-
           .date {
             order: 2 !important;
             padding-bottom: var(--yl-p-2xs) !important;
@@ -4292,7 +4293,26 @@ body:has(.tree-folder.category.favorites.active) {
 
           .item.thumbnail {
             margin-bottom: var(--yl-m-2xs) !important;
-            height: var(--yl-article-thumbnail-height) !important;
+          }
+
+          @container (max-width: 320px) {
+            --yl-article-thumbnail-width: 0;
+
+            .title {
+              font-size: calc(var(--yl-text-sm)/1.3) !important;
+            }
+
+            .item.thumbnail {
+              display: none;
+            }
+
+            .item.website {
+              margin-left: unset;
+
+              .websiteName {
+                max-width: 190px;
+              }
+            }
           }
         }
       }
@@ -4319,6 +4339,7 @@ body:has(.tree-folder.category.favorites.active) {
     
       .content {
         padding-top: 0;
+        max-width: 800px;
   
         header, .text, .footer {
           padding: 0 1rem;
