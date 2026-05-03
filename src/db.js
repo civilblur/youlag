@@ -1,4 +1,3 @@
-
 /**
  * IndexedDB wrapper for caching
  * Primarily for storing dearrow data, to reduce API calls.
@@ -36,7 +35,10 @@ function dbOpen(dbName, storeName) {
       resolve(db);
     };
     request.onerror = function (event) {
-      console.error(`Youlag (DB): Failed to open IndexedDB '${dbName}':`, event.target.error);
+      console.error(
+        `Youlag (DB): Failed to open IndexedDB '${dbName}':`,
+        event.target.error,
+      );
       reject(event.target.error);
     };
   });
@@ -52,35 +54,40 @@ async function dbGetConnection(dbName, storeName) {
 
 async function dbSet(storeName, key, value, ttlWeeks = 4) {
   try {
-    const dbName = `${app?.db?.name || 'youlag-cache'}-${storeName}`;
+    const dbName = `${app?.db?.name || "youlag-cache"}-${storeName}`;
     const db = await dbGetConnection(dbName, storeName);
 
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readwrite');
+      const tx = db.transaction(storeName, "readwrite");
       const store = tx.objectStore(storeName);
 
       // Store value with TTL metadata (4 weeks default, configurable per operation)
       const dataWithMetadata = {
         value,
         timestamp: Date.now(),
-        ttlMs: ttlWeeks * 7 * 24 * 60 * 60 * 1000
+        ttlMs: ttlWeeks * 7 * 24 * 60 * 60 * 1000,
       };
 
       const req = store.put(dataWithMetadata, key);
 
       req.onerror = (e) => {
-        console.error(`Youlag (DB): Failed to set key '${key}':`, e.target.error);
+        console.error(
+          `Youlag (DB): Failed to set key '${key}':`,
+          e.target.error,
+        );
         reject(e.target.error);
       };
 
       tx.oncomplete = () => resolve();
       tx.onerror = () => {
-        console.error(`Youlag (DB): Transaction error in dbSet for key '${key}':`, tx.error);
+        console.error(
+          `Youlag (DB): Transaction error in dbSet for key '${key}':`,
+          tx.error,
+        );
         reject(tx.error);
       };
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(`Youlag (DB): dbSet error:`, error);
     throw error;
   }
@@ -88,11 +95,11 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
 
 async function dbGet(storeName, key) {
   try {
-    const dbName = `${app?.db?.name || 'youlag-cache'}-${storeName}`;
+    const dbName = `${app?.db?.name || "youlag-cache"}-${storeName}`;
     const db = await dbGetConnection(dbName, storeName);
 
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readonly');
+      const tx = db.transaction(storeName, "readonly");
       const store = tx.objectStore(storeName);
       const req = store.get(key);
 
@@ -113,19 +120,23 @@ async function dbGet(storeName, key) {
       };
 
       req.onerror = (e) => {
-        console.error(`Youlag (DB): Failed to get key '${key}':`, e.target.error);
+        console.error(
+          `Youlag (DB): Failed to get key '${key}':`,
+          e.target.error,
+        );
         reject(e.target.error);
       };
 
       tx.onerror = () => {
-        console.error(`Youlag (DB): Transaction error in dbGet for key '${key}':`, tx.error);
+        console.error(
+          `Youlag (DB): Transaction error in dbGet for key '${key}':`,
+          tx.error,
+        );
         reject(tx.error);
       };
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(`Youlag (DB): dbGet error:`, error);
     throw error;
   }
 }
-

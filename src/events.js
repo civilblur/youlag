@@ -1,14 +1,12 @@
-
 /**
  * Events
- * 
+ *
  * Handles initialization and event-related functionalities.
  */
 
-
 function init() {
   if (app.state.youlag.init) return;
-  
+
   clearPathHash();
   setFreshRssUrlPrefix();
   setBodyClass();
@@ -35,8 +33,8 @@ function init() {
   }
   updateSidenavLinks();
   settingsPageEventListeners();
-  setVideoLabelsTitle('playlists', 'Playlists');
-  setVideoLabelsTitle('watch_later', 'Watch later');
+  setVideoLabelsTitle("playlists", "Playlists");
+  setVideoLabelsTitle("watch_later", "Watch later");
   updateAddFeedLink();
   setAddFeedCategoryValue();
   setMissingLogo();
@@ -53,10 +51,9 @@ function init() {
 }
 
 async function initialVideoState() {
-  if (hasQueryParam('ylvideo')) {
+  if (hasQueryParam("ylvideo")) {
     await handleVideoDirectLink();
-  } 
-  else {
+  } else {
     restoreVideoQueue();
   }
 }
@@ -64,8 +61,8 @@ async function initialVideoState() {
 function setupVisibilityEventListeners() {
   // Restore event listeners when the page becomes visible, primarily for the video modal.
   // E.g. when the user switches tabs and returns, reset and reattach event listeners to improve reliability.
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') {
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") {
       restoreModalEventListeners();
       setupSwipeSidebar();
     }
@@ -77,36 +74,47 @@ function handleExperimentalFeature() {
 
   // Show the category filter toggle if the feature is disabled.
   if (!isWatchLaterPage()) return;
-  const categoryFilterToggle = document.getElementById('yl_stream_category_filter_toggle');
-  const watchLaterCategoryFilterEnabledElement = document.getElementById('yl_watch_later_category_filter_enabled');
-  const watchLaterCategoryFilterEnabledSetting = watchLaterCategoryFilterEnabledElement?.getAttribute('data-yl-watch-later-category-filter-enabled');
-  const isWatchLaterCategoryFilterEnabled = watchLaterCategoryFilterEnabledSetting === 'true';
+  const categoryFilterToggle = document.getElementById(
+    "yl_stream_category_filter_toggle",
+  );
+  const watchLaterCategoryFilterEnabledElement = document.getElementById(
+    "yl_watch_later_category_filter_enabled",
+  );
+  const watchLaterCategoryFilterEnabledSetting =
+    watchLaterCategoryFilterEnabledElement?.getAttribute(
+      "data-yl-watch-later-category-filter-enabled",
+    );
+  const isWatchLaterCategoryFilterEnabled =
+    watchLaterCategoryFilterEnabledSetting === "true";
   if (isWatchLaterCategoryFilterEnabled && categoryFilterToggle) {
     app.state.youlag.experimentalFeatureEnabled = true;
-    categoryFilterToggle.style.setProperty('display', 'flex', 'important');
+    categoryFilterToggle.style.setProperty("display", "flex", "important");
   }
 }
 
 function removeYoulagLoadingState() {
   // By default, the youlag CSS is set to a loading state.
   // This will remove the loading state when the script is ready.
-  document.body.classList.add('youlag-loaded');
+  document.body.classList.add("youlag-loaded");
 }
 
 function initFallback() {
   // NOTE: Using FreshRSS' `freshrss:globalContextLoaded` event hasn't been reliable, hence this fallback method.
-  if (document.readyState === 'complete' || document.readyState === 'interactive' || app.state.youlag.init === true) {
+  if (
+    document.readyState === "complete" ||
+    document.readyState === "interactive" ||
+    app.state.youlag.init === true
+  ) {
     init();
-  }
-  else {
-    document.addEventListener('DOMContentLoaded', init);
-    window.addEventListener('load', init);
+  } else {
+    document.addEventListener("DOMContentLoaded", init);
+    window.addEventListener("load", init);
   }
 }
 
 // Fallback interval check
 const checkInitInterval = setInterval(() => {
-  if (document.readyState === 'complete' || app.state.youlag.init === true) {
+  if (document.readyState === "complete" || app.state.youlag.init === true) {
     init();
     clearInterval(checkInitInterval);
   }
@@ -114,4 +122,6 @@ const checkInitInterval = setInterval(() => {
 
 // Ensure init runs
 initFallback();
-(async () => { await initialVideoState(); })();
+(async () => {
+  await initialVideoState();
+})();

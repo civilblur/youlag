@@ -7,7 +7,7 @@
 function toggleModalMode() {
   if (isModeMiniplayer()) {
     // Toggle from miniplayer -> fullscreen mode
-    setModeMiniplayer(false, 'fullscreen');
+    setModeMiniplayer(false, "fullscreen");
     setModeFullscreen(true);
 
     if (!getHistoryPopstate()) {
@@ -16,18 +16,17 @@ function toggleModalMode() {
        * Thus, if expanding back to fullscreen mode, we need to add it here to avoid routing back a page,
        * and instead just close the modal.
        */
-      pushHistoryState('modalOpen', true);
+      pushHistoryState("modalOpen", true);
     }
 
     const modal = getModalVideo();
     if (!modal) return;
-    const entryId = modal.getAttribute('data-entry');
+    const entryId = modal.getAttribute("data-entry");
     if (entryId) addVideoParamUrl(entryId);
-  }
-  else {
+  } else {
     // Toggle from fullscreen -> miniplayer mode
     setModeMiniplayer(true);
-    setModeFullscreen(false, 'miniplayer');
+    setModeFullscreen(false, "miniplayer");
     removeVideoParamUrl();
   }
 }
@@ -36,27 +35,32 @@ function setModeMiniplayer(state, prevState) {
   const modal = getModalVideo();
 
   if (state === true) {
-    if (app.state.modal.activeType === 'article') {
+    if (app.state.modal.activeType === "article") {
       modal ? (app.state.modal.miniplayerScrollTop = modal.scrollTop) : null;
     }
     document.body.classList.add(app.modal.class.modeMiniplayer);
-    setModeState('miniplayer');
+    setModeState("miniplayer");
     setModalState(false); // Miniplayer mode is not considered active.
     modal ? modal.scrollTo({ top: 0 }) : null;
-  }
-  else if (state === false) {
+  } else if (state === false) {
     if (modal) {
       let transitionRan = false;
       const onTransitionEnd = () => {
         transitionRan = true;
         // Scroll back to previous position when exiting miniplayer mode.
-        modal.scrollTo({ top: app.state.modal.miniplayerScrollTop, behavior: 'smooth' });
+        modal.scrollTo({
+          top: app.state.modal.miniplayerScrollTop,
+          behavior: "smooth",
+        });
       };
-      modal.addEventListener('transitionend', onTransitionEnd, { once: true });
+      modal.addEventListener("transitionend", onTransitionEnd, { once: true });
       setTimeout(() => {
         // Fallback if transition event is not detected.
         if (!transitionRan) {
-          modal.scrollTo({ top: app.state.modal.miniplayerScrollTop, behavior: 'smooth' });
+          modal.scrollTo({
+            top: app.state.modal.miniplayerScrollTop,
+            behavior: "smooth",
+          });
         }
       }, 500);
     }
@@ -68,19 +72,21 @@ function setModeMiniplayer(state, prevState) {
     if (stored) {
       const obj = JSON.parse(stored);
       obj.isMiniplayer = !!state;
-      localStorage.setItem(app.modal.queue.localStorageKey, JSON.stringify(obj));
+      localStorage.setItem(
+        app.modal.queue.localStorageKey,
+        JSON.stringify(obj),
+      );
     }
-  } catch (e) { }
+  } catch (e) {}
 }
 
 function setModeFullscreen(state, prevState) {
   if (state === true) {
     document.body.classList.add(app.modal.class.modeFullscreen);
     document.body.classList.remove(app.modal.class.modeMiniplayer);
-    setModeState('fullscreen');
+    setModeState("fullscreen");
     setModalState(true);
-  }
-  else if (state === false) {
+  } else if (state === false) {
     document.body.classList.remove(app.modal.class.modeFullscreen);
     app.state.modal.mode = prevState || null;
     setModalState(false);
@@ -95,13 +101,18 @@ function setupSwipeToMiniplayer(modal) {
 
   // Remove any previous swipe listeners
   if (modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
-    modal._videoModalListeners = modal._videoModalListeners.filter(({ el, type, handler }) => {
-      if (el === modal && (type === 'touchstart' || type === 'touchmove' || type === 'touchend')) {
-        el.removeEventListener(type, handler);
-        return false;
-      }
-      return true;
-    });
+    modal._videoModalListeners = modal._videoModalListeners.filter(
+      ({ el, type, handler }) => {
+        if (
+          el === modal &&
+          (type === "touchstart" || type === "touchmove" || type === "touchend")
+        ) {
+          el.removeEventListener(type, handler);
+          return false;
+        }
+        return true;
+      },
+    );
   }
 
   let touchStartY = null;
@@ -111,10 +122,10 @@ function setupSwipeToMiniplayer(modal) {
 
   // Track the initial Y position when a single touch starts near the top of the modal.
   function touchStartHandler(e) {
-
     // If chapter list is scrollable, don't activate swipe to miniplayer within that area.
     const chapterList = e.target.closest(`#${app.modal.id.chapterList}`);
-    if (chapterList && chapterList.scrollHeight > chapterList.clientHeight) return;
+    if (chapterList && chapterList.scrollHeight > chapterList.clientHeight)
+      return;
 
     if (modal.scrollTop <= scrollTolerance && e.touches.length === 1) {
       touchStartY = e.touches[0].clientY;
@@ -124,7 +135,11 @@ function setupSwipeToMiniplayer(modal) {
 
   // Detect downward movement from the top of the modal to track overscroll gesture.
   function touchMoveHandler(e) {
-    if (touchStartY !== null && modal.scrollTop <= scrollTolerance && e.touches.length === 1) {
+    if (
+      touchStartY !== null &&
+      modal.scrollTop <= scrollTolerance &&
+      e.touches.length === 1
+    ) {
       const moveY = e.touches[0].clientY;
       if (moveY - touchStartY > 0) {
         overscrollActive = true;
@@ -135,9 +150,16 @@ function setupSwipeToMiniplayer(modal) {
 
   // If a downward swipe of sufficient distance is detected, triggers miniplayer mode.
   function touchEndHandler(e) {
-    if (touchStartY !== null && overscrollActive && e.changedTouches.length === 1) {
+    if (
+      touchStartY !== null &&
+      overscrollActive &&
+      e.changedTouches.length === 1
+    ) {
       const endY = e.changedTouches[0].clientY;
-      if (endY - touchStartY > swipeThreshold && modal.scrollTop <= scrollTolerance) {
+      if (
+        endY - touchStartY > swipeThreshold &&
+        modal.scrollTop <= scrollTolerance
+      ) {
         toggleModalMode(true);
       }
     }
@@ -145,34 +167,38 @@ function setupSwipeToMiniplayer(modal) {
     overscrollActive = false;
   }
 
-  modal.addEventListener('touchstart', touchStartHandler, { passive: false });
-  modal.addEventListener('touchmove', touchMoveHandler, { passive: false });
-  modal.addEventListener('touchend', touchEndHandler, { passive: false });
+  modal.addEventListener("touchstart", touchStartHandler, { passive: false });
+  modal.addEventListener("touchmove", touchMoveHandler, { passive: false });
+  modal.addEventListener("touchend", touchEndHandler, { passive: false });
 
   if (modal._videoModalListeners) {
     modal._videoModalListeners.push(
-      { el: modal, type: 'touchstart', handler: touchStartHandler },
-      { el: modal, type: 'touchmove', handler: touchMoveHandler },
-      { el: modal, type: 'touchend', handler: touchEndHandler }
+      { el: modal, type: "touchstart", handler: touchStartHandler },
+      { el: modal, type: "touchmove", handler: touchMoveHandler },
+      { el: modal, type: "touchend", handler: touchEndHandler },
     );
   }
 }
 
 function handleArticleSplitView() {
   // Actions to take when clicking an article while article split view is enabled.
-  const articleContentPane = document.getElementById(app.modal.id.splitPaneContent);
+  const articleContentPane = document.getElementById(
+    app.modal.id.splitPaneContent,
+  );
   if (!articleContentPane) return;
 
-  const streamContainer = document.getElementById('stream');
+  const streamContainer = document.getElementById("stream");
   if (!streamContainer) return;
 
   const activeArticle = document.querySelector(app.frss.el.current);
-  articleContentPane.classList.add('loading');
+  articleContentPane.classList.add("loading");
 
   function getStickyHeights() {
     // TODO: Extract as utility function.
-    const topNavHeight = document.querySelector('body > header')?.offsetHeight || 57;
-    const stickyHeaderHeight = document.getElementById(app.ui.id.toolbar)?.offsetHeight || 60;
+    const topNavHeight =
+      document.querySelector("body > header")?.offsetHeight || 57;
+    const stickyHeaderHeight =
+      document.getElementById(app.ui.id.toolbar)?.offsetHeight || 60;
     return { topNavHeight, stickyHeaderHeight };
   }
 
@@ -180,11 +206,11 @@ function handleArticleSplitView() {
     // Check if article entry is fully visible within its container
     const elementRect = element.getBoundingClientRect();
     const { topNavHeight, stickyHeaderHeight } = getStickyHeights();
-    const visibleTop = container.getBoundingClientRect().top + topNavHeight + stickyHeaderHeight;
+    const visibleTop =
+      container.getBoundingClientRect().top + topNavHeight + stickyHeaderHeight;
 
     return (
-      elementRect.top >= visibleTop &&
-      elementRect.bottom <= window.innerHeight
+      elementRect.top >= visibleTop && elementRect.bottom <= window.innerHeight
     );
   }
 
@@ -198,33 +224,37 @@ function handleArticleSplitView() {
     const offsetBottom = 70; // Enough to reveal next article's headline
 
     // Suppress toolbar reaction (show/hide) during programmatic scroll
-    setToolbarStickyState(true)
+    setToolbarStickyState(true);
 
     // Element is partially covered
     if (elementRect.top < offsetTop) {
       const scrollAmount = offsetTop - elementRect.top;
       container.scrollTo({
         top: container.scrollTop - scrollAmount,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
-    }
-    else if (elementRect.bottom > window.innerHeight) {
-      const scrollAmount = elementRect.bottom - window.innerHeight + offsetBottom;
+    } else if (elementRect.bottom > window.innerHeight) {
+      const scrollAmount =
+        elementRect.bottom - window.innerHeight + offsetBottom;
       container.scrollTo({
         top: container.scrollTop + scrollAmount,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
 
-    setTimeout(() => { setToolbarStickyState(false) }, 500);
+    setTimeout(() => {
+      setToolbarStickyState(false);
+    }, 500);
   }
 
   // Copy article content to the content pane
   function copyActiveArticleContent(article) {
     if (article) {
-      const activeArticleContent = article.querySelector('article.flux_content');
+      const activeArticleContent = article.querySelector(
+        "article.flux_content",
+      );
       if (activeArticleContent) {
-        articleContentPane.classList.remove('loading');
+        articleContentPane.classList.remove("loading");
         articleContentPane.innerHTML = activeArticleContent.innerHTML;
         articleContentPane.scrollTop = 0;
 
@@ -242,11 +272,11 @@ function handleArticleSplitView() {
   // MutationObserver to display the article once active
   const timeout = setTimeout(() => {
     if (observer) observer.disconnect();
-    articleContentPane.classList.remove('loading');
-    articleContentPane.innerHTML = '';
-    const errorState = document.createElement('div');
-    errorState.className = 'yl-article-split-view__empty-state-content';
-    errorState.textContent = 'Article could not be loaded.';
+    articleContentPane.classList.remove("loading");
+    articleContentPane.innerHTML = "";
+    const errorState = document.createElement("div");
+    errorState.className = "yl-article-split-view__empty-state-content";
+    errorState.textContent = "Article could not be loaded.";
     articleContentPane.appendChild(errorState);
   }, 10000); // Timeout
 
@@ -254,9 +284,14 @@ function handleArticleSplitView() {
 
   observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
-      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      if (
+        mutation.type === "attributes" &&
+        mutation.attributeName === "class"
+      ) {
         // Get fresh active article on each mutation
-        const currentActiveArticle = document.querySelector(app.frss.el.current);
+        const currentActiveArticle = document.querySelector(
+          app.frss.el.current,
+        );
         if (copyActiveArticleContent(currentActiveArticle)) {
           observer.disconnect();
           clearTimeout(timeout);
@@ -268,9 +303,9 @@ function handleArticleSplitView() {
 
   observer.observe(streamContainer, {
     attributes: true,
-    attributeFilter: ['class'],
+    attributeFilter: ["class"],
     subtree: true,
-    attributeOldValue: false
+    attributeOldValue: false,
   });
 
   // Fallback: try to load the article on the next animation frame in case it's available, to reduce loading time.

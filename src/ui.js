@@ -14,7 +14,6 @@
  *
  ****************************************/
 
-
 /*****************************************
  * BEGIN "EVENT LISTENERS"
  * Related to click listeners and popstate handling.
@@ -25,18 +24,16 @@ function setupClickListener() {
 
   if (isLayoutVideo()) {
     setupVideoClickListener();
-  }
-  else if (isLayoutArticle()) {
+  } else if (isLayoutArticle()) {
     setupArticleClickListener();
   }
 
-  document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
       if (isLayoutVideo() && !isModeMiniplayer()) {
         const modal = getModalVideo();
         if (modal) closeModalVideo();
-      }
-      else if (isLayoutArticle()) {
+      } else if (isLayoutArticle()) {
         const openedArticle = document.querySelector(app.frss.el.current);
         if (openedArticle) closeArticle(event);
       }
@@ -49,38 +46,40 @@ function setupClickListener() {
 function setupVideoClickListener() {
   const streamContainer = getFeedRoot();
   if (!streamContainer) return;
-  streamContainer.addEventListener('click', (event) => {
+  streamContainer.addEventListener("click", (event) => {
     const target = event.target.closest(app.frss.el.entry);
     if (!target) return;
     const actionButtons = [
-      'li.manage',
-      'li.labels',
-      'li.share',
-      'li.link',
-      '.website a[href^="./?get=f_"]'
-    ].join(', ');
+      "li.manage",
+      "li.labels",
+      "li.share",
+      "li.link",
+      '.website a[href^="./?get=f_"]',
+    ].join(", ");
     if (event.target.closest(actionButtons)) return;
     handleActiveVideo(event);
-    if (target.classList.contains('active')) {
+    if (target.classList.contains("active")) {
       forceFrssEntryToCollapse(target);
-    }
-    else {
+    } else {
       const observer = new MutationObserver((observer) => {
-        if (target.classList.contains('active')) {
+        if (target.classList.contains("active")) {
           forceFrssEntryToCollapse(target);
           observer.disconnect();
         }
       });
-      observer.observe(target, { attributes: true, attributeFilter: ['class'] });
+      observer.observe(target, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
     }
 
-    if (event.target.closest('a.yl-video-card__link')) {
+    if (event.target.closest("a.yl-video-card__link")) {
       // Prioritize the click event to open the dialog, opposed to navigating to video link.
       event.preventDefault();
     }
   });
 
-  window.addEventListener('popstate', function popstateHandler(e) {
+  window.addEventListener("popstate", function popstateHandler(e) {
     if (isHashUrl()) return;
     if (isModeFullscreen() && getModalVideo()) {
       app.state.popstate.allowBack = false;
@@ -97,8 +96,7 @@ function setupVideoClickListener() {
       app.state.popstate.ignoreNext = true;
       history.back();
       return;
-    }
-    else {
+    } else {
       app.state.popstate.ignoreNext = false;
     }
   });
@@ -117,11 +115,17 @@ function setupArticleClickListener() {
   let splitViewDebounceTimer = null;
   const activeArticle = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
-      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      if (
+        mutation.type === "attributes" &&
+        mutation.attributeName === "class"
+      ) {
         const target = mutation.target;
-        const articleContent = target.querySelector('.flux_content .content');
+        const articleContent = target.querySelector(".flux_content .content");
 
-        if (target.matches(app.frss.el.entry) && target.matches(app.frss.el.current)) {
+        if (
+          target.matches(app.frss.el.entry) &&
+          target.matches(app.frss.el.current)
+        ) {
           clearTimeout(splitViewDebounceTimer);
           splitViewDebounceTimer = setTimeout(() => {
             if (isArticleSplitViewEnabled()) {
@@ -134,24 +138,32 @@ function setupArticleClickListener() {
 
               // Article video fallback:
               // Embed iframe if source is YouTube video and is missing from the rendered content.
-              sourceUrl = target.getAttribute('data-link');
+              sourceUrl = target.getAttribute("data-link");
               if (getVideoIdFromUrl(sourceUrl)) {
                 const videoId = getVideoIdFromUrl(sourceUrl);
-                const existingIframe = articleContent.querySelector(`iframe[src*="${videoId}"]`);
+                const existingIframe = articleContent.querySelector(
+                  `iframe[src*="${videoId}"]`,
+                );
                 if (!existingIframe) {
                   const iframe = setupVideoIframe(sourceUrl);
-                  articleContent.querySelector('header')?.insertAdjacentElement('afterend', iframe);
+                  articleContent
+                    .querySelector("header")
+                    ?.insertAdjacentElement("afterend", iframe);
                 }
               }
 
               // Article regular mode: Auto-scroll article to the top when clicked, only when split view is not active.
               const scrollToTarget = () => {
                 const rect = target.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollTop =
+                  window.pageYOffset || document.documentElement.scrollTop;
                 let offset = 0;
                 if (window.getComputedStyle) {
                   const root = document.documentElement;
-                  const val = getComputedStyle(root).getPropertyValue('--yl-topnav-height');
+                  const val =
+                    getComputedStyle(root).getPropertyValue(
+                      "--yl-topnav-height",
+                    );
                   offset = parseInt(val, 10) || 0;
                 }
                 return rect.top + scrollTop - offset;
@@ -160,9 +172,9 @@ function setupArticleClickListener() {
               // Article regular mode: Scroll to article top position.
               // Re-scroll on resize to correct for layout shifts (expanding content, images, etc.).
               const toolbar = document.getElementById(app.ui.id.toolbar);
-              setToolbarStickyState(true);   // Suppress scroll-driven toolbar show/hide before any scrollTo call.
-              toolbar.classList.remove('sticky-visible');
-              toolbar.classList.add('sticky-hidden');
+              setToolbarStickyState(true); // Suppress scroll-driven toolbar show/hide before any scrollTo call.
+              toolbar.classList.remove("sticky-visible");
+              toolbar.classList.add("sticky-hidden");
               window.scrollTo({ top: scrollToTarget() });
               let resizeScrollTimer = null;
               const ro = new ResizeObserver(() => {
@@ -190,64 +202,67 @@ function setupArticleClickListener() {
 
   activeArticle.observe(streamContainer, {
     attributes: true,
-    attributeFilter: ['class'],
-    subtree: true
+    attributeFilter: ["class"],
+    subtree: true,
   });
 
   if (isArticleSplitViewEnabled()) {
-
     if (isMarkReadOnScrollEnabled()) {
       // Mark article as read when scrolling past, if FreshRSS `auto_mark_scroll` setting is enabled
       onArticleEntryVisibility({
         onLeave: (articleEntry) => {
-          if (articleEntry.classList.contains('not_read')) {
-            const entryId = articleEntry.getAttribute('data-entry');
+          if (articleEntry.classList.contains("not_read")) {
+            const entryId = articleEntry.getAttribute("data-entry");
             if (entryId) {
               send_mark_read_queue([entryId], true, null); // Native FreshRSS function.
             }
           }
-        }
+        },
       });
     }
 
-    if (isArticleNavEnabled() && document.body.classList.contains('youlag-inactive')) {
+    if (
+      isArticleNavEnabled() &&
+      document.body.classList.contains("youlag-inactive")
+    ) {
       // Remap article navigation "Up" (scroll to top) button.
       // Scroll to of article stream instead of the body.
       const articleNav = isArticleNavEnabled();
-      const articleNavUp = articleNav ? articleNav.querySelector('.up') : null;
+      const articleNavUp = articleNav ? articleNav.querySelector(".up") : null;
       if (articleNavUp) {
-        articleNavUp.addEventListener('click', (event) => {
-          if (event.target.closest('.up')) {
+        articleNavUp.addEventListener("click", (event) => {
+          if (event.target.closest(".up")) {
             event.preventDefault();
-            streamContainer.scrollTo({ top: 0, behavior: 'smooth' });
+            streamContainer.scrollTo({ top: 0, behavior: "smooth" });
           }
         });
       }
     }
   }
 
-  streamContainer.addEventListener('click', function (event) {
+  streamContainer.addEventListener("click", function (event) {
     const target = event.target.closest(app.frss.el.entry);
     if (!target) return;
 
     const actionButtons = [
-      '.flux_header li.manage',
-      '.flux_header li.labels',
-      '.flux_header li.share',
-      '.flux_header li.link',
-      '.flux_header li.website',
-      '.flux_content',
-    ].join(', ');
+      ".flux_header li.manage",
+      ".flux_header li.labels",
+      ".flux_header li.share",
+      ".flux_header li.link",
+      ".flux_header li.website",
+      ".flux_content",
+    ].join(", ");
     if (event.target.closest(actionButtons)) return;
     if (!getModalState()) {
       setModalState(true);
       handleActiveArticle(event);
     }
-
   });
 
-  window.addEventListener('popstate', function (event) {
-    function getOpenArticle() { return getModalState(); } // Alias for clarity
+  window.addEventListener("popstate", function (event) {
+    function getOpenArticle() {
+      return getModalState();
+    } // Alias for clarity
 
     if (isHashUrl()) return;
     if (isModeMiniplayer() && getOpenArticle()) {
@@ -258,8 +273,7 @@ function setupArticleClickListener() {
       if (!app.state.popstate.ignoreNext) {
         app.state.popstate.ignoreNext = true;
         history.back();
-      }
-      else {
+      } else {
         app.state.popstate.ignoreNext = false;
       }
       return;
@@ -268,8 +282,7 @@ function setupArticleClickListener() {
       if (!app.state.popstate.ignoreNext) {
         app.state.popstate.ignoreNext = true;
         history.back();
-      }
-      else {
+      } else {
         app.state.popstate.ignoreNext = false;
       }
       return;
@@ -278,10 +291,9 @@ function setupArticleClickListener() {
       closeArticle(event);
     }
   });
-
 }
 
-function onArticleEntryVisibility({onEnter, onLeave} = {}) {
+function onArticleEntryVisibility({ onEnter, onLeave } = {}) {
   /**
    * Tracks when article entries enter and leave the viewport.
    *
@@ -293,24 +305,26 @@ function onArticleEntryVisibility({onEnter, onLeave} = {}) {
 
   const visibleStates = new WeakMap();
 
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      const articleEntry = entry.target;
-      const wasVisible = visibleStates.get(articleEntry) || false;
-      const isVisible = entry.isIntersecting;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const articleEntry = entry.target;
+        const wasVisible = visibleStates.get(articleEntry) || false;
+        const isVisible = entry.isIntersecting;
 
-      if (isVisible && !wasVisible && onEnter) {
-        onEnter(articleEntry, entry);
-      }
-      else if (!isVisible && wasVisible && onLeave) {
-        onLeave(articleEntry, entry);
-      }
+        if (isVisible && !wasVisible && onEnter) {
+          onEnter(articleEntry, entry);
+        } else if (!isVisible && wasVisible && onLeave) {
+          onLeave(articleEntry, entry);
+        }
 
-      visibleStates.set(articleEntry, isVisible);
-    }
-  }, {
-    threshold: 0
-  });
+        visibleStates.set(articleEntry, isVisible);
+      }
+    },
+    {
+      threshold: 0,
+    },
+  );
 
   const articleEntries = streamContainer.querySelectorAll(app.frss.el.entry);
   for (const entry of articleEntries) {
@@ -325,63 +339,75 @@ function setupTagsDropdownOverride() {
   const streamContainer = document.querySelector(app.frss.el.feedRoot);
   if (!streamContainer) return;
 
-  streamContainer.addEventListener('click', async function (event) {
-    const modal = getModalVideo();
-    if (modal && modal.contains(event.target)) return;
+  streamContainer.addEventListener(
+    "click",
+    async function (event) {
+      const modal = getModalVideo();
+      if (modal && modal.contains(event.target)) return;
 
-    const entryItem = event.target.closest(`${app.frss.el.entry} .flux_header li.labels`);
-    const entryItemDropdown = entryItem ? entryItem.querySelector('a.dropdown-toggle') : null;
-    const entryItemFooterDropdown = event.target.closest('.item.labels a.dropdown-toggle[href^="#dropdown-labels-"]');
+      const entryItem = event.target.closest(
+        `${app.frss.el.entry} .flux_header li.labels`,
+      );
+      const entryItemDropdown = entryItem
+        ? entryItem.querySelector("a.dropdown-toggle")
+        : null;
+      const entryItemFooterDropdown = event.target.closest(
+        '.item.labels a.dropdown-toggle[href^="#dropdown-labels-"]',
+      );
 
-    if (entryItemDropdown || entryItemFooterDropdown) {
-      // Prevent default tag dropdown behavior
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      let entryId = null;
-      let entryIdRegex = '([0-9]+)$';
-      let iconImg = null; // Tag icon in card element
+      if (entryItemDropdown || entryItemFooterDropdown) {
+        // Prevent default tag dropdown behavior
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        let entryId = null;
+        let entryIdRegex = "([0-9]+)$";
+        let iconImg = null; // Tag icon in card element
 
-      if (entryItemDropdown) {
-        // Card tags button: Get feed entry ID
-        entryId = entryItem.querySelector('.dropdown-target')?.id;
-        entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
-        entryId = entryId ? entryId[1] : null;
-        iconImg = entryItemDropdown.closest('li.labels')?.querySelector('img.icon');
+        if (entryItemDropdown) {
+          // Card tags button: Get feed entry ID
+          entryId = entryItem.querySelector(".dropdown-target")?.id;
+          entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
+          entryId = entryId ? entryId[1] : null;
+          iconImg = entryItemDropdown
+            .closest("li.labels")
+            ?.querySelector("img.icon");
+        }
+        if (entryItemFooterDropdown) {
+          // Footer tags button: Get feed entry ID
+          entryId = entryItemFooterDropdown.href;
+          entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
+          entryId = entryId ? entryId[1] : null;
+          iconImg = entryItemFooterDropdown
+            .closest("li.labels, .item.labels")
+            ?.querySelector("img.icon");
+        }
+        let prevSrc = null;
+        if (iconImg) {
+          prevSrc = iconImg.src;
+          iconImg.classList.add("loading");
+          iconImg.src = app.frss.img.spinner;
+        }
+        let tags = await getItemTags(entryId);
+        if (iconImg) {
+          iconImg.classList.remove("loading");
+          iconImg.src = prevSrc;
+        }
+        // Open custom tags modal
+        renderTagsModal(entryId, tags);
       }
-      if (entryItemFooterDropdown) {
-        // Footer tags button: Get feed entry ID
-        entryId = entryItemFooterDropdown.href;
-        entryId = entryId ? entryId.match(new RegExp(entryIdRegex)) : null;
-        entryId = entryId ? entryId[1] : null;
-        iconImg = entryItemFooterDropdown.closest('li.labels, .item.labels')?.querySelector('img.icon');
-      }
-      let prevSrc = null;
-      if (iconImg) {
-        prevSrc = iconImg.src;
-        iconImg.classList.add('loading');
-        iconImg.src = app.frss.img.spinner;
-      }
-      let tags = await getItemTags(entryId);
-      if (iconImg) {
-        iconImg.classList.remove('loading');
-        iconImg.src = prevSrc;
-      }
-      // Open custom tags modal
-      renderTagsModal(entryId, tags);
-    }
-  }, true);
+    },
+    true,
+  );
 }
 
 function setupSidenavStateListener() {
   // Listen for class changes on #aside_feed and update body classes
-  const sidenav = document.getElementById('aside_feed');
+  const sidenav = document.getElementById("aside_feed");
   if (!sidenav) return;
   setSidenavState();
   const observer = new MutationObserver(setSidenavState);
-  observer.observe(sidenav, { attributes: true, attributeFilter: ['class'] });
+  observer.observe(sidenav, { attributes: true, attributeFilter: ["class"] });
 }
-
-
 
 function handleSliderHashChange() {
   // Temporary fix for page scroll being locked after closing a slider via browser's back navigation.
@@ -390,13 +416,17 @@ function handleSliderHashChange() {
   if (!app.state.youlag.sliderListeners) app.state.youlag.sliderListeners = [];
 
   const sliderHandler = function () {
-    if (window.location.hash !== '#slider') {
-      document.documentElement.classList.remove('slider-active');
+    if (window.location.hash !== "#slider") {
+      document.documentElement.classList.remove("slider-active");
       clearPathHash();
     }
   };
-  window.addEventListener('hashchange', sliderHandler);
-  app.state.youlag.sliderListeners.push({ el: window, type: 'hashchange', handler: sliderHandler });
+  window.addEventListener("hashchange", sliderHandler);
+  app.state.youlag.sliderListeners.push({
+    el: window,
+    type: "hashchange",
+    handler: sliderHandler,
+  });
 }
 
 function autoLoadMoreArticlesOnScroll() {
@@ -406,42 +436,48 @@ function autoLoadMoreArticlesOnScroll() {
    * This is useful when custom layouts like "Article split view" is used,
    * as that layout never triggers the native `load_more_posts()` due to fixed body height and overflow.
    */
-  const streamFooter = document.getElementById('stream-footer');
+  const streamFooter = document.getElementById("stream-footer");
   if (!streamFooter) return;
 
   let isLoading = false;
   let debounceTimeout = null;
 
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting && !isLoading) {
-        // Clear any pending debounce timeout
-        if (debounceTimeout) {
-          clearTimeout(debounceTimeout);
-          debounceTimeout = null;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && !isLoading) {
+          // Clear any pending debounce timeout
+          if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = null;
+          }
+
+          isLoading = true;
+          load_more_posts();
+
+          debounceTimeout = setTimeout(() => {
+            isLoading = false;
+            debounceTimeout = null;
+          }, 500); // Debounce duration
         }
-
-        isLoading = true;
-        load_more_posts();
-
-        debounceTimeout = setTimeout(() => {
-          isLoading = false;
-          debounceTimeout = null;
-        }, 500); // Debounce duration
       }
-    }
-  }, {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.2 // Trigger when at least 20% of the footer is visible
-  });
+    },
+    {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.2, // Trigger when at least 20% of the footer is visible
+    },
+  );
 
   observer.observe(streamFooter);
 }
 
 function isHashUrl() {
-  const currentPathnameSearch = window.location.pathname + window.location.search;
-  const isHash = app.state.popstate.pathPrev === currentPathnameSearch && window.location.hash;
+  const currentPathnameSearch =
+    window.location.pathname + window.location.search;
+  const isHash =
+    app.state.popstate.pathPrev === currentPathnameSearch &&
+    window.location.hash;
   app.state.popstate.pathPrev = currentPathnameSearch;
   return isHash;
 }
@@ -449,8 +485,6 @@ function isHashUrl() {
 /*****************************************
  * END "EVENT LISTENERS"
  ****************************************/
-
-
 
 /*****************************************
  * BEGIN "UI CLASS HANDLERS"
@@ -460,18 +494,21 @@ function isHashUrl() {
 function setBodyClass() {
   // TODO: Shorten class name prefix from 'youlag-' to 'yl-' as the amount of classes have grown.
 
-  document.body.className += ' ' + getCurrentPage().class;
-  currentPageParams = new URLSearchParams(window.location.search).get('get');
+  document.body.className += " " + getCurrentPage().class;
+  currentPageParams = new URLSearchParams(window.location.search).get("get");
   setArticleSplitViewClass();
   setMobileLayoutGrid();
   setupSidenavStateListener();
-  getSubpageParentId(currentPageParams) && (document.body.className += ' yl-page-' + getSubpageParentId(currentPageParams));
+  getSubpageParentId(currentPageParams) &&
+    (document.body.className +=
+      " yl-page-" + getSubpageParentId(currentPageParams));
   setVideoLabelsClass();
   setCategoryWhitelistClass();
   setUnreadBadgeClass();
   setPageSortingClass();
-  document.body.setAttribute('data-youlag-version', app.metadata.version);
-  shouldCustomThumbnailTitle() && document.body.classList.add('yl-feed-custom-thumbnail-title');
+  document.body.setAttribute("data-youlag-version", app.metadata.version);
+  shouldCustomThumbnailTitle() &&
+    document.body.classList.add("yl-feed-custom-thumbnail-title");
 }
 
 function setCategoryWhitelistClass() {
@@ -479,30 +516,42 @@ function setCategoryWhitelistClass() {
 
   let localStorageWhitelist = [];
   try {
-    const stored = localStorage.getItem('youlagCategoryWhitelist');
+    const stored = localStorage.getItem("youlagCategoryWhitelist");
     if (stored) localStorageWhitelist = JSON.parse(stored);
-  } catch (e) { }
+  } catch (e) {}
 
   const currentPageClass = getCurrentPage().class;
-  const isWhitelisted = isPageWhitelisted(localStorageWhitelist, currentPageClass);
-  app.state.page.layout = isWhitelisted ? 'video' : 'article';
+  const isWhitelisted = isPageWhitelisted(
+    localStorageWhitelist,
+    currentPageClass,
+  );
+  app.state.page.layout = isWhitelisted ? "video" : "article";
 
   // Apply class based on localStorage
-  document.body.classList.toggle('youlag-active', isWhitelisted);
-  document.body.classList.toggle('youlag-inactive', !isWhitelisted);
+  document.body.classList.toggle("youlag-active", isWhitelisted);
+  document.body.classList.toggle("youlag-inactive", !isWhitelisted);
 
   // Sync with actual whitelist from the user settings exposed in the DOM.
   const whitelist = getCategoryWhitelist();
-  const isWhitelistedUserSetting = isPageWhitelisted(whitelist, currentPageClass);
-  app.state.page.layout = isWhitelistedUserSetting ? 'video' : 'article';
+  const isWhitelistedUserSetting = isPageWhitelisted(
+    whitelist,
+    currentPageClass,
+  );
+  app.state.page.layout = isWhitelistedUserSetting ? "video" : "article";
 
   // If the actual whitelist status differs from localStorage, update class and localStorage.
   if (isWhitelistedUserSetting !== isWhitelisted) {
-    document.body.classList.toggle('youlag-active', isWhitelistedUserSetting);
-    document.body.classList.toggle('youlag-inactive', !isWhitelistedUserSetting);
+    document.body.classList.toggle("youlag-active", isWhitelistedUserSetting);
+    document.body.classList.toggle(
+      "youlag-inactive",
+      !isWhitelistedUserSetting,
+    );
     try {
-      localStorage.setItem('youlagCategoryWhitelist', JSON.stringify(whitelist));
-    } catch (e) { }
+      localStorage.setItem(
+        "youlagCategoryWhitelist",
+        JSON.stringify(whitelist),
+      );
+    } catch (e) {}
     return isWhitelistedUserSetting;
   }
   return isWhitelisted;
@@ -513,30 +562,29 @@ function setVideoLabelsClass() {
    * The setting is stored in localStorage for faster access.
    * When active, labels like "My Labels" changes to "Playlists", and "Favorites" to "Watch Later".
    */
-  const localStorageSetting = localStorage.getItem('youlagVideoLabels') === 'true';
-  const userSettingElement = document.querySelector('#yl_video_labels');
+  const localStorageSetting =
+    localStorage.getItem("youlagVideoLabels") === "true";
+  const userSettingElement = document.querySelector("#yl_video_labels");
   let userSetting;
 
   if (userSettingElement) {
-    userSetting = userSettingElement.getAttribute('data-yl-video-labels') === 'true';
+    userSetting =
+      userSettingElement.getAttribute("data-yl-video-labels") === "true";
   }
 
   if (userSetting) {
-    document.body.classList.add('youlag-video-labels');
-    localStorage.setItem('youlagVideoLabels', 'true');
+    document.body.classList.add("youlag-video-labels");
+    localStorage.setItem("youlagVideoLabels", "true");
     return true;
-  }
-  else if (userSetting === false) {
-    document.body.classList.remove('youlag-video-labels');
-    localStorage.setItem('youlagVideoLabels', 'false');
+  } else if (userSetting === false) {
+    document.body.classList.remove("youlag-video-labels");
+    localStorage.setItem("youlagVideoLabels", "false");
     return false;
-  }
-  else if (localStorageSetting) {
-    document.body.classList.add('youlag-video-labels');
+  } else if (localStorageSetting) {
+    document.body.classList.add("youlag-video-labels");
     return true;
-  }
-  else {
-    document.body.classList.remove('youlag-video-labels');
+  } else {
+    document.body.classList.remove("youlag-video-labels");
     return false;
   }
 }
@@ -544,17 +592,17 @@ function setVideoLabelsClass() {
 function setUnreadBadgeClass() {
   // Adds css class 'youlag-video-unread-badge' to body if video unread badge setting is enabled.
   // If enabled, videos will show badge "New" for unwatched videos.
-  const userSettingElement = document.querySelector('#yl_video_unread_badge');
+  const userSettingElement = document.querySelector("#yl_video_unread_badge");
   let userSetting;
   if (userSettingElement) {
-    userSetting = userSettingElement.getAttribute('data-yl-video-unread-badge') === 'true';
+    userSetting =
+      userSettingElement.getAttribute("data-yl-video-unread-badge") === "true";
   }
   if (userSetting) {
-    document.body.classList.add('youlag-video-unread-badge');
+    document.body.classList.add("youlag-video-unread-badge");
     return true;
-  }
-  else {
-    document.body.classList.remove('youlag-video-unread-badge');
+  } else {
+    document.body.classList.remove("youlag-video-unread-badge");
     return false;
   }
 }
@@ -562,26 +610,30 @@ function setUnreadBadgeClass() {
 function setPageSortingClass() {
   // Adds css class e.g. `youlag-sort-watch_later--user-modified`.
   // Used as a reference for determining the user settings, and run functions based on that.
-  if (getAttrValue('data-yl-video-sort-modified') === 'true') {
-    document.body.classList.add('youlag-sort-watch_later--user-modified');
+  if (getAttrValue("data-yl-video-sort-modified") === "true") {
+    document.body.classList.add("youlag-sort-watch_later--user-modified");
   }
 }
 
 function setArticleSplitViewClass() {
   if (isArticleSplitViewEnabled()) {
-    document.body.classList.add('yl-article-split-view');
+    document.body.classList.add("yl-article-split-view");
   }
 }
 
 function setMobileLayoutGrid() {
   // Determine if mobile layout should use grid view based on user setting.
-  const userSettingElement = document.querySelector('#yl_feed_view_mobile_grid_enabled');
-  const userSetting = userSettingElement?.getAttribute('data-yl-feed-view-mobile-grid-enabled') === 'true';
+  const userSettingElement = document.querySelector(
+    "#yl_feed_view_mobile_grid_enabled",
+  );
+  const userSetting =
+    userSettingElement?.getAttribute(
+      "data-yl-feed-view-mobile-grid-enabled",
+    ) === "true";
   if (userSetting) {
-    document.body.classList.add('youlag-mobile-layout--grid');
-  }
-  else {
-    document.body.classList.remove('youlag-mobile-layout--grid');
+    document.body.classList.add("youlag-mobile-layout--grid");
+  } else {
+    document.body.classList.remove("youlag-mobile-layout--grid");
   }
   return userSetting;
 }
@@ -593,22 +645,24 @@ function setVideoLabelsTitle(pageName, newTitle) {
 
   // Replace the middle text of the tab title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
   // Primarily for 'Playlists' and 'Watch Later' pages.
-  const titleMatch = document.title.match(/^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/);
+  const titleMatch = document.title.match(
+    /^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/,
+  );
   if (titleMatch) {
-    const countPart = titleMatch[1] ? titleMatch[1] : '';
-    const customSuffix = titleMatch[4] ? titleMatch[4] : ''; // In case the user has rename their FreshRSS instance.
+    const countPart = titleMatch[1] ? titleMatch[1] : "";
+    const customSuffix = titleMatch[4] ? titleMatch[4] : ""; // In case the user has rename their FreshRSS instance.
     document.title = `${countPart}${newTitle} · ${customSuffix}`;
   }
 }
 
 function setSidenavState() {
   // Update body classes based on sidenav state (expanded/collapsed)
-  const sidenav = document.getElementById('aside_feed');
+  const sidenav = document.getElementById("aside_feed");
   if (!sidenav) return;
-  const expanded = sidenav.classList.contains('visible');
+  const expanded = sidenav.classList.contains("visible");
   app.state.page.sidenavExpanded = expanded;
-  document.body.classList.toggle('youlag-sidenav--expanded', expanded);
-  document.body.classList.toggle('youlag-sidenav--collapsed', !expanded);
+  document.body.classList.toggle("youlag-sidenav--expanded", expanded);
+  document.body.classList.toggle("youlag-sidenav--collapsed", !expanded);
 }
 
 async function handleFeedDearrowFeatures() {
@@ -622,7 +676,9 @@ async function handleFeedDearrowFeatures() {
   const thumbnailSelector = ".item.thumbnail img";
   const feedEntriesSelector = `${feedRootSelector} ${entrySelector} ${thumbnailSelector}`;
   const feedEntriesThumbnail = document.querySelectorAll(feedEntriesSelector);
-  const feedEntriesTitle = document.querySelectorAll(`${feedRootSelector} ${entrySelector} .flux_header .titleAuthorSummaryDate a.title`);
+  const feedEntriesTitle = document.querySelectorAll(
+    `${feedRootSelector} ${entrySelector} .flux_header .titleAuthorSummaryDate a.title`,
+  );
   const pageLayoutVideo = isLayoutVideo();
   const useCustomThumbTitle = shouldCustomThumbnailTitle();
 
@@ -659,7 +715,9 @@ async function handleFeedDearrowFeatures() {
 
   // Batch fetch DeArrow data for all unique videoIds
   const videoIdList = Array.from(videoIdSet);
-  const dearrowResults = await Promise.all(videoIdList.map(videoId => getDearrowData(videoId)));
+  const dearrowResults = await Promise.all(
+    videoIdList.map((videoId) => getDearrowData(videoId)),
+  );
   const dearrowDataMap = {};
   for (let i = 0; i < videoIdList.length; i++) {
     dearrowDataMap[videoIdList[i]] = dearrowResults[i];
@@ -669,7 +727,12 @@ async function handleFeedDearrowFeatures() {
     // Update video titles
     for (const { entryTitle, videoId } of videoIdTitleMap) {
       const dearrowData = dearrowDataMap[videoId];
-      if (dearrowData && typeof dearrowData === 'object' && Array.isArray(dearrowData.titles) && dearrowData.titles.length > 0) {
+      if (
+        dearrowData &&
+        typeof dearrowData === "object" &&
+        Array.isArray(dearrowData.titles) &&
+        dearrowData.titles.length > 0
+      ) {
         // Use the first title as default
         entryTitle.textContent = dearrowData.titles[0].title;
       }
@@ -680,27 +743,34 @@ async function handleFeedDearrowFeatures() {
   for (const { entryImg, videoId } of videoIdEntryMap) {
     const dearrowData = dearrowDataMap[videoId];
     let thumbnail = entryImg.src;
-    if (dearrowData && typeof dearrowData === 'object') {
-
+    if (dearrowData && typeof dearrowData === "object") {
       // Thumbnail priority: DeArrow thumbnail -> YouTube screencap -> original thumbnail.
-      if (useCustomThumbTitle && dearrowData.thumbnails && dearrowData.thumbnails.length > 0) {
+      if (
+        useCustomThumbTitle &&
+        dearrowData.thumbnails &&
+        dearrowData.thumbnails.length > 0
+      ) {
         thumbnail = dearrowData.thumbnails[0].url;
-        entryImg.setAttribute('data-yl-video-screencap', 'true');
-        entryImg.setAttribute('data-yl-original-src', entryImg.src);
+        entryImg.setAttribute("data-yl-video-screencap", "true");
+        entryImg.setAttribute("data-yl-original-src", entryImg.src);
         entryImg.src = thumbnail; // Ensure DOM image is actually updated
       }
 
       // Video duration on top of thumbnail
       if (pageLayoutVideo && dearrowData.videoDuration) {
         const videoDurationText = formatTime(dearrowData.videoDuration);
-        let durationEl = entryImg.parentElement.querySelector('.yl-video-duration');
+        let durationEl =
+          entryImg.parentElement.querySelector(".yl-video-duration");
         if (!durationEl) {
-          durationEl = document.createElement('div');
-          durationEl.className = 'yl-video-duration';
+          durationEl = document.createElement("div");
+          durationEl.className = "yl-video-duration";
           entryImg.parentElement.appendChild(durationEl);
         }
         durationEl.textContent = videoDurationText;
-        getEntryRootElement(entryImg)?.setAttribute('data-yl-video-duration', videoDurationText);
+        getEntryRootElement(entryImg)?.setAttribute(
+          "data-yl-video-duration",
+          videoDurationText,
+        );
       }
     }
   }
@@ -749,19 +819,27 @@ function setupSwipeSidebar() {
       return;
     }
 
-    const isSidebarVisible = sidebar.classList.contains('visible');
+    const isSidebarVisible = sidebar.classList.contains("visible");
 
     // Open sidebar
-    if (!isSidebarVisible && touchStartX < swipeStartThreshold && deltaX > swipeMinDistance) {
-      sidebar.classList.add('visible');
-      sidebar.style.display = '';
+    if (
+      !isSidebarVisible &&
+      touchStartX < swipeStartThreshold &&
+      deltaX > swipeMinDistance
+    ) {
+      sidebar.classList.add("visible");
+      sidebar.style.display = "";
       setSidenavState();
     }
 
     // Close sidebar
-    else if (isSidebarVisible && deltaX < -swipeMinDistance && sidebar.contains(e.target)) {
-      sidebar.classList.remove('visible');
-      sidebar.style.display = 'none';
+    else if (
+      isSidebarVisible &&
+      deltaX < -swipeMinDistance &&
+      sidebar.contains(e.target)
+    ) {
+      sidebar.classList.remove("visible");
+      sidebar.style.display = "none";
       setSidenavState();
     }
 
@@ -774,17 +852,15 @@ function setupSwipeSidebar() {
     feedRoot._swipeSidebarListeners.push({ el, type, handler });
   }
 
-  addTracked(feedRoot, 'touchstart', touchStartHandler);
-  addTracked(feedRoot, 'touchend', touchEndHandler);
-  addTracked(sidebar, 'touchstart', touchStartHandler);
-  addTracked(sidebar, 'touchend', touchEndHandler);
+  addTracked(feedRoot, "touchstart", touchStartHandler);
+  addTracked(feedRoot, "touchend", touchEndHandler);
+  addTracked(sidebar, "touchstart", touchStartHandler);
+  addTracked(sidebar, "touchend", touchEndHandler);
 }
 
 /*****************************************
  * END "UI CLASS HANDLERS"
  ****************************************/
-
-
 
 /*****************************************
  * BEGIN "UI COMPONENTS"
@@ -796,38 +872,41 @@ function renderToolbar() {
   if (app.state.youlag.toolbarInit) return;
   app.state.youlag.toolbarInit = true;
 
-  const toolbar = document.getElementById('yl_category_toolbar');
-  const menuContainer = document.getElementById('yl_nav_menu_container');
-  const menuContent = menuContainer?.querySelector('#yl_nav_menu_container_content');
-  const menuToggle = toolbar?.querySelector('#yl_nav_menu_container_toggle');
+  const toolbar = document.getElementById("yl_category_toolbar");
+  const menuContainer = document.getElementById("yl_nav_menu_container");
+  const menuContent = menuContainer?.querySelector(
+    "#yl_nav_menu_container_content",
+  );
+  const menuToggle = toolbar?.querySelector("#yl_nav_menu_container_toggle");
 
-  const frssToggleSearch = document?.querySelector('#dropdown-search-wrapper');
-  const frssMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
+  const frssToggleSearch = document?.querySelector("#dropdown-search-wrapper");
+  const frssMenu = document.querySelector(
+    "#global nav.nav_menu:not(#yl_nav_menu_container)",
+  );
 
   // Fail gracefully
   if (!menuContainer || !menuContent || !menuToggle || !frssMenu || !toolbar) {
     const missing = [];
-    if (!menuContainer) missing.push('menuContainer');
-    if (!menuContent) missing.push('menuContent');
-    if (!menuToggle) missing.push('menuToggle');
-    if (!frssMenu) missing.push('frssMenu');
-    if (!toolbar) missing.push('toolbar');
-    console.warn('Failed to setup sticky nav menu, missing elements:', missing);
+    if (!menuContainer) missing.push("menuContainer");
+    if (!menuContent) missing.push("menuContent");
+    if (!menuToggle) missing.push("menuToggle");
+    if (!frssMenu) missing.push("frssMenu");
+    if (!toolbar) missing.push("toolbar");
+    console.warn("Failed to setup sticky nav menu, missing elements:", missing);
     return;
   }
 
   menuContent.hidden = true; // `#yl_nav_menu_container_content` is hidden by default.
-  menuContent.classList.add('nav_menu');
+  menuContent.classList.add("nav_menu");
 
-  toolbar.classList.add('yl-category-toolbar--sticky');
+  toolbar.classList.add("yl-category-toolbar--sticky");
 
   // Place `#yl_category_toolbar` after `#new-article` notification.
-  const domLocation = document.querySelector('#stream #new-article');
+  const domLocation = document.querySelector("#stream #new-article");
   if (domLocation && toolbar) {
     if (domLocation.nextSibling) {
       domLocation.parentNode.insertBefore(toolbar, domLocation.nextSibling);
-    }
-    else {
+    } else {
       domLocation.parentNode.appendChild(toolbar);
     }
   }
@@ -842,16 +921,16 @@ function renderToolbar() {
   if (frssMenu && menuContent) {
     // Move FreshRSS `.nav_menu` items inside Youlag's own `.nav_menu` content, `menuContent` (child of `menuContainer`).
     const navMenuChildren = Array.from(frssMenu.children);
-    navMenuChildren.forEach(child => {
-      if (child.id !== 'nav_menu_toggle_aside') {
+    navMenuChildren.forEach((child) => {
+      if (child.id !== "nav_menu_toggle_aside") {
         // Exclude the sidebar toggle button, as that its position placement is handled via css already.
         menuContent.appendChild(child);
       }
     });
 
     // Create shortcut button to Youlag settings page.
-    const settingsShortcut = document.createElement('div');
-    settingsShortcut.id = 'yl_nav_menu_settings_shortcut';
+    const settingsShortcut = document.createElement("div");
+    settingsShortcut.id = "yl_nav_menu_settings_shortcut";
     settingsShortcut.innerHTML = `<a href="${app.frss.urlPrefix}/i/?c=extension&a=configure&e=Youlag" class="btn" target="_blank" rel="noopener noreferrer">
                                     More settings
                                   </a>`;
@@ -865,39 +944,47 @@ function renderToolbar() {
       const feedIdNumber = feedIdNumberMatch ? feedIdNumberMatch[1] : null;
       let manageFeed = null;
       if (page.id && /^f_\d+$/.test(page.id)) {
-        manageFeed = Object.assign(document.createElement('a'), {
-          id: 'yl_nav_menu_manage_current_feed',
+        manageFeed = Object.assign(document.createElement("a"), {
+          id: "yl_nav_menu_manage_current_feed",
           href: `${app.frss.urlPrefix}/i/?c=subscription&a=feed&id=${feedIdNumber}`,
-          target: '_blank',
-          rel: 'noopener noreferrer'
+          target: "_blank",
+          rel: "noopener noreferrer",
         });
 
-        const span = document.createElement('span');
-        span.textContent = isVideoLabelsEnabled() && isLayoutVideo() ? 'Manage channel' : 'Manage feed';
+        const span = document.createElement("span");
+        span.textContent =
+          isVideoLabelsEnabled() && isLayoutVideo()
+            ? "Manage channel"
+            : "Manage feed";
         manageFeed.appendChild(span);
 
         menuToggle.parentNode.insertBefore(manageFeed, menuToggle);
       }
       if (feedId && feedIdNumber && manageFeed) {
-        manageFeed.addEventListener('click', function (e) {
+        manageFeed.addEventListener("click", function (e) {
           e.preventDefault();
 
           // HACK: Trigger the manage feed slider by simulating clicks to the sidebar.
           // This naive implementation replaces commit #0133a24 for easier maintenance, as some form submit actions (like "remove (feed)") required reimplementing the click events.
-          document.querySelector(`#${feedId} a[href="#dropdown-${feedIdNumber}"]`).click();
+          document
+            .querySelector(`#${feedId} a[href="#dropdown-${feedIdNumber}"]`)
+            .click();
 
           let attempts = 0;
           function pollDropdown() {
             // Poll the dropdown for the feed, for simulating a click on "Manage".
-            const dropdown = document.querySelector(`#${feedId} ul.dropdown-menu`);
-            const dropdownItem = document.querySelector(`#${feedId} ul.dropdown-menu a.configure.open-slider`);
-            dropdown.classList.add('display-none');
+            const dropdown = document.querySelector(
+              `#${feedId} ul.dropdown-menu`,
+            );
+            const dropdownItem = document.querySelector(
+              `#${feedId} ul.dropdown-menu a.configure.open-slider`,
+            );
+            dropdown.classList.add("display-none");
             if (dropdownItem) {
               setTimeout(() => {
                 dropdownItem.click();
               }, 200); // Delay to allow FreshRSS click events to attach.
-            }
-            else if (attempts < 10) {
+            } else if (attempts < 10) {
               attempts++;
               setTimeout(pollDropdown, 50);
             }
@@ -910,8 +997,12 @@ function renderToolbar() {
 
     // Watch later: Setup category filter.
     if (isWatchLaterPage()) {
-      const categoryFilterButton = document.getElementById('yl_stream_category_filter_toggle');
-      const categoryFilterMenu = document.getElementById('yl_stream_category_filter');
+      const categoryFilterButton = document.getElementById(
+        "yl_stream_category_filter_toggle",
+      );
+      const categoryFilterMenu = document.getElementById(
+        "yl_stream_category_filter",
+      );
       if (!categoryFilterButton || !categoryFilterMenu) return;
       toolbar.appendChild(categoryFilterMenu);
     }
@@ -920,24 +1011,28 @@ function renderToolbar() {
   // Make the toolbar sticky on scroll.
   setToolbarSticky(toolbar);
 
-  document.addEventListener('click', function (e) {
+  document.addEventListener("click", function (e) {
     // Allow toggling the view options via 'Configure view' button in the toolbar.
-    const viewOptionsToggle = e.target.closest('#yl_nav_menu_container_toggle');
-    const categoryFilterToggle = e.target.closest('#yl_stream_category_filter_toggle');
+    const viewOptionsToggle = e.target.closest("#yl_nav_menu_container_toggle");
+    const categoryFilterToggle = e.target.closest(
+      "#yl_stream_category_filter_toggle",
+    );
     if (!toolbar) return;
 
     if (viewOptionsToggle) {
-      const viewOptionsMenu = document.getElementById('yl_nav_menu_container');
+      const viewOptionsMenu = document.getElementById("yl_nav_menu_container");
       if (!viewOptionsMenu) return;
 
-      if (app.state.youlag.toolbarActiveMenu === 'categoryFilter') {
-        toolbar.classList.remove('yl-toolbar-open--categoryFilter');
+      if (app.state.youlag.toolbarActiveMenu === "categoryFilter") {
+        toolbar.classList.remove("yl-toolbar-open--categoryFilter");
       }
 
-      const isOpen = !toolbar.classList.contains('yl-toolbar-open--viewOptions');
-      toolbar.classList.toggle('yl-toolbar-open--viewOptions', isOpen);
+      const isOpen = !toolbar.classList.contains(
+        "yl-toolbar-open--viewOptions",
+      );
+      toolbar.classList.toggle("yl-toolbar-open--viewOptions", isOpen);
       menuContent.hidden = !isOpen;
-      app.state.youlag.toolbarActiveMenu = isOpen ? 'viewOptions' : null;
+      app.state.youlag.toolbarActiveMenu = isOpen ? "viewOptions" : null;
       setToolbarStickyState(true);
       setTimeout(() => {
         setToolbarStickyState(false);
@@ -948,17 +1043,21 @@ function renderToolbar() {
     }
 
     if (categoryFilterToggle) {
-      const categoryFilter = document.getElementById('yl_stream_category_filter');
+      const categoryFilter = document.getElementById(
+        "yl_stream_category_filter",
+      );
       if (!categoryFilter) return;
 
-      if (app.state.youlag.toolbarActiveMenu === 'viewOptions') {
-        toolbar.classList.remove('yl-toolbar-open--viewOptions');
+      if (app.state.youlag.toolbarActiveMenu === "viewOptions") {
+        toolbar.classList.remove("yl-toolbar-open--viewOptions");
         menuContent.hidden = true;
       }
 
-      const isOpen = !toolbar.classList.contains('yl-toolbar-open--categoryFilter');
-      toolbar.classList.toggle('yl-toolbar-open--categoryFilter', isOpen);
-      app.state.youlag.toolbarActiveMenu = isOpen ? 'categoryFilter' : null;
+      const isOpen = !toolbar.classList.contains(
+        "yl-toolbar-open--categoryFilter",
+      );
+      toolbar.classList.toggle("yl-toolbar-open--categoryFilter", isOpen);
+      app.state.youlag.toolbarActiveMenu = isOpen ? "categoryFilter" : null;
       setToolbarStickyState(true);
       setTimeout(() => {
         setToolbarStickyState(false);
@@ -998,22 +1097,22 @@ function setToolbarSticky(toolbarElement) {
   function setStickyVisibility(show) {
     if (getToolbarStickyState() === true) {
       // Allow temporarily forcing the toolbar to be visible, e.g. while toggling 'configure view'.
-      toolbar.classList.add('sticky-visible');
-      toolbar.classList.remove('sticky-hidden');
+      toolbar.classList.add("sticky-visible");
+      toolbar.classList.remove("sticky-hidden");
       return;
     }
 
     // Default behavior: Toggle based on scroll direction.
-    toolbar.classList.toggle('sticky-visible', show);
-    toolbar.classList.toggle('sticky-hidden', !show);
+    toolbar.classList.toggle("sticky-visible", show);
+    toolbar.classList.toggle("sticky-hidden", !show);
   }
 
   function setStickyVisibilitySidenavToggle(show) {
-    const sidenavToggle = document.getElementById('nav_menu_toggle_aside');
+    const sidenavToggle = document.getElementById("nav_menu_toggle_aside");
     if (sidenavToggle) {
       // Desktop: Hide show the sidenav toggle button based on scroll direction.
-      sidenavToggle.classList.toggle('sticky-visible--sidenav-toggle', show);
-      sidenavToggle.classList.toggle('sticky-hidden--sidenav-toggle', !show);
+      sidenavToggle.classList.toggle("sticky-visible--sidenav-toggle", show);
+      sidenavToggle.classList.toggle("sticky-hidden--sidenav-toggle", !show);
     }
   }
 
@@ -1033,12 +1132,10 @@ function setToolbarSticky(toolbarElement) {
     if (currentScrollY <= 0) {
       setStickyVisibility(true);
       if (!isArticleSplitViewActive()) setStickyVisibilitySidenavToggle(true);
-    }
-    else if (currentScrollY > lastScrollY + 2) {
+    } else if (currentScrollY > lastScrollY + 2) {
       setStickyVisibility(false);
       if (!isArticleSplitViewActive()) setStickyVisibilitySidenavToggle(false);
-    }
-    else if (currentScrollY < lastScrollY - 2) {
+    } else if (currentScrollY < lastScrollY - 2) {
       setStickyVisibility(true);
       if (!isArticleSplitViewActive()) setStickyVisibilitySidenavToggle(true);
     }
@@ -1056,12 +1153,12 @@ function setToolbarSticky(toolbarElement) {
   }
 
   // Listen to scroll on window
-  window.addEventListener('scroll', scrollHandler);
+  window.addEventListener("scroll", scrollHandler);
 
   // Article split view mode: listen to scroll on feedRoot (#stream)
   const feedRoot = getFeedRoot();
   if (feedRoot) {
-    feedRoot.addEventListener('scroll', scrollHandler);
+    feedRoot.addEventListener("scroll", scrollHandler);
   }
 }
 
@@ -1072,13 +1169,13 @@ function setupArticleSplitView() {
   const feedRoot = getFeedRoot();
   if (!feedRoot) return;
 
-  const splitViewPane = document.createElement('div');
-  splitViewPane.id = 'ylArticleSplitPane';
+  const splitViewPane = document.createElement("div");
+  splitViewPane.id = "ylArticleSplitPane";
 
   // Add initial placeholder text
-  const placeholder = document.createElement('div');
-  placeholder.className = 'yl-article-split-view__empty-state-content';
-  placeholder.textContent = 'Select an article to start reading';
+  const placeholder = document.createElement("div");
+  placeholder.className = "yl-article-split-view__empty-state-content";
+  placeholder.textContent = "Select an article to start reading";
   splitViewPane.appendChild(placeholder);
 
   feedRoot.parentNode.insertBefore(splitViewPane, feedRoot.nextSibling);
@@ -1089,11 +1186,14 @@ function storeCurrentCategoryId() {
   // If current page is not a category page, the ID is cleared.
   const page = getCurrentPage();
   let categoryId = null;
-  if (page.name === 'category' && page.id && page.id.startsWith('c_')) {
+  if (page.name === "category" && page.id && page.id.startsWith("c_")) {
     categoryId = page.id.match(/^c_(\d+)$/);
   }
 
-  localStorage.setItem('youlagCategoryIdRecent', categoryId ? categoryId[1] : null);
+  localStorage.setItem(
+    "youlagCategoryIdRecent",
+    categoryId ? categoryId[1] : null,
+  );
 }
 
 function setupVideoIframe(youtubeUrl) {
@@ -1103,16 +1203,16 @@ function setupVideoIframe(youtubeUrl) {
   const videoId = getVideoIdFromUrl(youtubeUrl);
   if (!videoId) return null;
 
-  const videoBaseUrl = videoId ? getBaseUrl(youtubeUrl) : '';
+  const videoBaseUrl = videoId ? getBaseUrl(youtubeUrl) : "";
   const videoEmbedUrl = `${videoBaseUrl}/embed/${videoId}?enablejsapi=1`;
 
-  const iframe = document.createElement('iframe');
+  const iframe = document.createElement("iframe");
   iframe.src = videoEmbedUrl;
-  iframe.allow = 'accelerometer; autoplay; picture-in-picture';
+  iframe.allow = "accelerometer; autoplay; picture-in-picture";
   iframe.allowFullscreen = true;
-  iframe.className = 'yl-article-video-iframe';
-  iframe.setAttribute('frameborder', '0');
-  iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+  iframe.className = "yl-article-video-iframe";
+  iframe.setAttribute("frameborder", "0");
+  iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
   return iframe;
 }
 
@@ -1127,7 +1227,7 @@ function setMissingLogo() {
   let frssGlobal = document.querySelector(app.frss.el.global);
   pageContainer = frssGlobal ? frssGlobal : document.body;
 
-  const logo = document.createElement('div');
+  const logo = document.createElement("div");
   logo.id = app.frss.id.logo;
   logo.innerHTML = `
     <a href="${app.frss.urlPrefix}/i/">
@@ -1141,45 +1241,44 @@ function showUpdateAvailableInSettings() {
   // Adds a simple to that a new Youlag version is available by the extension area.
 
   const page = getCurrentPage();
-  if (page.name !== 'extension' && page.name !== 'extensions') return;
+  if (page.name !== "extension" && page.name !== "extensions") return;
 
-  const tableWrapper = document.querySelector('.table-wrapper');
+  const tableWrapper = document.querySelector(".table-wrapper");
   if (!tableWrapper) return;
 
-  const rows = tableWrapper.querySelectorAll('tr');
-  rows.forEach(row => {
-    const firstTd = row.querySelector('td:first-child');
-    if (firstTd && firstTd.textContent.trim() === 'Youlag') {
-      const fourthTd = row.querySelector('td:nth-child(4)');
-      if (fourthTd && fourthTd.querySelector('.alert.alert-warn')) {
+  const rows = tableWrapper.querySelectorAll("tr");
+  rows.forEach((row) => {
+    const firstTd = row.querySelector("td:first-child");
+    if (firstTd && firstTd.textContent.trim() === "Youlag") {
+      const fourthTd = row.querySelector("td:nth-child(4)");
+      if (fourthTd && fourthTd.querySelector(".alert.alert-warn")) {
         // A warning in the table indicates a new version available.
-        const manageList = document.querySelector('.manage-list');
+        const manageList = document.querySelector(".manage-list");
         if (manageList) {
-          const items = manageList.querySelectorAll('li');
-          items.forEach(item => {
-            const extNameSpan = item.querySelector('span.ext_name');
-            if (extNameSpan && extNameSpan.textContent.trim() === 'Youlag') {
+          const items = manageList.querySelectorAll("li");
+          items.forEach((item) => {
+            const extNameSpan = item.querySelector("span.ext_name");
+            if (extNameSpan && extNameSpan.textContent.trim() === "Youlag") {
               // Add a notice next to the extension name.
-              if (!item.querySelector('.youlag-update-notice')) {
-
+              if (!item.querySelector(".youlag-update-notice")) {
                 // "New Youlag update available" link
-                const updateNotice = document.createElement('a');
+                const updateNotice = document.createElement("a");
                 Object.assign(updateNotice, {
-                  href: 'https://github.com/civilblur/youlag/releases',
-                  target: '_blank',
-                  rel: 'noopener noreferrer',
-                  id: 'yl-update-notice',
-                  textContent: '🔄 New update available'
+                  href: "https://github.com/civilblur/youlag/releases",
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  id: "yl-update-notice",
+                  textContent: "🔄 New update available",
                 });
                 item.appendChild(updateNotice);
 
                 // "How to update" link
-                const howToUpdate = Object.assign(document.createElement('a'), {
-                  href: 'https://github.com/civilblur/youlag?tab=readme-ov-file#update',
-                  target: '_blank',
-                  rel: 'noopener noreferrer',
-                  id: 'yl-update-howto',
-                  textContent: '(How to update)'
+                const howToUpdate = Object.assign(document.createElement("a"), {
+                  href: "https://github.com/civilblur/youlag?tab=readme-ov-file#update",
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  id: "yl-update-howto",
+                  textContent: "(How to update)",
                 });
                 item.appendChild(howToUpdate);
               }
@@ -1189,25 +1288,24 @@ function showUpdateAvailableInSettings() {
       }
     }
   });
-
 }
 
-function showNotification({title, message, action, link, dismissRef}) {
+function showNotification({ title, message, action, link, dismissRef }) {
   // Show a simple notification in the feed when a new Youlag version is available.
 
-  if (document.getElementById('yl_notification')) return;
-  const notification = document.createElement('div');
-  notification.id = 'yl_notification';
+  if (document.getElementById("yl_notification")) return;
+  const notification = document.createElement("div");
+  notification.id = "yl_notification";
   notification.innerHTML = `
     <div class="flex flex-col flex-1">
       <div class="yl-notification-title">${title}</div>
       <div class="yl-notification-message">${message}</div>
     </div>
 
-    ${link ? `<a href="${link}" class="yl-notification-action" target="_blank" rel="noopener noreferrer">${action || 'View'}</a>` : ''}
+    ${link ? `<a href="${link}" class="yl-notification-action" target="_blank" rel="noopener noreferrer">${action || "View"}</a>` : ""}
 
     <div class="yl-notification-close" id="yl_update_notification_close">×</div>
-  `
+  `;
 
   // Remove notification
   function removeNotification(e) {
@@ -1216,15 +1314,15 @@ function showNotification({title, message, action, link, dismissRef}) {
       const now = Date.now();
       try {
         localStorage.setItem(`${dismissRef}`, now.toString());
-      } catch (e) { }
+      } catch (e) {}
     }
   }
 
-  notification.addEventListener('click', function(e) {
-    if (e.target.id === 'yl_update_notification_close') {
+  notification.addEventListener("click", function (e) {
+    if (e.target.id === "yl_update_notification_close") {
       removeNotification(e);
     }
-    if (e.target.classList.contains('yl-notification-action')) {
+    if (e.target.classList.contains("yl-notification-action")) {
       removeNotification(e);
     }
   });
@@ -1236,16 +1334,20 @@ function setWatchLaterCategoryFilter() {
   // NOTE 2026-02-03: Experimental feature to filter videos in "Watch Later" by category.
   // It utilizes CSS hacks to hide/show videos based on selected categories.
 
-  const categoryFilterMenu = document.getElementById('yl_stream_category_filter');
+  const categoryFilterMenu = document.getElementById(
+    "yl_stream_category_filter",
+  );
   if (!categoryFilterMenu) return;
 
-  const checkboxes = categoryFilterMenu.querySelectorAll('.yl-stream-category-filter__checkbox');
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', updateCategoryVisibility);
+  const checkboxes = categoryFilterMenu.querySelectorAll(
+    ".yl-stream-category-filter__checkbox",
+  );
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", updateCategoryVisibility);
   });
 
   function clearAllCategoryFilters() {
-    checkboxes.forEach(checkbox => {
+    checkboxes.forEach((checkbox) => {
       checkbox.checked = false;
     });
   }
@@ -1254,32 +1356,45 @@ function setWatchLaterCategoryFilter() {
 
   function updateCategoryVisibility() {
     // Handle the visiblity of feed entries based on filtered categories.
-    const checked = Array.from(categoryFilterMenu.querySelectorAll('.yl-stream-category-filter__checkbox:checked'))
-      .map(cb => cb.closest('.yl-stream-category-filter-options__item')?.getAttribute('data-category'))
+    const checked = Array.from(
+      categoryFilterMenu.querySelectorAll(
+        ".yl-stream-category-filter__checkbox:checked",
+      ),
+    )
+      .map((cb) =>
+        cb
+          .closest(".yl-stream-category-filter-options__item")
+          ?.getAttribute("data-category"),
+      )
       .filter(Boolean);
 
     // Update filter count in the toolbar button
-    const countSpan = document.getElementById('yl_stream_category_filter_count');
+    const countSpan = document.getElementById(
+      "yl_stream_category_filter_count",
+    );
     if (countSpan) {
-      countSpan.textContent = checked.length > 0 ? `\u00A0(${checked.length})` : '';
+      countSpan.textContent =
+        checked.length > 0 ? `\u00A0(${checked.length})` : "";
     }
 
     // Remove all previous filter classes
     document.body.className = document.body.className
-      .split(' ')
-      .filter(cls => !/^yl-stream-category-filter(--|$)/.test(cls))
-      .join(' ');
+      .split(" ")
+      .filter((cls) => !/^yl-stream-category-filter(--|$)/.test(cls))
+      .join(" ");
 
     if (checked.length > 0) {
-      document.body.classList.add('yl-stream-category-filter--active'); // Hide all feed entries by default
-      checked.forEach(catId => {
+      document.body.classList.add("yl-stream-category-filter--active"); // Hide all feed entries by default
+      checked.forEach((catId) => {
         document.body.classList.add(`yl-stream-category-filter--${catId}`); // Only show feed entries matching category id
       });
     }
   }
 
-  const clearAllButton = categoryFilterMenu.querySelector('#yl_stream_category_filter_clear');
-  clearAllButton.addEventListener('click', (e) => {
+  const clearAllButton = categoryFilterMenu.querySelector(
+    "#yl_stream_category_filter_clear",
+  );
+  clearAllButton.addEventListener("click", (e) => {
     e.preventDefault();
     clearAllCategoryFilters();
     updateCategoryVisibility();
@@ -1291,28 +1406,36 @@ function setWatchLaterCategoryFilter() {
 
 function updateCategoryEntryCounts() {
   // Update the counts shown in the category filter menu.
-  const categoryFilterMenu = document.getElementById('yl_stream_category_filter');
+  const categoryFilterMenu = document.getElementById(
+    "yl_stream_category_filter",
+  );
   if (!categoryFilterMenu) return;
 
   countObj = app.state.youlag.categoryFilterEntryCount || {};
 
-  const categoryFilter = categoryFilterMenu.querySelectorAll('.yl-stream-category-filter-options__item');
+  const categoryFilter = categoryFilterMenu.querySelectorAll(
+    ".yl-stream-category-filter-options__item",
+  );
 
-  categoryFilter.forEach(filter => {
-    let categoryId = filter?.getAttribute('data-category');
-    const countSpan = filter?.querySelector('.yl-stream-category-filter__count');
+  categoryFilter.forEach((filter) => {
+    let categoryId = filter?.getAttribute("data-category");
+    const countSpan = filter?.querySelector(
+      ".yl-stream-category-filter__count",
+    );
 
     if (categoryId && countSpan) {
       const key = `c_${categoryId}`;
       // TODO: Currently using naive implementation of count during experimental phase.
       // Optimize later when the proper implementation `setWatchLaterCategoryFilter()` is defined.
-      count = document.querySelectorAll(`${app.frss.el.entry}[data-category="${categoryId}"]`).length;
+      count = document.querySelectorAll(
+        `${app.frss.el.entry}[data-category="${categoryId}"]`,
+      ).length;
 
       countObj[key] = { count };
       app.state.youlag.categoryFilterEntryCount = countObj;
 
       countSpan.textContent = `(${count})`;
-      filter.setAttribute('data-yl-entry-count', count);
+      filter.setAttribute("data-yl-entry-count", count);
     }
   });
 }
@@ -1321,22 +1444,19 @@ function updateCategoryEntryCounts() {
  * END "UI COMPONENTS"
  ****************************************/
 
-
-
 /*****************************************
  * BEGIN "UI UTILITIES"
  * General utility functions for UI handling.
  ****************************************/
 
 function setPageTitle(title) {
-  if (typeof title === 'string' && title.length > 0) {
+  if (typeof title === "string" && title.length > 0) {
     if (app.state.page.titlePrev === null) {
       app.state.page.titlePrev = document.title;
     }
     // Set new title
     document.title = title;
-  }
-  else if (app.state.page.titlePrev !== null) {
+  } else if (app.state.page.titlePrev !== null) {
     // Restore previous title
     document.title = app.state.page.titlePrev;
     app.state.page.titlePrev = null;
@@ -1346,70 +1466,87 @@ function setPageTitle(title) {
 function toggleFavorite(url, container, feedItemEl = null) {
   const hasFeedStream = isFeedPage();
   const favoriteButton = container.querySelector(`#${app.modal.id.favorite}`);
-  const favoriteButtonIcon = favoriteButton ? favoriteButton.querySelector(`.${app.modal.class.favoriteIcon}`) : null;
+  const favoriteButtonIcon = favoriteButton
+    ? favoriteButton.querySelector(`.${app.modal.class.favoriteIcon}`)
+    : null;
   if (!favoriteButton) return;
 
   // Show loading spinner while processing
   favoriteButtonIcon.style.backgroundImage = `url("${app.frss.img.spinner}")`;
-  favoriteButtonIcon.style.filter = 'invert(1)';
-  favoriteButtonIcon.style.backgroundSize = '1.2rem';
+  favoriteButtonIcon.style.filter = "invert(1)";
+  favoriteButtonIcon.style.backgroundSize = "1.2rem";
 
   // Determine to favorite or unfavorite a feed entry based on the favorite button's current state.
-  const isFavorited = favoriteButton.classList.contains(`${app.modal.class.favorite}--true`);
+  const isFavorited = favoriteButton.classList.contains(
+    `${app.modal.class.favorite}--true`,
+  );
   const toggleUrl = new URL(url);
-  toggleUrl.searchParams.delete('is_favorite');
-  if (isFavorited) toggleUrl.searchParams.set('is_favorite', '0');
+  toggleUrl.searchParams.delete("is_favorite");
+  if (isFavorited) toggleUrl.searchParams.set("is_favorite", "0");
 
-  const csrfToken = document.querySelector('#stream-footer input[name="_csrf"]')?.getAttribute('value') || '';
+  const csrfToken =
+    document
+      .querySelector('#stream-footer input[name="_csrf"]')
+      ?.getAttribute("value") || "";
   fetch(toggleUrl.toString(), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({ ajax: true, _csrf: csrfToken })
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ ajax: true, _csrf: csrfToken }),
   })
-    .then(response => {
-
+    .then((response) => {
       // Remove loading spinner
-      favoriteButtonIcon.removeAttribute('style');
+      favoriteButtonIcon.removeAttribute("style");
 
       if (response.ok) {
         // Toggle favorite classes and icons.
-        const currentlyTrue = favoriteButton.classList.contains(`${app.modal.class.favorite}--true`);
-        favoriteButton.classList.remove(`${app.modal.class.favorite}--${currentlyTrue}`);
-        favoriteButton.classList.add(`${app.modal.class.favorite}--${!currentlyTrue}`);
+        const currentlyTrue = favoriteButton.classList.contains(
+          `${app.modal.class.favorite}--true`,
+        );
+        favoriteButton.classList.remove(
+          `${app.modal.class.favorite}--${currentlyTrue}`,
+        );
+        favoriteButton.classList.add(
+          `${app.modal.class.favorite}--${!currentlyTrue}`,
+        );
 
-        if (!feedItemEl && hasFeedStream || feedItemEl && !(feedItemEl instanceof Element) && hasFeedStream) {
+        if (
+          (!feedItemEl && hasFeedStream) ||
+          (feedItemEl && !(feedItemEl instanceof Element) && hasFeedStream)
+        ) {
           // Try to find the feed entry in the feed stream if not provided.
           // This may be needed when restoring modal event listeners after `visibilitychange`: `setupVisibilityEventListeners()`.
-          const entryId = getModalVideo()?.getAttribute('data-entry');
+          const entryId = getModalVideo()?.getAttribute("data-entry");
           if (entryId) {
-            feedItemEl = document.querySelector(`${app.frss.el.feedRoot} div.flux${app.frss.el.entry}[data-entry="${entryId}"]`);
+            feedItemEl = document.querySelector(
+              `${app.frss.el.feedRoot} div.flux${app.frss.el.entry}[data-entry="${entryId}"]`,
+            );
           }
         }
 
         // Keep the feed entry in the feed stream in sync, if the current page is a feed page and the entry exists in the feed stream.
         // The miniplayer video modal could be restored to a different page/state, meaning that the feed entry might not exist in the view.
         if (feedItemEl && feedItemEl instanceof Element && hasFeedStream) {
-          const bookmarkIcon = feedItemEl.querySelector('.item-element.bookmark img.icon');
+          const bookmarkIcon = feedItemEl.querySelector(
+            ".item-element.bookmark img.icon",
+          );
           if (currentlyTrue) {
             feedItemEl.classList.remove(app.modal.class.favorite);
             if (bookmarkIcon) {
               bookmarkIcon.src = app.frss.img.favoriteInactive;
             }
-          }
-          else {
+          } else {
             feedItemEl.classList.add(app.modal.class.favorite);
             if (bookmarkIcon) {
               bookmarkIcon.src = app.frss.img.favoriteActive;
             }
           }
         }
-      }
-      else {
-        console.error('Youlag: Failed to toggle favorite status');
+      } else {
+        console.error("Youlag: Failed to toggle favorite status");
       }
     })
-    .catch(error => {
-      console.error('Youlag: Error toggling favorite status:', error);
+    .catch((error) => {
+      console.error("Youlag: Error toggling favorite status:", error);
     });
 }
 
@@ -1417,7 +1554,11 @@ function clearPathHash() {
   // Clear the URL hash to prevent dropdown menus from opening on page load.
   // Related to the css hacks used in: "Dropdown custom mobile behavior hacks".
   if (window.location.hash) {
-    history.replaceState(null, '', window.location.pathname + window.location.search);
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search,
+    );
   }
 }
 
@@ -1426,11 +1567,19 @@ function updateVideoAuthor() {
   // This prevents the author from being truncated in the title line, and is always displayed regardless of title length.
 
   // TODO: refactor hardcoded querySelectorAll to use global `app` references.
-  const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--author)');
-  feedCards.forEach(card => {
-    const author = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title .author');
-    const title = card.querySelector('.flux_header .item.titleAuthorSummaryDate .title');
-    const websiteName = card.querySelector('.flux_header .item.website .websiteName');
+  const feedCards = document.querySelectorAll(
+    "#stream div[data-feed]:not(.yl-modified--author)",
+  );
+  feedCards.forEach((card) => {
+    const author = card.querySelector(
+      ".flux_header .item.titleAuthorSummaryDate .title .author",
+    );
+    const title = card.querySelector(
+      ".flux_header .item.titleAuthorSummaryDate .title",
+    );
+    const websiteName = card.querySelector(
+      ".flux_header .item.website .websiteName",
+    );
     if (author && title && title.parentNode) {
       if (websiteName) {
         // Use website name instead of author name.
@@ -1438,7 +1587,7 @@ function updateVideoAuthor() {
       }
       // Move author (website name) element after title element.
       title.parentNode.insertBefore(author, title.nextSibling);
-      card.classList.add('yl-modified--author');
+      card.classList.add("yl-modified--author");
     }
   });
 }
@@ -1447,16 +1596,25 @@ function updateVideoDateFormat() {
   // youlag-active: On video cards, update to use relative date.
 
   // TODO: refactor hardcoded querySelectorAll to use global `app` references.
-  const feedCards = document.querySelectorAll('#stream div[data-feed]:not(.yl-modified--date)');
-  feedCards.forEach(card => {
-    const date = card.querySelector('.flux_header .item.titleAuthorSummaryDate .date time');
+  const feedCards = document.querySelectorAll(
+    "#stream div[data-feed]:not(.yl-modified--date)",
+  );
+  feedCards.forEach((card) => {
+    const date = card.querySelector(
+      ".flux_header .item.titleAuthorSummaryDate .date time",
+    );
     if (date) {
-      const datetime = date.getAttribute('datetime');
+      const datetime = date.getAttribute("datetime");
       if (datetime) {
-        const relativeDate = typeof getRelativeDate === 'function' ? getRelativeDate(datetime) : (typeof getRelativeTime === 'function' ? getRelativeTime(datetime) : null);
+        const relativeDate =
+          typeof getRelativeDate === "function"
+            ? getRelativeDate(datetime)
+            : typeof getRelativeTime === "function"
+              ? getRelativeTime(datetime)
+              : null;
         if (relativeDate) {
           date.textContent = relativeDate;
-          card.classList.add('yl-modified--date');
+          card.classList.add("yl-modified--date");
         }
       }
     }
@@ -1465,37 +1623,46 @@ function updateVideoDateFormat() {
 
 function setVideoCardLink() {
   // Allow ability to right click and open a video card in new tab by adding a link with ylvideo param.
-  const feedCards = document.querySelectorAll(`${app.frss.el.feedRoot} ${app.frss.el.entry}:not(.yl-modified--link)`);
-  feedCards.forEach(card => {
-    const entryId = card.getAttribute('data-entry');
+  const feedCards = document.querySelectorAll(
+    `${app.frss.el.feedRoot} ${app.frss.el.entry}:not(.yl-modified--link)`,
+  );
+  feedCards.forEach((card) => {
+    const entryId = card.getAttribute("data-entry");
     if (!entryId) return;
-    const anchor = document.createElement('a');
+    const anchor = document.createElement("a");
     const directLink = getVideoParamUrl(entryId);
     anchor.href = directLink;
-    anchor.className = 'yl-video-card__link';
-    const cardContainer = card.querySelector('ul.flux_header');
+    anchor.className = "yl-video-card__link";
+    const cardContainer = card.querySelector("ul.flux_header");
     if (cardContainer) {
       cardContainer.insertBefore(anchor, cardContainer.firstChild);
     }
-    card.classList.add('yl-modified--link');
+    card.classList.add("yl-modified--link");
   });
 }
 
 function onNewFeedItems() {
   // Run actions based on if there's new items added to the feed stream.
-  document.addEventListener('freshrss:load-more', function () {
-    if (isLayoutVideo()) {
-      updateVideoAuthor();
-      updateVideoDateFormat();
-      setVideoCardLink();
+  document.addEventListener(
+    "freshrss:load-more",
+    function () {
+      if (isLayoutVideo()) {
+        updateVideoAuthor();
+        updateVideoDateFormat();
+        setVideoCardLink();
 
-      if (isWatchLaterPage() && app.state.youlag.experimentalFeatureEnabled === true) {
-        updateCategoryEntryCounts();
+        if (
+          isWatchLaterPage() &&
+          app.state.youlag.experimentalFeatureEnabled === true
+        ) {
+          updateCategoryEntryCounts();
+        }
       }
-    }
 
-    handleFeedDearrowFeatures();
-  }, false);
+      handleFeedDearrowFeatures();
+    },
+    false,
+  );
 }
 
 /*****************************************
