@@ -1,6 +1,6 @@
 /**
  * UI: General
- * 
+ *
  * Handles general UI interactions, including click listeners, popstate handling, etc.
  */
 
@@ -106,7 +106,7 @@ function setupVideoClickListener() {
 
 function setupArticleClickListener() {
   const streamContainer = getFeedRoot();
-  
+
   if (!streamContainer) return;
 
   if (isArticleSplitViewEnabled()) {
@@ -130,7 +130,7 @@ function setupArticleClickListener() {
 
             if (isArticleSplitViewActive() === false) {
               // Article regular mode
-              // The article "split view" mode is either disabled or inactive due to viewport width being mobile size. 
+              // The article "split view" mode is either disabled or inactive due to viewport width being mobile size.
 
               // Article video fallback:
               // Embed iframe if source is YouTube video and is missing from the rendered content.
@@ -157,31 +157,29 @@ function setupArticleClickListener() {
                 return rect.top + scrollTop - offset;
               };
 
-              // Article regular mode: Scroll to article top position
-              let attempts = 0;
-              const maxAttempts = 4;
-              const scroll = () => {
-                const targetScroll = scrollToTarget();
-                window.scrollTo({ top: targetScroll });
-                const assessScrollPosition = () => {
-                  // Ensure correct position after layout shifts, due to expanding article content.
-                  attempts++;
-                  const newTargetScroll = scrollToTarget();
-                  if (Math.abs(window.pageYOffset - newTargetScroll) > 2 && attempts < maxAttempts) {
-                    window.requestAnimationFrame(scroll);
-                  }
-                  else {
-                    setTimeout(() => { setToolbarStickyState(false); }, 50);
-                  }
-                };
-                window.setTimeout(assessScrollPosition, 180);
-              };
-              scroll();
-
+              // Article regular mode: Scroll to article top position.
+              // Re-scroll on resize to correct for layout shifts (expanding content, images, etc.).
               const toolbar = document.getElementById(app.ui.id.toolbar);
-              setToolbarStickyState(true);
+              setToolbarStickyState(true);   // Suppress scroll-driven toolbar show/hide before any scrollTo call.
               toolbar.classList.remove('sticky-visible');
               toolbar.classList.add('sticky-hidden');
+              window.scrollTo({ top: scrollToTarget() });
+              let resizeScrollTimer = null;
+              const ro = new ResizeObserver(() => {
+                clearTimeout(resizeScrollTimer);
+                resizeScrollTimer = setTimeout(() => {
+                  window.scrollTo({ top: scrollToTarget() });
+                }, 16);
+              });
+              ro.observe(target);
+              setTimeout(() => {
+                clearTimeout(resizeScrollTimer); // Cancel any pending scrollTo before disconnecting.
+                ro.disconnect();
+                // Delay releasing sticky state to let iOS flush any in-flight scroll events from
+                // the last scrollTo call. iOS dispatches scroll events asynchronously over multiple
+                // frames, and releasing too early causes the toolbar to falsely detect an upward scroll.
+                setTimeout(() => setToolbarStickyState(false), 200);
+              }, 1000);
             }
           }, 100); // Debounce
           break;
@@ -286,7 +284,7 @@ function setupArticleClickListener() {
 function onArticleEntryVisibility({onEnter, onLeave} = {}) {
   /**
    * Tracks when article entries enter and leave the viewport.
-   * 
+   *
    * Reimplement FreshRSS' `onScroll() { if (context.auto_mark_scroll){...} }` for "article split view"
    * due to fixed body height and overflow, which results in FreshRSS' native `onScroll()` not being triggered.
    */
@@ -341,7 +339,7 @@ function setupTagsDropdownOverride() {
       event.stopImmediatePropagation();
       let entryId = null;
       let entryIdRegex = '([0-9]+)$';
-      let iconImg = null; // Tag icon in card element 
+      let iconImg = null; // Tag icon in card element
 
       if (entryItemDropdown) {
         // Card tags button: Get feed entry ID
@@ -402,12 +400,12 @@ function handleSliderHashChange() {
 }
 
 function autoLoadMoreArticlesOnScroll() {
-  /* 
+  /*
    * Custom wrapper for FreshRSS' `load_more_posts()` to auto-load article.
    *
-   * This is useful when custom layouts like "Article split view" is used, 
+   * This is useful when custom layouts like "Article split view" is used,
    * as that layout never triggers the native `load_more_posts()` due to fixed body height and overflow.
-  */
+   */
   const streamFooter = document.getElementById('stream-footer');
   if (!streamFooter) return;
 
@@ -425,7 +423,7 @@ function autoLoadMoreArticlesOnScroll() {
 
         isLoading = true;
         load_more_posts();
-        
+
         debounceTimeout = setTimeout(() => {
           isLoading = false;
           debounceTimeout = null;
@@ -446,14 +444,6 @@ function isHashUrl() {
   const isHash = app.state.popstate.pathPrev === currentPathnameSearch && window.location.hash;
   app.state.popstate.pathPrev = currentPathnameSearch;
   return isHash;
-}
-
-function renderConsoleLogs() {
-  
-}
-
-function renderLocalStorageStates() {
-
 }
 
 /*****************************************
@@ -656,7 +646,7 @@ async function handleFeedDearrowFeatures() {
   }
 
   // Also build videoIdTitleMap to address custom title updates,
-  // if setting is enabled for `useCustomThumbTitle`. 
+  // if setting is enabled for `useCustomThumbTitle`.
   if (useCustomThumbTitle) {
     for (const entryTitle of feedEntriesTitle) {
       const videoId = getVideoIdFromUrl(entryTitle.href);
@@ -717,7 +707,7 @@ async function handleFeedDearrowFeatures() {
 }
 
 function setupSwipeSidebar() {
-  // Mobile: Swipe left to right to open sidebar, and opposite to close. 
+  // Mobile: Swipe left to right to open sidebar, and opposite to close.
   const feedRoot = getFeedRoot();
   const sidebar = getSidebar();
   if (!feedRoot || !sidebar) return;
@@ -767,7 +757,7 @@ function setupSwipeSidebar() {
       sidebar.style.display = '';
       setSidenavState();
     }
-    
+
     // Close sidebar
     else if (isSidebarVisible && deltaX < -swipeMinDistance && sidebar.contains(e.target)) {
       sidebar.classList.remove('visible');
@@ -802,7 +792,7 @@ function setupSwipeSidebar() {
  ****************************************/
 
 function renderToolbar() {
-  // Creates a sticky toolbar to contains the category title and 'configure view' button. 
+  // Creates a sticky toolbar to contains the category title and 'configure view' button.
   if (app.state.youlag.toolbarInit) return;
   app.state.youlag.toolbarInit = true;
 
@@ -814,7 +804,7 @@ function renderToolbar() {
   const frssToggleSearch = document?.querySelector('#dropdown-search-wrapper');
   const frssMenu = document.querySelector('#global nav.nav_menu:not(#yl_nav_menu_container)');
 
-  // Fail gracefully 
+  // Fail gracefully
   if (!menuContainer || !menuContent || !menuToggle || !frssMenu || !toolbar) {
     const missing = [];
     if (!menuContainer) missing.push('menuContainer');
@@ -881,21 +871,21 @@ function renderToolbar() {
           target: '_blank',
           rel: 'noopener noreferrer'
         });
-        
+
         const span = document.createElement('span');
         span.textContent = isVideoLabelsEnabled() && isLayoutVideo() ? 'Manage channel' : 'Manage feed';
         manageFeed.appendChild(span);
-        
+
         menuToggle.parentNode.insertBefore(manageFeed, menuToggle);
       }
       if (feedId && feedIdNumber && manageFeed) {
         manageFeed.addEventListener('click', function (e) {
           e.preventDefault();
-  
+
           // HACK: Trigger the manage feed slider by simulating clicks to the sidebar.
           // This naive implementation replaces commit #0133a24 for easier maintenance, as some form submit actions (like "remove (feed)") required reimplementing the click events.
           document.querySelector(`#${feedId} a[href="#dropdown-${feedIdNumber}"]`).click();
-  
+
           let attempts = 0;
           function pollDropdown() {
             // Poll the dropdown for the feed, for simulating a click on "Manage".
@@ -915,7 +905,7 @@ function renderToolbar() {
           pollDropdown();
         });
       }
-    } 
+    }
     setupManageFeedButton();
 
     // Watch later: Setup category filter.
@@ -979,7 +969,7 @@ function renderToolbar() {
     }
 
     if (toolbar) {
-      // Allow mobile dropdown to expand without causing scroll events to hide the toolbar. 
+      // Allow mobile dropdown to expand without causing scroll events to hide the toolbar.
       setToolbarStickyState(true);
       setTimeout(() => {
         setToolbarStickyState(false);
@@ -994,7 +984,6 @@ function setToolbarSticky(toolbarElement) {
   const toolbar = toolbarElement;
   let lastScrollY;
   let ticking = false;
-  let ignoreNextScroll = false; // 'Configure view' toggling expands `toolbarElement`, causing unwanted scroll events. Prevent those.  
 
   function getScrollY() {
     if (isArticleSplitViewEnabled() && isArticleSplitViewActive()) {
@@ -1029,16 +1018,15 @@ function setToolbarSticky(toolbarElement) {
   }
 
   function onScroll() {
-    if (ignoreNextScroll) {
-      ignoreNextScroll = false;
-      lastScrollY = getScrollY();
-      return;
-    }
-    if (app.state.youlag.toolbarIgnoreScroll) {
-      lastScrollY = getScrollY();
-      return;
-    }
     if (getToolbarStickyState() === true) {
+      lastScrollY = getScrollY();
+      return;
+    }
+    if (app.state.page.toolbarSticky) {
+      lastScrollY = getScrollY();
+      return;
+    }
+    if (getToolbarStickyState() === false) {
       return;
     }
     const currentScrollY = getScrollY();
@@ -1086,13 +1074,13 @@ function setupArticleSplitView() {
 
   const splitViewPane = document.createElement('div');
   splitViewPane.id = 'ylArticleSplitPane';
-  
+
   // Add initial placeholder text
   const placeholder = document.createElement('div');
   placeholder.className = 'yl-article-split-view__empty-state-content';
   placeholder.textContent = 'Select an article to start reading';
   splitViewPane.appendChild(placeholder);
-  
+
   feedRoot.parentNode.insertBefore(splitViewPane, feedRoot.nextSibling);
 }
 
@@ -1129,7 +1117,7 @@ function setupVideoIframe(youtubeUrl) {
 }
 
 function setMissingLogo() {
-  // For search results with no result, the FreshRSS logo is not rendered 
+  // For search results with no result, the FreshRSS logo is not rendered
   // due to relying on the `registerHook('nav_entries'...)` in `extensions.php`, which only renders if there's a feed.
   // This function adds the logo back in such cases.
 
@@ -1296,7 +1284,7 @@ function setWatchLaterCategoryFilter() {
     clearAllCategoryFilters();
     updateCategoryVisibility();
   });
-  
+
   updateCategoryEntryCounts(); // Run once, let `onNewFeedItems()` handle subsequent updates.
   updateCategoryVisibility();
 }
@@ -1317,7 +1305,7 @@ function updateCategoryEntryCounts() {
     if (categoryId && countSpan) {
       const key = `c_${categoryId}`;
       // TODO: Currently using naive implementation of count during experimental phase.
-      // Optimize later when the proper implementation `setWatchLaterCategoryFilter()` is defined. 
+      // Optimize later when the proper implementation `setWatchLaterCategoryFilter()` is defined.
       count = document.querySelectorAll(`${app.frss.el.entry}[data-category="${categoryId}"]`).length;
 
       countObj[key] = { count };
@@ -1399,7 +1387,7 @@ function toggleFavorite(url, container, feedItemEl = null) {
         }
 
         // Keep the feed entry in the feed stream in sync, if the current page is a feed page and the entry exists in the feed stream.
-        // The miniplayer video modal could be restored to a different page/state, meaning that the feed entry might not exist in the view. 
+        // The miniplayer video modal could be restored to a different page/state, meaning that the feed entry might not exist in the view.
         if (feedItemEl && feedItemEl instanceof Element && hasFeedStream) {
           const bookmarkIcon = feedItemEl.querySelector('.item-element.bookmark img.icon');
           if (currentlyTrue) {

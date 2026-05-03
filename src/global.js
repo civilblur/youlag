@@ -1,6 +1,6 @@
 /**
  * Global
- * 
+ *
  * Stores global app state, metadata, breakpoints, and type definitions.
  */
 
@@ -20,7 +20,6 @@ app.state = {
     init: false,                // Whether the Youlag script has initialized.
     toolbarInit: false,         // The toolbar (nav_menu) displaying the feed category title and view options.
     toolbarActiveMenu: null,    // Currently active menu in the toolbar: 'viewOptions' || 'categoryFilter' || null
-    toolbarIgnoreScroll: false, // Suppress toolbar sticky reaction (show/hide) during programmatic scrolls.
     clickListenerInit: false,
     restoreVideoInit: false,    // If miniplayer was restored after page refresh.
     sliderListeners: null,      // Store slider event listener.
@@ -39,7 +38,7 @@ app.state = {
   page: {
     layout: null,               // {'video' || 'article'}. Previously boolean "youlagActive" and "!youlagActive" (youlag inactive = article layout).
     titlePrev: null,
-    toolbarSticky: false,       // true: forced sticky. false: dynamic, based on scroll. Use for temporarily disabling the sticky toolbar (nav_menu), e.g. when using programmatic scrolling.
+    toolbarSticky: false,       // true: forced sticky. false: disable dynamic behavior of show/hide on scroll. Use for temporarily disabling the sticky toolbar (nav_menu), e.g. when using programmatic scrolling.
     sidebarExpanded: false,     // Sidebar expanded and collapsed state also reflected in `body.youlag-sidenav--{collapsed | expanded}`.
   },
   popstate: {
@@ -60,7 +59,7 @@ app.breakpoints = {
 app.modal = {
   id: {
     // TODO: Unify formatting for id and class names
-    
+
     root: 'youlagTheaterModal',
     close: 'youlagCloseModal',
     minimize: 'youlagMinimizeModal',
@@ -122,15 +121,15 @@ app.frss = {
   // FreshRSS selectors
   id: {
     logo: 'yl_freshrss_logo_container',
-    logoImg: 'yl_freshrss_logo',   
+    logoImg: 'yl_freshrss_logo',
   },
   el: {
     feedRoot: '#stream',
     current: '#stream div[data-entry].active.current',    // Currently opened feed entry in the stream.
     entry: 'div[data-entry]',                             // Feed entry element in the stream.
     global: '#global',
-    sidebar: '#aside_feed',   
-    articleNav: '#nav_entries',                                
+    sidebar: '#aside_feed',
+    articleNav: '#nav_entries',
   },
   img: {
     spinner: '../themes/icons/spinner.svg',
@@ -199,4 +198,3 @@ app.types = {
     parentId: '', // Parent id if applicable, e.g. for f_{n} (sub-page of category), t_{n} (playlist sub-page).
   }
 };
-

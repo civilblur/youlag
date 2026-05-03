@@ -1,6 +1,6 @@
 /**
  * UI: Modes
- * 
+ *
  * Handles different view modes for the video modal, such as fullscreen and miniplayer.
  */
 
@@ -112,7 +112,7 @@ function setupSwipeToMiniplayer(modal) {
   // Track the initial Y position when a single touch starts near the top of the modal.
   function touchStartHandler(e) {
 
-    // If chapter list is scrollable, don't activate swipe to miniplayer within that area. 
+    // If chapter list is scrollable, don't activate swipe to miniplayer within that area.
     const chapterList = e.target.closest(`#${app.modal.id.chapterList}`);
     if (chapterList && chapterList.scrollHeight > chapterList.clientHeight) return;
 
@@ -162,20 +162,20 @@ function handleArticleSplitView() {
   // Actions to take when clicking an article while article split view is enabled.
   const articleContentPane = document.getElementById(app.modal.id.splitPaneContent);
   if (!articleContentPane) return;
-  
+
   const streamContainer = document.getElementById('stream');
   if (!streamContainer) return;
-  
+
   const activeArticle = document.querySelector(app.frss.el.current);
   articleContentPane.classList.add('loading');
-  
+
   function getStickyHeights() {
     // TODO: Extract as utility function.
     const topNavHeight = document.querySelector('body > header')?.offsetHeight || 57;
     const stickyHeaderHeight = document.getElementById(app.ui.id.toolbar)?.offsetHeight || 60;
     return { topNavHeight, stickyHeaderHeight };
   }
-  
+
   function isArticleEntryVisible(element, container) {
     // Check if article entry is fully visible within its container
     const elementRect = element.getBoundingClientRect();
@@ -187,19 +187,19 @@ function handleArticleSplitView() {
       elementRect.bottom <= window.innerHeight
     );
   }
-  
+
   // If active article entry isn't fully visible, scroll the stream container.
   // Especially useful when using FreshRSS' article navigation feature.
   function scrollToActiveArticle(element, container) {
     const elementRect = element.getBoundingClientRect();
     const { topNavHeight, stickyHeaderHeight } = getStickyHeights();
-    
+
     const offsetTop = topNavHeight + stickyHeaderHeight + 20;
     const offsetBottom = 70; // Enough to reveal next article's headline
-    
+
     // Suppress toolbar reaction (show/hide) during programmatic scroll
-    app.state.youlag.toolbarIgnoreScroll = true;
-    
+    setToolbarStickyState(true)
+
     // Element is partially covered
     if (elementRect.top < offsetTop) {
       const scrollAmount = offsetTop - elementRect.top;
@@ -215,10 +215,10 @@ function handleArticleSplitView() {
         behavior: 'smooth'
       });
     }
-    
-    setTimeout(() => { app.state.youlag.toolbarIgnoreScroll = false; }, 500);
+
+    setTimeout(() => { setToolbarStickyState(false) }, 500);
   }
-  
+
   // Copy article content to the content pane
   function copyActiveArticleContent(article) {
     if (article) {
@@ -227,12 +227,12 @@ function handleArticleSplitView() {
         articleContentPane.classList.remove('loading');
         articleContentPane.innerHTML = activeArticleContent.innerHTML;
         articleContentPane.scrollTop = 0;
-        
+
         if (!isArticleEntryVisible(article, streamContainer)) {
           // If active article entry isn't fully visible, scroll the stream container.
           scrollToActiveArticle(article, streamContainer);
         }
-        
+
         return true;
       }
     }
@@ -251,7 +251,7 @@ function handleArticleSplitView() {
   }, 10000); // Timeout
 
   let observer = null;
-  
+
   observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.type === 'attributes' && mutation.attributeName === 'class') {

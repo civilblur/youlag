@@ -155,7 +155,7 @@ function updateSidenavLinks() {
 }
 
 function updateAddFeedLink() {
-  // Add a custom query param to the 'Add new feed' with the current category id, 
+  // Add a custom query param to the 'Add new feed' with the current category id,
   // allowing auto-selection of the category in the 'add new feed' dropdown.
 
   const page = getCurrentPage();
@@ -174,7 +174,7 @@ function updateAddFeedLink() {
 function getVideoIdFromUrl(url) {
   /**
    * Match video ID without relying of base domain, to support YouTube, Invidious, Piped, etc.
-   * 
+   *
    * Patterns:
    * ?v=ID or ?id=ID (/watch?v=ID)
    * /shorts/ID, /embed/ID
@@ -259,7 +259,7 @@ function sanitizeExtractedVideoUrl(content) {
 
 function appendOriginalSrc(element) {
   // Update lazyloaded content, where `data-original` stores the original src.
-  // This is required as the content may not have been fully loaded during extraction for modal usage. 
+  // This is required as the content may not have been fully loaded during extraction for modal usage.
 
   if (!element) return element;
 
@@ -310,7 +310,7 @@ function wrapVideoDescription(description) {
 }
 
 function hideVideoDescriptionIntro(description) {
-  /** 
+  /**
    * Hides the intro of YouTube video descriptions, which often contains sponsored content above the fold.
    * Assumes the intro is wrapped in divs by `wrapVideoDescription()`.
    */
@@ -703,6 +703,8 @@ function getToolbarStickyState() {
 }
 
 function setToolbarStickyState(state) {
+  // true: forced sticky. false: disable dynamic behavior of show/hide on scroll.
+  // Use for temporarily disabling the sticky toolbar (nav_menu), e.g. when using programmatic scrolling.
   app.state.page.toolbarSticky = state;
 }
 
@@ -831,7 +833,7 @@ async function fetchRelatedItems(category = 'watch_later', order = 'rand', limit
 async function checkForUpdates() {
   // Check for updates every 2 weeks
   // NOTE: This communicates with Github (Microsoft). You can disable the update check in Youlag's settings page.
-  
+
   const now = Date.now();
   const lastChecked = localStorage.getItem('ylLastUpdateCheck');
   // Only check for updates if 2 weeks have passed
@@ -853,9 +855,9 @@ async function checkForUpdates() {
 
       if (latestVersion !== currentVersion) {
         showNotification({
-          title: 'New Youlag update available', 
-          message: `Version &nbsp;<span class="yl-badge">${latestVersion}</span>&nbsp; has been released. Head to the release page for more details.`, 
-          action: 'View update', 
+          title: 'New Youlag update available',
+          message: `Version &nbsp;<span class="yl-badge">${latestVersion}</span>&nbsp; has been released. Head to the release page for more details.`,
+          action: 'View update',
           link: data.html_url,
           dismissRef: 'ylLastUpdateCheck'
         });
