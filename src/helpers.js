@@ -90,7 +90,7 @@ function extractFeedItemData(feedItem) {
   const videoBaseUrl = isVideoFeedItem ? getBaseUrl(extractedVideoUrl) : '';
   const youtubeUrl = app.state.modal.youtubeId ? `https://www.youtube.com/watch?v=${app.state.modal.youtubeId}` : '';
   const youtubeEmbedUrl = app.state.modal.youtubeId ? `https://www.youtube.com/embed/${app.state.modal.youtubeId}?enablejsapi=1` : '';
-  const videoEmbedUrl = app.state.modal.youtubeId ? `${videoBaseUrl}/embed/${app.state.modal.youtubeId}` : '';
+  const videoEmbedUrl = app.state.modal.youtubeId ? `${videoBaseUrl}/embed/${app.state.modal.youtubeId}?enablejsapi=1` : '';
   const authorElement = feedItem.querySelector('.flux_header');
   const authorFilterElement = authorElement?.querySelector('.website a.item-element[href*="get=f_"]');
   const invidiousInstanceElemenet = feedItem.querySelector('.content div.text span[data-yl-invidious-instance]');

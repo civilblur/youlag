@@ -127,8 +127,19 @@ function setupArticleClickListener() {
             }
 
             if (!!isArticleSplitViewActive()) {
-              // Auto-scroll article to the top when clicked, only when split view is not active.
+              // Article mode, video fallback:
+              // Embed iframe if source is YouTube video and is missing from the rendered content.
+              sourceUrl = target.getAttribute('data-link');
+              if (getVideoIdFromUrl(sourceUrl)) {
+                const videoId = getVideoIdFromUrl(sourceUrl);
+                const existingIframe = articleContent.querySelector(`iframe[src*="${videoId}"]`);
+                if (!existingIframe) {
+                  const iframe = setupVideoIframe(sourceUrl);
+                  articleContent.querySelector('header')?.insertAdjacentElement('afterend', iframe);
+                }
+              }
 
+              // Auto-scroll article to the top when clicked, only when split view is not active.
               const scrollToTarget = () => {
                 const rect = target.getBoundingClientRect();
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -1203,6 +1214,26 @@ function storeCurrentCategoryId() {
   }
 
   localStorage.setItem('youlagCategoryIdRecent', categoryId ? categoryId[1] : null);
+}
+
+function setupVideoIframe(youtubeUrl) {
+  // Creates an iframe for embedding YouTube videos.
+  // Currently primarily used for viewing YouTube feeds in article mode.
+
+  const videoId = getVideoIdFromUrl(youtubeUrl);
+  if (!videoId) return null;
+
+  const videoBaseUrl = videoId ? getBaseUrl(youtubeUrl) : '';
+  const videoEmbedUrl = `${videoBaseUrl}/embed/${videoId}?enablejsapi=1`;
+
+  const iframe = document.createElement('iframe');
+  iframe.src = videoEmbedUrl;
+  iframe.allow = 'accelerometer; autoplay; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.className = 'yl-article-video-iframe';
+  iframe.setAttribute('frameborder', '0');
+  iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+  return iframe;
 }
 
 function setMissingLogo() {

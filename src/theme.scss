@@ -3439,6 +3439,10 @@ body.youlag-active.youlag-video-unread-badge:not(.reader) main#stream {
 
 body.youlag-inactive:not(.reader) {
 
+  .yl-article-video-iframe {
+    margin-top: var(--yl-m-sm);
+  }
+
   nav.aside_feed {
     &.visible ~ .nav_menu {
       max-width: calc(900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)); /* youlag-inactive: Match position of article */
@@ -4171,7 +4175,7 @@ body:has(.tree-folder.category.favorites.active) {
       box-sizing: border-box;
       opacity: 0.6;
     }
-    
+
     #new-article {
       display: block;
       margin-right: var(--yl-m-xs);
