@@ -169,10 +169,9 @@ function setupArticleClickListener() {
                 return rect.top + scrollTop - offset;
               };
 
-              // Article regular mode: Scroll to article top position.
-              // Re-scroll on resize to correct for layout shifts (expanding content, images, etc.).
+              // Article regular mode: Scroll to article top position, needed due to layout shift.
               const toolbar = document.getElementById(app.ui.id.toolbar);
-              setToolbarStickyState(true); // Suppress scroll-driven toolbar show/hide before any scrollTo call.
+              setToolbarStickyState(true); // Prevent toolbar dynamic show/hide behavior during scroll.
               toolbar.classList.remove("sticky-visible");
               toolbar.classList.add("sticky-hidden");
               window.scrollTo({ top: scrollToTarget() });
@@ -187,9 +186,6 @@ function setupArticleClickListener() {
               setTimeout(() => {
                 clearTimeout(resizeScrollTimer); // Cancel any pending scrollTo before disconnecting.
                 ro.disconnect();
-                // Delay releasing sticky state to let iOS flush any in-flight scroll events from
-                // the last scrollTo call. iOS dispatches scroll events asynchronously over multiple
-                // frames, and releasing too early causes the toolbar to falsely detect an upward scroll.
                 setTimeout(() => setToolbarStickyState(false), 200);
               }, 1000);
             }
@@ -262,7 +258,7 @@ function setupArticleClickListener() {
   window.addEventListener("popstate", function (event) {
     function getOpenArticle() {
       return getModalState();
-    } // Alias for clarity
+    }
 
     if (isHashUrl()) return;
     if (isModeMiniplayer() && getOpenArticle()) {
