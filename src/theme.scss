@@ -4171,15 +4171,22 @@ body:has(.tree-folder.category.favorites.active) {
       box-sizing: border-box;
       opacity: 0.6;
     }
+    
+    #new-article {
+      display: block;
+      margin-right: var(--yl-m-xs);
+      margin-left: var(--yl-m-xs);
+      margin-top: 0 !important;
+      margin-bottom: var(--yl-m-xs);
+      top: var(--yl-m-3xs);
 
-    #yl_category_toolbar {
-      // TODO: FreshRSS' 'navigation' feature that has the 'scroll to top' button
-      // Causes the show/hide of the toolbar to trigger as it scroll the body.
-      // Temporarily force the toolbar to be always visible, to avoid a in the article split view where it is hidden.
-      // The fix is essentially to override FreshRSS' navigation button with custom logic.
-      pointer-events: all !important;
-      transform: unset !important;
-      opacity: 1 !important
+      a {
+        max-height: 60px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: var(--yl-text-2xs);
+      }
     }
   
     #stream,
