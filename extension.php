@@ -85,6 +85,7 @@ class YoulagExtension extends Minz_Extension
   {
     // TODO: Refactor to pass data with `Minz_HookType::JsVars` instead.
     $this->registerHook('entry_before_display', array($this, 'setInvidiousURL'));
+    $this->registerHook('entry_before_display', array($this, 'handleArticleYoutubeIframe'));
     $this->registerHook('nav_entries', array($this, 'createFreshRssLogo'), 6);
     $this->registerHook('nav_entries', array($this, 'createCategoryTitle'), 7);
     $this->registerHook('nav_entries', array($this, 'setCategoryWhitelist'), 10);
@@ -375,42 +376,6 @@ class YoulagExtension extends Minz_Extension
     return $this->instance != '';
   }
 
-  public function embedVideoIframe($entry): mixed
-  {
-    $this->loadConfigValues();
-
-    // Youlag-inactive: Embed YouTube video for regular articles.
-    $content = $entry->content();
-    $link = $entry->link();
-    if (
-      preg_match(pattern: '#https?://(?:www\.)?youtube\.com/watch\?v=([\w-]+)#i', subject: $link, matches: $m) ||
-      preg_match(pattern: '#https?://youtu\.be/([\w-]+)#i', subject: $link, matches: $m)
-    ) {
-      $videoId = $m[1];
-      /* 
-       * HACK: Use 'data-original' instead of 'src' to prevent FreshRSS from lazy-loading through its injected 'grey.gif',
-       * which creates an http call for every iframe. 'data-original' is not a standard attribute, but handled through Youlag's script.js.
-       * 
-       * NOTE: The attribute naming scheme follows what is used in FreshRSS for lazyload:
-       * https://github.com/FreshRSS/FreshRSS/blob/131f4f8e636fd2d0b7652c3afeb54eaaa48b283a/lib/lib_rss.php#L279
-       */
-      $iframeSrc = htmlspecialchars(string: "https://www.youtube.com/embed/{$videoId}?enablejsapi=1", flags: ENT_QUOTES);
-      $iframe = <<<HTML
-        <iframe
-          class="aspect-ratio-16-9 rounded-md"
-          width="100%"
-          height="auto"
-          data-original="{$iframeSrc}"
-          frameborder="0"
-          allowfullscreen
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
-      HTML;
-      $content = "$iframe\n$content";
-    }
-    return $content;
-  }
-
   /**
    * Replaces all youtube.com domains in entry links/content with the user Invidious instance.
    * @param FreshRSS_Entry $entry
@@ -473,6 +438,114 @@ class YoulagExtension extends Minz_Extension
     }
 
     return $entry;
+  }
+
+  public function embedVideoIframe($entry): mixed
+  {
+    $this->loadConfigValues();
+
+    // Youlag-inactive: Embed YouTube video for regular articles.
+    $content = $entry->content();
+    $link = $entry->link();
+    if (
+      preg_match(pattern: '#https?://(?:www\.)?youtube\.com/watch\?v=([\w-]+)#i', subject: $link, matches: $m) ||
+      preg_match(pattern: '#https?://youtu\.be/([\w-]+)#i', subject: $link, matches: $m)
+    ) {
+      $videoId = $m[1];
+      /* 
+       * HACK: Use 'data-original' instead of 'src' to prevent FreshRSS from lazy-loading through its injected 'grey.gif',
+       * which creates an http call for every iframe. 'data-original' is not a standard attribute, but handled through Youlag's script.js.
+       * 
+       * NOTE: The attribute naming scheme follows what is used in FreshRSS for lazyload:
+       * https://github.com/FreshRSS/FreshRSS/blob/131f4f8e636fd2d0b7652c3afeb54eaaa48b283a/lib/lib_rss.php#L279
+       */
+      $iframeSrc = htmlspecialchars(string: "https://www.youtube.com/embed/{$videoId}?enablejsapi=1", flags: ENT_QUOTES);
+      $iframe = <<<HTML
+        <iframe
+          class="aspect-ratio-16-9 rounded-md"
+          width="100%"
+          height="auto"
+          data-original="{$iframeSrc}"
+          frameborder="0"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin">
+        </iframe>
+      HTML;
+      $content = "$iframe\n$content";
+    }
+    return $content;
+  }
+
+  public function handleArticleYoutubeIframe($entry): FreshRSS_Entry
+  {
+    $content = $entry->content();
+    
+    // Pattern to match iframe tags
+    $pattern = '/<iframe[^>]*src=["\']([^"\']*)["\'][^>]*>/is';
+    
+    if (preg_match_all($pattern, $content, $matches, PREG_SET_ORDER)) {
+      foreach ($matches as $match) {
+        $iframe = $match[0];
+        $src = $match[1];
+        
+        // Article mode: If article's original content embeds YouTube video, add
+        // `referrerpolicy="strict-origin-when-cross-origin"`. See #12.
+        if ($this->isYouTubeEmbedUrl($src)) {
+          if (!preg_match('/referrerpolicy=["\'][^"\']*["\']/i', $iframe)) {
+            // Apply referrerpolicy attribute
+            $newIframe = preg_replace(
+              '/(<iframe[^>]*)(>)/is',
+              '$1 referrerpolicy="strict-origin-when-cross-origin"$2',
+              $iframe
+            );
+            
+            $content = str_replace($iframe, $newIframe, $content);
+          }
+        }
+      }
+    }
+    
+    if ($content !== $entry->content()) {
+      $entry->_content($content);
+    }
+    
+    return $entry;
+  }
+  
+  /**
+   * Check if it's a YouTube embedded iframe.
+   * @param string $url
+   * @return bool
+   */
+  private function isYouTubeEmbedUrl(string $url): bool
+  {
+    // Check for iframe embed patterns first (common in iframe src)
+    $patterns = [
+      // Standard YouTube embed: /embed/VIDEO_ID
+      '/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/i',
+      '/youtu\.be\/([a-zA-Z0-9_-]{11})/i',
+      // Invidious, Piped, etc.: /embed/VIDEO_ID (other base domain)
+      '/\/embed\/([a-zA-Z0-9_-]{11})/i',
+      // Other patterns: /v/VIDEO_ID, /vi/VIDEO_ID, /e/VIDEO_ID, /shorts/VIDEO_ID
+      '/\/(?:v|vi|e|shorts)\/([a-zA-Z0-9_-]{11})/i',
+    ];
+    
+    foreach ($patterns as $pattern) {
+      if (preg_match($pattern, $url, $matches)) {
+        if (isset($matches[1]) && preg_match('/^[a-zA-Z0-9_-]{11}$/', $matches[1])) {
+          return true;
+        }
+      }
+    }
+    
+    // Check for query parameters ?v=VIDEO_ID or ?id=VIDEO_ID
+    if (preg_match('/[?&](?:v|id)=([a-zA-Z0-9_-]{11})/i', $url, $matches)) {
+      if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $matches[1])) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   /**

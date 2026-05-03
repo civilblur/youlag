@@ -119,6 +119,8 @@ function setupArticleClickListener() {
     for (const mutation of mutations) {
       if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
         const target = mutation.target;
+        const articleContent = target.querySelector('.flux_content .content');
+
         if (target.matches(app.frss.el.entry) && target.matches(app.frss.el.current)) {
           clearTimeout(splitViewDebounceTimer);
           splitViewDebounceTimer = setTimeout(() => {
@@ -132,7 +134,6 @@ function setupArticleClickListener() {
               sourceUrl = target.getAttribute('data-link');
               if (getVideoIdFromUrl(sourceUrl)) {
                 const videoId = getVideoIdFromUrl(sourceUrl);
-                const articleContent = target.querySelector('.flux_content .content');
                 const existingIframe = articleContent.querySelector(`iframe[src*="${videoId}"]`);
                 if (!existingIframe) {
                   const iframe = setupVideoIframe(sourceUrl);
