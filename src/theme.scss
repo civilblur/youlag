@@ -3214,12 +3214,6 @@ body:not(.normal) {
  * ==================================== */
 
 %article-typography {
-  p, a, ul, li {
-    font-size: var(--yl-text-sm);
-    line-height: 1.69;
-    letter-spacing: 1.1;
-  }
-
   header {
     h1.title a {
 
@@ -3384,6 +3378,14 @@ body:not(.normal) {
   }
 
   .content {
+    & > div.text {
+      p, a, ul, li {
+        font-size: var(--yl-text-sm);
+        line-height: 1.69;
+        letter-spacing: 1.1;
+      }
+    }
+
     & > header > h1.title {
       margin-top: 0;
     }
