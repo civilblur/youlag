@@ -620,6 +620,9 @@ function renderRelatedVideos(videoObject) {
     relatedVideos.then(videos => {
       if (!Array.isArray(videos) || videos.length === 0) return;
 
+      // Do not render "related videos" if the only video is the currently viewing video 
+      if (videos.length === 0 || videos[0].entryId === currentlyViewing) return
+
       // Refetch the modal and related videos container as modal content could have been rerendered since the relatedVideos promise was initiated
       const modal = getModalVideo();
       const container = modal?.querySelector(`#${app.modal.id.relatedContainer}`);
