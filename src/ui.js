@@ -406,6 +406,9 @@ function handleArticleSplitView() {
     const offsetTop = topNavHeight + stickyHeaderHeight + 30;
     const offsetBottom = 60; // Enough to reveal next article's headline
     
+    // Suppress toolbar reaction (show/hide) during programmatic scroll
+    app.state.youlag.toolbarIgnoreScroll = true;
+    
     // Element is partially covered
     if (elementRect.top < offsetTop) {
       const scrollAmount = offsetTop - elementRect.top;
@@ -421,6 +424,8 @@ function handleArticleSplitView() {
         behavior: 'smooth'
       });
     }
+    
+    setTimeout(() => { app.state.youlag.toolbarIgnoreScroll = false; }, 500);
   }
   
   // Copy article content to the content pane
@@ -1127,6 +1132,10 @@ function setToolbarSticky(toolbarElement) {
   function onScroll() {
     if (ignoreNextScroll) {
       ignoreNextScroll = false;
+      lastScrollY = getScrollY();
+      return;
+    }
+    if (app.state.youlag.toolbarIgnoreScroll) {
       lastScrollY = getScrollY();
       return;
     }

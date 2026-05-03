@@ -20,6 +20,7 @@ app.state = {
     init: false,                // Whether the Youlag script has initialized.
     toolbarInit: false,         // The toolbar (nav_menu) displaying the feed category title and view options.
     toolbarActiveMenu: null,    // Currently active menu in the toolbar: 'viewOptions' || 'categoryFilter' || null
+    toolbarIgnoreScroll: false, // Suppress toolbar sticky reaction (show/hide) during programmatic scrolls.
     clickListenerInit: false,
     restoreVideoInit: false,    // If miniplayer was restored after page refresh.
     sliderListeners: null,      // Store slider event listener.
