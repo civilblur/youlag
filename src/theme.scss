@@ -4156,7 +4156,7 @@ body:has(.tree-folder.category.favorites.active) {
 @media (min-width: 840px) {
   .youlag-inactive:not(.reader).yl-article-split-view {
     /* Article: Split pane view */
-    max-height: 100vh;
+    max-height: 100dvh;
     overflow: hidden;
 
     #ylArticleSplitPane {
@@ -4195,7 +4195,7 @@ body:has(.tree-folder.category.favorites.active) {
     #stream,
     #ylArticleSplitPane {
       box-sizing: border-box;
-      height: calc(100vh - var(--yl-topnav-height));
+      height: calc(100dvh - var(--yl-topnav-height));
       scrollbar-width: thin;
     }
   
