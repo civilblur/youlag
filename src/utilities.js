@@ -506,6 +506,14 @@ function getRelatedVideosSetting() {
   );
 }
 
+function getArticleThumbnailPlacement() {
+  return (
+    document
+      .querySelector("#yl_article_thumbnail_placement")
+      ?.getAttribute("data-yl-article-thumbnail-placement") || "right"
+  );
+}
+
 function getHistoryPopstate() {
   return app.state.popstate.added; // true = history state for modal/article has been added
 }

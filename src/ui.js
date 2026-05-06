@@ -504,6 +504,7 @@ function setBodyClass() {
   setCategoryWhitelistClass();
   setUnreadBadgeClass();
   setPageSortingClass();
+  setArticleThumbnailPlacementClass();
   document.body.setAttribute("data-youlag-version", app.metadata.version);
   shouldCustomThumbnailTitle() &&
     document.body.classList.add("yl-feed-custom-thumbnail-title");
@@ -617,6 +618,11 @@ function setArticleSplitViewClass() {
   if (isArticleSplitViewEnabled()) {
     document.body.classList.add("yl-article-split-view");
   }
+}
+
+function setArticleThumbnailPlacementClass() {
+  const placement = getArticleThumbnailPlacement() || "right";
+  document.body.classList.add(`yl-article-thumbnail-placement--${placement}`);
 }
 
 function setMobileLayoutGrid() {

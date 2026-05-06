@@ -3454,6 +3454,19 @@ body.youlag-active.youlag-video-unread-badge:not(.reader) main#stream {
 }
 
 body.youlag-inactive:not(.reader) {
+    &.yl-article-thumbnail-placement {
+        &--left {
+            #stream div.flux > ul.flux_header .titleAuthorSummaryDate {
+                /* Place headline after the thumbnail, thumbnail is positioned left. */
+                order: -3 !important;
+            }
+        }
+
+        &--right {
+            /* Default placement already set on `.titleAuthorSummaryDate`.
+               Including this comment primarily for discoverability. */
+        }
+    }
     .yl-article-video-iframe {
         margin-top: var(--yl-m-sm);
     }
@@ -3646,7 +3659,7 @@ body.youlag-inactive:not(.reader) main#stream {
                 }
 
                 &.titleAuthorSummaryDate {
-                    order: -2; /* Place headline and description next to thumbnail. */
+                    order: -4; /* Place headline and description before thumbnail. */
                     display: flex;
                     align-items: flex-start;
                     justify-content: flex-start;
@@ -5803,6 +5816,10 @@ body.youlag-tags-modal-open {
 
 .yt-flex-1 {
     flex: 1;
+}
+
+.yl-gap-2xs {
+    gap: var(--yl-space-2xs);
 }
 
 .yl-gap-3xs {

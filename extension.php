@@ -13,6 +13,16 @@ class YoulagExtension extends Minz_Extension
      */
     public $yl_related_videos = "watch_later";
     /**
+     * Position of thumbnail in relationship to article headline.
+     * @var string
+     */
+    public $yl_article_thumbnail_placement = "right";
+    /**
+     * Whether article uses split pane view.
+     * @var bool
+     */
+    public $yl_article_split_view_enabled = true;
+    /**
      * Set two-column grid layout on viewport width ≤ 600px.
      * @var bool
      */
@@ -121,27 +131,28 @@ class YoulagExtension extends Minz_Extension
             18,
         );
         $this->registerHook("nav_entries", [$this, "setArticleSplitView"], 19);
+        $this->registerHook("nav_entries", [$this, "setArticleThumbnailPlacement"], 20);
         $this->registerHook(
             "nav_entries",
             [$this, "setFeedViewLayoutMobileGrid"],
-            20,
-        );
-        $this->registerHook(
-            "nav_entries",
-            [$this, "setFeedThumbnailScreencapEnabled"],
             21,
         );
         $this->registerHook(
             "nav_entries",
-            [$this, "setWatchLaterCategoryFilterEnabled"],
+            [$this, "setFeedThumbnailScreencapEnabled"],
             22,
         );
         $this->registerHook(
             "nav_entries",
-            [$this, "setUpdateCheckEnabled"],
+            [$this, "setWatchLaterCategoryFilterEnabled"],
             23,
         );
-        $this->registerHook("nav_entries", [$this, "setBaseUrl"], 24);
+        $this->registerHook(
+            "nav_entries",
+            [$this, "setUpdateCheckEnabled"],
+            24,
+        );
+        $this->registerHook("nav_entries", [$this, "setBaseUrl"], 25);
         if (Minz_Request::paramString("get", "") === "s") {
             // Watch later page: add category filter
             $this->registerHook(
@@ -255,6 +266,14 @@ class YoulagExtension extends Minz_Extension
                 ? true
                 : $ylArticleSplitViewEnabled;
 
+        $ylArticleThumbnailPlacement = FreshRSS_Context::userConf()->attributeString(
+            "yl_article_thumbnail_placement",
+        );
+        $this->yl_article_thumbnail_placement =
+            $ylArticleThumbnailPlacement === null
+                ? "right"
+                : $ylArticleThumbnailPlacement;
+
         $feedViewMobileGridEnabled = FreshRSS_Context::userConf()->attributeBool(
             "yl_feed_view_mobile_grid_enabled",
         );
@@ -356,6 +375,14 @@ class YoulagExtension extends Minz_Extension
         $enabled = $this->yl_article_split_view_enabled ? "true" : "false";
         return '<div id="yl_article_split_view_enabled" data-yl-article-split-view-enabled="' .
             $enabled .
+            '"></div>';
+    }
+
+    public function setArticleThumbnailPlacement(): string
+    {
+        $placement = htmlspecialchars(string: $this->yl_article_thumbnail_placement, flags: ENT_QUOTES);
+        return '<div id="yl_article_thumbnail_placement" data-yl-article-thumbnail-placement="' .
+            $placement .
             '"></div>';
     }
 
@@ -1095,6 +1122,16 @@ class YoulagExtension extends Minz_Extension
             FreshRSS_Context::userConf()->_attribute(
                 "yl_article_split_view_enabled",
                 $articleSplitViewEnabled,
+            );
+
+            // Article thumbnail placement
+            $articleThumbnailPlacement = Minz_Request::paramString(
+                "yl_article_thumbnail_placement",
+                "right",
+            );
+            FreshRSS_Context::userConf()->_attribute(
+                "yl_article_thumbnail_placement",
+                $articleThumbnailPlacement,
             );
 
             // Feed view mobile grid layout
