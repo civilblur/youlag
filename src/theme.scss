@@ -1390,7 +1390,7 @@ main#stream {
     }
 }
 
-.youlag-inactive {
+.youlag-inactive:not(.yl-article-split-view) {
     &.yl-page-home,
     &.yl-page-important,
     &.yl-page-watch_later,

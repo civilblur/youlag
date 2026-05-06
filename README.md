@@ -1,7 +1,8 @@
 <h1 align="center">
   <img src=".github/icon.png" alt="youlag icon" width="180">
 
-   Youlag
+Youlag
+
 </h1>
 
 <h2 align="center">
@@ -9,12 +10,12 @@
 </h2>
 
 <center>
-   <img src=".github/capture-1.jpg" alt="youlag video mode" width="1000">
-   <img src=".github/capture-2.jpg" alt="youlag article view" width="1000">
+   <img src=".github/preview-1.jpg" alt="youlag video mode" width="1000">
+   <img src=".github/preview-2.jpg" alt="youlag article view" width="1000">
 </center>
 
-
 ## About
+
 Youlag is an extension for [FreshRSS](https://github.com/FreshRSS/FreshRSS), allowing you to browse YouTube and article RSS feeds through a modernized design that incorporates quality-of-life features.
 
 It is designed for a distraction-free experience, for people who want to be intentional about their viewing habits.
@@ -24,6 +25,7 @@ It is designed for a distraction-free experience, for people who want to be inte
 Subscribe to creators via RSS without a Google account, stay free of algorithms, and access your subscriptions from any device. Youlag can also be used just for article reading.
 
 ## Table of Content
+
 - [Features](#features)
 - [Install](#install)
 - [Update](#update)
@@ -63,7 +65,7 @@ Before installing Youlag, please make sure to update FreshRSS to `1.28.0` or hig
 1. Move the `xExtension-Youlag` folder into your FreshRSS installation: `freshrss/extensions/`.
 
 1. In FreshRSS, go to `Settings → Extensions` and enable the `Youlag` extension.
-    - Click the gear (⚙️) icon to explore the available settings.
+   - Click the gear (⚙️) icon to explore the available settings.
 
 ## Update
 
@@ -72,17 +74,18 @@ Before installing Youlag, please make sure to update FreshRSS to `1.28.0` or hig
 1. Repeat the same steps from the ["Install" instructions](#install).
 
 ## Additional resources
+
 - [Video Background Play Fix](https://addons.mozilla.org/en-US/firefox/addon/video-background-play-fix/)
-    - Enables background playback of YouTube videos in Firefox-based browsers on Android devices.
+  - Enables background playback of YouTube videos in Firefox-based browsers on Android devices.
 - [Invidious](https://invidious.io/)
-    - An open source alternative front-end to YouTube.
+  - An open source alternative front-end to YouTube.
 
 ## Contribution
 
 1. Fork the `dev` branch.
 1. Install dependencies: `npm i`.
 1. Run `npm run watch` to compile files to `/static`.
-    1. For local development, see `.env.example` to learn how you can sync your changes directly to FreshRSS' extensions folder.
+   1. For local development, see `.env.example` to learn how you can sync your changes directly to FreshRSS' extensions folder.
 1. Run `npm run build` to generate a production build to `/dist`.
 
 ## Attributions
