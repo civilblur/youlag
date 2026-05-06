@@ -13,7 +13,7 @@ class YoulagExtension extends Minz_Extension
      */
     public $yl_related_videos = "watch_later";
     /**
-     * Position of thumbnail in relationship to article headline.
+     * Position of thumbnail relative to headline.
      * @var string
      */
     public $yl_article_thumbnail_placement = "right";
@@ -131,7 +131,11 @@ class YoulagExtension extends Minz_Extension
             18,
         );
         $this->registerHook("nav_entries", [$this, "setArticleSplitView"], 19);
-        $this->registerHook("nav_entries", [$this, "setArticleThumbnailPlacement"], 20);
+        $this->registerHook(
+            "nav_entries",
+            [$this, "setArticleThumbnailPlacement"],
+            20,
+        );
         $this->registerHook(
             "nav_entries",
             [$this, "setFeedViewLayoutMobileGrid"],
@@ -380,7 +384,10 @@ class YoulagExtension extends Minz_Extension
 
     public function setArticleThumbnailPlacement(): string
     {
-        $placement = htmlspecialchars(string: $this->yl_article_thumbnail_placement, flags: ENT_QUOTES);
+        $placement = htmlspecialchars(
+            string: $this->yl_article_thumbnail_placement,
+            flags: ENT_QUOTES,
+        );
         return '<div id="yl_article_thumbnail_placement" data-yl-article-thumbnail-placement="' .
             $placement .
             '"></div>';

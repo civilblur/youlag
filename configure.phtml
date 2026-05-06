@@ -233,20 +233,24 @@ declare(strict_types=1)
          <div class="inline-block">
              Thumbnail placement
            <div class="yl-form-group-help">
-             Position of thumbnail in relationship to article headline.
+               Position of thumbnail relative to headline.
            </div>
          </div>
          <div class="flex yl-gap-2xs">
              <label for="yl_article_thumbnail_placement_left" class="flex">
              <input type="radio" id="yl_article_thumbnail_placement_left" name="yl_article_thumbnail_placement" value="left" class="mb-auto"
-                 <?php echo $this->yl_article_thumbnail_placement === "left" ? ' checked="checked"' : ""; ?>>
+                 <?php echo $this->yl_article_thumbnail_placement === "left"
+                     ? ' checked="checked"'
+                     : ""; ?>>
              <div class="inline-block">
                  Left
              </div>
              </label>
              <label for="yl_article_thumbnail_placement_right" class="flex">
              <input type="radio" id="yl_article_thumbnail_placement_right" name="yl_article_thumbnail_placement" value="right" class="mb-auto"
-                 <?php echo $this->yl_article_thumbnail_placement === "right" ? ' checked="checked"' : ""; ?>>
+                 <?php echo $this->yl_article_thumbnail_placement === "right"
+                     ? ' checked="checked"'
+                     : ""; ?>>
              <div class="inline-block">
                  Right
              </div>
