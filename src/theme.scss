@@ -3088,6 +3088,11 @@ main.post {
         }
     }
 
+    a.about {
+        /* About link shown for unauthenticated users. */
+        display: none;
+    }
+
     a.toggle_aside {
         border: none;
     }
