@@ -47,8 +47,9 @@ Subscribe to creators via RSS without a Google account, stay free of algorithms,
   - Switch between YouTube and Invidious playback sources
   - Hide video-description intros with links to avoid sponsored content
 - 🖥️ **Desktop & Mobile**
-  - Mobile: Swipe down in video mode to activate miniplayer
-  - Mobile: Swipe to open/close sidebar
+  - Article split view: Browse and view articles side by side
+  - Swipe down in video mode to activate miniplayer
+  - Swipe to open/close sidebar
   - Use `Esc` key or the browser's `Back` navigation to exit videos and articles
 - 📰 **FreshRSS features**
   - Subscribe to YouTube creators without needing an account
