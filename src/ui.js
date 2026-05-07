@@ -205,7 +205,7 @@ function setupArticleClickListener() {
   }
 
   if (isArticleSplitViewEnabled()) {
-    if (isMarkReadOnScrollEnabled()) {
+    if (isMarkReadOnScrollEnabled() && !context.anonymous) {
       // Mark article as read when scrolling past, if FreshRSS `auto_mark_scroll` setting is enabled
       onArticleEntryVisibility({
         onLeave: (articleEntry) => {
