@@ -520,21 +520,13 @@ function setupModalVideoEventListeners(videoObject) {
 
 function restoreModalEventListeners() {
   // Restore modal event listeners after tab suspension.
-  // Primarily to address how moobile devices handles tab suspension,
+  // Primarily to address how mobile devices handles tab suspension.
 
   const modal = getModalVideo();
   if (!modal) return;
 
-  // Remove all existing modal event listeners before reattaching new ones, to prevent stacking.
-  if (modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
-    for (const { el, type, handler } of modal._videoModalListeners) {
-      if (el && type && handler) {
-        el.removeEventListener(type, handler);
-      }
-    }
-    modal._videoModalListeners.length = 0;
-  }
-
+  // Validate state before touching any listeners — guards must pass before removal,
+  // otherwise the modal is left with no handlers if any guard fails mid-function.
   let videoQueue; // Localstorage: youlagVideoQueue
   try {
     videoQueue = JSON.parse(
@@ -553,19 +545,31 @@ function restoreModalEventListeners() {
   const videoObject = videoQueue.queue.find((v) => v.entryId === entryId);
   if (!videoObject) return;
 
+  // Remove all existing modal event listeners before reattaching new ones, to prevent stacking.
+  if (modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
+    for (const { el, type, handler } of modal._videoModalListeners) {
+      if (el && type && handler) {
+        el.removeEventListener(type, handler);
+      }
+    }
+    modal._videoModalListeners.length = 0;
+  }
+
   setupModalVideoEventListeners(videoObject);
   setupModalVideoControlEventListeners();
 
-  // Related videos render fallback
-  // TODO: In some cases when opening up a direct link in a new tab, the related video may not render.
   const relatedContainer = modal.querySelector(
     `#${app.modal.id.relatedContainer}`,
   );
-  if (
-    getRelatedVideosSetting() !== "none" &&
-    relatedContainer?.classList.contains("display-none")
-  ) {
-    renderRelatedVideos(videoObject);
+  if (getRelatedVideosSetting() !== "none" && relatedContainer) {
+    if (relatedContainer.classList.contains("display-none")) {
+      // Related videos haven't loaded yet — fetch and render them.
+      // TODO: In some cases when opening up a direct link in a new tab, the related video may not render.
+      renderRelatedVideos(videoObject);
+    } else {
+      // Related videos are already visible — only re-register the click handler (no refetch needed).
+      setupRelatedVideosClickListener();
+    }
   }
 }
 
@@ -644,6 +648,52 @@ function resetModalHistoryState() {
     removeVideoParamUrl();
     resetHistoryState();
   }
+}
+
+function setupRelatedVideosClickListener() {
+  // Register click handler for related videos in video modal.
+  const modal = getModalVideo();
+  if (!modal) return;
+
+  const relatedVideosContainer = modal.querySelector(
+    `#${app.modal.id.relatedContainer}`,
+  );
+  if (!relatedVideosContainer) return;
+
+  if (!modal._videoModalListeners) modal._videoModalListeners = [];
+
+  // Remove any existing handler for the video modal before attaching a fresh one.
+  modal._videoModalListeners = modal._videoModalListeners.filter((listener) => {
+    if (listener.type === "click" && listener.el === relatedVideosContainer) {
+      listener.el.removeEventListener(listener.type, listener.handler);
+      return false;
+    }
+    return true;
+  });
+
+  const relatedClickHandler = function (e) {
+    if (e.target.closest(".youlag-related-video-item__link")) {
+      e.preventDefault();
+    }
+    const relatedItem = e.target.closest(
+      `.${app.modal.class.relatedVideoEntry}`,
+    );
+    if (!relatedItem) return;
+    const feedItem = relatedItem.querySelector(
+      `.${app.modal.class.relatedVideoEntryHTML} > ${app.frss.el.entry}`,
+    );
+    if (feedItem) {
+      const modal = getModalVideo();
+      if (modal) modal.scrollTo({ top: 0 });
+      handleActiveVideo(feedItem);
+    }
+  };
+  relatedVideosContainer.addEventListener("click", relatedClickHandler);
+  modal._videoModalListeners.push({
+    el: relatedVideosContainer,
+    type: "click",
+    handler: relatedClickHandler,
+  });
 }
 
 function renderRelatedVideos(videoObject) {
@@ -746,48 +796,7 @@ function renderRelatedVideos(videoObject) {
       container.classList.remove("display-none");
     });
 
-    // Remove any previous relatedVideosContainer click listeners and attach new ones.
-    if (!modal._videoModalListeners) modal._videoModalListeners = [];
-    modal._videoModalListeners = modal._videoModalListeners.filter(
-      (listener) => {
-        if (
-          listener.type === "click" &&
-          listener.el === relatedVideosContainer
-        ) {
-          listener.el.removeEventListener(listener.type, listener.handler);
-          return false;
-        }
-        return true;
-      },
-    );
-
-    // Attach and track the new click handler
-    const relatedClickHandler = function (e) {
-      if (e.target.closest(".youlag-related-video-item__link")) {
-        // The anchor on the card is primarily to allow right click to open in new tab, so ignore clicks on the anchor itself.
-        e.preventDefault();
-      }
-      const relatedItem = e.target.closest(
-        `.${app.modal.class.relatedVideoEntry}`,
-      );
-      if (!relatedItem) return;
-      const feedItem = relatedItem.querySelector(
-        `.${app.modal.class.relatedVideoEntryHTML} > ${app.frss.el.entry}`,
-      );
-      if (feedItem) {
-        const modal = getModalVideo();
-        if (modal) {
-          modal.scrollTo({ top: 0 });
-        }
-        handleActiveVideo(feedItem);
-      }
-    };
-    relatedVideosContainer.addEventListener("click", relatedClickHandler);
-    modal._videoModalListeners.push({
-      el: relatedVideosContainer,
-      type: "click",
-      handler: relatedClickHandler,
-    });
+    setupRelatedVideosClickListener();
   }
 
   appendRelatedVideos(videoObject.entryId, videoObject.authorId);
