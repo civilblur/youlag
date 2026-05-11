@@ -57,7 +57,7 @@ Subscribe to creators via RSS without a Google account, stay free of algorithms,
 
 ## Install
 
-Before installing Youlag, please make sure to update FreshRSS to `1.28.0` or higher.
+Before installing Youlag, please make sure to update FreshRSS to `1.29.0` or higher.
 
 1. Download the [latest release here](https://github.com/civilblur/youlag/releases).
 
