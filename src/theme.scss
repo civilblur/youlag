@@ -1871,6 +1871,7 @@ body.youlag-active:not(.reader) main#stream {
         flex: 1;
         background-color: unset;
         display: inline-flex;
+        align-self: stretch;
         height: auto;
         justify-content: center;
         border-radius: 12px;
