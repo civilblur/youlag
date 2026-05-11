@@ -403,8 +403,18 @@ function setupSidenavStateListener() {
   const sidenav = document.getElementById("aside_feed");
   if (!sidenav) return;
   setSidenavState();
+
+  // Update sidenav state when there has been a class change
   const observer = new MutationObserver(setSidenavState);
   observer.observe(sidenav, { attributes: true, attributeFilter: ["class"] });
+
+  // Update sidenav state after CSS transitions complete. FreshRSS introduces width animation on v1.29.0.
+  sidenav.addEventListener("transitionend", setSidenavState);
+
+  // Update sidenav when going from desktop to mobile viewport width
+  window
+    .matchMedia(`(max-width: ${app.breakpoints.mobile_max}px)`)
+    .addEventListener("change", setSidenavState);
 }
 
 function handleSliderHashChange() {

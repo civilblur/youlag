@@ -644,15 +644,20 @@ body {
   }
 }
 
+body.youlag-sidenav--expanded:has(
+    #stream > #new-article + .prompt.alert.alert-warn
+  )
+  .nav_menu {
+  /* 
+   1. Accommmodate fixed sidenav expanded state.
+   2. For no article empty state, `#yl_nav_menu_container` is not available, thus target `.nav_menu` */
+  padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm));
+}
+
 .youlag-sidenav--expanded {
   nav.aside.aside_feed {
     /* Position and adjust behavior of "Subscriptions management" button */
     text-align: unset;
-
-    #yl_nav_menu_container {
-      /* Accommmodate fixed sidenav expanded state. */
-      padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm));
-    }
 
     /* Manage feeds ("Subscriptions management") button */
     .stick.configure-feeds {
@@ -2238,12 +2243,12 @@ html {
     }
   }
 
-  .yl-page-home,
-  .yl-page-important,
-  .yl-page-watch_later,
-  .yl-page-playlists,
-  .yl-page-category,
-  .yl-page-search_results {
+  body.yl-page-home,
+  body.yl-page-important,
+  body.yl-page-watch_later,
+  body.yl-page-playlists,
+  body.yl-page-category,
+  body.yl-page-search_results {
     /* Only implement fixed sidebar for feed pages (to exclude other pages like settings. */
 
     &.youlag-sidenav--expanded {
