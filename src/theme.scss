@@ -644,262 +644,262 @@ body {
   }
 }
 
-nav.aside.aside_feed {
-  /* Position and adjust behavior of "Subscriptions management" button */
-  text-align: unset;
+.youlag-sidenav--expanded {
+  nav.aside.aside_feed {
+    /* Position and adjust behavior of "Subscriptions management" button */
+    text-align: unset;
 
-  &.visible {
-    & ~ #yl_nav_menu_container {
+    #yl_nav_menu_container {
       /* Accommmodate fixed sidenav expanded state. */
       padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm));
     }
-  }
 
-  /* Manage feeds ("Subscriptions management") button */
-  .stick.configure-feeds {
-    position: relative;
-
-    &:before {
-      content: "Manage feeds";
-      position: absolute;
-      top: 50%;
-      /* The 21px represents the padding and margin-left around the button. */
-      left: calc(
-        21px + var(--yl-sidenav-icon-size) + var(--yl-sidenav-icon-label-gap)
-      );
-      transform: translateY(-50%);
-      z-index: 1;
-      font-weight: normal;
-      pointer-events: none;
-    }
-
-    &:after {
-      /* RSS icon */
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 21px;
-      transform: translateY(-50%);
-      z-index: 1;
-      filter: invert(1);
-      width: var(--yl-sidenav-icon-size);
-      height: var(--yl-sidenav-icon-size);
-      pointer-events: none;
-      background-repeat: no-repeat;
-      background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0OTAgNDkwIj48cGF0aCBkPSJNNDY4LjIgNDg5LjVIMjAuOEM5LjQgNDg5LjUgMCA0ODAuMSAwIDQ2OC43VjIxLjNDMCA5LjkgOS40LjUgMjAuOC41aDQ0OC40QzQ4MC42LjUgNDkwIDkuOSA0OTAgMjEuM3Y0NDguNGMtMSAxMC40LTEwLjQgMTkuOC0yMS44IDE5Ljh6TTQwLjYgNDQ4LjloNDA3LjhWNDEuMUg0MC42djQwNy44eiIvPjxwYXRoIGQ9Ik0yNjAuMSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTc3LTYyLjQtMTM5LjQtMTM5LjQtMTM5LjQtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOFM4OC41IDIxOCA5OS45IDIxOGM5OS45IDAgMTgxIDgxLjEgMTgxIDE4MSAwIDExLjQtOS40IDIwLjgtMjAuOCAyMC44eiIvPjxwYXRoIGQ9Ik0zNDcuNSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTEyNC44LTEwMi0yMjcuOC0yMjcuOC0yMjcuOC0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44czkuNC0yMC44IDIwLjgtMjAuOGMxNDcuNyAwIDI2OC40IDEyMC43IDI2OC40IDI2OC40IDEgMTIuNC04LjQgMjEuOC0xOS44IDIxLjh6TTE3My43IDQxOS44Yy0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44IDAtMjkuMS0yMy45LTUzLjEtNTMuMS01My4xLTExLjQgMC0yMC44LTkuNC0yMC44LTIwLjhzOS40LTIwLjggMjAuOC0yMC44YzUyIDAgOTQuNyA0Mi43IDk0LjcgOTQuNyAwIDExLjQtOS4zIDIwLjgtMjAuOCAyMC44eiIvPjwvc3ZnPg==);
-    }
-
-    #btn-subscription,
-    #btn-add {
-      transition: 0s;
-    }
-
-    #btn-subscription:hover,
-    #btn-subscription:hover ~ #btn-add,
-    #btn-add:hover {
-      background: var(--yl-color-gradient-surface-3);
-    }
-
-    #btn-add {
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
+    /* Manage feeds ("Subscriptions management") button */
+    .stick.configure-feeds {
+      position: relative;
 
       &:before {
-        /* HACK: When hovering #btn-add, also highlight #btn-subscription */
-        content: "";
-        width: calc(100% - 68px);
-        height: 100%;
-        background: #303136;
-        left: 8px;
+        content: "Manage feeds";
         position: absolute;
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
+        top: 50%;
+        /* The 21px represents the padding and margin-left around the button. */
+        left: calc(
+          21px + var(--yl-sidenav-icon-size) + var(--yl-sidenav-icon-label-gap)
+        );
+        transform: translateY(-50%);
+        z-index: 1;
+        font-weight: normal;
         pointer-events: none;
-        opacity: 0;
+      }
+
+      &:after {
+        /* RSS icon */
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 21px;
+        transform: translateY(-50%);
+        z-index: 1;
+        filter: invert(1);
+        width: var(--yl-sidenav-icon-size);
+        height: var(--yl-sidenav-icon-size);
+        pointer-events: none;
+        background-repeat: no-repeat;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0OTAgNDkwIj48cGF0aCBkPSJNNDY4LjIgNDg5LjVIMjAuOEM5LjQgNDg5LjUgMCA0ODAuMSAwIDQ2OC43VjIxLjNDMCA5LjkgOS40LjUgMjAuOC41aDQ0OC40QzQ4MC42LjUgNDkwIDkuOSA0OTAgMjEuM3Y0NDguNGMtMSAxMC40LTEwLjQgMTkuOC0yMS44IDE5Ljh6TTQwLjYgNDQ4LjloNDA3LjhWNDEuMUg0MC42djQwNy44eiIvPjxwYXRoIGQ9Ik0yNjAuMSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTc3LTYyLjQtMTM5LjQtMTM5LjQtMTM5LjQtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOFM4OC41IDIxOCA5OS45IDIxOGM5OS45IDAgMTgxIDgxLjEgMTgxIDE4MSAwIDExLjQtOS40IDIwLjgtMjAuOCAyMC44eiIvPjxwYXRoIGQ9Ik0zNDcuNSA0MTkuOGMtMTEuNCAwLTIwLjgtOS40LTIwLjgtMjAuOCAwLTEyNC44LTEwMi0yMjcuOC0yMjcuOC0yMjcuOC0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44czkuNC0yMC44IDIwLjgtMjAuOGMxNDcuNyAwIDI2OC40IDEyMC43IDI2OC40IDI2OC40IDEgMTIuNC04LjQgMjEuOC0xOS44IDIxLjh6TTE3My43IDQxOS44Yy0xMS40IDAtMjAuOC05LjQtMjAuOC0yMC44IDAtMjkuMS0yMy45LTUzLjEtNTMuMS01My4xLTExLjQgMC0yMC44LTkuNC0yMC44LTIwLjhzOS40LTIwLjggMjAuOC0yMC44YzUyIDAgOTQuNyA0Mi43IDk0LjcgOTQuNyAwIDExLjQtOS4zIDIwLjgtMjAuOCAyMC44eiIvPjwvc3ZnPg==);
+      }
+
+      #btn-subscription,
+      #btn-add {
         transition: 0s;
       }
 
-      &:hover {
-        background-color: #424348;
+      #btn-subscription:hover,
+      #btn-subscription:hover ~ #btn-add,
+      #btn-add:hover {
+        background: var(--yl-color-gradient-surface-3);
+      }
+
+      #btn-add {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
 
         &:before {
-          opacity: 1;
+          /* HACK: When hovering #btn-add, also highlight #btn-subscription */
+          content: "";
+          width: calc(100% - 68px);
+          height: 100%;
+          background: #303136;
+          left: 8px;
+          position: absolute;
+          border-top-left-radius: 8px;
+          border-bottom-left-radius: 8px;
+          pointer-events: none;
+          opacity: 0;
+          transition: 0s;
+        }
+
+        &:hover {
+          background-color: #424348;
+
+          &:before {
+            opacity: 1;
+          }
         }
       }
-    }
 
-    #btn-subscription {
-      /* Hide text, later replace with psuedo element :before text */
-      font-size: 0;
-      flex: 1;
-      height: 46px;
-      margin-left: 8px;
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
-      color: var(--yl-color-text-default-emphasis);
-    }
-
-    #btn-subscription,
-    #btn-add {
-      text-transform: capitalize;
-      font-weight: normal;
-      display: flex;
-      align-items: center;
-      background: none;
-      box-sizing: border-box;
-    }
-
-    #btn-add {
-      font-size: var(--yl-text-sm);
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-      background: none;
-      border: none;
-      width: 60px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: var(--yl-color-text-default-emphasis);
-
-      .icon {
-        filter: brightness(3);
-        height: 1.5rem;
+      #btn-subscription {
+        /* Hide text, later replace with psuedo element :before text */
+        font-size: 0;
+        flex: 1;
+        height: 46px;
+        margin-left: 8px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        color: var(--yl-color-text-default-emphasis);
       }
 
-      &:hover {
-        background-color: #424348;
-      }
-    }
-  }
-
-  #mark-read-aside ul#sidebar {
-    .tree-folder.category {
-      .tree-folder-title .title {
+      #btn-subscription,
+      #btn-add {
+        text-transform: capitalize;
         font-weight: normal;
+        display: flex;
+        align-items: center;
         background: none;
+        box-sizing: border-box;
+      }
+
+      #btn-add {
+        font-size: var(--yl-text-sm);
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        background: none;
+        border: none;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--yl-color-text-default-emphasis);
+
+        .icon {
+          filter: brightness(3);
+          height: 1.5rem;
+        }
+
+        &:hover {
+          background-color: #424348;
+        }
       }
     }
 
-    & > li.tree-folder ul.tree-folder-items li.item.feed > .dropdown {
-      margin-right: 0;
-    }
-
-    /* Subscriptions ("Main stream") button */
-    .tree-folder.category.all {
-      .tree-folder-title .title {
-        font-size: 0;
-
-        &:before {
-          content: "Subscriptions";
+    #mark-read-aside ul#sidebar {
+      .tree-folder.category {
+        .tree-folder-title .title {
+          font-weight: normal;
+          background: none;
         }
       }
 
-      .icon {
-        opacity: 0;
-        pointer-events: none;
+      & > li.tree-folder ul.tree-folder-items li.item.feed > .dropdown {
+        margin-right: 0;
       }
 
-      .tree-folder-title:before {
-        /* Video icon */
-        content: "";
-        width: var(--yl-sidenav-icon-size);
-        height: var(--yl-sidenav-icon-size);
-        position: absolute;
-        filter: invert(1);
-        pointer-events: none;
-        background-repeat: no-repeat;
-        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgODAwIj48cGF0aCBkPSJNNzY2LjE5Ni43MzVIMzMuOTY2QzE1LjM1LjczNSAwIDE2LjA4NSAwIDM0Ljd2NjAxLjQyN2MwIDE4LjYxNiAxNS4zNSAzMy45NjcgMzMuOTY2IDMzLjk2N2g3MzAuNDMzYzE4LjYxNiAwIDMzLjk2Ni0xNS4zNTEgMzUuNTk5LTMyLjMzNFYzNC43MDFDODAwLjE2MiAxNi4wODUgNzg0LjgxMi43MzUgNzY2LjE5Ni43MzVabS0zMy45NjYgNjAzLjA2SDY2LjNWNjcuMDM0aDY2NS45M3Y1MzYuNzYxWk03NjYuMTk2IDczMS4zMzJIMzMuOTY2QzE1LjM1IDczMS4zMzIgMCA3NDYuNjgyIDAgNzY1LjI5OHMxNS4zNSAzMy45NjYgMzMuOTY2IDMzLjk2Nmg3MzAuNDMzYzE4LjYxNiAwIDM1LjU5OS0xNS4zNSAzNS41OTktMzMuOTY2LjE2NC0xOC43OC0xNS4xODYtMzMuOTY2LTMzLjgwMi0zMy45NjZaIi8+PHBhdGggZD0iTTUxNi40MDggMzA4LjIwOCAzNDYuNjEyIDE5NC40MTJjLTIyLjIwNC0xNC41My01MC45MzkgMi4xMjMtNTAuOTM5IDI3LjEwMnYyMjcuNTkyYzAgMjYuMjg2IDI4LjczNSA0MS40NjkgNTAuOTM5IDI3LjEwMmwxNjkuNzk2LTExMy43OTZjMTUuMTg0LTguMTYzIDI0LjY1My0zNi4yNDUgMC01NC4yMDRabS0xNTQuNjEyIDc4LjA0MVYyODQuMzcxbDc2LjQwOCA1MC45MzktNzYuNDA4IDUwLjkzOVoiLz48L3N2Zz4=);
-      }
-    }
+      /* Subscriptions ("Main stream") button */
+      .tree-folder.category.all {
+        .tree-folder-title .title {
+          font-size: 0;
 
-    /* Important feeds button */
-    .tree-folder.category.important {
-      .tree-folder-title .title {
-        font-size: 0;
+          &:before {
+            content: "Subscriptions";
+          }
+        }
 
-        &:before {
-          content: "Important";
+        .icon {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .tree-folder-title:before {
+          /* Video icon */
+          content: "";
+          width: var(--yl-sidenav-icon-size);
+          height: var(--yl-sidenav-icon-size);
+          position: absolute;
+          filter: invert(1);
+          pointer-events: none;
+          background-repeat: no-repeat;
+          background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgODAwIj48cGF0aCBkPSJNNzY2LjE5Ni43MzVIMzMuOTY2QzE1LjM1LjczNSAwIDE2LjA4NSAwIDM0Ljd2NjAxLjQyN2MwIDE4LjYxNiAxNS4zNSAzMy45NjcgMzMuOTY2IDMzLjk2N2g3MzAuNDMzYzE4LjYxNiAwIDMzLjk2Ni0xNS4zNTEgMzUuNTk5LTMyLjMzNFYzNC43MDFDODAwLjE2MiAxNi4wODUgNzg0LjgxMi43MzUgNzY2LjE5Ni43MzVabS0zMy45NjYgNjAzLjA2SDY2LjNWNjcuMDM0aDY2NS45M3Y1MzYuNzYxWk03NjYuMTk2IDczMS4zMzJIMzMuOTY2QzE1LjM1IDczMS4zMzIgMCA3NDYuNjgyIDAgNzY1LjI5OHMxNS4zNSAzMy45NjYgMzMuOTY2IDMzLjk2Nmg3MzAuNDMzYzE4LjYxNiAwIDM1LjU5OS0xNS4zNSAzNS41OTktMzMuOTY2LjE2NC0xOC43OC0xNS4xODYtMzMuOTY2LTMzLjgwMi0zMy45NjZaIi8+PHBhdGggZD0iTTUxNi40MDggMzA4LjIwOCAzNDYuNjEyIDE5NC40MTJjLTIyLjIwNC0xNC41My01MC45MzkgMi4xMjMtNTAuOTM5IDI3LjEwMnYyMjcuNTkyYzAgMjYuMjg2IDI4LjczNSA0MS40NjkgNTAuOTM5IDI3LjEwMmwxNjkuNzk2LTExMy43OTZjMTUuMTg0LTguMTYzIDI0LjY1My0zNi4yNDUgMC01NC4yMDRabS0xNTQuNjEyIDc4LjA0MVYyODQuMzcxbDc2LjQwOCA1MC45MzktNzYuNDA4IDUwLjkzOVoiLz48L3N2Zz4=);
         }
       }
 
-      .icon {
-        opacity: 0;
-        pointer-events: none;
+      /* Important feeds button */
+      .tree-folder.category.important {
+        .tree-folder-title .title {
+          font-size: 0;
+
+          &:before {
+            content: "Important";
+          }
+        }
+
+        .icon {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .tree-folder-title:before {
+          /* Bell icon */
+          content: "";
+          width: var(--yl-sidenav-icon-size);
+          height: var(--yl-sidenav-icon-size);
+          position: absolute;
+          filter: invert(1);
+          background-repeat: no-repeat;
+          background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0ODcuNzcgNDg3Ljc3Ij48cGF0aCBkPSJNNDg2LjIgMjEwLjI2Yy02LjMtMTguOC0yNi4xLTIxLjktNDQuOC0yNS0xOS44LTMuMS00Mi43LTYuMy01OS40LTI0LTc2LjEtODMuNC0xNDEuOC0xMDEuMS0xODMuNS0xMDIuMS0xNy43LS41LTM0LjYgMi4yLTUwLjMgNy44LTMuOC0zNy40LTM1LjUtNjYuOC03My45LTY2LjhDMzMuMy4xNiAwIDMzLjQ2IDAgNzQuNDZjMCAzOC44IDI5LjggNzAuNyA2Ny43IDc0LTUuNiAxNS44LTguMyAzMi42LTcuOCA1MC40IDEgNDEuNyAxOS44IDEwNi4zIDEwMi4yIDE4My41IDE3LjcgMTYuNyAyMC45IDM5LjYgMjQgNTkuNCAzLjEgMTguOCA2IDM5LjUgMjUgNDQuOCAyMC4xIDUuNiA0Ny0xMSA5NC01NC41IDE3LjEgMTYuMyA0MC4yIDI1LjkgNjQuMyAyNS45IDUxLjIgMCA5Mi45LTQxLjcgOTIuOS05Mi45IDAtMjQuNi05LjgtNDgtMjYuOC02NS4zIDQ5LjUtNTQgNTYuMS03MS43IDUwLjctODkuNXpNNDAuOSA3NC40NmMwLTE4LjQgMTQuOS0zMy4zIDMzLjMtMzMuM3MzMy4zIDE0LjkgMzMuMyAzMy4zLTE0LjkgMzMuMy0zMy4zIDMzLjMtMzMuMy0xNC45LTMzLjMtMzMuM3ptMzI4LjQgMzQyLjVjLTEzIDAtMjUuMi00LjgtMzQuNi0xMy4xIDExLjEtMTEuMSA2My02NS4xIDcyLjQtNzQuMyA4LjkgOS41IDE0LjEgMjIuMiAxNC4xIDM1LjUgMCAyOC42LTIzLjMgNTEuOS01MS45IDUxLjl6bS0xNDIuNyAyNy45YzAtMy4xLTkuNC02NS43LTM3LjUtOTEuNy01Ny4zLTUzLjItODcuNi0xMDYuMy04OC42LTE1NC4zIDAtMjguMSAxOC42LTEwMC4yIDk4LTk5IDQ4IC43IDEwMS4xIDMxLjMgMTU0LjMgODguNiAyNi4xIDI4LjEgODguNiAzNy41IDkxLjcgMzcuNS0xNC43IDI2LjgtMTkyIDIwNC42LTIxNy45IDIxOC45eiIvPjwvc3ZnPg==);
+        }
       }
 
-      .tree-folder-title:before {
-        /* Bell icon */
-        content: "";
-        width: var(--yl-sidenav-icon-size);
-        height: var(--yl-sidenav-icon-size);
-        position: absolute;
-        filter: invert(1);
-        background-repeat: no-repeat;
-        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0ODcuNzcgNDg3Ljc3Ij48cGF0aCBkPSJNNDg2LjIgMjEwLjI2Yy02LjMtMTguOC0yNi4xLTIxLjktNDQuOC0yNS0xOS44LTMuMS00Mi43LTYuMy01OS40LTI0LTc2LjEtODMuNC0xNDEuOC0xMDEuMS0xODMuNS0xMDIuMS0xNy43LS41LTM0LjYgMi4yLTUwLjMgNy44LTMuOC0zNy40LTM1LjUtNjYuOC03My45LTY2LjhDMzMuMy4xNiAwIDMzLjQ2IDAgNzQuNDZjMCAzOC44IDI5LjggNzAuNyA2Ny43IDc0LTUuNiAxNS44LTguMyAzMi42LTcuOCA1MC40IDEgNDEuNyAxOS44IDEwNi4zIDEwMi4yIDE4My41IDE3LjcgMTYuNyAyMC45IDM5LjYgMjQgNTkuNCAzLjEgMTguOCA2IDM5LjUgMjUgNDQuOCAyMC4xIDUuNiA0Ny0xMSA5NC01NC41IDE3LjEgMTYuMyA0MC4yIDI1LjkgNjQuMyAyNS45IDUxLjIgMCA5Mi45LTQxLjcgOTIuOS05Mi45IDAtMjQuNi05LjgtNDgtMjYuOC02NS4zIDQ5LjUtNTQgNTYuMS03MS43IDUwLjctODkuNXpNNDAuOSA3NC40NmMwLTE4LjQgMTQuOS0zMy4zIDMzLjMtMzMuM3MzMy4zIDE0LjkgMzMuMyAzMy4zLTE0LjkgMzMuMy0zMy4zIDMzLjMtMzMuMy0xNC45LTMzLjMtMzMuM3ptMzI4LjQgMzQyLjVjLTEzIDAtMjUuMi00LjgtMzQuNi0xMy4xIDExLjEtMTEuMSA2My02NS4xIDcyLjQtNzQuMyA4LjkgOS41IDE0LjEgMjIuMiAxNC4xIDM1LjUgMCAyOC42LTIzLjMgNTEuOS01MS45IDUxLjl6bS0xNDIuNyAyNy45YzAtMy4xLTkuNC02NS43LTM3LjUtOTEuNy01Ny4zLTUzLjItODcuNi0xMDYuMy04OC42LTE1NC4zIDAtMjguMSAxOC42LTEwMC4yIDk4LTk5IDQ4IC43IDEwMS4xIDMxLjMgMTU0LjMgODguNiAyNi4xIDI4LjEgODguNiAzNy41IDkxLjcgMzcuNS0xNC43IDI2LjgtMTkyIDIwNC42LTIxNy45IDIxOC45eiIvPjwvc3ZnPg==);
+      /* Favorites button */
+      .tree-folder.category.favorites {
+        .icon {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .tree-folder-title:before {
+          /* Star icon */
+          content: "";
+          width: var(--yl-sidenav-icon-size);
+          height: var(--yl-sidenav-icon-size);
+          position: absolute;
+          filter: invert(1);
+          pointer-events: none;
+          background-repeat: no-repeat;
+          background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGcgY2xpcC1wYXRoPSJ1cmwoI2EpIj48cGF0aCBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIiBkPSJNMTEuMDkxIDIuNjM1Yy4yODgtLjY0Ny40MzItLjk3LjYzMy0xLjA3YS42MjEuNjIxIDAgMCAxIC41NTIgMGMuMjAxLjEuMzQ1LjQyMy42MzMgMS4wN2wyLjI5NCA1LjE1Yy4wODUuMTkyLjEyOC4yODcuMTk0LjM2LjA1OC4wNjUuMTMuMTE3LjIwOS4xNTMuMDkuMDQuMTk0LjA1LjQwMi4wNzNsNS42MDMuNTkyYy43MDMuMDc0IDEuMDU1LjExMSAxLjIxMi4yNzEuMTM2LjE0LjE5OS4zMzQuMTcuNTI3LS4wMzIuMjIxLS4yOTUuNDU4LS44Mi45MzJsLTQuMTg2IDMuNzc2Yy0uMTU1LjE0LS4yMzMuMjEtLjI4Mi4yOTVhLjYyNC42MjQgMCAwIDAtLjA4LjI0NmMtLjAxLjA5OC4wMTEuMi4wNTUuNDA1bDEuMTY5IDUuNTE3Yy4xNDcuNjkzLjIyIDEuMDQuMTE2IDEuMjM4YS42MjIuNjIyIDAgMCAxLS40NDcuMzI1Yy0uMjIuMDM3LS41MjctLjE0LTEuMTQtLjQ5M2wtNC44OC0yLjgxOGMtLjE4Mi0uMTA1LS4yNzItLjE1Ny0uMzY5LS4xNzdhLjYyMi42MjIgMCAwIDAtLjI1OCAwYy0uMDk3LjAyLS4xODcuMDcyLS4zNjguMTc3bC00Ljg4MSAyLjgxOGMtLjYxMy4zNTQtLjkyLjUzLTEuMTQuNDkzYS42MjIuNjIyIDAgMCAxLS40NDctLjMyNWMtLjEwNC0uMTk5LS4wMy0uNTQ1LjExNi0xLjIzOGwxLjE3LTUuNTE3Yy4wNDMtLjIwNC4wNjQtLjMwNy4wNTQtLjQwNWEuNjI0LjYyNCAwIDAgMC0uMDgtLjI0NmMtLjA0OS0uMDg1LS4xMjctLjE1NS0uMjgyLS4yOTVsLTQuMTg1LTMuNzc2Yy0uNTI2LS40NzQtLjc4OS0uNzEtLjgyMS0uOTMyYS42MjMuNjIzIDAgMCAxIC4xNy0uNTI3Yy4xNTctLjE2LjUwOS0uMTk3IDEuMjEyLS4yNzFsNS42MDQtLjU5MmMuMjA4LS4wMjIuMzEyLS4wMzMuNDAxLS4wNzNhLjYyMi42MjIgMCAwIDAgLjIxLS4xNTJjLjA2NS0uMDc0LjEwOC0uMTcuMTkzLS4zNmwyLjI5NC01LjE1MVoiLz48L2c+PGRlZnM+PGNsaXBQYXRoIGlkPSJhIj48cGF0aCBkPSJNMCAwaDI0djI0SDB6Ii8+PC9jbGlwUGF0aD48L2RlZnM+PC9zdmc+);
+        }
       }
     }
 
-    /* Favorites button */
-    .tree-folder.category.favorites {
-      .icon {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .tree-folder-title:before {
-        /* Star icon */
-        content: "";
-        width: var(--yl-sidenav-icon-size);
-        height: var(--yl-sidenav-icon-size);
-        position: absolute;
-        filter: invert(1);
-        pointer-events: none;
-        background-repeat: no-repeat;
-        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGcgY2xpcC1wYXRoPSJ1cmwoI2EpIj48cGF0aCBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIiBkPSJNMTEuMDkxIDIuNjM1Yy4yODgtLjY0Ny40MzItLjk3LjYzMy0xLjA3YS42MjEuNjIxIDAgMCAxIC41NTIgMGMuMjAxLjEuMzQ1LjQyMy42MzMgMS4wN2wyLjI5NCA1LjE1Yy4wODUuMTkyLjEyOC4yODcuMTk0LjM2LjA1OC4wNjUuMTMuMTE3LjIwOS4xNTMuMDkuMDQuMTk0LjA1LjQwMi4wNzNsNS42MDMuNTkyYy43MDMuMDc0IDEuMDU1LjExMSAxLjIxMi4yNzEuMTM2LjE0LjE5OS4zMzQuMTcuNTI3LS4wMzIuMjIxLS4yOTUuNDU4LS44Mi45MzJsLTQuMTg2IDMuNzc2Yy0uMTU1LjE0LS4yMzMuMjEtLjI4Mi4yOTVhLjYyNC42MjQgMCAwIDAtLjA4LjI0NmMtLjAxLjA5OC4wMTEuMi4wNTUuNDA1bDEuMTY5IDUuNTE3Yy4xNDcuNjkzLjIyIDEuMDQuMTE2IDEuMjM4YS42MjIuNjIyIDAgMCAxLS40NDcuMzI1Yy0uMjIuMDM3LS41MjctLjE0LTEuMTQtLjQ5M2wtNC44OC0yLjgxOGMtLjE4Mi0uMTA1LS4yNzItLjE1Ny0uMzY5LS4xNzdhLjYyMi42MjIgMCAwIDAtLjI1OCAwYy0uMDk3LjAyLS4xODcuMDcyLS4zNjguMTc3bC00Ljg4MSAyLjgxOGMtLjYxMy4zNTQtLjkyLjUzLTEuMTQuNDkzYS42MjIuNjIyIDAgMCAxLS40NDctLjMyNWMtLjEwNC0uMTk5LS4wMy0uNTQ1LjExNi0xLjIzOGwxLjE3LTUuNTE3Yy4wNDMtLjIwNC4wNjQtLjMwNy4wNTQtLjQwNWEuNjI0LjYyNCAwIDAgMC0uMDgtLjI0NmMtLjA0OS0uMDg1LS4xMjctLjE1NS0uMjgyLS4yOTVsLTQuMTg1LTMuNzc2Yy0uNTI2LS40NzQtLjc4OS0uNzEtLjgyMS0uOTMyYS42MjMuNjIzIDAgMCAxIC4xNy0uNTI3Yy4xNTctLjE2LjUwOS0uMTk3IDEuMjEyLS4yNzFsNS42MDQtLjU5MmMuMjA4LS4wMjIuMzEyLS4wMzMuNDAxLS4wNzNhLjYyMi42MjIgMCAwIDAgLjIxLS4xNTJjLjA2NS0uMDc0LjEwOC0uMTcuMTkzLS4zNmwyLjI5NC01LjE1MVoiLz48L2c+PGRlZnM+PGNsaXBQYXRoIGlkPSJhIj48cGF0aCBkPSJNMCAwaDI0djI0SDB6Ii8+PC9jbGlwUGF0aD48L2RlZnM+PC9zdmc+);
-      }
+    /**
+     * Side navigation button label font adjustment:
+     * - Manage feed ("Subscriptions management")
+     * - Subscriptions ("Main stream")
+     * - Important
+     * - Favorites
+     * - Playlists ("My labels")
+     * - User's category
+     */
+    .stick.configure-feeds:before,
+    .tree-folder.category.all .tree-folder-title .title:before,
+    .tree-folder.category.important .tree-folder-title .title:before,
+    .tree-folder.category.favorites .tree-folder-title .title:before,
+    #tags .tree-folder-title .title:before,
+    .tree-folder.category .tree-folder-title .title {
+      font-size: var(--yl-sidenav-label-font-size);
+      letter-spacing: 1px;
+      font-weight: normal;
+      max-width: 64%; /* Avoid overlapping with badge count. */
+      color: var(--yl-color-text-default-emphasis);
     }
-  }
 
-  /**
-   * Side navigation button label font adjustment:
-   * - Manage feed ("Subscriptions management")
-   * - Subscriptions ("Main stream")
-   * - Important
-   * - Favorites
-   * - Playlists ("My labels")
-   * - User's category
-   */
-  .stick.configure-feeds:before,
-  .tree-folder.category.all .tree-folder-title .title:before,
-  .tree-folder.category.important .tree-folder-title .title:before,
-  .tree-folder.category.favorites .tree-folder-title .title:before,
-  #tags .tree-folder-title .title:before,
-  .tree-folder.category .tree-folder-title .title {
-    font-size: var(--yl-sidenav-label-font-size);
-    letter-spacing: 1px;
-    font-weight: normal;
-    max-width: 64%; /* Avoid overlapping with badge count. */
-    color: var(--yl-color-text-default-emphasis);
-  }
-
-  /* Keep "Subscriptions management" button sticky on scroll */
-  .stick.configure-feeds {
-    position: sticky;
-    top: 50px;
-    z-index: 10;
-    width: calc(var(--yl-sidenav-width) - 7px);
-  }
-
-  @media (max-width: 840px) {
+    /* Keep "Subscriptions management" button sticky on scroll */
     .stick.configure-feeds {
-      width: calc(100% - 8px);
+      position: sticky;
+      top: 50px;
+      z-index: 10;
+      width: calc(var(--yl-sidenav-width) - 7px);
     }
-  }
 
-  #mark-read-aside {
-    top: calc(
-      50px + 52px
-    ); /* Padding-top of container + height of "Subscriptions management" button */
+    @media (max-width: 840px) {
+      .stick.configure-feeds {
+        width: calc(100% - 8px);
+      }
+    }
+
+    #mark-read-aside {
+      top: calc(
+        50px + 52px
+      ); /* Padding-top of container + height of "Subscriptions management" button */
+    }
   }
 }
 
@@ -1361,13 +1361,11 @@ main#stream {
   &.yl-page-playlists,
   &.yl-page-category,
   &.yl-page-search_results {
-    #aside_feed {
+    &.youlag-sidenav--collapsed {
       @media (min-width: 841px) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
-        &:not(.visible) {
-          & ~ main#stream .yl-category-toolbar--sticky {
-            padding-left: 52px; /* About the width of sidenav toggle button. */
-          }
+        main#stream .yl-category-toolbar--sticky {
+          padding-left: 52px; /* About the width of sidenav toggle button. */
         }
       }
     }
@@ -1388,13 +1386,11 @@ main#stream {
   &.yl-page-playlists,
   &.yl-page-category,
   &.yl-page-search_results {
-    #aside_feed {
+    &.youlag-sidenav--collapsed {
       @media (min-width: 841px) and (max-width: 1020px) {
-        /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
-        &:not(.visible) {
-          & ~ main#stream .yl-category-toolbar--sticky {
-            padding-left: 52px; /* About the width of sidenav toggle button. */
-          }
+        /* HACK: On article expand mode: workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
+        main#stream .yl-category-toolbar--sticky {
+          padding-left: 52px; /* About the width of sidenav toggle button. */
         }
       }
     }
@@ -2249,6 +2245,31 @@ html {
   .yl-page-category,
   .yl-page-search_results {
     /* Only implement fixed sidebar for feed pages (to exclude other pages like settings. */
+
+    &.youlag-sidenav--expanded {
+      @media (max-width: 840px) {
+        #aside_feed {
+          z-index: 60; /* Mobile: Hide sidenav toggle, as mobile sidenav already has a close button. */
+          /* Mobile: Sidenav is visible. */
+          max-width: 80%; /* Mobile: Leave space on the right side to allow onblur close. */
+        }
+      }
+
+      @media (min-width: 841px) {
+        #aside_feed {
+          padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
+        }
+
+        /* Desktop: Sidenav is visible. */
+        main#stream {
+          box-sizing: border-box;
+          padding-left: calc(
+            var(--yl-sidenav-width) + var(--yl-p-sm)
+          ); /* Set aside space for the sidebar */
+        }
+      }
+    }
+
     #aside_feed {
       position: fixed; /* sidebar, reimplement its behavior. */
       top: 0px;
@@ -2260,31 +2281,6 @@ html {
 
       .toggle_aside {
         display: none !important; /* Hide existing mobile sidenav toggle button to priotize the 'nav_menu_toggle_aside' (which has been made 'position:fixed'). */
-      }
-
-      @media (max-width: 840px) {
-        z-index: 60; /* Mobile: Hide sidenav toggle, as mobile sidenav already has a close button. */
-
-        &.visible {
-          /* Mobile: Sidenav is visible. */
-          max-width: 80%; /* Mobile: Leave space on the right side to allow onblur close. */
-        }
-      }
-
-      @media (min-width: 841px) {
-        padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
-
-        &.visible {
-          /* Desktop: Sidenav is visible. */
-          & ~ main#stream,
-          & ~ nav.nav_menu,
-          &.visible ~ main.post {
-            box-sizing: border-box;
-            padding-left: calc(
-              var(--yl-sidenav-width) + var(--yl-p-sm)
-            ); /* Set aside space for the sidebar */
-          }
-        }
       }
 
       & ~ .close-aside {
@@ -3446,19 +3442,21 @@ body.youlag-inactive:not(.reader) {
     margin-top: var(--yl-m-sm);
   }
 
-  nav.aside_feed {
-    &.visible ~ .nav_menu {
-      max-width: calc(
-        900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)
-      ); /* youlag-inactive: Match position of article */
-      margin: 0 auto;
-    }
+  &.youlag-sidenav--expanded {
+    nav.aside_feed {
+      .nav_menu {
+        max-width: calc(
+          900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)
+        ); /* youlag-inactive: Match position of article */
+        margin: 0 auto;
+      }
 
-    &.visible ~ main#stream {
-      /* Desktop: sidenav opened */
-      max-width: calc(
-        900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)
-      ); /* youlag-inactive: Articles will effectively be max 900px */
+      main#stream {
+        /* Desktop: sidenav opened */
+        max-width: calc(
+          900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)
+        ); /* youlag-inactive: Articles will effectively be max 900px */
+      }
     }
   }
 }
@@ -3557,7 +3555,7 @@ body.youlag-inactive:not(.reader) main#stream {
           align-items: center;
           justify-content: center;
           width: auto;
-          padding: 0;
+          padding: var(--yl-p-2xs) 0;
 
           & > a,
           & > div a {
@@ -3574,6 +3572,13 @@ body.youlag-inactive:not(.reader) main#stream {
 
             &:hover {
               background-color: hsla(0, 0%, 100%, 0.08);
+            }
+          }
+
+          &.labels {
+            .item-element {
+              /* Remove additional padding that dropdown elements gets from freshrss. */
+              padding: 0;
             }
           }
         }
@@ -5829,27 +5834,29 @@ body.youlag-tags-modal-open {
 }
 
 @media (min-width: 841px) {
-  #aside_feed:not(.visible) {
-    /* Sidenav is not visible, hide and show sidenav toggle button based on scroll down or up. */
-    & ~ nav.nav_menu #nav_menu_toggle_aside {
-      transition:
-        transform 0.15s ease-out,
-        opacity 0.15s ease-out,
-        background-color 0.2s;
+  .youlag-sidenav--collapsed {
+    #aside_feed {
+      /* Sidenav is not visible, hide and show sidenav toggle button based on scroll down or up. */
+      & ~ nav.nav_menu #nav_menu_toggle_aside {
+        transition:
+          transform 0.15s ease-out,
+          opacity 0.15s ease-out,
+          background-color 0.2s;
 
-      & .btn:not(:hover) {
-        background-color: transparent;
+        & .btn:not(:hover) {
+          background-color: transparent;
+        }
       }
-    }
 
-    & ~ nav.nav_menu .sticky-visible--sidenav-toggle {
-      transform: translateY(0);
-      opacity: 1;
-    }
+      & ~ nav.nav_menu .sticky-visible--sidenav-toggle {
+        transform: translateY(0);
+        opacity: 1;
+      }
 
-    & ~ nav.nav_menu .sticky-hidden--sidenav-toggle {
-      transform: translateY(-100%);
-      opacity: 0;
+      & ~ nav.nav_menu .sticky-hidden--sidenav-toggle {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
     }
   }
 }

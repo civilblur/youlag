@@ -663,7 +663,10 @@ function setSidenavState() {
   // Update body classes based on sidenav state (expanded/collapsed)
   const sidenav = document.getElementById("aside_feed");
   if (!sidenav) return;
-  const expanded = sidenav.classList.contains("visible");
+  const expandedMinWidth = 50; // Arbitrary width to see check sidenav is expanded, as `.visible` is only added by freshrss on event triggers, making it unreliable as the only check.
+  const expanded =
+    sidenav.classList.contains("visible") ||
+    sidenav.offsetWidth > expandedMinWidth;
   app.state.page.sidenavExpanded = expanded;
   document.body.classList.toggle("youlag-sidenav--expanded", expanded);
   document.body.classList.toggle("youlag-sidenav--collapsed", !expanded);
