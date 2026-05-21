@@ -139,6 +139,7 @@
   --yl-text-2xl: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
   --yl-text-3xl: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
 
+  --yl-favicon-avatar-display: block;
   --yl-favicon-avatar-size: 34px;
   --yl-favicon-avatar-size-margin: 6px;
   --yl-feed-day-title-font-size: 1.7rem;
@@ -187,7 +188,7 @@
 
 @media (max-width: 840px) {
   :root {
-    --yl-favicon-avatar-size: 42px;
+    --yl-favicon-avatar-size: 36px;
     --yl-sidenav-label-font-size: calc(var(--yl-text-md) * 0.9);
     --yl-sidenav-sublabel-font-size: var(--yl-text-sm);
     --yl-sidenav-icon-size: 20px;
@@ -199,6 +200,8 @@
 @media (max-width: 480px) {
   :root {
     --yl-sidenav-width: max(80%, 280px);
+    --yl-favicon-avatar-size: 0px;
+    --yl-favicon-avatar-display: none;
   }
 }
 
@@ -1607,7 +1610,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
         }
       }
 
-      a.item-element.title.multiline {
+      a.item-element.title {
         display: flex;
         flex-direction: column;
         position: static;
@@ -1623,6 +1626,10 @@ body.youlag-active:not(.reader) main#stream div.flux {
         -webkit-line-clamp: 3;
         line-clamp: 3;
         overflow: hidden;
+      }
+
+      & > a.title {
+        padding-right: 0 !important;
       }
 
       .author {
@@ -2013,7 +2020,7 @@ body.youlag-active:not(.reader) main#stream {
       position: relative;
 
       li.item.website.icon,
-      li.item.website.full {
+      li.item.website {
         /* If user set "Website: Icon" in Display settings */
         display: flex;
         width: 100%;
@@ -2060,6 +2067,8 @@ body.youlag-active:not(.reader) main#stream {
           width: calc(
             var(--yl-favicon-avatar-size) + var(--yl-favicon-avatar-size-margin)
           );
+          margin-top: calc(var(--yl-space-3xs) / 2 * -1);
+          margin-left: calc(var(--yl-space-3xs) / 2 * -1);
           visibility: visible;
           pointer-events: all;
           box-sizing: unset;
@@ -2068,6 +2077,7 @@ body.youlag-active:not(.reader) main#stream {
         img.favicon {
           height: var(--yl-favicon-avatar-size);
           width: var(--yl-favicon-avatar-size);
+          display: var(--yl-favicon-avatar-display);
           background-color: hsl(0deg 0% 100% / 18%);
           padding: 8px;
           box-sizing: border-box;
