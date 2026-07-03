@@ -555,6 +555,14 @@ function restoreModalEventListeners() {
     modal._videoModalListeners.length = 0;
   }
 
+  // Disconnect observers from previous setup runs
+  if (modal._videoModalObservers && Array.isArray(modal._videoModalObservers)) {
+    for (const observer of modal._videoModalObservers) {
+      observer.disconnect();
+    }
+    modal._videoModalObservers.length = 0;
+  }
+
   setupModalVideoEventListeners(videoObject);
   setupModalVideoControlEventListeners();
 
@@ -563,7 +571,7 @@ function restoreModalEventListeners() {
   );
   if (getRelatedVideosSetting() !== "none" && relatedContainer) {
     if (relatedContainer.classList.contains("display-none")) {
-      // Related videos haven't loaded yet — fetch and render them.
+      // If the element is still hidden, related videos haven't loaded yet.
       // TODO: In some cases when opening up a direct link in a new tab, the related video may not render.
       renderRelatedVideos(videoObject);
     } else {

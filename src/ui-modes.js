@@ -105,7 +105,10 @@ function setupSwipeToMiniplayer(modal) {
       ({ el, type, handler }) => {
         if (
           el === modal &&
-          (type === "touchstart" || type === "touchmove" || type === "touchend")
+          (type === "touchstart" ||
+            type === "touchmove" ||
+            type === "touchend" ||
+            type === "touchcancel")
         ) {
           el.removeEventListener(type, handler);
           return false;
@@ -119,6 +122,7 @@ function setupSwipeToMiniplayer(modal) {
   let overscrollActive = false;
   const swipeThreshold = 50; // Minimum distance in pixels to consider a swipe.
   const scrollTolerance = 30; // Allow a larger tolerance for scrollTop to improve swipe reliability
+  const intentThreshold = 12; // Minimum downward travel before the gesture claims the touch. Prevents `preventDefault()` on tap jitter, which can cause click suppresses on Firefox Android.
 
   // Track the initial Y position when a single touch starts near the top of the modal.
   function touchStartHandler(e) {
@@ -126,6 +130,9 @@ function setupSwipeToMiniplayer(modal) {
     const chapterList = e.target.closest(`#${app.modal.id.chapterList}`);
     if (chapterList && chapterList.scrollHeight > chapterList.clientHeight)
       return;
+
+    // Prevent taps to be claimed if they begin on interactive elements (close, minimize, favorite, etc.).
+    if (e.target.closest('button, a, select, input, [role="button"]')) return;
 
     if (modal.scrollTop <= scrollTolerance && e.touches.length === 1) {
       touchStartY = e.touches[0].clientY;
@@ -141,7 +148,7 @@ function setupSwipeToMiniplayer(modal) {
       e.touches.length === 1
     ) {
       const moveY = e.touches[0].clientY;
-      if (moveY - touchStartY > 0) {
+      if (moveY - touchStartY > intentThreshold) {
         overscrollActive = true;
         e.preventDefault(); // Prevent native scroll bounce to allow custom overscroll detection.
       }
@@ -167,15 +174,25 @@ function setupSwipeToMiniplayer(modal) {
     overscrollActive = false;
   }
 
-  modal.addEventListener("touchstart", touchStartHandler, { passive: false });
-  modal.addEventListener("touchmove", touchMoveHandler, { passive: false });
-  modal.addEventListener("touchend", touchEndHandler, { passive: false });
+  // Reset gesture state when the touch is interrupted,
+  // e.g. Android backgrounding the app mid-gesture,
+  // otherwise stale state can cause the next tap to be swallowed.
+  function touchCancelHandler() {
+    touchStartY = null;
+    overscrollActive = false;
+  }
+
+  modal.addEventListener("touchstart", touchStartHandler, { passive: true });
+  modal.addEventListener("touchmove", touchMoveHandler, { passive: false }); // Only `touchmove` needs `passive: false` (uses `preventDefault()`).
+  modal.addEventListener("touchend", touchEndHandler, { passive: true });
+  modal.addEventListener("touchcancel", touchCancelHandler, { passive: true });
 
   if (modal._videoModalListeners) {
     modal._videoModalListeners.push(
       { el: modal, type: "touchstart", handler: touchStartHandler },
       { el: modal, type: "touchmove", handler: touchMoveHandler },
       { el: modal, type: "touchend", handler: touchEndHandler },
+      { el: modal, type: "touchcancel", handler: touchCancelHandler },
     );
   }
 }
