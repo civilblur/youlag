@@ -15,6 +15,7 @@ function init() {
     setupSwipeSidebar();
     setupVisibilityEventListeners(); // Restore event listeners after page inactvity, e.g. when switching tabs.
     setupTagsDropdownOverride();
+    setupShareDropdownOverride();
     renderToolbar();
     if (isLayoutVideo()) {
       updateVideoAuthor();

@@ -398,6 +398,42 @@ function setupTagsDropdownOverride() {
   );
 }
 
+function setupShareDropdownOverride() {
+  // Delegated eventlistener to override share dropdown click, on both the card header and the article footer.
+  const streamContainer = document.querySelector(app.frss.el.feedRoot);
+  if (!streamContainer) return;
+
+  streamContainer.addEventListener(
+    "click",
+    function (event) {
+      const modal = getModalVideo();
+      if (modal && modal.contains(event.target)) return;
+
+      const shareToggle = event.target.closest(
+        ".item.share a.dropdown-toggle, li.share a.dropdown-toggle",
+      );
+      if (!shareToggle || !shareToggle.closest(app.frss.el.entry)) return;
+
+      const shareMenu = getItemShareMenu(shareToggle);
+      if (!shareMenu.options.length) return; // Fall back to FreshRSS' native dropdown.
+
+      // Prevent default share dropdown behavior
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const entryId =
+        shareToggle
+          .closest(app.frss.el.entry)
+          ?.getAttribute("data-entry")
+          ?.match(/([0-9]+)$/)?.[1] || null;
+
+      // Open custom share modal
+      renderShareModal(entryId, shareMenu);
+    },
+    true,
+  );
+}
+
 function setupSidenavStateListener() {
   // Listen for class changes on #aside_feed and update body classes
   const sidenav = document.getElementById("aside_feed");
