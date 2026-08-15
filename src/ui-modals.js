@@ -262,6 +262,13 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
                 <img class="icon" src="../themes/icons/label.svg" loading="lazy" alt="🏷️">
               </a>
 
+              <a href="#"
+                class="yl-video-action-button display-none"
+                id="${app.modal.id.share}"
+                title="Share">
+                <img class="icon" src="../themes/icons/share.svg" loading="lazy" alt="🔗">
+              </a>
+
               <a class="yl-video-action-button" href="${videoObject.external_link}" target="_blank">
                 <span class="yl-video-action-button__icon">🌐</span><span>Source</span>
               </a>
@@ -457,6 +464,36 @@ function setupModalVideoEventListeners(videoObject) {
       el: tagsBtn,
       type: "click",
       handler: tagsHandler,
+    });
+  }
+
+  // Share button, replacing FreshRSS' native share dropdown.
+  // Only shown when the feed item is present in the feed stream, as sharing is delegated to its native share elements.
+  const shareBtn = modal.querySelector(`#${app.modal.id.share}`);
+  const shareAvailable =
+    shareBtn &&
+    getItemShareToggle(videoObject.entryId, videoObject.feedItemEl) !== null;
+  if (shareAvailable) {
+    shareBtn.classList.remove("display-none");
+
+    const shareHandler = (e) => {
+      e.preventDefault();
+      const shareToggle = getItemShareToggle(
+        videoObject.entryId,
+        videoObject.feedItemEl,
+      );
+      if (!shareToggle) return;
+
+      const shareMenu = getItemShareMenu(shareToggle);
+      if (!shareMenu.options.length) return;
+
+      renderShareModal(videoObject.entryId, shareMenu);
+    };
+    shareBtn.addEventListener("click", shareHandler);
+    modal._videoModalListeners.push({
+      el: shareBtn,
+      type: "click",
+      handler: shareHandler,
     });
   }
 
@@ -1183,6 +1220,140 @@ function renderTagsModal(entryId, tags) {
     );
     if (content && !content.contains(event.target)) {
       closeTagsModal();
+    }
+  });
+}
+
+function renderShareModal(entryId, shareMenu) {
+  // Opens modal to share feed item (entryId), replacing FreshRSS' native share dropdown.
+  /**
+   * Example shareMenu object:
+  {
+    "title": "Share",
+    "configureUrl": "./?c=configure&a=integration",
+    "options": [{
+      "el": <the share element within the feed item, used to delegate sharing to FreshRSS>,
+      "label": "Email",
+      "type": "email",
+      "deprecated": false
+    },]
+  }
+  */
+
+  if (document.getElementById(`${app.modal.id.shareContainer}`)) {
+    // Remove existing modal if present
+    document.getElementById(`${app.modal.id.shareContainer}`).remove();
+  }
+
+  let container = document.createElement("div");
+  container.id = `${app.modal.id.shareContainer}`;
+  container.classList.add(app.modal.class.shareModalRoot);
+  container.innerHTML = `
+    <div class="yl-share-content">
+      <h3 class="yl-share-modal-title">
+        <span class="yl-share-modal-title-text"></span>
+
+        ${
+          shareMenu.configureUrl
+            ? `<a href="${shareMenu.configureUrl}" target="_blank"><img class="icon" src="../themes/Mapco/icons/configure.svg" loading="lazy" alt="⚙️"></a>`
+            : ""
+        }
+      </h3>
+      <div class="yl-share-list"></div>
+      <div class="yl-share-modal-actions">
+        <button id="${app.modal.id.shareClose}" class="btn">Close</button>
+      </div>
+    </div>
+  `;
+  container.querySelector(".yl-share-modal-title-text").textContent =
+    shareMenu.title;
+
+  // Sharing options, labels are user configurable in FreshRSS, hence set as text content.
+  const list = container.querySelector(".yl-share-list");
+  shareMenu.options.forEach((option, index) => {
+    const shareButton = document.createElement("button");
+    shareButton.type = "button";
+    shareButton.classList.add(app.modal.class.shareModalItem);
+    if (option.deprecated) {
+      shareButton.classList.add(`${app.modal.class.shareModalItem}--deprecated`);
+    }
+    shareButton.setAttribute("data-yl-share-index", index);
+    shareButton.setAttribute("data-yl-share-type", option.type);
+    if (entryId) shareButton.setAttribute("data-entry-id", entryId);
+    shareButton.textContent = option.label;
+    list.appendChild(shareButton);
+  });
+
+  document.body.appendChild(container);
+  document.body.classList.add(app.modal.class.shareModalOpen);
+
+  // Event listener for sharing options.
+  const shareButtons = list.querySelectorAll(
+    `.${app.modal.class.shareModalItem}`,
+  );
+  shareButtons.forEach((shareButton) => {
+    shareButton.addEventListener("click", function () {
+      const option =
+        shareMenu.options[Number(this.getAttribute("data-yl-share-index"))];
+      if (option && option.el) handleShareOption(option, this);
+    });
+  });
+
+  function handleShareOption(option, shareButton) {
+    // Delegate sharing to FreshRSS, by clicking the share element within the feed item.
+    // Keeps native behavior intact: new tab links, POST form submit, print, clipboard, web sharing API.
+    const nativeShareElement = option.el;
+    nativeShareElement.classList.remove("ok", "error"); // Reset status of a previous share, set by FreshRSS.
+    nativeShareElement.click();
+
+    if (option.type !== "clipboard") {
+      closeShareModal();
+      return;
+    }
+
+    // Clipboard: FreshRSS sets the copy status on the share element, which is hidden, hence reflect the status in the modal.
+    const statusStart = Date.now();
+    const statusPoll = setInterval(() => {
+      const copied = nativeShareElement.classList.contains("ok");
+      const failed = nativeShareElement.classList.contains("error");
+      if (copied || failed) {
+        clearInterval(statusPoll);
+        shareButton.classList.add(copied ? "ok" : "error");
+        if (copied) setTimeout(closeShareModal, 800);
+      } else if (Date.now() - statusStart > 2000) {
+        clearInterval(statusPoll);
+        closeShareModal();
+      }
+    }, 50);
+  }
+
+  function closeShareModal() {
+    const modal = document.getElementById(`${app.modal.id.shareContainer}`);
+    if (modal) modal.remove();
+    document.body.classList.remove(app.modal.class.shareModalOpen);
+    document.removeEventListener("keydown", shareModalEscHandler, true);
+  }
+
+  // Close button
+  const closeButton = container.querySelector(`#${app.modal.id.shareClose}`);
+  closeButton.addEventListener("click", closeShareModal);
+
+  // Close on Esc key
+  function shareModalEscHandler(event) {
+    if (event.key === "Escape") {
+      closeShareModal();
+      event.stopPropagation(); // Prevent bubbling to other modals
+    }
+  }
+  document.addEventListener("keydown", shareModalEscHandler, true);
+
+  // Close onblur
+  container.addEventListener("mousedown", function (event) {
+    const content = container.querySelector(
+      `.${app.modal.class.shareModalContent}`,
+    );
+    if (content && !content.contains(event.target)) {
+      closeShareModal();
     }
   });
 }
