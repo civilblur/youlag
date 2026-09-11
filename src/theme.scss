@@ -385,7 +385,7 @@ body {
   }
 
   nav.aside.aside_feed {
-    #mark-read-aside ul#sidebar {
+    :is(#mark-read-aside, .mark-read-aside) ul#sidebar {
       /* Playlists ("My labels") button */
       #tags {
         /* Always display Playlist ("My Labels") button */
@@ -779,7 +779,7 @@ body.youlag-sidenav--expanded:has(
       }
     }
 
-    #mark-read-aside ul#sidebar {
+    :is(#mark-read-aside, .mark-read-aside) ul#sidebar {
       .tree-folder.category {
         .tree-folder-title .title {
           font-weight: normal;
@@ -903,7 +903,7 @@ body.youlag-sidenav--expanded:has(
       }
     }
 
-    #mark-read-aside {
+    :is(#mark-read-aside, .mark-read-aside) {
       top: calc(
         50px + 52px
       ); /* Padding-top of container + height of "Subscriptions management" button */
@@ -1166,8 +1166,8 @@ body.youlag-sidenav--expanded:has(
 }
 
 /* End of feed footer */
-main#stream #stream-footer,
-#overlay #panel #stream-footer {
+main#stream :is(#stream-footer, .stream-footer),
+#overlay #panel :is(#stream-footer, .stream-footer) {
   grid-column: 1 / -1;
   border-top: none;
   margin-top: 3rem;
@@ -1601,6 +1601,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       display: flex;
       flex-direction: column;
       width: 100%;
+      flex: 1 1 100%;
       margin: 4px 0 var(--yl-m-xs) 0;
 
       @media (min-width: 600px) {
@@ -4280,12 +4281,12 @@ body:has(.tree-folder.category.favorites.active) {
       --yl-article-thumbnail-height: 70px;
 
       .flux,
-      #stream-footer {
+      :is(#stream-footer, .stream-footer) {
         box-sizing: border-box;
         width: 100%;
       }
 
-      #stream-footer {
+      :is(#stream-footer, .stream-footer) {
         padding-left: var(--yl-p-sm);
         padding-right: var(--yl-p-sm);
       }

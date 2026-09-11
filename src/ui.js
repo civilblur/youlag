@@ -444,7 +444,7 @@ function autoLoadMoreArticlesOnScroll() {
    * This is useful when custom layouts like "Article split view" is used,
    * as that layout never triggers the native `load_more_posts()` due to fixed body height and overflow.
    */
-  const streamFooter = document.getElementById("stream-footer");
+  const streamFooter = document.querySelector("#stream-footer, .stream-footer");
   if (!streamFooter) return;
 
   let isLoading = false;
@@ -1497,7 +1497,7 @@ function toggleFavorite(url, container, feedItemEl = null) {
 
   const csrfToken =
     document
-      .querySelector('#stream-footer input[name="_csrf"]')
+      .querySelector('#stream-footer input[name="_csrf"], .stream-footer input[name="_csrf"]')
       ?.getAttribute("value") || "";
   fetch(toggleUrl.toString(), {
     method: "POST",
