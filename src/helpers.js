@@ -69,6 +69,73 @@ async function setItemTag(entryId, tag) {
   }
 }
 
+function getItemShareToggle(entryId, feedItemEl = null) {
+  // Find FreshRSS' native share dropdown toggle of a feed item, in the feed stream.
+  //
+  // Sharing is delegated to FreshRSS' own share elements, which only exist within the feed item.
+  // The feed item may be absent from the current view, e.g. when the miniplayer is restored on a page without a feed stream.
+
+  let feedItem =
+    feedItemEl instanceof Element && feedItemEl.isConnected ? feedItemEl : null;
+  if (!feedItem && entryId) {
+    // The feed item element may be missing or stale, e.g. after the feed stream was re-rendered.
+    feedItem = document.querySelector(
+      `${app.frss.el.feedRoot} ${app.frss.el.entry}[data-entry="${entryId}"]`,
+    );
+  }
+  if (!feedItem) return null;
+
+  return feedItem.querySelector(
+    ".item.share a.dropdown-toggle, li.share a.dropdown-toggle",
+  );
+}
+
+function getItemShareMenu(shareToggle) {
+  // Read the sharing options of a feed item, from FreshRSS' native share dropdown menu.
+  //
+  // FreshRSS only builds the share dropdown menu on demand, from the `share_article_template` template,
+  // hence its native `show_share_menu()` is called when the menu is missing.
+  // The share elements are kept in place, so that sharing can be delegated to FreshRSS' own click handling.
+
+  const shareMenu = { title: "", configureUrl: "", options: [] };
+  const dropdown = shareToggle ? shareToggle.parentElement : null;
+  if (!dropdown) return shareMenu;
+
+  let menu = dropdown.querySelector(":scope > .dropdown-menu");
+  if (!menu) {
+    if (typeof show_share_menu !== "function") return shareMenu; // Native FreshRSS function.
+    try {
+      show_share_menu(shareToggle);
+    } catch (error) {
+      console.error("Youlag: Error building share menu:", error);
+      return shareMenu;
+    }
+    menu = dropdown.querySelector(":scope > .dropdown-menu");
+  }
+  if (!menu) return shareMenu;
+
+  const header = menu.querySelector(".dropdown-header");
+  shareMenu.title = header?.firstChild?.textContent.trim() || "Share";
+  shareMenu.configureUrl = header?.querySelector("a")?.href || "";
+
+  menu.querySelectorAll(":scope > li.item").forEach((item) => {
+    const shareElement = item.querySelector(
+      `a[data-type], button[data-type], a[href="POST"]`,
+    );
+    if (!shareElement) return;
+    const type = shareElement.getAttribute("data-type") || "post"; // Sharing services without a type are shared by POST form submit.
+    if (type === "web-sharing-api" && !navigator.share) return; // Also hidden by FreshRSS when the browser lacks support.
+    shareMenu.options.push({
+      el: shareElement,
+      label: shareElement.textContent.trim(),
+      type: type,
+      deprecated: item.classList.contains("error"), // Deprecated sharing service, flagged by FreshRSS.
+    });
+  });
+
+  return shareMenu;
+}
+
 function extractFeedItemData(feedItem) {
   // Extract data from the provided target element.
 
