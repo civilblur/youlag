@@ -1283,7 +1283,9 @@ function renderShareModal(entryId, shareMenu) {
     shareButton.type = "button";
     shareButton.classList.add(app.modal.class.shareModalItem);
     if (option.deprecated) {
-      shareButton.classList.add(`${app.modal.class.shareModalItem}--deprecated`);
+      shareButton.classList.add(
+        `${app.modal.class.shareModalItem}--deprecated`,
+      );
     }
     shareButton.setAttribute("data-yl-share-index", index);
     shareButton.setAttribute("data-yl-share-type", option.type);
@@ -1307,35 +1309,45 @@ function renderShareModal(entryId, shareMenu) {
     });
   });
 
+  let shareStatusObserver = null; // Watches FreshRSS' copy status in `handleShareOption()`.
+
+  function stopShareStatusObserver() {
+    if (!shareStatusObserver) return;
+    shareStatusObserver.disconnect();
+    shareStatusObserver = null;
+  }
+
   function handleShareOption(option, shareButton) {
     // Delegate sharing to FreshRSS, by clicking the share element within the feed item.
     // Keeps native behavior intact: new tab links, POST form submit, print, clipboard, web sharing API.
+    stopShareStatusObserver(); // Drop a pending status watch, e.g. when a second option is clicked.
     const nativeShareElement = option.el;
     nativeShareElement.classList.remove("ok", "error"); // Reset status of a previous share, set by FreshRSS.
     nativeShareElement.click();
 
-    if (option.type !== "clipboard") {
-      closeShareModal();
-      return;
-    }
+    if (option.type !== "clipboard") return;
 
     // Clipboard: FreshRSS sets the copy status on the share element, which is hidden, hence reflect the status in the modal.
-    const statusStart = Date.now();
-    const statusPoll = setInterval(() => {
+    // The modal stays open so the status remains visible, and is closed by the user.
+    shareStatusObserver = new MutationObserver(() => {
       const copied = nativeShareElement.classList.contains("ok");
       const failed = nativeShareElement.classList.contains("error");
-      if (copied || failed) {
-        clearInterval(statusPoll);
-        shareButton.classList.add(copied ? "ok" : "error");
-        if (copied) setTimeout(closeShareModal, 800);
-      } else if (Date.now() - statusStart > 2000) {
-        clearInterval(statusPoll);
-        closeShareModal();
-      }
-    }, 50);
+      if (!copied && !failed) return;
+      stopShareStatusObserver();
+      shareButton.classList.add(copied ? "ok" : "error");
+      showNotification({
+        title: copied ? "Copied to clipboard!" : "Failed to copy to clipboard",
+        zIndex: "top",
+      });
+    });
+    shareStatusObserver.observe(nativeShareElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
   }
 
   function closeShareModal() {
+    stopShareStatusObserver();
     const modal = document.getElementById(`${app.modal.id.shareContainer}`);
     if (modal) modal.remove();
     document.body.classList.remove(app.modal.class.shareModalOpen);

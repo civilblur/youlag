@@ -4322,6 +4322,14 @@ body:has(.tree-folder.category.favorites.active) {
             margin-bottom: var(--yl-m-2xs) !important;
           }
 
+          .item.share {
+            a.dropdown-close {
+              // FreshRSS' dropdown menu shows "close" button only when Share is open.
+              // Hide it as Youlag is using custom Share dialog `handleShareOption()`.
+              display: none;
+            }
+          }
+
           @container (max-width: 320px) {
             --yl-article-thumbnail-width: 0;
 
@@ -5583,22 +5591,6 @@ body.youlag-share-modal-open {
       &--deprecated {
         /* Sharing service flagged as deprecated by FreshRSS. */
         opacity: 0.6;
-      }
-
-      &.ok::after,
-      &.error::after {
-        /* Copy to clipboard status. */
-        font-size: var(--yl-text-md);
-      }
-
-      &.ok::after {
-        content: "✓";
-        color: #1cef6d;
-      }
-
-      &.error::after {
-        content: "✕";
-        color: #fb2424;
       }
     }
   }

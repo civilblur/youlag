@@ -29,6 +29,17 @@ function isTextAllCaps(text) {
   return /^[^a-z]*[A-Z][^a-z]*$/.test(text);
 }
 
+function resolveZIndex(zIndex) {
+  // Resolve a z-index, either a given number, or "top" to stack above the currently rendered elements/modal.
+
+  if (typeof zIndex === "number") return zIndex;
+  if (zIndex !== "top") return null;
+  const layers = [...document.body.children].map(
+    (element) => Number(getComputedStyle(element).zIndex) || 0,
+  );
+  return Math.max(0, ...layers) + 1;
+}
+
 function formatTextToSentenceCase(text) {
   if (!text || typeof text !== "string") return text;
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -951,6 +962,7 @@ async function checkForUpdates() {
           action: "View update",
           link: data.html_url,
           dismissRef: "ylLastUpdateCheck",
+          timeout: 0,
         });
 
         return {

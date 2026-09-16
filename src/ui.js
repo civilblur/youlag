@@ -1337,16 +1337,26 @@ function showUpdateAvailableInSettings() {
   });
 }
 
-function showNotification({ title, message, action, link, dismissRef }) {
-  // Show a simple notification in the feed when a new Youlag version is available.
+function showNotification({
+  title,
+  message,
+  action,
+  link,
+  dismissRef,
+  zIndex,
+  timeout = 2000,
+}) {
+  // Show a simple notification in the feed, e.g. when a new Youlag version is available, or any other custom message.
 
   if (document.getElementById("yl_notification")) return;
   const notification = document.createElement("div");
   notification.id = "yl_notification";
+  const resolvedZIndex = resolveZIndex(zIndex);
+  if (resolvedZIndex) notification.style.zIndex = resolvedZIndex;
   notification.innerHTML = `
     <div class="flex flex-col flex-1">
-      <div class="yl-notification-title">${title}</div>
-      <div class="yl-notification-message">${message}</div>
+      ${title ? `<div class="yl-notification-title">${title}</div>` : ""}
+      ${message ? `<div class="yl-notification-message">${message}</div>` : ""}
     </div>
 
     ${link ? `<a href="${link}" class="yl-notification-action" target="_blank" rel="noopener noreferrer">${action || "View"}</a>` : ""}
@@ -1355,7 +1365,9 @@ function showNotification({ title, message, action, link, dismissRef }) {
   `;
 
   // Remove notification
+  let dismissTimer = null;
   function removeNotification(e) {
+    clearTimeout(dismissTimer);
     notification.remove();
     if (dismissRef) {
       const now = Date.now();
@@ -1375,6 +1387,7 @@ function showNotification({ title, message, action, link, dismissRef }) {
   });
 
   document.body.appendChild(notification);
+  if (timeout) dismissTimer = setTimeout(removeNotification, timeout);
 }
 
 function setWatchLaterCategoryFilter() {
@@ -1533,7 +1546,9 @@ function toggleFavorite(url, container, feedItemEl = null) {
 
   const csrfToken =
     document
-      .querySelector('#stream-footer input[name="_csrf"], .stream-footer input[name="_csrf"]')
+      .querySelector(
+        '#stream-footer input[name="_csrf"], .stream-footer input[name="_csrf"]',
+      )
       ?.getAttribute("value") || "";
   fetch(toggleUrl.toString(), {
     method: "POST",
