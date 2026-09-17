@@ -4187,6 +4187,10 @@ body:has(.tree-folder.category.favorites.active) {
   #ylArticleSplitPane {
     display: none;
   }
+
+  main#stream {
+    max-width: unset;
+  }
 }
 
 @media (min-width: 840px) {
