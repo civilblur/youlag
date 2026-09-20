@@ -124,6 +124,7 @@ class YoulagExtension extends Minz_Extension
      */
     public function init(): void
     {
+        $this->registerHook("js_vars", [$this, "setJsVars"]);
         // TODO: Refactor to pass data with `Minz_HookType::JsVars` instead.
         $this->registerHook("entry_before_display", [$this, "setInvidiousURL"]);
         $this->registerHook("entry_before_display", [
@@ -255,6 +256,31 @@ class YoulagExtension extends Minz_Extension
         if (FreshRSS_Context::$user_conf->yl_invidious_url_1 != "") {
             $this->instance = FreshRSS_Context::$user_conf->yl_invidious_url_1;
         }
+    }
+
+    /**
+     * Pass user settings to the frontend via FreshRSS' JS vars.
+     * Read in the browser as `context.extensions.youlag`.
+     * @param array<string,mixed> $vars
+     * @return array<string,mixed>
+     */
+    public function setJsVars(array $vars): array
+    {
+        $this->loadConfigValues();
+
+        $youlag = [];
+        foreach (self::SETTINGS as $name => $spec) {
+            if ($name === "yl_block_youtube_shorts") {
+                // Youtube shorts setting is read by backend only.
+                continue;
+            }
+            $youlag[$name] = $this->{$name};
+        }
+        $youlag["yl_invidious_instance"] = $this->instance;
+
+        $vars["youlag"] = $youlag;
+
+        return $vars;
     }
 
     /**
