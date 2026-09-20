@@ -540,8 +540,10 @@ function setBodyClass() {
 
   document.body.className += " " + getCurrentPage().class;
   currentPageParams = new URLSearchParams(window.location.search).get("get");
-  setArticleSplitViewClass();
-  setMobileLayoutGrid();
+  if (isFeedPage()) {
+    setArticleSplitViewClass();
+    setMobileLayoutGrid();
+  }
   setupSidenavStateListener();
   getSubpageParentId(currentPageParams) &&
     (document.body.className +=
