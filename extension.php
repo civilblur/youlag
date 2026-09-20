@@ -125,7 +125,6 @@ class YoulagExtension extends Minz_Extension
     public function init(): void
     {
         $this->registerHook("js_vars", [$this, "setJsVars"]);
-        // TODO: Refactor to pass data with `Minz_HookType::JsVars` instead.
         $this->registerHook("entry_before_display", [$this, "setInvidiousURL"]);
         $this->registerHook("entry_before_display", [
             $this,
