@@ -20,6 +20,7 @@ fs.mkdirSync(tempDir, { recursive: true });
 const srcFiles = [
   '../src/db.js',
   '../src/global.js',
+  '../src/settings.js',
   '../src/utilities.js',
   '../src/helpers.js',
   '../src/ui.js',
