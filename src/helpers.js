@@ -457,6 +457,7 @@ function isPageWhitelisted(whitelist, currentPageClass) {
   // Whitelisted pages/categories will use the video mode.
 
   if (!Array.isArray(whitelist) || !currentPageClass) return false;
+  if (!isFeedPage()) return false;
 
   // If 'all' is included, it means every page and category will use the video mode.
   if (whitelist.includes("all")) return true;
