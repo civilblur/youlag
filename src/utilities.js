@@ -485,13 +485,6 @@ function removeVideoParamUrl(element = null) {
  * To get and set various states.
  ****************************************/
 
-function getAttrValue(attr, element) {
-  // Helper to get any value of a data attribute. Where element is optional, defaults to using it as querySelector on document.
-  const el = element || document;
-  const value = el.querySelector(`[${attr}]`)?.getAttribute(attr);
-  return value;
-}
-
 function isMobile() {
   return window.innerWidth <= app.breakpoints.desktop_md_max;
 }
@@ -711,11 +704,6 @@ function isLayoutArticle() {
 function isVideoLabelsEnabled() {
   // If user has enabled video labels setting, where "Favorites" becomes "Watch Later", and "My Labels" becomes "Playlists".
   return getSetting("yl_video_labels_enabled") === true;
-}
-
-function isMiniplayerAutoplayEnabled() {
-  // Whether restoring miniplayer should auto-play.
-  return getSetting("yl_miniplayer_autoplay_enabled") === true;
 }
 
 function isArticleSplitViewEnabled() {
