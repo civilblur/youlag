@@ -179,9 +179,10 @@ function extractFeedItemData(feedItem) {
     '.website a.item-element[href*="get=f_"]',
   );
   const invidiousInstance1 = getSetting("yl_invidious_instance");
-  const videoSourceDefault = getSetting("yl_invidious_enabled")
-    ? "invidious_1"
-    : "youtube";
+  const videoSourceDefault =
+    getSetting("yl_invidious_enabled") && getSetting("yl_invidious_instance")
+      ? "invidious_1"
+      : "youtube";
 
   const invidiousRedirectPrefixUrl = "https://redirect.invidious.io/watch?v=";
 

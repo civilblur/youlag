@@ -200,7 +200,12 @@ class YoulagExtension extends Minz_Extension
         }
 
         if (FreshRSS_Context::$user_conf->yl_invidious_url_1 != "") {
-            $this->instance = FreshRSS_Context::$user_conf->yl_invidious_url_1;
+            $instance = trim(string: FreshRSS_Context::$user_conf->yl_invidious_url_1);
+            if (!preg_match(pattern: "#^https?://#i", subject: $instance)) {
+                $instance = "https://{$instance}";
+            }
+            $instance = rtrim(string: $instance, characters: "/");
+            $this->instance = $instance;
         }
     }
 
@@ -302,8 +307,6 @@ class YoulagExtension extends Minz_Extension
             $invidious = "https://{$invidious}";
         }
         $invidious = rtrim(string: $invidious, characters: "/");
-
-        $content = $entry->content();
 
         // Embed video iframe
         $content = $this->embedVideoIframe(entry: $entry);
