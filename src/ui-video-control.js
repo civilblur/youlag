@@ -455,13 +455,8 @@ function updateActiveChapterDisplay() {
     updateChapterActionButtons();
 
     // Update chapter progress bar
-    const isVideoChapterProgressEnabledElement = document.querySelector(
-      "#yl_chapter_progress_enabled",
-    );
     const isVideoChapterProgressEnabled =
-      isVideoChapterProgressEnabledElement?.getAttribute(
-        "data-yl-chapter-progress-enabled",
-      ) === "true";
+      getSetting("yl_chapter_progress_enabled") === true;
     if (chapterCurrentProgress && isVideoChapterProgressEnabled) {
       let chapterStart = chapters[activeIndex].seconds;
       let chapterEnd =

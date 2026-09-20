@@ -178,18 +178,10 @@ function extractFeedItemData(feedItem) {
   const authorFilterElement = authorElement?.querySelector(
     '.website a.item-element[href*="get=f_"]',
   );
-  const invidiousInstanceElemenet = feedItem.querySelector(
-    ".content div.text span[data-yl-invidious-instance]",
-  );
-  const invidiousInstance1 = invidiousInstanceElemenet
-    ? invidiousInstanceElemenet.getAttribute("data-yl-invidious-instance")
-    : "";
-  const videoSourceDefaultElement = feedItem.querySelector(
-    ".content div.text span[data-yl-is-video-default]",
-  );
-  const videoSourceDefault = videoSourceDefaultElement
-    ? videoSourceDefaultElement.getAttribute("data-yl-is-video-default")
-    : "";
+  const invidiousInstance1 = getSetting("yl_invidious_instance");
+  const videoSourceDefault = getSetting("yl_invidious_enabled")
+    ? "invidious_1"
+    : "youtube";
 
   const invidiousRedirectPrefixUrl = "https://redirect.invidious.io/watch?v=";
 
@@ -449,17 +441,8 @@ function getSubpageParentId(getParam) {
 
 function getCategoryWhitelist() {
   // Retrieve the category whitelist.
-  // `setCategoryWhitelist()` in `extension.php` outputs the user data to the DOM.
-
-  const el = document.querySelector("#yl_category_whitelist");
-  if (!el) return [];
-
-  const data = el.getAttribute("data-yl-category-whitelist");
-  if (!data) return ["all"];
-  const whitelist = data
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const whitelist = getSetting("yl_category_whitelist");
+  if (!Array.isArray(whitelist) || whitelist.length === 0) return ["all"];
 
   try {
     localStorage.setItem("youlagCategoryWhitelist", JSON.stringify(whitelist));

@@ -78,15 +78,8 @@ function handleExperimentalFeature() {
   const categoryFilterToggle = document.getElementById(
     "yl_stream_category_filter_toggle",
   );
-  const watchLaterCategoryFilterEnabledElement = document.getElementById(
-    "yl_watch_later_category_filter_enabled",
-  );
-  const watchLaterCategoryFilterEnabledSetting =
-    watchLaterCategoryFilterEnabledElement?.getAttribute(
-      "data-yl-watch-later-category-filter-enabled",
-    );
   const isWatchLaterCategoryFilterEnabled =
-    watchLaterCategoryFilterEnabledSetting === "true";
+    getSetting("yl_watch_later_category_filter_enabled") === true;
   if (isWatchLaterCategoryFilterEnabled && categoryFilterToggle) {
     app.state.youlag.experimentalFeatureEnabled = true;
     categoryFilterToggle.style.setProperty("display", "flex", "important");

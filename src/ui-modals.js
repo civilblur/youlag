@@ -416,13 +416,8 @@ function setupModalVideoEventListeners(videoObject) {
   }
 
   // Mode miniplayer: Settings state handling, if swipe-to-miniplayer is enabled.
-  const miniplayerSwipeEnabledElement = document.querySelector(
-    "#yl_miniplayer_swipe_enabled",
-  );
   const miniplayerSwipeEnabled =
-    miniplayerSwipeEnabledElement?.getAttribute(
-      "data-yl-miniplayer-swipe-enabled",
-    ) === "true";
+    getSetting("yl_miniplayer_swipe_enabled") === true;
   if (miniplayerSwipeEnabled) {
     setupSwipeToMiniplayer(modal);
   }

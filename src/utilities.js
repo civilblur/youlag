@@ -422,12 +422,7 @@ function markVideoFeedItems() {
     `${app.frss.el.feedRoot} ${app.frss.el.entry}`,
   );
   if (!feedEntries || feedEntries.length === 0) return false;
-  const invidiousSetting = document.querySelector(
-    `${app.frss.el.feedRoot} ${app.frss.el.entry}[data-yl-invidious-instance]`,
-  );
-  const invidiousInstanceUrl = invidiousSetting
-    ? invidiousSetting.getAttribute("data-yl-invidious-instance")
-    : null;
+  const invidiousInstanceUrl = getSetting("yl_invidious_instance");
   const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//;
 
   // For every feed entry that has attr [data-link="videoUrl"] matching either YouTube or the custom Invidious instance, mark as video source.
@@ -510,19 +505,11 @@ function isIOS() {
 }
 
 function getRelatedVideosSetting() {
-  return (
-    document
-      .querySelector("#yl_related_videos_source")
-      ?.getAttribute("data-yl-related-videos-source") || "none"
-  );
+  return getSetting("yl_related_videos") || "none";
 }
 
 function getArticleThumbnailPlacement() {
-  return (
-    document
-      .querySelector("#yl_article_thumbnail_placement")
-      ?.getAttribute("data-yl-article-thumbnail-placement") || "right"
-  );
+  return getSetting("yl_article_thumbnail_placement") || "right";
 }
 
 function getHistoryPopstate() {
@@ -723,25 +710,17 @@ function isLayoutArticle() {
 
 function isVideoLabelsEnabled() {
   // If user has enabled video labels setting, where "Favorites" becomes "Watch Later", and "My Labels" becomes "Playlists".
-  return (
-    document
-      .getElementById("yl_video_labels")
-      ?.getAttribute("data-yl-video-labels") === "true"
-  );
+  return getSetting("yl_video_labels_enabled") === true;
 }
 
 function isMiniplayerAutoplayEnabled() {
   // Whether restoring miniplayer should auto-play.
-  return (
-    document
-      .getElementById("yl_miniplayer_autoplay_enabled")
-      ?.getAttribute("data-yl-miniplayer-autoplay-enabled") === "true"
-  );
+  return getSetting("yl_miniplayer_autoplay_enabled") === true;
 }
 
 function isArticleSplitViewEnabled() {
   // Whether article uses split pane view.
-  return getAttrValue("data-yl-article-split-view-enabled") === "true";
+  return getSetting("yl_article_split_view_enabled") === true;
 }
 
 function isArticleSplitViewActive() {
@@ -765,19 +744,11 @@ function isArticleNavEnabled() {
 
 function isHideDescriptionIntroEnabled() {
   // Hides first intro of YouTube video descriptions, which often contains sponsored content above the fold.
-  return (
-    document
-      .getElementById("yl_description_hide_intro_enabled")
-      ?.getAttribute("data-yl-description-hide-intro-enabled") === "true"
-  );
+  return getSetting("yl_description_hide_intro_enabled") === true;
 }
 
 function isUpdateCheckEnabled() {
-  return (
-    document
-      .getElementById("yl_update_check_enabled")
-      ?.getAttribute("data-yl-update-check-enabled") === "true"
-  );
+  return getSetting("yl_update_check_enabled") === true;
 }
 
 function getToolbarStickyState() {
@@ -828,12 +799,7 @@ function formatTime(seconds) {
 }
 
 function shouldCustomThumbnailTitle() {
-  const setting = document.querySelector("#yl_custom_thumbnail_title_enabled");
-  if (!setting) return false;
-  const shouldUseScreencapThumbnail = setting.getAttribute(
-    "data-yl-custom-thumbnail-title-enabled",
-  );
-  return shouldUseScreencapThumbnail === "true";
+  return getSetting("yl_custom_thumbnail_title_enabled") === true;
 }
 
 /*****************************************

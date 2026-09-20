@@ -609,13 +609,7 @@ function setVideoLabelsClass() {
    */
   const localStorageSetting =
     localStorage.getItem("youlagVideoLabels") === "true";
-  const userSettingElement = document.querySelector("#yl_video_labels");
-  let userSetting;
-
-  if (userSettingElement) {
-    userSetting =
-      userSettingElement.getAttribute("data-yl-video-labels") === "true";
-  }
+  const userSetting = getSetting("yl_video_labels_enabled") === true;
 
   if (userSetting) {
     document.body.classList.add("youlag-video-labels");
@@ -637,12 +631,7 @@ function setVideoLabelsClass() {
 function setUnreadBadgeClass() {
   // Adds css class 'youlag-video-unread-badge' to body if video unread badge setting is enabled.
   // If enabled, videos will show badge "New" for unwatched videos.
-  const userSettingElement = document.querySelector("#yl_video_unread_badge");
-  let userSetting;
-  if (userSettingElement) {
-    userSetting =
-      userSettingElement.getAttribute("data-yl-video-unread-badge") === "true";
-  }
+  const userSetting = getSetting("yl_video_unread_badge_enabled") === true;
   if (userSetting) {
     document.body.classList.add("youlag-video-unread-badge");
     return true;
@@ -655,7 +644,7 @@ function setUnreadBadgeClass() {
 function setPageSortingClass() {
   // Adds css class e.g. `youlag-sort-watch_later--user-modified`.
   // Used as a reference for determining the user settings, and run functions based on that.
-  if (getAttrValue("data-yl-video-sort-modified") === "true") {
+  if (getSetting("yl_video_sort_modified_enabled") === true) {
     document.body.classList.add("youlag-sort-watch_later--user-modified");
   }
 }
@@ -673,13 +662,7 @@ function setArticleThumbnailPlacementClass() {
 
 function setMobileLayoutGrid() {
   // Determine if mobile layout should use grid view based on user setting.
-  const userSettingElement = document.querySelector(
-    "#yl_feed_view_mobile_grid_enabled",
-  );
-  const userSetting =
-    userSettingElement?.getAttribute(
-      "data-yl-feed-view-mobile-grid-enabled",
-    ) === "true";
+  const userSetting = getSetting("yl_feed_view_mobile_grid_enabled") === true;
   if (userSetting) {
     document.body.classList.add("youlag-mobile-layout--grid");
   } else {
