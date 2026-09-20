@@ -84,6 +84,36 @@ class YoulagExtension extends Minz_Extension
      */
     public $yl_update_check_enabled = true;
 
+    /**
+     * Block incoming YouTube shorts from being saved.
+     * @var bool
+     */
+    public $yl_block_youtube_shorts = false;
+
+    /**
+     * Source of truth for user settings.
+     * Key = setting name, property name, configure.phtml field name, and JS key.
+     * @var array<string, array{type: string, default: mixed}>
+     */
+    private const SETTINGS = [
+        "yl_related_videos" => ["type" => "string", "default" => "watch_later"],
+        "yl_article_thumbnail_placement" => ["type" => "string", "default" => "right"],
+        "yl_article_split_view_enabled" => ["type" => "bool", "default" => true],
+        "yl_feed_view_mobile_grid_enabled" => ["type" => "bool", "default" => false],
+        "yl_custom_thumbnail_title_enabled" => ["type" => "bool", "default" => false],
+        "yl_watch_later_category_filter_enabled" => ["type" => "bool", "default" => false],
+        "yl_miniplayer_swipe_enabled" => ["type" => "bool", "default" => true],
+        "yl_chapter_progress_enabled" => ["type" => "bool", "default" => true],
+        "yl_description_hide_intro_enabled" => ["type" => "bool", "default" => false],
+        "yl_video_labels_enabled" => ["type" => "bool", "default" => true],
+        "yl_video_unread_badge_enabled" => ["type" => "bool", "default" => false],
+        "yl_video_sort_modified_enabled" => ["type" => "bool", "default" => false],
+        "yl_update_check_enabled" => ["type" => "bool", "default" => true],
+        "yl_invidious_enabled" => ["type" => "bool", "default" => false],
+        "yl_block_youtube_shorts" => ["type" => "bool", "default" => false],
+        "yl_category_whitelist" => ["type" => "array", "default" => ["all"]],
+    ];
+
     protected array $csp_policies = [
         "connect-src" =>
             "'self' https://sponsor.ajay.app/ https://api.github.com/",
@@ -203,117 +233,28 @@ class YoulagExtension extends Minz_Extension
             return;
         }
 
-        $yl_related_videos = FreshRSS_Context::userConf()->attributeString(
-            "yl_related_videos",
-        );
-        if ($yl_related_videos !== null) {
-            $this->yl_related_videos = $yl_related_videos;
+        $conf = FreshRSS_Context::userConf();
+
+        foreach (self::SETTINGS as $name => $spec) {
+            $value = match ($spec["type"]) {
+                "bool" => $conf->attributeBool($name),
+                "string" => $conf->attributeString($name),
+                "array" => $conf->attributeArray($name),
+            };
+            $this->{$name} = $value === null ? $spec["default"] : $value;
         }
 
-        $yl_invidious_enabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_invidious_enabled",
-        );
-        if ($yl_invidious_enabled !== null) {
-            $this->yl_invidious_enabled = $yl_invidious_enabled;
+        // Default video mode to ['all'] when Youlag is activated for the first time.
+        if (
+            !is_array($this->yl_category_whitelist) ||
+            count($this->yl_category_whitelist) === 0
+        ) {
+            $this->yl_category_whitelist = ["all"];
         }
 
         if (FreshRSS_Context::$user_conf->yl_invidious_url_1 != "") {
             $this->instance = FreshRSS_Context::$user_conf->yl_invidious_url_1;
         }
-
-        $val = FreshRSS_Context::userConf()->attributeArray(
-            "yl_category_whitelist",
-        );
-        // Default video mode to ['all'] when Youlag is activated for the first time.
-        if (!is_array(value: $val) || count(value: $val) === 0) {
-            $this->yl_category_whitelist = ["all"];
-        } else {
-            $this->yl_category_whitelist = $val;
-        }
-
-        $miniplayerSwipeEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_miniplayer_swipe_enabled",
-        );
-        $this->yl_miniplayer_swipe_enabled =
-            $miniplayerSwipeEnabled === null ? true : $miniplayerSwipeEnabled;
-
-        $chapterProgressEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_chapter_progress_enabled",
-        );
-        $this->yl_chapter_progress_enabled =
-            $chapterProgressEnabled === null ? true : $chapterProgressEnabled;
-
-        $descriptionHideIntroEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_description_hide_intro_enabled",
-        );
-        $this->yl_description_hide_intro_enabled =
-            $descriptionHideIntroEnabled === null
-                ? false
-                : $descriptionHideIntroEnabled;
-
-        $ylArticleSplitViewEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_article_split_view_enabled",
-        );
-        $this->yl_article_split_view_enabled =
-            $ylArticleSplitViewEnabled === null
-                ? true
-                : $ylArticleSplitViewEnabled;
-
-        $ylArticleThumbnailPlacement = FreshRSS_Context::userConf()->attributeString(
-            "yl_article_thumbnail_placement",
-        );
-        $this->yl_article_thumbnail_placement =
-            $ylArticleThumbnailPlacement === null
-                ? "right"
-                : $ylArticleThumbnailPlacement;
-
-        $feedViewMobileGridEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_feed_view_mobile_grid_enabled",
-        );
-        $this->yl_feed_view_mobile_grid_enabled =
-            $feedViewMobileGridEnabled === null
-                ? false
-                : $feedViewMobileGridEnabled;
-
-        $feedThumbnailScreencapEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_custom_thumbnail_title_enabled",
-        );
-        $this->yl_custom_thumbnail_title_enabled =
-            $feedThumbnailScreencapEnabled === null
-                ? false
-                : $feedThumbnailScreencapEnabled;
-
-        $watchLaterCategoryFilterEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_watch_later_category_filter_enabled",
-        );
-        $this->yl_watch_later_category_filter_enabled =
-            $watchLaterCategoryFilterEnabled === null
-                ? false
-                : $watchLaterCategoryFilterEnabled;
-
-        $labelsEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_video_labels_enabled",
-        );
-        $this->yl_video_labels_enabled =
-            $labelsEnabled === null ? true : $labelsEnabled;
-
-        $unreadBadgeEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_video_unread_badge_enabled",
-        );
-        $this->yl_video_unread_badge_enabled =
-            $unreadBadgeEnabled === null ? false : $unreadBadgeEnabled;
-
-        $sortModifiedEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_video_sort_modified_enabled",
-        );
-        $this->yl_video_sort_modified_enabled =
-            $sortModifiedEnabled === null ? false : $sortModifiedEnabled;
-
-        $updateCheckEnabled = FreshRSS_Context::userConf()->attributeBool(
-            "yl_update_check_enabled",
-        );
-        $this->yl_update_check_enabled =
-            $updateCheckEnabled === null ? true : $updateCheckEnabled;
     }
 
     /**
@@ -1074,167 +1015,31 @@ class YoulagExtension extends Minz_Extension
 
         if (Minz_Request::isPost()) {
             // Invidious settings
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_invidious_enabled",
-                Minz_Request::paramBoolean("yl_invidious_enabled"),
-            );
             FreshRSS_Context::$user_conf->yl_invidious_url_1 = (string) Minz_Request::paramString(
                 "yl_invidious_url_1",
                 "",
             );
 
-            // Category whitelist
-            $catWhitelist = Minz_Request::paramArray(
-                "yl_category_whitelist",
-                true,
-            );
-            if (!is_array(value: $catWhitelist)) {
-                $catWhitelist = [];
+            foreach (self::SETTINGS as $name => $spec) {
+                $value = match ($spec["type"]) {
+                    "bool" => Minz_Request::paramBoolean($name),
+                    "string" => Minz_Request::paramString($name, $spec["default"]),
+                    "array" => Minz_Request::paramArray($name, true),
+                };
+
+                if ($name === "yl_category_whitelist") {
+                    if (!is_array($value)) {
+                        $value = [];
+                    }
+                    if (count($value) === 0) {
+                        // Unchecking all boxes disables video mode for all categories and pages.
+                        // Stored as ["none"] because an empty array falls back to ["all"] on load.
+                        $value = ["none"];
+                    }
+                }
+
+                FreshRSS_Context::userConf()->_attribute($name, $value);
             }
-            if (count(value: $catWhitelist) === 0) {
-                // Allow disabling video mode for all categories and pages, by unchecking all checkboxes.
-                $catWhitelist = ["none"];
-            }
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_category_whitelist",
-                $catWhitelist,
-            );
-
-            // Related videos source
-            $relatedVideosSource = Minz_Request::paramString(
-                "yl_related_videos",
-                "watch_later",
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_related_videos",
-                $relatedVideosSource,
-            );
-
-            // Article split view
-            $articleSplitViewEnabled = Minz_Request::paramBoolean(
-                "yl_article_split_view_enabled",
-                false,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_article_split_view_enabled",
-                $articleSplitViewEnabled,
-            );
-
-            // Article thumbnail placement
-            $articleThumbnailPlacement = Minz_Request::paramString(
-                "yl_article_thumbnail_placement",
-                "right",
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_article_thumbnail_placement",
-                $articleThumbnailPlacement,
-            );
-
-            // Feed view mobile grid layout
-            $feedViewMobileGridEnabled = Minz_Request::paramBoolean(
-                "yl_feed_view_mobile_grid_enabled",
-                false,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_feed_view_mobile_grid_enabled",
-                $feedViewMobileGridEnabled,
-            );
-
-            // Feed thumbnail screencap
-            $feedThumbnailScreencapEnabled = Minz_Request::paramBoolean(
-                "yl_custom_thumbnail_title_enabled",
-                false,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_custom_thumbnail_title_enabled",
-                $feedThumbnailScreencapEnabled,
-            );
-
-            // Watch later category filter
-            $watchLaterCategoryFilterEnabled = Minz_Request::paramBoolean(
-                "yl_watch_later_category_filter_enabled",
-                false,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_watch_later_category_filter_enabled",
-                $watchLaterCategoryFilterEnabled,
-            );
-
-            // Mini player swipe
-            $miniplayerSwipeEnabled = Minz_Request::paramBoolean(
-                "yl_miniplayer_swipe_enabled",
-                true,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_miniplayer_swipe_enabled",
-                $miniplayerSwipeEnabled,
-            );
-
-            // Chapter progress indicator
-            $chapterProgressEnabled = Minz_Request::paramBoolean(
-                "yl_chapter_progress_enabled",
-                true,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_chapter_progress_enabled",
-                $chapterProgressEnabled,
-            );
-
-            // Description hide intro
-            $descriptionHideIntroEnabled = Minz_Request::paramBoolean(
-                "yl_description_hide_intro_enabled",
-                false,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_description_hide_intro_enabled",
-                $descriptionHideIntroEnabled,
-            );
-
-            // Video platform labels
-            $labelsEnabled = Minz_Request::paramBoolean(
-                "yl_video_labels_enabled",
-                true,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_video_labels_enabled",
-                $labelsEnabled,
-            );
-
-            // "New" badge for unwatched videos
-            $unreadBadgeEnabled = Minz_Request::paramBoolean(
-                "yl_video_unread_badge_enabled",
-                false,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_video_unread_badge_enabled",
-                $unreadBadgeEnabled,
-            );
-
-            // Sort by modified date for Watch later/Playlists
-            $sortModifiedEnabled = Minz_Request::paramBoolean(
-                "yl_video_sort_modified_enabled",
-                false,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_video_sort_modified_enabled",
-                $sortModifiedEnabled,
-            );
-
-            // YouTube shorts blocking
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_block_youtube_shorts",
-                Minz_Request::paramBoolean("yl_block_youtube_shorts", true),
-            );
-
-            // Youlag update check
-            $updateCheckEnabled = Minz_Request::paramBoolean(
-                "yl_update_check_enabled",
-                true,
-            );
-            FreshRSS_Context::userConf()->_attribute(
-                "yl_update_check_enabled",
-                $updateCheckEnabled,
-            );
 
             FreshRSS_Context::$user_conf->save();
 
