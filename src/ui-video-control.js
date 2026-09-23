@@ -42,7 +42,7 @@ function renderModalVideoChapters(videoChapters) {
   chapterContainer.appendChild(chapterList);
 }
 
-function setupModalVideoControlEventListeners() {
+function setupModalVideoControlEventListeners(videoObject) {
   // Attach click event listeners to chapter items for seeking
   const modal = getModalVideo();
   if (!modal) return;
@@ -233,8 +233,28 @@ function setupModalVideoControlEventListeners() {
         updateFeedEntryDuration(youtubeId, durationFloor);
       }
 
-      // Store current playback time and state to resume miniplayer from the same position.
       const entryId = modal.getAttribute("data-entry");
+
+      // Auto-remove from Watch later (favorites) once reaching user-set percentage.
+      const autoRemoveSetting = getSetting("yl_watch_later_auto_remove"); // User setting, "off" or 10-95%.
+      if (
+        playerState === 1 && // Not while paused, so scrubbing doesn't trigger it.
+        autoRemoveSetting !== "off" &&
+        modal._autoRemovedEntryId !== entryId &&
+        videoDuration > 0 &&
+        currentTime / videoDuration >= autoRemoveSetting / 100
+      ) {
+        modal._autoRemovedEntryId = entryId;
+        if (
+          isModalVideoFavorited(
+            modal.querySelector(`#${app.modal.id.favorite}`),
+          )
+        ) {
+          toggleFavorite(videoObject.favorite_toggle_url, modal);
+        }
+      }
+
+      // Store current playback time and state to resume miniplayer from the same position.
       if (entryId) {
         try {
           const stored = JSON.parse(

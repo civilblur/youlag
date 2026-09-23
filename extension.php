@@ -79,6 +79,12 @@ class YoulagExtension extends Minz_Extension
     public $yl_video_sort_modified_enabled = false;
 
     /**
+     * Remove entry from Watch later after this percentage of the video is watched. "off" disables it.
+     * @var string
+     */
+    public $yl_watch_later_auto_remove = "off";
+
+    /**
      * Enable Youlag update check
      * @var bool
      */
@@ -108,6 +114,7 @@ class YoulagExtension extends Minz_Extension
         "yl_video_labels_enabled" => ["type" => "bool", "default" => true],
         "yl_video_unread_badge_enabled" => ["type" => "bool", "default" => false],
         "yl_video_sort_modified_enabled" => ["type" => "bool", "default" => false],
+        "yl_watch_later_auto_remove" => ["type" => "string", "default" => "off"],
         "yl_update_check_enabled" => ["type" => "bool", "default" => true],
         "yl_invidious_enabled" => ["type" => "bool", "default" => false],
         "yl_block_youtube_shorts" => ["type" => "bool", "default" => false],

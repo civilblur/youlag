@@ -162,6 +162,27 @@ declare(strict_types=1)
       </label>
 
       <h4 class="mb-0">
+        <span class="yl-form-category__original-label">Favorites</span><span class="yl-form-category__video-label">Watch later</span>
+      </h4>
+      <label for="yl_watch_later_auto_remove">
+        <div class="inline-block">
+          Auto-remove after watching
+          <div class="yl-form-group-help">
+            Remove from
+            <span class="yl-form-category__original-label">"Favorites"</span><span class="yl-form-category__video-label">"Watch later"</span>
+            once this percentage of the video has played.
+          </div>
+        </div>
+        <div>
+          <select id="yl_watch_later_auto_remove" name="yl_watch_later_auto_remove">
+            <?php foreach (["off", "10", "20", "30", "40", "50", "60", "70", "80", "90", "95"] as $value) { ?>
+              <option value="<?= $value ?>"<?= $this->yl_watch_later_auto_remove === $value ? ' selected="selected"' : "" ?>><?= $value === "off" ? "Off" : "{$value}%" ?></option>
+            <?php } ?>
+          </select>
+        </div>
+      </label>
+
+      <h4 class="mb-0">
         Watch more suggestions
 
         <div class="yl-form-group-help">
@@ -353,7 +374,6 @@ declare(strict_types=1)
           </div>
         </div>
       </label>
-
 
     </section>
     <section class="yl-form-section">

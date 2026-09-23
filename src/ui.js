@@ -1522,9 +1522,7 @@ function toggleFavorite(url, container, feedItemEl = null) {
   favoriteButtonIcon.style.backgroundSize = "1.2rem";
 
   // Determine to favorite or unfavorite a feed entry based on the favorite button's current state.
-  const isFavorited = favoriteButton.classList.contains(
-    `${app.modal.class.favorite}--true`,
-  );
+  const isFavorited = isModalVideoFavorited(favoriteButton);
   const toggleUrl = new URL(url);
   toggleUrl.searchParams.delete("is_favorite");
   if (isFavorited) toggleUrl.searchParams.set("is_favorite", "0");
@@ -1546,9 +1544,7 @@ function toggleFavorite(url, container, feedItemEl = null) {
 
       if (response.ok) {
         // Toggle favorite classes and icons.
-        const currentlyTrue = favoriteButton.classList.contains(
-          `${app.modal.class.favorite}--true`,
-        );
+        const currentlyTrue = isModalVideoFavorited(favoriteButton);
         favoriteButton.classList.remove(
           `${app.modal.class.favorite}--${currentlyTrue}`,
         );

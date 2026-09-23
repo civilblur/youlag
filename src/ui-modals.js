@@ -69,7 +69,7 @@ function renderModalVideo(videoObject) {
   setModalType(videoObject);
 
   renderModalVideoChapters(videoObject.video_chapters);
-  setupModalVideoControlEventListeners();
+  setupModalVideoControlEventListeners(videoObject);
 
   setupModalVideoEventListeners(videoObject); // Handles: Close, Minimize, Favorite, Tags, Escape key.
 
@@ -596,7 +596,7 @@ function restoreModalEventListeners() {
   }
 
   setupModalVideoEventListeners(videoObject);
-  setupModalVideoControlEventListeners();
+  setupModalVideoControlEventListeners(videoObject);
 
   const relatedContainer = modal.querySelector(
     `#${app.modal.id.relatedContainer}`,

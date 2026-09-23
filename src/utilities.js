@@ -132,6 +132,13 @@ function setModalState(boolean) {
   return (app.state.modal.active = boolean); // true = modal is active
 }
 
+function isModalVideoFavorited(favoriteButton) {
+  // Determine if the modal favorite button is currently favorited.
+  return !!favoriteButton?.classList.contains(
+    `${app.modal.class.favorite}--true`,
+  );
+}
+
 /*****************************************
  * END "MODAL UTILITIES"
  ****************************************/
@@ -484,6 +491,11 @@ function removeVideoParamUrl(element = null) {
  * BEGIN "STATE & SETTINGS UTILITIES"
  * To get and set various states.
  ****************************************/
+
+function getSetting(name) {
+  // User settings passed from `extension.php` via FreshRSS `js_vars` hook.
+  return context?.extensions?.youlag?.[name];
+}
 
 function isMobile() {
   return window.innerWidth <= app.breakpoints.desktop_md_max;
