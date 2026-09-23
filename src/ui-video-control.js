@@ -4,7 +4,7 @@
  * Handles interaction with the video's playback state, e.g. seeking to a chapter/timestamp.
  */
 
-function renderModalVideoChapters(videoChapters) {
+async function renderModalVideoChapters(videoChapters, youtubeId) {
   // Appends video chapters to the video modal.
   const modal = getModalVideo();
   const chapterContainer = modal.querySelector(
@@ -22,6 +22,10 @@ function renderModalVideoChapters(videoChapters) {
   // Chapter only supported for YouTube as playback source.
   if (videoSource !== "youtube") chapterContainer.classList.add("display-none");
 
+  const chapterListHeader = document.createElement("div");
+  chapterListHeader.classList.add("yl-video-chapter-list-header");
+  chapterListHeader.innerHTML = `<span>Chapters</span><button type="button" id="${app.modal.id.chapterEdit}" class="yl-button-menu">Edit</button>`;
+
   // List all chapters
   const chapterList = document.createElement("div");
   chapterList.id = app.modal.id.chapterList;
@@ -32,14 +36,35 @@ function renderModalVideoChapters(videoChapters) {
     item.classList.add("yl-video-chapter-list-item");
     item.setAttribute("data-seconds", chapter.seconds);
     item.setAttribute("data-order", chapter.order);
+    // Checkbox marks whether the chapter is watched or skipped, shown in edit mode.
     item.innerHTML = `
+      <input type="checkbox" class="yl-video-chapter-list-item__checkbox" tabindex="-1" checked />
       <span class="yl-video-chapter-list-item__time yl-badge">${chapter.timestamp}</span>
       <span class="yl-video-chapter-list-item__label">${chapter.label}</span>
     `;
     chapterList.appendChild(item);
   });
 
+  chapterContainer.appendChild(chapterListHeader);
   chapterContainer.appendChild(chapterList);
+
+  // Restore the chapters the user chose to skip for this video.
+  if (!youtubeId) return;
+  const skippedSeconds = await dbGet("chapterSkip", youtubeId).catch(
+    () => null,
+  );
+  if (!Array.isArray(skippedSeconds)) return;
+  chapterList
+    .querySelectorAll(".yl-video-chapter-list-item")
+    .forEach((item) => {
+      if (!skippedSeconds.includes(Number(item.getAttribute("data-seconds"))))
+        return;
+      item.classList.add("is-skipped");
+      item.querySelector(".yl-video-chapter-list-item__checkbox").checked =
+        false;
+    });
+  updateChapterActionButtons();
+  updateChapterCounter();
 }
 
 function setupModalVideoControlEventListeners(videoObject) {
@@ -48,8 +73,6 @@ function setupModalVideoControlEventListeners(videoObject) {
   if (!modal) return;
 
   if (!modal._videoModalListeners) modal._videoModalListeners = [];
-
-  if (app.state && app.state.modal) app.state.modal.chapterLastActiveIndex = -1;
 
   // Remove existing listeners for chapter list items
   if (modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
@@ -83,12 +106,31 @@ function setupModalVideoControlEventListeners(videoObject) {
     );
   }
 
+  const chapterList = modal.querySelector(`#${app.modal.id.chapterList}`);
+
   // Attach new chapter click listeners.
   const chapterItems = modal.querySelectorAll(".yl-video-chapter-list-item");
   chapterItems.forEach((item) => {
     const seconds = parseInt(item.getAttribute("data-seconds"), 10);
     const chapterClickHandler = function (e) {
       e.preventDefault();
+      if (chapterList?.classList.contains("is-editing")) {
+        const isSkipped = item.classList.toggle("is-skipped");
+        item.querySelector(".yl-video-chapter-list-item__checkbox").checked =
+          !isSkipped;
+        updateChapterActionButtons();
+        updateChapterCounter();
+        if (videoObject.youtubeId) {
+          const skippedSeconds = Array.from(chapterItems)
+            .filter((i) => i.classList.contains("is-skipped"))
+            .map((i) => parseInt(i.getAttribute("data-seconds"), 10));
+          dbSet("chapterSkip", videoObject.youtubeId, skippedSeconds, 52).catch(
+            () => {},
+          );
+        }
+        return;
+      }
+      if (item.classList.contains("is-skipped")) return;
       chapterItems.forEach((i) => i.classList.remove("is-active")); // Clear previous active state
       item.classList.add("is-active");
       updateChapterActionButtons();
@@ -112,21 +154,6 @@ function setupModalVideoControlEventListeners(videoObject) {
     modal.querySelectorAll(".yl-video-chapter-list-item"),
   );
 
-  function updateChapterActionButtons() {
-    // Set chapter skip button states
-    let activeIndex = chapterItemsArr.findIndex((item) =>
-      item.classList.contains("is-active"),
-    );
-    if (activeIndex === -1) activeIndex = 0;
-    if (chapterActionPrevious)
-      chapterActionPrevious.classList.toggle("is-disabled", activeIndex === 0);
-    if (chapterActionNext)
-      chapterActionNext.classList.toggle(
-        "is-disabled",
-        activeIndex === chapterItemsArr.length - 1,
-      );
-  }
-
   // Chapter skip button initial state
   updateChapterActionButtons();
 
@@ -135,8 +162,12 @@ function setupModalVideoControlEventListeners(videoObject) {
     const activeIndex = chapterItemsArr.findIndex((item) =>
       item.classList.contains("is-active"),
     );
-    const targetIndex = activeIndex + direction;
-    if (targetIndex < 0 || targetIndex >= chapterItemsArr.length) return;
+    const targetIndex = findUnskippedChapterIndex(
+      chapterItemsArr,
+      activeIndex,
+      direction,
+    );
+    if (targetIndex === -1) return;
     const targetItem = chapterItemsArr[targetIndex];
     if (targetItem) {
       const seconds = parseInt(targetItem.getAttribute("data-seconds"), 10);
@@ -173,17 +204,34 @@ function setupModalVideoControlEventListeners(videoObject) {
     });
   }
 
+  const chapterEdit = modal.querySelector(`#${app.modal.id.chapterEdit}`);
+  if (chapterEdit && chapterList) {
+    const chapterEditClickHandler = (e) => {
+      e.preventDefault();
+      const isEditing = chapterList.classList.toggle("is-editing");
+      chapterEdit.textContent = isEditing ? "Done" : "Edit";
+      updateChapterActionButtons();
+    };
+    chapterEdit.addEventListener("click", chapterEditClickHandler);
+    modal._videoModalListeners.push({
+      el: chapterEdit,
+      type: "click",
+      handler: chapterEditClickHandler,
+    });
+  }
+
   // Toggle chapter list visibility by clicking the current chapter.
   const chapterCurrentPanel = modal.querySelector(
     `#${app.modal.id.chapterPanel}`,
   );
-  const chapterList = modal.querySelector(`#${app.modal.id.chapterList}`);
   const chapterCurrentClickHandler = function (e) {
     e.preventDefault();
     if (!chapterCurrent) return;
     const isExpanded = chapterCurrent.classList.contains("is-expanded");
     if (isExpanded) {
       chapterCurrent.classList.remove("is-expanded");
+      chapterList?.classList.remove("is-editing");
+      if (chapterEdit) chapterEdit.textContent = "Edit";
     } else {
       chapterCurrent.classList.add("is-expanded");
       // Scroll to the active chapter.
@@ -222,7 +270,7 @@ function setupModalVideoControlEventListeners(videoObject) {
   setupVideoPlaybackPosition(
     modal,
     (currentTime, videoDuration, playerState) => {
-      setActiveChapter(currentTime, videoDuration);
+      setActiveChapter(currentTime, videoDuration, playerState);
 
       // Persist duration to its own store when first received from the YouTube iframe API.
       // Stored separately from dearrow so it survives dearrow cache expiry (video duration never changes).
@@ -402,6 +450,8 @@ function updateActiveChapterDisplay() {
       "",
   }));
   let lastChapterIndex = -1;
+  // Distinguishes playback reaching a chapter from scrubbing into it.
+  let lastPlayingChapterIndex = -1;
 
   if (chapterItems.length > 0) {
     // Only set initial state if not dirty
@@ -414,39 +464,14 @@ function updateActiveChapterDisplay() {
         }
       });
       if (chapters.length > 0 && chapterActiveTime && chapterActiveLabel) {
-        chapterActiveTime.textContent = `1 / ${chapters.length}`;
+        updateChapterCounter();
         chapterActiveLabel.textContent = chapters[0].label;
       }
       chapterActive.setAttribute("data-yl-dirty", "true");
     }
   }
 
-  function updateChapterActionButtons() {
-    // Update chapter skip button states only if activeIndex changed
-    const chapterActionPrevious = modal.querySelector(
-      `#${app.modal.id.chapterActionPrevious}`,
-    );
-    const chapterActionNext = modal.querySelector(
-      `#${app.modal.id.chapterActionNext}`,
-    );
-    let activeIndex = Array.from(chapterItems).findIndex((item) =>
-      item.classList.contains("is-active"),
-    );
-    if (activeIndex === -1) activeIndex = 0;
-    if (typeof app.state.modal.chapterLastActiveIndex === "undefined")
-      app.state.modal.chapterLastActiveIndex = -1;
-    if (activeIndex === app.state.modal.chapterLastActiveIndex) return;
-    app.state.modal.chapterLastActiveIndex = activeIndex;
-    if (chapterActionPrevious)
-      chapterActionPrevious.classList.toggle("is-disabled", activeIndex === 0);
-    if (chapterActionNext)
-      chapterActionNext.classList.toggle(
-        "is-disabled",
-        activeIndex === chapterItems.length - 1,
-      );
-  }
-
-  function setActiveChapter(currentTime, videoDuration) {
+  function setActiveChapter(currentTime, videoDuration, playerState) {
     if (!chapterActiveTime || !chapterActiveLabel || chapters.length === 0) {
       return;
     }
@@ -458,8 +483,28 @@ function updateActiveChapterDisplay() {
       }
     }
     if (activeIndex < 0) activeIndex = 0;
+    if (playerState === 1 && activeIndex !== lastPlayingChapterIndex) {
+      // Skip an unchecked chapter when playback reaches its start, including the first chapter on play/restart.
+      // Scrubbing into one simply plays it and does not skip.
+      const isNaturalReach =
+        (activeIndex === lastPlayingChapterIndex + 1 || activeIndex === 0) &&
+        currentTime - chapters[activeIndex].seconds < 2; // Poll is about 1s, to allow for tick jitter.
+      lastPlayingChapterIndex = activeIndex;
+      if (
+        isNaturalReach &&
+        chapterItems[activeIndex].classList.contains("is-skipped")
+      ) {
+        const targetIndex = findUnskippedChapterIndex(
+          chapterItems,
+          activeIndex,
+          1,
+        );
+        const targetSeconds =
+          targetIndex === -1 ? videoDuration : chapters[targetIndex].seconds;
+        if (targetSeconds) videoControlSeekTo(targetSeconds, true);
+      }
+    }
     if (activeIndex !== lastChapterIndex) {
-      chapterActiveTime.textContent = `${activeIndex + 1} / ${chapters.length}`;
       chapterActiveLabel.textContent = chapters[activeIndex].label;
       lastChapterIndex = activeIndex;
     }
@@ -473,6 +518,7 @@ function updateActiveChapterDisplay() {
 
     // Update skip button states as playback progresses
     updateChapterActionButtons();
+    updateChapterCounter();
 
     // Update chapter progress bar
     const isVideoChapterProgressEnabled =
@@ -502,6 +548,69 @@ function updateActiveChapterDisplay() {
   }
 
   return { setActiveChapter };
+}
+
+function updateChapterActionButtons() {
+  const modal = getModalVideo();
+  if (!modal) return;
+  const chapterActionPrevious = modal.querySelector(
+    `#${app.modal.id.chapterActionPrevious}`,
+  );
+  const chapterActionNext = modal.querySelector(
+    `#${app.modal.id.chapterActionNext}`,
+  );
+  const chapterItems = Array.from(
+    modal.querySelectorAll(".yl-video-chapter-list-item"),
+  );
+  let activeIndex = chapterItems.findIndex((item) =>
+    item.classList.contains("is-active"),
+  );
+  if (activeIndex === -1) activeIndex = 0;
+  if (chapterActionPrevious)
+    chapterActionPrevious.classList.toggle(
+      "is-disabled",
+      findUnskippedChapterIndex(chapterItems, activeIndex, -1) === -1,
+    );
+  if (chapterActionNext)
+    chapterActionNext.classList.toggle(
+      "is-disabled",
+      findUnskippedChapterIndex(chapterItems, activeIndex, 1) === -1,
+    );
+}
+
+function updateChapterCounter() {
+  // Count only chapters that will be watched; inside a skipped one, keep the previous watched number.
+  const modal = getModalVideo();
+  const counter = modal?.querySelector(".yl-video-chapter-current__order");
+  if (!counter) return;
+  const chapterItems = Array.from(
+    modal.querySelectorAll(".yl-video-chapter-list-item"),
+  );
+  let activeIndex = chapterItems.findIndex((item) =>
+    item.classList.contains("is-active"),
+  );
+  if (activeIndex === -1) activeIndex = 0;
+  const watched = chapterItems.filter(
+    (item) => !item.classList.contains("is-skipped"),
+  );
+  const watchedSoFar = watched.filter(
+    (item) => chapterItems.indexOf(item) <= activeIndex,
+  ).length;
+  // Leading skipped chapters show 1, the upcoming first watched chapter.
+  const position = Math.min(Math.max(watchedSoFar, 1), watched.length);
+  counter.textContent = `${position} / ${watched.length}`;
+}
+
+function findUnskippedChapterIndex(items, fromIndex, direction) {
+  // Nearest non-skipped chapter strictly before (-1) or after (1) `fromIndex`, or -1.
+  for (
+    let i = fromIndex + direction;
+    i >= 0 && i < items.length;
+    i += direction
+  ) {
+    if (!items[i].classList.contains("is-skipped")) return i;
+  }
+  return -1;
 }
 
 function videoControlSeekTo(seconds, allowSeekAhead = true) {

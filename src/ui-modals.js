@@ -68,7 +68,7 @@ function renderModalVideo(videoObject) {
 
   setModalType(videoObject);
 
-  renderModalVideoChapters(videoObject.video_chapters);
+  renderModalVideoChapters(videoObject.video_chapters, videoObject.youtubeId);
   setupModalVideoControlEventListeners(videoObject);
 
   setupModalVideoEventListeners(videoObject); // Handles: Close, Minimize, Favorite, Tags, Escape key.
@@ -652,7 +652,6 @@ function closeModalVideo() {
     }
     modal._videoModalListeners.length = 0;
   }
-  if (app.state && app.state.modal) app.state.modal.chapterLastActiveIndex = -1;
   if (modal) modal.remove();
 
   setHistoryPopstate(false); // Signal that a new pop state can be pushed for the next video.

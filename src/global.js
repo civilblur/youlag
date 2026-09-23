@@ -31,7 +31,6 @@ app.state = {
     mode: null, // {'fullscreen' || 'miniplayer' || null}
     miniplayerScrollTop: 0, // Store scroll position of miniplayer before collapsing.
     youtubeId: null,
-    chapterLastActiveIndex: -1, // Current modal's video chapter last active index.
     nearEndThreshold: 3, // Seconds from end of video to considered "nearEnd", for autoplay logic.
   },
   page: {
@@ -78,6 +77,7 @@ app.modal = {
     chapterActionPrevious: "ylVideoChaptersActionPrevious",
     chapterActionNext: "ylVideoChaptersActionNext",
     chapterList: "ylVideoChapterList",
+    chapterEdit: "ylVideoChapterEdit",
     chapterCurrentProgress: "ylVideoChapterCurrentProgress",
     chapterCurrent: "ylVideoChapterCurrent",
     moreContainer: "youlagVideoMoreContentContainer",
