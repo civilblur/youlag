@@ -251,6 +251,8 @@ function extractFeedItemData(feedItem) {
     external_link: feedItem.querySelector(".item-element.title")?.href || "",
     date:
       feedItem.querySelector(".flux_content .date")?.textContent.trim() || "",
+    date_iso:
+      feedItem.querySelector("time[datetime]")?.getAttribute("datetime") || "",
     isVideoFeedItem: isVideoFeedItem,
     youtubeId: app.state.modal.youtubeId,
     youtube_embed_url: youtubeEmbedUrl,
@@ -416,7 +418,7 @@ async function getDearrowData(youtubeId) {
   return resultObj;
 }
 
-async function getSponsorSegments(youtubeId) {
+async function getSponsorSegments(youtubeId, dateIso) {
   if (!youtubeId) return [];
   try {
     const cached = await dbGet("sponsorblock", youtubeId);
@@ -459,8 +461,13 @@ async function getSponsorSegments(youtubeId) {
   } catch (e) {
     return []; // Skip caching, so the next open retries.
   }
-  // Cache for 1 week only, since viewers keep adding segments to new videos.
-  dbSet("sponsorblock", youtubeId, segments, 1).catch(() => {});
+  // SponsorBlock segments may not immediately be available for new videos, thus
+  // cache them shorter: 30min under a day old, 12h under a week old, otherwise 1 week.
+  const ageHours = (Date.now() - new Date(dateIso)) / (60 * 60 * 1000);
+  const ttlHours = ageHours < 24 ? 0.5 : ageHours < 24 * 7 ? 12 : 24 * 7;
+  dbSet("sponsorblock", youtubeId, segments, ttlHours / (24 * 7)).catch(
+    () => {},
+  );
   return segments;
 }
 

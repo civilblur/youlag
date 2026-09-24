@@ -99,7 +99,10 @@ async function setSponsorSegments(videoObject) {
     !videoObject.youtubeId
   )
     return;
-  const segments = await getSponsorSegments(videoObject.youtubeId);
+  const segments = await getSponsorSegments(
+    videoObject.youtubeId,
+    videoObject.date_iso,
+  );
   // Fetches overlap when switching videos quickly, only the open video's result is kept.
   if (modal.getAttribute("data-entry") !== videoObject.entryId) return;
   modal._sponsorSegments = segments

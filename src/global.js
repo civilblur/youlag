@@ -170,6 +170,7 @@ app.types = {
     title: "",
     external_link: "",
     date: "",
+    date_iso: "", // e.g. "2000-01-20T10:00:00+02:00".
     isVideoFeedItem: false,
     youtubeId: "",
     youtube_embed_url: "",
