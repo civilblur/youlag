@@ -14,16 +14,15 @@ declare(strict_types=1)
     <input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 
     <h2>Youlag settings</h2>
-
     <section class="yl-form-section">
       <?php $categories = isset($_SESSION["ext_categories"])
           ? $_SESSION["ext_categories"]
           : []; ?>
 
-      <h3>Appearance & behavior</h3>
+      <h3>Video mode</h3>
 
       <h4 class="mb-0">
-        Video mode
+        Apply video mode to
         <div class="yl-form-group-help">
           Select the pages and categories whose feeds will be displayed in Youlag's video interface.
         </div>
@@ -108,6 +107,83 @@ declare(strict_types=1)
       <?php else: ?>
         <div class="yl-form-group-help">No categories found.</div>
       <?php endif; ?>
+
+      <h4 class="mb-0">
+        Feed view
+      </h4>
+      <label for="yl_feed_view_mobile_grid_enabled" class="flex">
+          <input type="checkbox" id="yl_feed_view_mobile_grid_enabled" name="yl_feed_view_mobile_grid_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_feed_view_mobile_grid_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Use grid layout on mobile
+          <div class="yl-form-group-help">
+            Mobile: Use a compact two-column grid layout to display more entries at once.
+          </div>
+        </div>
+      </label>
+      <label for="yl_custom_thumbnail_title_enabled" class="flex">
+          <input type="checkbox" id="yl_custom_thumbnail_title_enabled" name="yl_custom_thumbnail_title_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_custom_thumbnail_title_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Replace clickbait thumbnails and titles with alternatives
+          <div class="yl-badge yl-badge--warning pointer-events-none">Experimental</div>
+          <div class="yl-form-group-help">
+            Use DeArrow's crowd-sourced options for honest previews.
+            If unavailable, fallback to low-resolution screencap, then the original content.
+          </div>
+        </div>
+      </label>
+      <label for="yl_video_unread_badge_enabled" class="flex">
+          <input type="checkbox" id="yl_video_unread_badge_enabled" name="yl_video_unread_badge_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_video_unread_badge_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Show "New" badge for unwatched videos
+          <div class="yl-form-group-help">
+            Applied to entries in video mode only.
+          </div>
+        </div>
+      </label>
+
+      <h4 class="mb-0">
+        Labels
+      </h4>
+      <label for="yl_video_labels_enabled" class="flex">
+          <input type="checkbox" id="yl_video_labels_enabled" name="yl_video_labels_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_video_labels_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Use video platform labels
+          <div class="yl-form-group-help">
+            Renames "Favorites → Watch later", "My Labels → Playlists".
+          </div>
+        </div>
+      </label>
+
+      <h4 class="mb-0">
+        YouTube shorts
+      </h4>
+      <label for="yl_block_youtube_shorts" class="flex">
+          <input type="checkbox" id="yl_block_youtube_shorts" name="yl_block_youtube_shorts" value="1" class="mb-auto"
+          <?php echo FreshRSS_Context::$user_conf->yl_block_youtube_shorts
+              ? ' checked="checked"'
+              : ""; ?>>
+        <div class="inline-block">
+          Block incoming YouTube shorts
+          <div class="yl-form-group-help">
+            Existing shorts in feeds will not be affected.
+          </div>
+        </div>
+      </label>
+    </section>
+    <section class="yl-form-section">
+      <h3>Video player</h3>
 
       <h4 class="mb-0">
         Miniplayer
@@ -245,27 +321,6 @@ declare(strict_types=1)
       </label>
 
       <h4 class="mb-0">
-        <span class="yl-form-category__original-label">Favorites</span><span class="yl-form-category__video-label">Watch later</span>
-      </h4>
-      <label for="yl_watch_later_auto_remove">
-        <div class="inline-block">
-          Auto-remove after watching
-          <div class="yl-form-group-help">
-            Remove from
-            <span class="yl-form-category__original-label">"Favorites"</span><span class="yl-form-category__video-label">"Watch later"</span>
-            once this percentage of the video has played.
-          </div>
-        </div>
-        <div>
-          <select id="yl_watch_later_auto_remove" name="yl_watch_later_auto_remove">
-            <?php foreach (["off", "10", "20", "30", "40", "50", "60", "70", "80", "90", "95"] as $value) { ?>
-              <option value="<?= $value ?>"<?= $this->yl_watch_later_auto_remove === $value ? ' selected="selected"' : "" ?>><?= $value === "off" ? "Off" : "{$value}%" ?></option>
-            <?php } ?>
-          </select>
-        </div>
-      </label>
-
-      <h4 class="mb-0">
         Watch more suggestions
 
         <div class="yl-form-group-help">
@@ -319,169 +374,8 @@ declare(strict_types=1)
         </label>
 
       <h4 class="mb-0">
-        Article mode
+        Default video playback source
       </h4>
-      <label for="yl_article_split_view_enabled" class="flex">
-          <input type="checkbox" id="yl_article_split_view_enabled" name="yl_article_split_view_enabled" value="1" class="mb-auto"
-            <?php echo $this->yl_article_split_view_enabled
-                ? ' checked="checked"'
-                : ""; ?>>
-        <div class="inline-block">
-          Split view
-          <div class="yl-form-group-help">
-            Desktop: Display article entries and its content side by side.
-          </div>
-        </div>
-      </label>
-<label for="yl_article_thumbnail_placement">
-         <div class="inline-block">
-             Thumbnail placement
-           <div class="yl-form-group-help">
-               Position of thumbnail relative to headline.
-           </div>
-         </div>
-         <div class="flex yl-gap-2xs">
-             <label for="yl_article_thumbnail_placement_left" class="flex">
-             <input type="radio" id="yl_article_thumbnail_placement_left" name="yl_article_thumbnail_placement" value="left" class="mb-auto"
-                 <?php echo $this->yl_article_thumbnail_placement === "left"
-                     ? ' checked="checked"'
-                     : ""; ?>>
-             <div class="inline-block">
-                 Left
-             </div>
-             </label>
-             <label for="yl_article_thumbnail_placement_right" class="flex">
-             <input type="radio" id="yl_article_thumbnail_placement_right" name="yl_article_thumbnail_placement" value="right" class="mb-auto"
-                 <?php echo $this->yl_article_thumbnail_placement === "right"
-                     ? ' checked="checked"'
-                     : ""; ?>>
-             <div class="inline-block">
-                 Right
-             </div>
-             </label>
-         </div>
-       </label>
-
-
-       <h4 class="mb-0">
-         Feed view
-       </h4>
-      <label for="yl_feed_view_mobile_grid_enabled" class="flex">
-          <input type="checkbox" id="yl_feed_view_mobile_grid_enabled" name="yl_feed_view_mobile_grid_enabled" value="1" class="mb-auto"
-            <?php echo $this->yl_feed_view_mobile_grid_enabled
-                ? ' checked="checked"'
-                : ""; ?>>
-        <div class="inline-block">
-          Use grid layout on mobile
-          <div class="yl-form-group-help">
-            Mobile: Use a compact two-column grid layout to display more entries at once.
-          </div>
-        </div>
-      </label>
-      <label for="yl_custom_thumbnail_title_enabled" class="flex">
-          <input type="checkbox" id="yl_custom_thumbnail_title_enabled" name="yl_custom_thumbnail_title_enabled" value="1" class="mb-auto"
-            <?php echo $this->yl_custom_thumbnail_title_enabled
-                ? ' checked="checked"'
-                : ""; ?>>
-        <div class="inline-block">
-          Replace clickbait thumbnails and titles with alternatives
-          <div class="yl-badge yl-badge--warning pointer-events-none">Experimental</div>
-          <div class="yl-form-group-help">
-            Use DeArrow's crowd-sourced options for honest previews.
-            If unavailable, fallback to low-resolution screencap, then the original content.
-          </div>
-        </div>
-      </label>
-      <label for="yl_watch_later_category_filter_enabled" class="flex">
-          <input type="checkbox" id="yl_watch_later_category_filter_enabled" name="yl_watch_later_category_filter_enabled" value="1" class="mb-auto"
-            <?php echo $this->yl_watch_later_category_filter_enabled
-                ? ' checked="checked"'
-                : ""; ?>>
-        <div class="inline-block">
-          Enable category filter in the
-          <span class="yl-form-category__original-label">Favorites</span>
-          <span class="yl-form-category__video-label">Watch later</span>
-          page
-          <div class="yl-badge yl-badge--warning pointer-events-none">Experimental</div>
-          <div class="yl-form-group-help">
-            Ability to filter the feed entries by their category in the
-            <span class="yl-form-category__original-label">Favorites</span>
-            <span class="yl-form-category__video-label">Watch later</span>
-            page.
-          </div>
-        </div>
-      </label>
-
-      <h4 class="mb-0">
-        Labels
-      </h4>
-      <label for="yl_video_labels_enabled" class="flex">
-          <input type="checkbox" id="yl_video_labels_enabled" name="yl_video_labels_enabled" value="1" class="mb-auto"
-            <?php echo $this->yl_video_labels_enabled
-                ? ' checked="checked"'
-                : ""; ?>>
-        <div class="inline-block">
-          Use video platform labels
-          <div class="yl-form-group-help">
-            Renames "Favorites → Watch later", "My Labels → Playlists".
-          </div>
-        </div>
-      </label>
-      <label for="yl_video_unread_badge_enabled" class="flex">
-          <input type="checkbox" id="yl_video_unread_badge_enabled" name="yl_video_unread_badge_enabled" value="1" class="mb-auto"
-            <?php echo $this->yl_video_unread_badge_enabled
-                ? ' checked="checked"'
-                : ""; ?>>
-        <div class="inline-block">
-          Show "New" badge for unwatched videos
-          <div class="yl-form-group-help">
-            Applied to entries in video mode only.
-          </div>
-        </div>
-      </label>
-
-      <h4 class="mb-0">
-        Sorting
-      </h4>
-      <label for="yl_video_sort_modified_enabled" class="flex">
-          <input type="checkbox" id="yl_video_sort_modified_enabled" name="yl_video_sort_modified_enabled" value="1" class="mb-auto"
-            <?php echo $this->yl_video_sort_modified_enabled
-                ? ' checked="checked"'
-                : ""; ?>>
-        <div class="inline-block">
-          Sort
-          <span class="yl-form-category__original-label">"Favorite"</span><span class="yl-form-category__video-label">"Watch later"</span>
-          by recently modified
-          <div class="yl-form-group-help">
-            Entries will be sorted by the time they were added or read, rather than by received date.
-          </div>
-        </div>
-      </label>
-
-    </section>
-    <section class="yl-form-section">
-      <h3>Subscription</h3>
-
-      <h4 class="mb-0">
-        YouTube shorts
-      </h4>
-      <label for="yl_block_youtube_shorts" class="flex">
-          <input type="checkbox" id="yl_block_youtube_shorts" name="yl_block_youtube_shorts" value="1" class="mb-auto"
-          <?php echo FreshRSS_Context::$user_conf->yl_block_youtube_shorts
-              ? ' checked="checked"'
-              : ""; ?>>
-        <div class="inline-block">
-          Block incoming YouTube shorts
-          <div class="yl-form-group-help">
-            Existing shorts in feeds will not be affected.
-          </div>
-        </div>
-      </label>
-    </section>
-    <section class="yl-form-section">
-
-      <h3>Default video playback source</h3>
-
       <div class="form-group">
 
         <div class="group-controls">
@@ -527,7 +421,104 @@ declare(strict_types=1)
 
         </div>
       </div>
+    </section>
+    <section class="yl-form-section">
+      <h3><span class="yl-form-category__original-label">Favorites</span><span class="yl-form-category__video-label">Watch later</span></h3>
 
+      <label for="yl_watch_later_auto_remove">
+        <div class="inline-block">
+          Auto-remove after watching
+          <div class="yl-form-group-help">
+            Remove from
+            <span class="yl-form-category__original-label">"Favorites"</span><span class="yl-form-category__video-label">"Watch later"</span>
+            once this percentage of the video has played.
+          </div>
+        </div>
+        <div>
+          <select id="yl_watch_later_auto_remove" name="yl_watch_later_auto_remove">
+            <?php foreach (["off", "10", "20", "30", "40", "50", "60", "70", "80", "90", "95"] as $value) { ?>
+              <option value="<?= $value ?>"<?= $this->yl_watch_later_auto_remove === $value ? ' selected="selected"' : "" ?>><?= $value === "off" ? "Off" : "{$value}%" ?></option>
+            <?php } ?>
+          </select>
+        </div>
+      </label>
+      <label for="yl_watch_later_category_filter_enabled" class="flex">
+          <input type="checkbox" id="yl_watch_later_category_filter_enabled" name="yl_watch_later_category_filter_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_watch_later_category_filter_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Enable category filter in the
+          <span class="yl-form-category__original-label">Favorites</span>
+          <span class="yl-form-category__video-label">Watch later</span>
+          page
+          <div class="yl-badge yl-badge--warning pointer-events-none">Experimental</div>
+          <div class="yl-form-group-help">
+            Ability to filter the feed entries by their category in the
+            <span class="yl-form-category__original-label">Favorites</span>
+            <span class="yl-form-category__video-label">Watch later</span>
+            page.
+          </div>
+        </div>
+      </label>
+      <label for="yl_video_sort_modified_enabled" class="flex">
+          <input type="checkbox" id="yl_video_sort_modified_enabled" name="yl_video_sort_modified_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_video_sort_modified_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Sort
+          <span class="yl-form-category__original-label">"Favorite"</span><span class="yl-form-category__video-label">"Watch later"</span>
+          by recently modified
+          <div class="yl-form-group-help">
+            Entries will be sorted by the time they were added or read, rather than by received date.
+          </div>
+        </div>
+      </label>
+    </section>
+    <section class="yl-form-section">
+      <h3>Article mode</h3>
+
+      <label for="yl_article_split_view_enabled" class="flex">
+          <input type="checkbox" id="yl_article_split_view_enabled" name="yl_article_split_view_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_article_split_view_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Split view
+          <div class="yl-form-group-help">
+            Desktop: Display article entries and its content side by side.
+          </div>
+        </div>
+      </label>
+<label for="yl_article_thumbnail_placement">
+         <div class="inline-block">
+             Thumbnail placement
+           <div class="yl-form-group-help">
+               Position of thumbnail relative to headline.
+           </div>
+         </div>
+         <div class="flex yl-gap-2xs">
+             <label for="yl_article_thumbnail_placement_left" class="flex">
+             <input type="radio" id="yl_article_thumbnail_placement_left" name="yl_article_thumbnail_placement" value="left" class="mb-auto"
+                 <?php echo $this->yl_article_thumbnail_placement === "left"
+                     ? ' checked="checked"'
+                     : ""; ?>>
+             <div class="inline-block">
+                 Left
+             </div>
+             </label>
+             <label for="yl_article_thumbnail_placement_right" class="flex">
+             <input type="radio" id="yl_article_thumbnail_placement_right" name="yl_article_thumbnail_placement" value="right" class="mb-auto"
+                 <?php echo $this->yl_article_thumbnail_placement === "right"
+                     ? ' checked="checked"'
+                     : ""; ?>>
+             <div class="inline-block">
+                 Right
+             </div>
+             </label>
+         </div>
+       </label>
     </section>
     <section class="yl-form-section">
       <h3>Youlag</h3>

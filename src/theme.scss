@@ -396,7 +396,7 @@ body {
   /* Change the labels and references to "Favorite" and "My Labels/Tags" based on user settings. */
 
   .yl-form-category {
-    /* Extension "Appearance" settings: display both labels in the DOM, show label according to `body.youlag-video-labels` */
+    /* Extension settings: display both labels in the DOM, show label according to `body.youlag-video-labels` */
 
     &__video-label {
       display: inline-block;
