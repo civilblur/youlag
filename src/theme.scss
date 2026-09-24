@@ -4932,7 +4932,11 @@ body {
       }
 
       &.is-skipped {
-        opacity: 0.4;
+        /* Dim content only, so the checkbox still looks toggleable. */
+        .yl-video-chapter-list-item__time,
+        .yl-video-chapter-list-item__label {
+          opacity: 0.4;
+        }
       }
 
       &__checkbox {
