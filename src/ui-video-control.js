@@ -758,8 +758,9 @@ function updateSponsorBlockAction(
   const current = segments.find(
     (s) => currentTime >= s.start && currentTime < s.end,
   );
+  // 9s keeps the countdown a single digit.
   const upcoming = segments.find(
-    (s) => s.start > currentTime && s.start - currentTime <= 5,
+    (s) => s.start > currentTime && s.start - currentTime <= 9,
   );
 
   // Auto-skip only when playback runs into the segment, not when seeking into it.
@@ -786,7 +787,8 @@ function updateSponsorBlockAction(
       "countdown",
       Math.ceil(upcoming.start - currentTime),
     );
-  } else if (current) {
+  } else if (current && playerState !== 0) {
+    // Hide once ended, since the reported time can stop just short of the segment end.
     renderSponsorBlockAction(button, current, "skip");
   } else {
     renderSponsorBlockAction(button, null, null);
