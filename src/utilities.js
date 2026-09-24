@@ -318,26 +318,42 @@ function appendOriginalSrc(element) {
 }
 
 function wrapVideoDescription(description) {
-  // Wrap first and second paragraph of a YouTube video description in a div.
+  // Wrap the first three paragraphs of a YouTube video description in divs.
   // YouTube video descriptions uses <br><br> to separate paragraphs.
 
   const regex = /^([\s\S]*?<br\s*\/?>\s*<br\s*\/?>)([\s\S]*)$/i; // brbr pattern
+  const paragraphClasses = [
+    app.modal.class.descParagraph1,
+    app.modal.class.descParagraph2,
+    app.modal.class.descParagraph3,
+  ];
 
-  const match1 = description.match(regex);
-  if (!match1) return description;
-
-  const match2 = match1[2].match(regex);
-  if (!match2) {
-    return (
-      `<div class="${app.modal.class.descParagraph1}">${match1[1]}</div>` +
-      match1[2]
-    ); // Remainder
+  let wrapped = "";
+  let remainder = description;
+  for (const paragraphClass of paragraphClasses) {
+    const match = remainder.match(regex);
+    if (!match) break;
+    wrapped += `<div class="${paragraphClass}">${match[1]}</div>`;
+    remainder = match[2];
   }
-  return (
-    `<div class="${app.modal.class.descParagraph1}">${match1[1]}</div>` +
-    `<div class="${app.modal.class.descParagraph2}">${match2[1]}</div>` +
-    match2[2]
-  );
+  return wrapped + remainder;
+}
+
+function hasTrackingLink(element) {
+  // Affiliate and tracking query params commonly used in sponsored links.
+  const trackingParamPattern =
+    /^(utm_.+|ref|via|aff|aff_id|affid|affiliate_id|fpr|rfsn|irclickid|sscid|awc|cjevent|clickref|linkcode|ascsubtag)$/i;
+
+  return Array.from(element.querySelectorAll("a[href]")).some((link) => {
+    try {
+      const url = new URL(link.getAttribute("href"));
+      return Array.from(url.searchParams.keys()).some((key) =>
+        trackingParamPattern.test(key),
+      );
+    } catch (_) {
+      return false;
+    }
+  });
 }
 
 function hideVideoDescriptionIntro(description) {
@@ -369,6 +385,15 @@ function hideVideoDescriptionIntro(description) {
     firstParagraph?.classList.add("display-none");
     secondParagraph.classList.add("display-none");
   }
+
+  const thirdParagraph = temp.querySelector(
+    `.${app.modal.class.descParagraph3}`,
+  );
+  [firstParagraph, secondParagraph, thirdParagraph].forEach((paragraph) => {
+    if (paragraph && hasTrackingLink(paragraph)) {
+      paragraph.classList.add("display-none");
+    }
+  });
 
   return temp.innerHTML;
 }

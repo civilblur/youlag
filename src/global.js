@@ -95,6 +95,7 @@ app.modal = {
     descContainerCollapsed: "youlag-video-description-container--collapsed",
     descParagraph1: "youlag-video-description-content__paragraph-1",
     descParagraph2: "youlag-video-description-content__paragraph-2",
+    descParagraph3: "youlag-video-description-content__paragraph-3",
     relatedVideoEntryHTML: "youlag-related-video-item__feed-item-container", // Contains original feed entry HTML for related video item, used for parsing when opening a related video.
     relatedVideoEntry: "youlag-related-video-item",
     tagsModalRoot: "youlag-tags-modal",
