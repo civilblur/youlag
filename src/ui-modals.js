@@ -68,6 +68,7 @@ function renderModalVideo(videoObject) {
 
   setModalType(videoObject);
 
+  setSponsorSegments(videoObject);
   renderModalVideoChapters(videoObject.video_chapters, videoObject.youtubeId);
   setupModalVideoControlEventListeners(videoObject);
 
@@ -216,6 +217,11 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
           </div>
 
           <div id="${app.modal.id.chapterActionContainer}" class="yl-video-chapter-action-container">
+            <button type="button" id="${app.modal.id.sponsorBlockAction}" class="yl-video-chapter-action yl-video-sponsorblock-action display-none">
+              <span class="yl-video-sponsorblock-action__label"></span>
+              <span class="yl-video-sponsorblock-action__countdown"></span>
+              <span class="yl-video-sponsorblock-action__cancel">×</span>
+            </button>
             <div id="${app.modal.id.chapterActionPrevious}"
                     class="yl-video-chapter-action is-disabled"
                     role="button">
@@ -515,17 +521,7 @@ function setupModalVideoEventListeners(videoObject) {
     const sourceHandler = function () {
       iframe.src = getEmbedUrl(videoSourceSelect.value);
       iframe.setAttribute("data-yl-is-video", videoSourceSelect.value);
-      const chapterContainer = modal.querySelector(
-        `#${app.modal.id.chapterContainer}`,
-      );
-      if (chapterContainer) {
-        // Chapter only supported for YouTube as playback source.
-        if (videoSourceSelect.value !== "youtube") {
-          chapterContainer.classList.add("display-none");
-        } else {
-          chapterContainer.classList.remove("display-none");
-        }
-      }
+      updateChapterContainerVisibility();
     };
     videoSourceSelect.addEventListener("change", sourceHandler);
     modal._videoModalListeners.push({

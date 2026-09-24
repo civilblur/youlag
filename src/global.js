@@ -78,6 +78,7 @@ app.modal = {
     chapterActionNext: "ylVideoChaptersActionNext",
     chapterList: "ylVideoChapterList",
     chapterEdit: "ylVideoChapterEdit",
+    sponsorBlockAction: "ylVideoSponsorBlockAction",
     chapterCurrentProgress: "ylVideoChapterCurrentProgress",
     chapterCurrent: "ylVideoChapterCurrent",
     moreContainer: "youlagVideoMoreContentContainer",

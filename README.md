@@ -91,7 +91,7 @@ Before installing Youlag, please make sure to update FreshRSS to `1.30.0` or hig
 
 ## Attributions
 
-- **Integration**: [Korbak/freshrss-invidious](https://github.com/Korbak/freshrss-invidious), [ajayyy/DeArrow](https://github.com/ajayyy/DeArrow)
+- **Integration**: [Korbak/freshrss-invidious](https://github.com/Korbak/freshrss-invidious), [ajayyy/DeArrow](https://github.com/ajayyy/DeArrow), [ajayyy/SponsorBlock](https://github.com/ajayyy/SponsorBlock)
 - **Icons used/remixed**: [SVG Repo](https://www.svgrepo.com/collection/design-and-development-elements/), [krystonschwarze](https://www.svgrepo.com/author/krystonschwarze/), [phosphor](https://www.svgrepo.com/author/phosphor/), [Solar Icons](https://www.svgrepo.com/svg/529779/playlist), [Dazzle UI](https://www.svgrepo.com/author/Dazzle%20UI/), [n3r4zzurr0/svg-spinners](https://github.com/n3r4zzurr0/svg-spinners).
 - **Tools**: [SVGOptimizer](https://jakearchibald.github.io/svgomg/).
 

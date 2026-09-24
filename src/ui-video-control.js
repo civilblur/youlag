@@ -7,20 +7,17 @@
 async function renderModalVideoChapters(videoChapters, youtubeId) {
   // Appends video chapters to the video modal.
   const modal = getModalVideo();
-  const chapterContainer = modal.querySelector(
+  const chapterContainer = modal?.querySelector(
     `#${app.modal.id.chapterContainer}`,
   );
-  const iframe = modal.querySelector(`#${app.modal.id.videoIframe}`);
-  const videoSource = iframe?.getAttribute("data-yl-is-video");
 
-  if (!modal || !videoChapters || videoChapters.length === 0) {
-    if (chapterContainer) chapterContainer.remove();
+  if (!modal || !chapterContainer) return;
+  if (!videoChapters || videoChapters.length === 0) {
+    chapterContainer.classList.add("is-chapterless");
+    updateChapterContainerVisibility();
     return;
   }
-  if (!chapterContainer) return;
-
-  // Chapter only supported for YouTube as playback source.
-  if (videoSource !== "youtube") chapterContainer.classList.add("display-none");
+  chapterContainer.classList.remove("is-chapterless");
 
   const chapterListHeader = document.createElement("div");
   chapterListHeader.classList.add("yl-video-chapter-list-header");
@@ -47,6 +44,7 @@ async function renderModalVideoChapters(videoChapters, youtubeId) {
 
   chapterContainer.appendChild(chapterListHeader);
   chapterContainer.appendChild(chapterList);
+  updateChapterContainerVisibility();
 
   // Restore the chapters the user chose to skip for this video.
   if (!youtubeId) return;
@@ -65,6 +63,43 @@ async function renderModalVideoChapters(videoChapters, youtubeId) {
     });
   updateChapterActionButtons();
   updateChapterCounter();
+}
+
+function updateChapterContainerVisibility() {
+  // Bar shows for chapters or sponsor segments, YouTube source only.
+  const modal = getModalVideo();
+  const chapterContainer = modal?.querySelector(
+    `#${app.modal.id.chapterContainer}`,
+  );
+  if (!chapterContainer) return;
+  const iframe = modal.querySelector(`#${app.modal.id.videoIframe}`);
+  const hasContent =
+    modal.querySelectorAll(".yl-video-chapter-list-item").length > 0 ||
+    modal._sponsorSegments?.length > 0;
+  chapterContainer.classList.toggle(
+    "display-none",
+    iframe?.getAttribute("data-yl-is-video") !== "youtube" || !hasContent,
+  );
+}
+
+async function setSponsorSegments(videoObject) {
+  const modal = getModalVideo();
+  if (!modal) return;
+  modal._sponsorSegments = [];
+  const categories = getSetting("yl_sponsorblock_categories") || [];
+  if (
+    getSetting("yl_sponsorblock_enabled") !== true ||
+    categories.length === 0 ||
+    !videoObject.youtubeId
+  )
+    return;
+  const segments = await getSponsorSegments(videoObject.youtubeId);
+  // Fetches overlap when switching videos quickly, only the open video's result is kept.
+  if (modal.getAttribute("data-entry") !== videoObject.entryId) return;
+  modal._sponsorSegments = segments
+    .filter((s) => categories.includes(s.category))
+    .map((s) => ({ ...s, cancelled: false }));
+  updateChapterContainerVisibility();
 }
 
 function setupModalVideoControlEventListeners(videoObject) {
@@ -220,6 +255,36 @@ function setupModalVideoControlEventListeners(videoObject) {
     });
   }
 
+  const sponsorBlockAction = modal.querySelector(
+    `#${app.modal.id.sponsorBlockAction}`,
+  );
+  if (sponsorBlockAction) {
+    // Cancels the auto-skip during the countdown, and skips while inside a segment.
+    const sponsorBlockActionClickHandler = (e) => {
+      e.preventDefault();
+      const segment = sponsorBlockAction._sponsorSegment;
+      if (!segment) return;
+      if (sponsorBlockAction._sponsorMode === "countdown") {
+        segment.cancelled = true;
+        renderSponsorBlockAction(sponsorBlockAction, null, null);
+        return;
+      }
+      // Jump past this segment, and any skipped content right after it.
+      const target = getSkipTargetTime(segment.end, lastVideoDuration);
+      if (target) videoControlSeekTo(target, true);
+      sponsorBlockAction.classList.add("display-none");
+    };
+    sponsorBlockAction.addEventListener(
+      "click",
+      sponsorBlockActionClickHandler,
+    );
+    modal._videoModalListeners.push({
+      el: sponsorBlockAction,
+      type: "click",
+      handler: sponsorBlockActionClickHandler,
+    });
+  }
+
   // Toggle chapter list visibility by clicking the current chapter.
   const chapterCurrentPanel = modal.querySelector(
     `#${app.modal.id.chapterPanel}`,
@@ -266,11 +331,22 @@ function setupModalVideoControlEventListeners(videoObject) {
   const { setActiveChapter } = updateActiveChapterDisplay();
   const youtubeId = app.state.modal.youtubeId || null;
   let cachedVideoDuration = null;
+  // Previous playing position, to tell playback reaching a segment from scrubbing into it.
+  let lastPlayingTime = -1; // -1 so a segment at 0s is reached on play start.
+  let lastVideoDuration = null;
 
   setupVideoPlaybackPosition(
     modal,
     (currentTime, videoDuration, playerState) => {
       setActiveChapter(currentTime, videoDuration, playerState);
+      lastVideoDuration = videoDuration;
+      updateSponsorBlockAction(
+        currentTime,
+        videoDuration,
+        playerState,
+        lastPlayingTime,
+      );
+      if (playerState === 1) lastPlayingTime = currentTime;
 
       // Persist duration to its own store when first received from the YouTube iframe API.
       // Stored separately from dearrow so it survives dearrow cache expiry (video duration never changes).
@@ -494,13 +570,10 @@ function updateActiveChapterDisplay() {
         isNaturalReach &&
         chapterItems[activeIndex].classList.contains("is-skipped")
       ) {
-        const targetIndex = findUnskippedChapterIndex(
-          chapterItems,
-          activeIndex,
-          1,
+        const targetSeconds = getSkipTargetTime(
+          chapters[activeIndex].seconds,
+          videoDuration,
         );
-        const targetSeconds =
-          targetIndex === -1 ? videoDuration : chapters[targetIndex].seconds;
         if (targetSeconds) videoControlSeekTo(targetSeconds, true);
       }
     }
@@ -579,7 +652,7 @@ function updateChapterActionButtons() {
 }
 
 function updateChapterCounter() {
-  // Count only chapters that will be watched; inside a skipped one, keep the previous watched number.
+  // Count only chapters that will be watched. Inside a skipped one, keep the previous watched number.
   const modal = getModalVideo();
   const counter = modal?.querySelector(".yl-video-chapter-current__order");
   if (!counter) return;
@@ -611,6 +684,123 @@ function findUnskippedChapterIndex(items, fromIndex, direction) {
     if (!items[i].classList.contains("is-skipped")) return i;
   }
   return -1;
+}
+
+function getSkipTargetTime(seconds, videoDuration) {
+  // Keep jumping past enabled segments and unchecked chapters, so a skip never lands in skipped content.
+  const modal = getModalVideo();
+  const segments = (modal?._sponsorSegments || []).filter((s) => !s.cancelled);
+  const chapterItems = Array.from(
+    modal?.querySelectorAll(".yl-video-chapter-list-item") || [],
+  );
+  let target = seconds;
+  let moved = true;
+  while (moved && (!videoDuration || target < videoDuration)) {
+    moved = false;
+    const segment = segments.find((s) => target >= s.start && target < s.end);
+    if (segment) {
+      target = segment.end;
+      moved = true;
+      continue;
+    }
+    const chapterIndex = chapterItems.findLastIndex(
+      (item) => parseInt(item.getAttribute("data-seconds"), 10) <= target,
+    );
+    if (
+      chapterIndex !== -1 &&
+      chapterItems[chapterIndex].classList.contains("is-skipped")
+    ) {
+      const nextIndex = findUnskippedChapterIndex(
+        chapterItems,
+        chapterIndex,
+        1,
+      );
+      // Nothing watched remains, so skip to the end.
+      if (nextIndex === -1) return videoDuration || null;
+      target = parseInt(
+        chapterItems[nextIndex].getAttribute("data-seconds"),
+        10,
+      );
+      moved = true;
+    }
+  }
+  return target;
+}
+
+function updateSponsorBlockAction(
+  currentTime,
+  videoDuration,
+  playerState,
+  previousTime,
+) {
+  // Auto-skips a segment playback runs into, and shows the countdown or skip button around segments.
+  const modal = getModalVideo();
+  const button = modal?.querySelector(`#${app.modal.id.sponsorBlockAction}`);
+  if (!button) return;
+  const autoSkip = getSetting("yl_sponsorblock_auto_skip_enabled") === true;
+  const segments = modal._sponsorSegments || [];
+  // Cancel lasts until the user scrubs.
+  if (
+    playerState === 1 &&
+    (currentTime < previousTime || currentTime - previousTime >= 3)
+  ) {
+    segments.forEach((s) => (s.cancelled = false));
+  }
+  const current = segments.find(
+    (s) => currentTime >= s.start && currentTime < s.end,
+  );
+  const upcoming = segments.find(
+    (s) => s.start > currentTime && s.start - currentTime <= 5,
+  );
+
+  // Auto-skip only when playback runs into the segment, not when seeking into it.
+  if (
+    current &&
+    autoSkip &&
+    !current.cancelled &&
+    playerState === 1 &&
+    previousTime < current.start &&
+    currentTime - previousTime < 3 &&
+    currentTime - current.start < 2
+  ) {
+    const target = getSkipTargetTime(current.end, videoDuration);
+    if (target) videoControlSeekTo(target, true);
+    button.classList.add("display-none");
+    return;
+  }
+
+  // Countdown first, so a segment right after the current one never auto-skips unannounced.
+  if (upcoming && autoSkip && playerState === 1 && !upcoming.cancelled) {
+    renderSponsorBlockAction(
+      button,
+      upcoming,
+      "countdown",
+      Math.ceil(upcoming.start - currentTime),
+    );
+  } else if (current) {
+    renderSponsorBlockAction(button, current, "skip");
+  } else {
+    renderSponsorBlockAction(button, null, null);
+  }
+}
+
+function renderSponsorBlockAction(button, segment, mode, countdownSeconds) {
+  // The click handler reads the shown segment and mode from the button.
+  button._sponsorSegment = segment;
+  button._sponsorMode = mode;
+  button.classList.toggle("display-none", !segment);
+  if (!segment) return;
+  const isCountdown = mode === "countdown";
+  button.querySelector(".yl-video-sponsorblock-action__label").textContent =
+    isCountdown ? "Sponsor in" : "Skip sponsor";
+  const countdown = button.querySelector(
+    ".yl-video-sponsorblock-action__countdown",
+  );
+  countdown.textContent = isCountdown ? countdownSeconds : "";
+  countdown.classList.toggle("display-none", !isCountdown);
+  button
+    .querySelector(".yl-video-sponsorblock-action__cancel")
+    .classList.toggle("display-none", !isCountdown);
 }
 
 function videoControlSeekTo(seconds, allowSeekAhead = true) {

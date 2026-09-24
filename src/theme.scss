@@ -4892,6 +4892,39 @@ body {
         }
       }
     }
+
+    .yl-video-sponsorblock-action {
+      gap: var(--yl-space-2xs);
+      font-size: var(--yl-text-xs);
+      color: var(--yl-color-text-default);
+      background: none;
+      border-top: 0;
+      border-right: 0;
+      border-bottom: 0;
+      white-space: nowrap;
+
+      &__countdown {
+        /* Fixed width so the ticking digit doesn't shift the layout. */
+        display: inline-block;
+        min-width: 1ch;
+        font-variant-numeric: tabular-nums;
+      }
+    }
+  }
+
+  &.is-chapterless {
+    #ylVideoChaptersPanel,
+    #ylVideoChapterCurrentProgress,
+    #ylVideoChaptersActionPrevious,
+    #ylVideoChaptersActionNext,
+    .yl-video-chapter-list-header,
+    .yl-video-chapter-list {
+      display: none !important;
+    }
+
+    .yl-video-chapter-action-container {
+      margin-left: auto;
+    }
   }
 
   .yl-video-chapter-list-header {
@@ -5796,6 +5829,14 @@ body.youlag-share-modal-open {
     hr {
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
+    }
+  }
+
+  label:has(#yl_sponsorblock_enabled:not(:checked)) {
+    /* SponsorBlock options only apply when it's enabled. */
+    & ~ .yl-form-category-container:has([name="yl_sponsorblock_categories[]"]),
+    & ~ label[for="yl_sponsorblock_auto_skip_enabled"] {
+      display: none !important; /* Overrides the label's `.flex` helper. */
     }
   }
 

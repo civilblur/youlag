@@ -7,6 +7,7 @@
  * - TTL-based expiration (4 weeks default, configurable per operation)
  *   - youlag-cache-dearrow: Stores dearrow API responses for 4 weeks.
  *   - youlag-cache-duration: Stores video duration for 52 weeks (1y).
+ *   - youlag-cache-sponsorblock: Stores SponsorBlock segments for 1 week.
  * - Proper transaction error handling
  * - Each store gets its own database: '{app.db.name}-{storeName}' (e.g. 'youlag-cache-dearrow').
  *   This sidesteps IndexedDB versioning — no version bump needed when adding new stores.

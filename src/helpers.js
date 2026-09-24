@@ -416,6 +416,54 @@ async function getDearrowData(youtubeId) {
   return resultObj;
 }
 
+async function getSponsorSegments(youtubeId) {
+  if (!youtubeId) return [];
+  try {
+    const cached = await dbGet("sponsorblock", youtubeId);
+    if (Array.isArray(cached)) return cached;
+  } catch (e) {}
+
+  const categories = [
+    "sponsor",
+    "selfpromo",
+    "interaction",
+    "intro",
+    "outro",
+    "preview",
+    "hook",
+    "filler",
+    "music_offtopic",
+  ];
+  const apiUrl =
+    `https://sponsor.ajay.app/api/skipSegments?videoID=${encodeURIComponent(youtubeId)}` +
+    `&categories=${encodeURIComponent(JSON.stringify(categories))}` +
+    `&actionTypes=${encodeURIComponent('["skip"]')}`;
+  let segments;
+  try {
+    const response = await fetch(apiUrl);
+    // 404 means the video has no segments.
+    if (response.status === 404) {
+      segments = [];
+    } else if (response.ok) {
+      const data = await response.json();
+      segments = (Array.isArray(data) ? data : [])
+        .map((s) => ({
+          category: s.category,
+          start: s.segment[0],
+          end: s.segment[1],
+        }))
+        .sort((a, b) => a.start - b.start);
+    } else {
+      return [];
+    }
+  } catch (e) {
+    return []; // Skip caching, so the next open retries.
+  }
+  // Cache for 1 week only, since viewers keep adding segments to new videos.
+  dbSet("sponsorblock", youtubeId, segments, 1).catch(() => {});
+  return segments;
+}
+
 function getSubpageParentId(getParam) {
   /**
    * Check parent of current subpage.

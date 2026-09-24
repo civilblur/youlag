@@ -97,6 +97,24 @@ class YoulagExtension extends Minz_Extension
     public $yl_block_youtube_shorts = false;
 
     /**
+     * Skip sponsored video segments using SponsorBlock.
+     * @var bool
+     */
+    public $yl_sponsorblock_enabled = false;
+
+    /**
+     * SponsorBlock categories that get the skip button.
+     * @var array<string>
+     */
+    public $yl_sponsorblock_categories = ["sponsor"];
+
+    /**
+     * Auto-skip sponsored video segments after a countdown.
+     * @var bool
+     */
+    public $yl_sponsorblock_auto_skip_enabled = true;
+
+    /**
      * Source of truth for user settings.
      * Key = setting name, property name, configure.phtml field name, and JS key.
      * @var array<string, array{type: string, default: mixed}>
@@ -110,6 +128,9 @@ class YoulagExtension extends Minz_Extension
         "yl_watch_later_category_filter_enabled" => ["type" => "bool", "default" => false],
         "yl_miniplayer_swipe_enabled" => ["type" => "bool", "default" => true],
         "yl_chapter_progress_enabled" => ["type" => "bool", "default" => true],
+        "yl_sponsorblock_enabled" => ["type" => "bool", "default" => false],
+        "yl_sponsorblock_categories" => ["type" => "array", "default" => ["sponsor"]],
+        "yl_sponsorblock_auto_skip_enabled" => ["type" => "bool", "default" => true],
         "yl_description_hide_intro_enabled" => ["type" => "bool", "default" => false],
         "yl_video_labels_enabled" => ["type" => "bool", "default" => true],
         "yl_video_unread_badge_enabled" => ["type" => "bool", "default" => false],

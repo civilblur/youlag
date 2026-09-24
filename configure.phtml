@@ -146,6 +146,89 @@ declare(strict_types=1)
       </label>
 
       <h4 class="mb-0">
+        Video sponsored segments
+
+        <div class="yl-form-group-help">
+          Skip sponsors and other unwanted parts of a video. A "Skip sponsor" button appears during sponsored segments if other viewers have marked them.
+        </div>
+      </h4>
+      <label for="yl_sponsorblock_enabled" class="flex">
+          <input type="checkbox" id="yl_sponsorblock_enabled" name="yl_sponsorblock_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_sponsorblock_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Skip sponsored segments
+          <div class="yl-form-group-help">
+            Uses SponsorBlock's crowd-sourced segments.
+          </div>
+        </div>
+      </label>
+      <div class="yl-form-category-container">
+        <?php foreach ([
+            "sponsor" => [
+                "Sponsor",
+                "Paid promotion, paid referrals and direct advertisements.",
+            ],
+            "selfpromo" => [
+                "Unpaid/self promotion",
+                "Merchandise, donations, or who they collaborated with.",
+            ],
+            "interaction" => [
+                "Interaction reminder (subscribe)",
+                "Short reminder to like, subscribe or follow.",
+            ],
+            "intro" => [
+                "Intermission/intro animation",
+                "An interval without actual content.",
+            ],
+            "outro" => [
+                "Endcards/credits",
+                "Credits or when the YouTube endcards appear.",
+            ],
+            "preview" => [
+                "Preview/recap",
+                "Clips of what is coming up, repeated later in the video.",
+            ],
+            "hook" => [
+                "Hook/greetings",
+                "Narrated trailers for the video, greetings and goodbyes.",
+            ],
+            "filler" => [
+                "Tangents/jokes",
+                "Scenes not required to understand the main content.",
+            ],
+            "music_offtopic" => [
+                "Music: non-music section",
+                "Music videos only: parts without music.",
+            ],
+        ] as $category => [$label, $help]) { ?>
+        <label for="yl_sponsorblock_category_<?= $category ?>" class="flex">
+            <input type="checkbox" id="yl_sponsorblock_category_<?= $category ?>" name="yl_sponsorblock_categories[]" value="<?= $category ?>" class="mb-auto"
+              <?= in_array($category, $this->yl_sponsorblock_categories, true)
+                  ? ' checked="checked"'
+                  : "" ?>>
+          <div class="inline-block">
+            <?= $label ?>
+            <div class="yl-form-group-help"><?= $help ?></div>
+          </div>
+        </label>
+        <?php } ?>
+      </div>
+      <label for="yl_sponsorblock_auto_skip_enabled" class="flex">
+          <input type="checkbox" id="yl_sponsorblock_auto_skip_enabled" name="yl_sponsorblock_auto_skip_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_sponsorblock_auto_skip_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Auto-skip
+          <div class="yl-form-group-help">
+            Skip automatically after the countdown. When off, skip manually with the button.
+          </div>
+        </div>
+      </label>
+
+      <h4 class="mb-0">
         Video description
       </h4>
       <label for="yl_description_hide_intro_enabled" class="flex">
