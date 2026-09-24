@@ -4912,6 +4912,11 @@ body {
     }
   }
 
+  &:not(.is-chapterless) .yl-video-chapter-current {
+    /* Fixed height when chapters exist, to avoid dynamic content like sponsorblock button to the layout. */
+    height: 54px;
+  }
+
   &.is-chapterless {
     #ylVideoChaptersPanel,
     #ylVideoChapterCurrentProgress,
@@ -4925,6 +4930,13 @@ body {
     .yl-video-chapter-action-container {
       margin-left: auto;
     }
+
+    .yl-video-chapter-current:not(
+      :has(.yl-video-sponsorblock-action:not(.display-none))
+    ) {
+      /* Without chapters, the bar only shows while the sponsor button does. */
+      border-bottom: 0;
+    }
   }
 
   .yl-video-chapter-list-header {
@@ -4934,6 +4946,16 @@ body {
     padding: var(--yl-space-2xs) var(--yl-p-md) 0;
     font-size: var(--yl-text-xs);
     font-weight: 600;
+
+    &__hint {
+      display: none; /* Shown in edit mode */
+      font-weight: 400;
+      opacity: 0.7;
+    }
+  }
+
+  &:has(.yl-video-chapter-list.is-editing) .yl-video-chapter-list-header__hint {
+    display: block;
   }
 
   .yl-video-chapter-list {

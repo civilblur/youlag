@@ -221,6 +221,7 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
               <span class="yl-video-sponsorblock-action__label"></span>
               <span class="yl-video-sponsorblock-action__countdown"></span>
               <span class="yl-video-sponsorblock-action__cancel">×</span>
+              <span class="yl-video-sponsorblock-action__skip yl-video-chapter-action__icon yl-video-chapter-action__icon--next"></span>
             </button>
             <div id="${app.modal.id.chapterActionPrevious}"
                     class="yl-video-chapter-action is-disabled"

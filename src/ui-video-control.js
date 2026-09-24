@@ -21,7 +21,13 @@ async function renderModalVideoChapters(videoChapters, youtubeId) {
 
   const chapterListHeader = document.createElement("div");
   chapterListHeader.classList.add("yl-video-chapter-list-header");
-  chapterListHeader.innerHTML = `<span>Chapters</span><button type="button" id="${app.modal.id.chapterEdit}" class="yl-button-menu">Edit</button>`;
+  chapterListHeader.innerHTML = `
+    <div>
+      <span>Chapters</span>
+      <div class="yl-video-chapter-list-header__hint">Uncheck chapters to skip when playback reaches them. Scrubbing into one still plays it.</div>
+    </div>
+    <button type="button" id="${app.modal.id.chapterEdit}" class="yl-button-menu">Edit</button>
+  `;
 
   // List all chapters
   const chapterList = document.createElement("div");
@@ -801,6 +807,9 @@ function renderSponsorBlockAction(button, segment, mode, countdownSeconds) {
   button
     .querySelector(".yl-video-sponsorblock-action__cancel")
     .classList.toggle("display-none", !isCountdown);
+  button
+    .querySelector(".yl-video-sponsorblock-action__skip")
+    .classList.toggle("display-none", isCountdown);
 }
 
 function videoControlSeekTo(seconds, allowSeekAhead = true) {
