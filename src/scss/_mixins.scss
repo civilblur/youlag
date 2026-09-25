@@ -1,0 +1,176 @@
+/*****************************************
+ *
+ * Youlag Sass mixins and functions
+ *
+ * Tools layer. Outputs no CSS, so any partial can use it.
+ *
+ ****************************************/
+
+@use "sass:list";
+@use "sass:map";
+@use "sass:string";
+@use "variables" as *;
+
+@function yl-fn-breakpoint($name) {
+  @if not map.has-key($yl-breakpoints, $name) {
+    @error "Unknown breakpoint: #{$name}. Use one of #{map.keys($yl-breakpoints)}.";
+  }
+  @return map.get($yl-breakpoints, $name);
+}
+
+/* Adjust is for device-tested exceptions only */
+@mixin yl-media-down($name, $adjust: 0px) {
+  $max: yl-fn-breakpoint($name) + $adjust;
+  @media (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin yl-media-up($name, $adjust: 0px) {
+  $min: yl-fn-breakpoint($name) + 1px + $adjust;
+  @media (min-width: $min) {
+    @content;
+  }
+}
+
+@mixin yl-media-between($from, $to, $from-adjust: 0px, $to-adjust: 0px) {
+  $min: yl-fn-breakpoint($from) + 1px + $from-adjust;
+  $max: yl-fn-breakpoint($to) + $to-adjust;
+  @media (min-width: $min) and (max-width: $max) {
+    @content;
+  }
+}
+
+@function yl-fn-overlay($step) {
+  @if not map.has-key($yl-overlay-alpha, $step) {
+    @error "Unknown overlay step: #{$step}. Use one of #{map.keys($yl-overlay-alpha)}.";
+  }
+  @return string.unquote(
+    "hsl(var(--yl-overlay-hsl) / #{map.get($yl-overlay-alpha, $step)})"
+  );
+}
+
+@function yl-fn-state-layer($state) {
+  @return hsl(var(--yl-overlay-hsl) / var(--yl-state-#{$state}));
+}
+
+@function yl-fn-state-on($base, $state) {
+  @return color-mix(
+    in srgb,
+    $base,
+    hsl(var(--yl-overlay-hsl)) var(--yl-state-#{$state})
+  );
+}
+
+@function yl-fn-tint-on($base, $tint, $amount) {
+  @return color-mix(in srgb, $tint $amount, $base);
+}
+
+@function yl-fn-tint($color, $amount) {
+  @return color-mix(in oklab, $color $amount, transparent);
+}
+
+@function yl-fn-gradient-pair($name) {
+  @if not map.has-key($yl-gradients, $name) {
+    @error "Unknown gradient: #{$name}. Use one of #{map.keys($yl-gradients)}.";
+  }
+  @return map.get($yl-gradients, $name);
+}
+
+@function yl-fn-gradient-btn-bg($name) {
+  $pair: yl-fn-gradient-pair($name);
+  @return radial-gradient(
+    circle at center right,
+    list.nth($pair, 2),
+    list.nth($pair, 1)
+  );
+}
+
+@function yl-fn-gradient-surface($start, $middle, $end, $angle: 135deg) {
+  @return linear-gradient($angle, $start 0%, $middle 40%, $end 100%);
+}
+
+@function yl-fn-gradient-badge($color, $colorDarker) {
+  @return linear-gradient(
+    to bottom,
+    yl-fn-tint($color, 35%),
+    yl-fn-tint($colorDarker, 60%)
+  );
+}
+
+@mixin yl-gradient-bg($name, $hover: true) {
+  $pair: yl-fn-gradient-pair($name);
+  $color: list.nth($pair, 1);
+  $colorDarker: list.nth($pair, 2);
+
+  background: linear-gradient(
+    to bottom,
+    yl-fn-tint($color, 10%),
+    yl-fn-tint($colorDarker, 15%)
+  );
+  backdrop-filter: var(--yl-filter-blur-glass);
+  border: var(--yl-border-width-sm) solid yl-fn-tint($color, 30%);
+  transition: filter var(--yl-duration-button) var(--yl-easing-ease-in-out);
+
+  @if $hover {
+    &:hover {
+      background: linear-gradient(
+        to bottom,
+        yl-fn-tint($color, 10%),
+        yl-fn-tint($colorDarker, 15%)
+      );
+      filter: var(--yl-filter-gradient-bg-hover);
+    }
+  }
+}
+
+@mixin yl-gradient-btn-bg($name) {
+  $pair: yl-fn-gradient-pair($name);
+  $color: list.nth($pair, 1);
+  $colorDarker: list.nth($pair, 2);
+
+  background: radial-gradient(circle at center right, $colorDarker, $color);
+  &:hover {
+    background: radial-gradient(circle at center right, $colorDarker, $color);
+    filter: var(--yl-filter-gradient-bg-hover);
+  }
+}
+
+@mixin yl-button-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--yl-space-2xs) var(--yl-space-sm);
+  border: var(--yl-border-width-sm) solid var(--yl-color-border-button-menu);
+  border-radius: var(--yl-radius-full);
+  background-color: var(--yl-color-bg-button-menu);
+  cursor: pointer;
+  font-size: var(--yl-text-xs);
+  color: var(--yl-color-text-medium);
+  line-height: var(--yl-line-height-lg);
+  transition: background-color var(--yl-duration-button);
+
+  &:hover {
+    background-color: var(--yl-color-bg-button-menu-hover);
+    text-decoration: none;
+  }
+}
+
+/* Sidenav item: e.g. sidenav buttons in feed, settings. */
+@mixin yl-sidenav-item {
+  padding: var(--yl-space-xs);
+  border-radius: var(--yl-radius-md);
+  line-height: var(--yl-line-height-md);
+}
+
+/* State layer as an inset shadow, for buttons with a gradient background. */
+/* Pass existing shadows, such as a ring, to keep them. */
+@mixin yl-state-layer($state: hover, $shadows: ()) {
+  $rest: inset 0 0 0 100vmax transparent;
+  $active: inset 0 0 0 100vmax yl-fn-state-layer($state);
+  box-shadow: list.append($shadows, $rest, $separator: comma);
+
+  &:hover {
+    box-shadow: list.append($shadows, $active, $separator: comma);
+  }
+}

@@ -1,0 +1,67 @@
+@use "sass:list";
+@use "variables" as *;
+@use "mixins" as *;
+
+/* Helpers with !important: always win over components */
+$yl-utilities-important: (
+  display-none: (display: none),
+  inline-block: (display: inline-block),
+  block: (display: block),
+  flex: (display: flex),
+  flex-col: (flex-direction: column),
+  flex-1: (flex: 1),
+  justify-start: (justify-content: flex-start),
+  items-center: (align-items: center),
+  mb-auto: (margin-bottom: auto),
+  mb-0: (margin-bottom: 0),
+  pointer-events-none: (pointer-events: none),
+);
+
+$yl-utilities: (
+  yl-flex: (display: flex),
+  yl-flex-col: (flex-direction: column),
+  yt-items-center: (align-items: center),
+  yt-flex-1: (flex: 1),
+  yl-gap-2xs: (gap: var(--yl-space-2xs)),
+  yl-gap-3xs: (gap: var(--yl-space-3xs)),
+  yl-mb-md: (margin-bottom: var(--yl-space-md)),
+  w-100: (width: 100%),
+  aspect-ratio-16-9: (aspect-ratio: list.slash(16, 9)),
+  rounded-md: (border-radius: var(--yl-radius-lg)),
+  sticky-visible: (transform: translateY(0), opacity: 1),
+  sticky-hidden: (transform: translateY(-100%), opacity: 0, pointer-events: none),
+);
+
+@each $class, $declarations in $yl-utilities-important {
+  .#{$class} {
+    @each $property, $value in $declarations {
+      #{$property}: $value !important;
+    }
+  }
+}
+
+@each $class, $declarations in $yl-utilities {
+  .#{$class} {
+    @each $property, $value in $declarations {
+      #{$property}: $value;
+    }
+  }
+}
+
+[data-yl-invidious-instance],
+[data-yl-is-video-default],
+[data-yl-category-whitelist],
+[data-yl-video-labels],
+[data-yl-video-unread-badge],
+[data-yl-miniplayer-swipe-enabled],
+[data-yl-miniplayer-autoplay-enabled],
+[data-yl-video-sort-modified],
+[data-yl-related-videos-source],
+[data-yl-feed-view-mobile-grid-enabled] {
+  /**
+   * Elements containing user extension settings rendered in frontend.
+   * This exposes the Youlag extension settings to allow `script.js`
+   * to access them. These elements are hidden from view.
+   */
+  display: none;
+}

@@ -1,0 +1,673 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+.dropdown-menu {
+  list-style: none;
+  overflow: auto;
+
+  @include yl-media-up(md) {
+    /* Desktop dropdown menu, prevent overflowing viewport height. */
+    max-height: calc(
+      100dvh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height) - var(
+          --yl-space-3xl
+        )
+    ); /* `var(--yl-space-3xl)` is arbitrary padding to prevent touching the viewport edge. */
+  }
+
+  form .search {
+    input {
+      /* Mobile: Dropdown search input field */
+      border-bottom-left-radius: var(--yl-radius-md);
+      border-top-left-radius: var(--yl-radius-md);
+      background-color: var(--yl-color-bg-control);
+      box-shadow: inset 0 0 0 var(--yl-border-width-sm)
+        var(--yl-color-border-search);
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 var(--yl-border-width-md)
+          var(--yl-color-border-search);
+      }
+    }
+
+    .btn[type="submit"] {
+      /* Mobile: Dropdown search submit button */
+      background: var(--yl-color-gradient-active);
+
+      img {
+        filter: var(--yl-filter-icon-search);
+      }
+    }
+  }
+
+  .help {
+    font-size: var(--yl-text-sm);
+    margin-top: var(--yl-space-sm);
+  }
+}
+
+@include yl-media-down(md) {
+  /* Mobile dropdown, with media query increase selector specificity */
+  .dropdown-target:target ~ .dropdown-toggle::after {
+    /* Mobile dropdown triangle */
+    background-color: var(--yl-color-surface-menu);
+    border-color: var(--yl-color-surface-menu);
+  }
+
+  body:not(.reader) main#stream div.flux li.item.share,
+  body:not(.reader) main#stream div.flux li.item.labels,
+  .nav_menu #mark-read-menu,
+  .nav_menu #nav_menu_actions,
+  #nav_menu_sort,
+  body:not(.reader) main#stream div.flux li.item.tags,
+  #dropdown-search-wrapper {
+    /**
+      * Turn dropdowns into bottom sheets on mobile
+      * - Share button
+      * - Playlists button (labels)
+      * - Mark read button group within feed nav menu
+      * - Feed actions button group within feed nav menu
+      * - Sort button within feed nav menu
+      * - youlag-inactive: Article tags button within article feeds items
+      */
+
+    .dropdown-toggle:after {
+      /* Hide dropdown triangle on mobile */
+      display: none;
+    }
+
+    li.item,
+    li.item button {
+      margin: 0;
+      font-size: var(--yl-text-md);
+
+      label {
+        padding: var(--yl-space-2xs);
+        text-indent: 0;
+      }
+
+      input[type="checkbox"] {
+        width: 1.4rem !important;
+        height: 1.4rem !important;
+        margin-right: var(--yl-space-xs);
+      }
+    }
+
+    .dropdown-menu {
+      /* Card dropdown menu on mobile */
+      position: fixed;
+      bottom: 0;
+      height: calc(100vh - 50%);
+      left: 0 !important;
+      right: 0 !important;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      overflow: auto;
+      animation: slideUp var(--yl-duration-md) var(--yl-easing-ease-in-out)
+        forwards; /* Animate bottom sheet from bottom to up */
+
+      @include yl-media-down(md) {
+        max-height: 60vh;
+        margin-bottom: calc(
+          var(--yl-space-xs) * -1
+        ); /* HACK: Nudge mobile dropdown (bottom sheet) to bottom edge. */
+
+        & + .dropdown-close {
+          /* Mobile: FreshRSS dropdown background acts as an onblur, close function. */
+          background: var(--frss-modal-background-color-transparent);
+        }
+      }
+
+      &[role="radiogroup"] {
+        li.item a {
+          /* Add separation between check icon and label text. */
+          display: flex;
+          gap: var(--yl-space-xs);
+          padding-left: var(--yl-space-xl);
+
+          &::before {
+            margin-left: calc(var(--yl-space-lg) * -1);
+          }
+        }
+      }
+
+      & > ul {
+        overflow: auto;
+
+        .item.addItem {
+          /* Sticky "add new" playlist (label) */
+          position: sticky;
+          top: 0;
+          margin-right: 0;
+          padding-right: 0;
+          width: unset;
+          background-color: var(--yl-color-surface-menu);
+        }
+      }
+
+      p.help {
+        display: flex;
+        flex-wrap: wrap;
+        word-break: break-all;
+        line-height: var(--yl-line-height-md);
+        justify-content: center;
+
+        .btn {
+          background-color: var(--yl-color-bg-menu-control);
+        }
+
+        .icon {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .dropdown .dropdown-menu,
+  .dropdown-target:target ~ .dropdown-menu {
+    border-radius: var(--yl-radius-lg);
+  }
+
+  #dropdown-configure ~ .dropdown-menu {
+    border-radius: unset;
+
+    .toggle_aside {
+      border: none;
+    }
+  }
+
+  #overlay a.close {
+    border: none;
+  }
+
+  #dropdown-search-wrapper.only-mobile {
+    /* Mobile: Container for search button, place it on the top header, left to settings. */
+    position: fixed;
+    top: 7px;
+    z-index: var(--yl-z-nav);
+    right: 60px;
+
+    #toggle-search {
+      /* Mobile: Search button */
+      border-radius: var(--yl-radius-full);
+      width: var(--yl-icon-button-size);
+      height: var(--yl-icon-button-size);
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--yl-color-bg-header-button);
+
+      img {
+        filter: var(--yl-filter-icon-search);
+      }
+    }
+  }
+
+  .extension_smartmenu ul {
+    list-style-position: inside;
+    list-style-type: none;
+  }
+
+  #nav_menu_views_dropdown ul.dropdown-menu,
+  #nav_menu_actions_dropdown ul.dropdown-men {
+    .item a {
+      width: 100%;
+    }
+  }
+}
+
+.tree .tree-folder .tree-folder-items .item.active .dropdown li a,
+.dropdown .dropdown-menu .item a,
+li.item.feed .item-title {
+  color: var(--yl-color-text-medium);
+}
+
+.dropdown {
+  /* Dropdown menu styling. Displayed as bottom sheets on mobile. */
+  position: relative;
+}
+
+.dropdown-menu,
+.box {
+  background-color: var(--yl-color-surface-menu);
+  color: var(--yl-color-text-medium);
+  border-radius: var(--yl-radius-lg);
+
+  .item.dropdown-section ~ .dropdown-section,
+  .item.separator {
+    border-top-color: var(--yl-color-border-divider);
+    border-bottom-color: var(--yl-color-border-divider);
+    border-color: var(--yl-color-border-divider);
+  }
+}
+
+.dropdown:not(#dropdown-search-wrapper) {
+  /* Add hover effect to dropdown items, while exluding e.g. #dropdown-search-wrapper */
+  .dropdown-menu,
+  .box {
+    li.item {
+      &:hover {
+        background-color: var(--yl-color-bg-menu-item-hover);
+      }
+    }
+  }
+}
+
+/* Mobile dropdown workarounds */
+
+@include yl-media-down(md) {
+  #yl_nav_menu_container:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Dropdown menu is opened */
+
+    .dropdown-close {
+      background: var(--yl-color-body-background);
+    }
+  }
+
+  #yl_nav_menu_container_content:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Dropdown menu is opened */
+
+    /**
+      * HACK: Mobile: due to `position:sticky` on `#yl_nav_menu_container`,
+      * the dropdown is forced to be positioned relative to the parent container, instead of the viewport.
+      *
+      * To fix this, expand the height of the `#yl_nav_menu_container_content`, to allow it to reach the bottom of the viewport.
+      */
+    height: calc(
+      100dvh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height)
+    );
+    /* The `#yl_nav_menu_container` doesn't stretch to the edge of the screen. Fill out the sides with the same color as the dropdown backdrop. */
+    box-shadow: 0px 0 0 500px var(--yl-color-body-background);
+  }
+
+  body:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Disable body scroll when any dropdown is opened on mobile. */
+    overflow: hidden;
+  }
+
+  #yl_nav_menu_container:has(.dropdown-target:target ~ .dropdown-menu) {
+    /* Mobile: Force `#yl_nav_menu_container` to show, otherwise the dropdown menu will be hidden. */
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+  }
+}
+
+@include yl-media-up(md) {
+  /* Desktop: Expand clickable area to close dropdown */
+  #yl_nav_menu_container_content .dropdown-close {
+    height: 100vh;
+  }
+}
+
+.box .box-title {
+  background-color: var(--yl-color-bg-box-title);
+  color: var(--yl-color-text-medium);
+
+  .configure {
+    border-radius: var(--yl-radius-md);
+  }
+}
+
+.box .box-content {
+  .configure {
+    border-radius: var(--yl-radius-md);
+  }
+}
+
+main#stream .box.category {
+  .box-content {
+    padding: var(--yl-space-sm);
+
+    li.item.feed {
+      border: none;
+
+      a,
+      a:hover {
+        color: var(--yl-color-text-medium);
+      }
+    }
+  }
+
+  .box-title a.title,
+  .box-title a.title:hover {
+    color: var(--yl-color-text-medium);
+
+    &:not([data-unread="0"]):after {
+      background-color: var(--yl-color-accent-count-badge);
+    }
+  }
+}
+
+#global #overlay {
+  #panel {
+    background: var(--yl-color-body-background);
+
+    .flux.not_read:not(.current) {
+      background: var(--yl-color-body-background);
+
+      a {
+        color: var(--yl-color-text-medium);
+      }
+    }
+
+    .flux .flux_header {
+      border-color: var(--yl-color-border-overlay-panel-item);
+      padding: var(--yl-space-xs);
+      box-sizing: border-box;
+
+      &:hover {
+        background: var(--yl-color-surface-overlay-panel-hover);
+      }
+    }
+
+    .flux .flux_header:hover:not(.current):hover .item .title {
+      background: unset;
+    }
+  }
+}
+
+main#stream,
+#overlay #panel {
+  button#bigMarkAsRead {
+    @include yl-gradient-bg(action);
+    color: var(--yl-color-text-medium);
+    transition: var(--yl-duration-button);
+
+    .bigTick {
+      filter: var(--yl-filter-icon-mark-read);
+      opacity: 0.9;
+    }
+
+    &:hover {
+      .bigTick {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+body.youlag-tags-modal-open,
+body.youlag-share-modal-open {
+  overflow: hidden;
+}
+
+#youlagTagsModal,
+#youlagShareModal {
+  position: fixed;
+  z-index: var(--yl-z-modal-above); /* Above theater modal */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--yl-color-overlay-scrim-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .yl-tags-content,
+  .yl-share-content {
+    background-color: var(--yl-color-surface-modal);
+    border-radius: var(--yl-radius-lg);
+    box-shadow: 0 4px 16px var(--yl-shadow-modal);
+    width: 90%;
+    max-width: 350px;
+    max-height: 80vh;
+    max-height: 80dvh;
+    overflow-y: auto;
+    padding: var(--yl-space-md);
+    margin: var(--yl-space-md);
+  }
+
+  .yl-tags-modal-title,
+  .yl-share-modal-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    font-size: var(--yl-text-md);
+    font-weight: var(--yl-font-weight-bold);
+    margin-bottom: var(--yl-space-xs);
+    padding-left: var(--yl-space-xs);
+
+    .icon {
+      filter: var(--yl-filter-icon-title);
+    }
+  }
+
+  .yl-tags-list,
+  .yl-share-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    max-height: 450px;
+
+    .yl-tags-list-item,
+    .yl-share-list-item {
+      display: flex;
+      align-items: center;
+      gap: var(--yl-space-2xs);
+      padding: var(--yl-space-2xs) var(--yl-space-xs);
+      color: var(--yl-color-text-medium);
+      font-size: var(--yl-text-sm);
+      border-radius: var(--yl-radius-md);
+
+      &:hover {
+        background-color: var(--yl-color-bg-modal-item-hover);
+      }
+
+      label {
+        min-height: 0;
+        width: 100%;
+      }
+    }
+  }
+
+  .yl-share-list {
+    display: flex;
+    flex-direction: column;
+
+    .yl-share-list-item {
+      /* Sharing option, delegates to FreshRSS' native share element. */
+      justify-content: space-between;
+      width: 100%;
+      min-height: 40px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+
+      &--deprecated {
+        /* Sharing service flagged as deprecated by FreshRSS. */
+        opacity: var(--yl-opacity-disabled);
+      }
+    }
+  }
+
+  .yl-tags-modal-actions,
+  .yl-share-modal-actions {
+    display: flex;
+    gap: var(--yl-space-2xs);
+    margin-top: var(--yl-space-md);
+
+    #yl-tags-modal-close,
+    #yl-share-modal-close {
+      width: 100%;
+    }
+  }
+}
+
+@include yl-media-down(md) {
+  #youlagTagsModal,
+  #youlagShareModal {
+    align-items: flex-end;
+    height: 100dvh;
+
+    .yl-tags-content,
+    .yl-share-content {
+      margin: 0;
+      max-width: unset;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      animation: slideUp var(--yl-duration-md) var(--yl-easing-ease-in-out)
+        forwards; /* Animate bottom sheet from bottom to up */
+
+      .yl-tags-list,
+      .yl-share-list {
+        max-height: min(50vh, 400px);
+      }
+    }
+  }
+}
+
+html {
+  .alert-warn {
+    @include yl-gradient-bg(warning, false);
+    color: var(--yl-color-text-medium);
+    border-radius: var(--yl-radius-md);
+  }
+}
+
+#notification,
+#actualizeProgress {
+  /* #nofication: general notification */
+  /* #actualizeProgress: feed update progress */
+
+  border-radius: var(--yl-radius-lg);
+  margin: var(--yl-space-xs);
+  max-width: calc(100% - var(--yl-space-xs) * 2);
+
+  &.good {
+    @include yl-gradient-bg(success);
+  }
+
+  &.bad {
+    @include yl-gradient-bg(error);
+  }
+
+  button.close {
+    border-radius: var(--yl-radius-lg);
+
+    img.icon {
+      height: var(--yl-icon-size-xl);
+      width: var(--yl-icon-size-xl);
+    }
+  }
+}
+
+.alert {
+  &.alert-error {
+    /* FreshRSS error container: https://example.com/i/?c=error */
+    @include yl-gradient-bg(error, false);
+    color: var(--yl-color-text-medium);
+    border-radius: var(--yl-radius-lg);
+  }
+
+  &.alert-success {
+    @include yl-gradient-bg(success, false);
+    color: var(--yl-color-text-medium);
+    border-radius: var(--yl-radius-lg);
+  }
+
+  &.alert-warn {
+    @include yl-gradient-bg(info, false);
+    color: var(--yl-color-text-medium);
+    border-radius: var(--yl-radius-lg);
+  }
+}
+
+#yl_notification {
+  @include yl-gradient-bg(action);
+  position: fixed;
+  bottom: var(--yl-space-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--yl-space-2xs);
+  width: min(50vw, 500px);
+  min-width: 320px;
+  color: var(--yl-color-text-medium);
+  padding: var(--yl-space-sm) var(--yl-space-sm);
+  border-radius: var(--yl-radius-lg);
+  box-shadow: 0px 4px 8px var(--yl-shadow-floating);
+  z-index: var(--yl-z-nav);
+
+  .yl-notification {
+    &-title {
+      font-size: var(--yl-text-xs);
+      font-weight: var(--yl-font-weight-semibold);
+      margin-bottom: var(--yl-space-3xs);
+    }
+
+    &-message {
+      font-size: var(--yl-text-xs);
+      text-wrap: pretty;
+      margin-bottom: var(--yl-space-2xs);
+    }
+
+    &-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--yl-space-2xs) var(--yl-space-sm);
+      border: var(--yl-border-width-sm) solid var(--yl-color-border-button-menu);
+      border-radius: var(--yl-radius-full);
+      background-color: var(--yl-color-bg-button-menu);
+      transition: background-color var(--yl-duration-button);
+      cursor: pointer;
+      font-size: var(--yl-text-xs);
+      color: var(--yl-color-text-medium);
+      line-height: var(--yl-line-height-lg);
+
+      &:hover {
+        background-color: var(--yl-color-bg-button-menu-hover);
+        text-decoration: none;
+      }
+    }
+
+    &-close {
+      position: absolute;
+      top: var(--yl-space-3xs);
+      right: var(--yl-space-3xs);
+      display: flex;
+      align-items: center;
+      font-size: var(--yl-text-md);
+      line-height: var(--yl-line-height-xs);
+      padding: var(--yl-space-2xs) var(--yl-space-xs);
+      font-size: var(--yl-text-md);
+      border-radius: var(--yl-radius-full);
+
+      &:hover {
+        background-color: var(--yl-color-bg-button-menu-hover);
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.yl-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--yl-space-4xs) var(--yl-space-3xs);
+  border: var(--yl-border-width-sm) solid var(--yl-color-border-badge);
+  border-radius: var(--yl-radius-xs);
+  background-color: var(--yl-color-bg-badge);
+  font-size: var(--yl-text-2xs);
+  color: var(--yl-color-text-medium);
+  cursor: default;
+
+  &--warning {
+    @include yl-gradient-bg(warning, false);
+    color: var(--yl-color-accent-warning);
+  }
+
+  &--success {
+    @include yl-gradient-bg(success-alt, false);
+    color: var(--yl-color-accent-success-alt);
+  }
+}

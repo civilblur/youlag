@@ -1,0 +1,188 @@
+/*****************************************
+ *
+ * Youlag Sass variables
+ *
+ * Settings layer: Sass maps and breakpoints.
+ * Outputs no CSS, so any partial can use it.
+ *
+ ****************************************/
+
+/* Overlay alpha: strength of the translucent layer for hovers, borders and dividers */
+$yl-overlay-alpha: (
+  2xs: 4%,
+  xs: 6%,
+  sm: 8%,
+  md: 12%,
+  lg: 18%,
+  xl: 26%,
+);
+
+/* Gradient pairs (start, end) for the gradient mixins */
+$yl-gradients: (
+  action: (
+    hsl(217 100% 45%),
+    hsl(225 89.2% 39.8%),
+  ),
+  active: (
+    hsl(220 69% 49.4%),
+    hsl(219.8 74.77% 41.96%),
+  ),
+  warning: (
+    hsl(40 96.4% 56.3%),
+    hsl(39 86.9% 38.8%),
+  ),
+  info: (
+    hsl(51.2 86.83% 52.35%),
+    hsl(47 97% 38.6%),
+  ),
+  success: (
+    hsl(143 86.8% 52.4%),
+    hsl(133 88% 32.7%),
+  ),
+  success-alt: (
+    hsl(133.7 61.35% 40.59%),
+    hsl(133.4 60.95% 33.14%),
+  ),
+  error: (
+    hsl(0 96.4% 56.3%),
+    hsl(0 86.9% 38.8%),
+  ),
+  sidenav-count: (
+    var(--yl-color-bg-sidenav-count),
+    var(--yl-color-bg-sidenav-count-dark),
+  ),
+);
+
+/* Surface levels */
+$yl-color-surface-levels: (
+  lowest: hsl(0 0% 12%),
+  low: hsl(225 5% 15.7%),
+  medium: hsl(230 6% 20%),
+  high: hsl(230 4% 27%),
+  highest: hsl(240 1.7% 34.7%),
+);
+
+/* Icon tones: control color tone of Mapco icons through brightness filter */
+$yl-filter-icon-tones: (
+  lowest: 0.537,
+  low: 0.667,
+  medium: 0.87,
+  high: 0.92,
+  highest: 1,
+);
+
+$yl-filter-glass-blur-sizes: (
+  sm: 40px,
+  md: 60px,
+  lg: 80px,
+);
+
+/* Shadow alpha */
+$yl-shadow-alpha: (
+  sm: hsl(0 0% 0% / 13%),
+  md: hsl(0 0% 0% / 40%),
+  lg: hsl(0 0% 0% / 50%),
+);
+
+$yl-radius-scale: (
+  2xs: 2px,
+  xs: 4px,
+  sm: 6px,
+  md: 8px,
+  lg: 12px,
+  xl: 16px,
+  2xl: 24px,
+  full: 999px,
+);
+
+/* Icon sizes: square icons */
+$yl-icon-sizes: (
+  xs: 12px,
+  sm: 16px,
+  md: 18px,
+  lg: 20px,
+  xl: 24px,
+);
+
+/* State layers */
+$yl-state-layers: (
+  hover: 8%,
+  focus: 10%,
+  pressed: 10%,
+  dragged: 16%,
+);
+
+/* Above the FreshRSS notification (9999) */
+$yl-z-modal: 10000;
+
+/* Stacking */
+$yl-z-layers: (
+  raised: 10,
+  sticky: 20,
+  backdrop: 40,
+  docked: 45,
+  nav: 50,
+  nav-above: 55,
+  sidenav: 60,
+  header-open: 110,
+  dropdown: 1100,
+  loading: 5000,
+  modal: $yl-z-modal,
+  modal-above: $yl-z-modal + 1,
+);
+
+$yl-border-widths: (
+  sm: 1px,
+  md: 2px,
+  lg: 3px,
+);
+
+$yl-letter-spacings: (
+  xs: 0.5px,
+  sm: 1px,
+  md: 1.5px,
+);
+
+$yl-font-weights: (
+  regular: 400,
+  semibold: 600,
+  bold: 700,
+);
+
+$yl-durations: (
+  xs: 50ms,
+  sm: 0.1s,
+  md: 0.2s,
+  lg: 0.3s,
+  xl: 0.5s,
+);
+
+$yl-line-heights: (
+  xs: 1,
+  sm: 1.2,
+  md: 1.4,
+  lg: 1.6,
+);
+
+/* Breakpoints */
+$yl-breakpoints: (
+  xs: 480px,
+  sm: 600px,
+  md: 840px,
+  lg: 960px,
+  xl: 1200px,
+  2xl: 1400px,
+);
+
+/* Feed grid columns */
+/* Ambiguous sizes derived from testing on various real-life devices */
+$yl-breakpoint-feed-grid-2-columns: 600px;
+$yl-breakpoint-feed-grid-3-columns: 1144px;
+$yl-breakpoint-feed-grid-4-columns: 1360px;
+$yl-breakpoint-feed-grid-5-columns: 1800px;
+
+$yl-breakpoint-article-row-wrap: 291px;
+
+$yl-breakpoint-sidenav-toggle-overlap: 1020px;
+
+$yl-breakpoint-short-viewport: 900px;

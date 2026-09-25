@@ -1,0 +1,230 @@
+@use "sass:list";
+@use "variables" as *;
+@use "mixins" as *;
+
+html {
+  background-color: var(
+    --yl-color-body-background
+  ); /* Display background color for macOS overscroll effect, otherwise white color is shown. */
+  min-height: 100%;
+
+  /* Global background and text color */
+  body,
+  #slider,
+  .aside.aside_feed,
+  .nav.nav-list.aside,
+  .nav.nav-list.aside ul,
+  .nav-list .item,
+  .tree .tree-folder .tree-folder-title {
+    background-color: var(--yl-color-body-background);
+    --frss-font-color-dark: var(--yl-color-text-medium);
+    color: var(--yl-color-text-medium);
+  }
+
+  figure {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  iframe {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border: none;
+  }
+
+  #stream {
+    position: relative; /* To position the youlag overlay, to block interactions before loaded. */
+  }
+
+  /* Text and link colors */
+  label,
+  .day,
+  .day .name,
+  .dropdown-menu .item > a,
+  .dropdown-menu .item > span,
+  .dropdown-menu .item > .as-link,
+  .dropdown-menu .dropdown-header,
+  .dropdown-menu .dropdown-section .dropdown-section-title,
+  .tree .tree-folder .tree-folder-items .dropdown-menu .item a,
+  .tree .tree-folder .tree-folder-items .dropdown-menu .item button,
+  .transition .transition-value a {
+    --frss-font-color-dark: var(--yl-color-text-medium);
+    color: var(--yl-color-text-medium);
+    font-family: inherit;
+  }
+
+  .title,
+  .title a,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .transition .name,
+  .content h1.title a,
+  .content h1 a,
+  .content.thin h1.title a,
+  .content.thin h1 a,
+  .flux .website a,
+  .post h1,
+  .post h2 {
+    color: var(--yl-color-text-highest);
+    font-family: inherit;
+  }
+
+  article .content figure figcaption {
+    font-style: normal;
+  }
+
+  /* Input, button, and focus */
+  input,
+  select,
+  textarea,
+  button,
+  .btn,
+  kbd,
+  input:focus,
+  select:focus,
+  textarea:focus,
+  .nav_menu,
+  .pagination .item,
+  .nav_menu .btn {
+    background-color: var(--yl-color-bg-control);
+    border-color: var(--yl-color-bg-control);
+    border-top-color: var(--yl-color-bg-control);
+    color: var(--yl-color-text-medium);
+
+    & .stick .btn,
+    & .group .btn,
+    & .stick .btn.read_all,
+    & .group .btn.read_all,
+    & .btn + .btn:not(.btn-important),
+    & .btn + input,
+    & .btn + .dropdown > .btn,
+    & input + .btn,
+    & input + input,
+    & input + .dropdown > .btn,
+    & .dropdown + .btn,
+    & .dropdown + input,
+    & .dropdown + .dropdown > .btn {
+      background-color: var(--yl-color-bg-control);
+      border-color: var(--yl-color-bg-control);
+      border-top-color: var(--yl-color-bg-control);
+      color: var(--yl-color-text-medium);
+    }
+
+    .icon {
+      filter: var(--yl-filter-icon-control);
+    }
+  }
+
+  /* Button hover */
+  .btn:hover,
+  .nav_menu .stick .btn:not(.active):hover,
+  .nav_menu .group .btn:not(.active):hover,
+  .nav_menu .stick .btn.read_all:hover,
+  .nav_menu .group .btn.read_all:hover,
+  .pagination .item:hover,
+  .nav_menu .btn:hover,
+  .nav-list .item a:hover {
+    background-color: var(--yl-color-bg-control-hover);
+  }
+
+  #global {
+    .btn.active,
+    .btn-important {
+      @include yl-gradient-btn-bg(active);
+    }
+  }
+
+  .dropdown-menu,
+  .nav_menu .dropdown-menu button.as-link {
+    --main-first: var(
+      --yl-color-gradient-active
+    ); /* Header top right settings, hover background color */
+  }
+
+  .nav_menu {
+    background-color: unset;
+    border-color: unset;
+    text-align: left;
+
+    .stick .btn.active,
+    .group .btn.active {
+      @include yl-gradient-btn-bg(active);
+
+      .icon {
+        filter: var(--yl-filter-icon-control-active);
+      }
+    }
+  }
+
+  /* Kbd Styles */
+  kbd a {
+    filter: var(--yl-filter-kbd-link);
+  }
+
+  /* Disabled input */
+  input:disabled,
+  select:disabled {
+    background-color: var(--yl-color-bg-control);
+    border-color: var(--yl-color-bg-control);
+    border-style: solid;
+    background-image: var(--yl-color-gradient-input-disabled-stripes);
+  }
+
+  table th {
+    background: var(--yl-color-bg-table-header);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    filter: var(--yl-filter-pulse-base);
+  }
+  50% {
+    filter: var(--yl-filter-pulse-dim);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in--youlag-loading {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}

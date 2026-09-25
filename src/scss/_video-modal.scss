@@ -1,0 +1,1149 @@
+@use "sass:list";
+@use "variables" as *;
+@use "mixins" as *;
+
+.youlag-active {
+  main#stream > .flux {
+    cursor: pointer;
+  }
+}
+
+.youlag-mode--fullscreen {
+  overflow: hidden;
+}
+
+body {
+  /* Youlag loading spinner */
+  &:has(#global main#stream):before {
+    /* Loading spinner, before the youlag script has fully loaded. Only on feed stream pages. */
+    content: "Loading";
+    position: fixed;
+    top: 89px;
+    left: 50%;
+    width: 260px;
+    height: 62px;
+    backdrop-filter: var(--yl-filter-blur-glass);
+    box-shadow: inset -8px 4px 70px 0px var(--yl-shadow-glow-loading-indicator);
+    border: var(--yl-border-width-sm) solid
+      var(--yl-color-border-loading-indicator);
+    background-image: var(--yl-loading-spinner-background-image);
+    background-repeat: no-repeat;
+    background-position: 82px;
+    background-size: 18px;
+    z-index: var(--yl-z-loading);
+    transition: opacity var(--yl-duration-md);
+    color: var(--yl-color-text-medium);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 111px;
+    box-sizing: border-box;
+    font-family: arial;
+    font-size: var(--yl-text-xs);
+    letter-spacing: var(--yl-letter-spacing-sm);
+    white-space: pre;
+    pointer-events: none;
+    border-radius: var(--yl-radius-lg);
+    opacity: 0;
+    animation-name: fade-in--youlag-loading;
+    animation-duration: 2s;
+    animation-timing-function: var(--yl-easing-ease-in-out);
+    animation-fill-mode: forwards;
+
+    @include yl-media-down(md) {
+      width: calc(100% - var(--yl-space-sm) * 2);
+      left: var(--yl-space-sm);
+      overflow: hidden;
+      padding-left: 40%;
+      background-position: calc(40% - 8px);
+    }
+  }
+
+  /* Display only the youlag loading on non-settings page, that is, feed pages. */
+  #global {
+    position: relative;
+    overflow-x: hidden;
+
+    &:after {
+      /* before youlag-loaded: Black backdrop to hide feed content while loading Youlag script. */
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: calc(100% - var(--yl-sidenav-width));
+      margin-left: var(
+        --yl-sidenav-width
+      ); /* To display the sidenav while loading Youlag */
+      box-sizing: border-box;
+      background: var(--yl-color-body-background);
+      background: var(--yl-color-overlay-scrim-loading);
+      z-index: var(--yl-z-backdrop);
+      transition: var(--yl-duration-md);
+      opacity: 1;
+      backdrop-filter: var(--yl-filter-blur-loading-scrim);
+
+      @include yl-media-down(md) {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    @include yl-media-down(md) {
+      padding-top: var(
+        --yl-topnav-height
+      ); /* Mobile: Height of top navigation bar, to avoid fixed top header to cover content underneath. */
+    }
+  }
+
+  &.youlag-loaded {
+    /* Youlag script has loaded, remove loading spinner and feed overlay. */
+    &:before {
+      display: none !important;
+    }
+
+    #global {
+      &:after {
+        /* youlag-loaded: Remove black backdrop after Youlag script has loaded. */
+        display: none !important;
+      }
+    }
+  }
+
+  @include yl-media-up(md) {
+    & > header.header {
+      /* Desktop: Place header above loading overlay, to not block access to the settings menu while youlag is in a blocking/loading state. */
+      position: relative;
+      z-index: var(--yl-z-docked);
+    }
+  }
+
+  &.profile,
+  &.display,
+  &.reading,
+  &.archiving,
+  &.integration,
+  &.shortcut,
+  &.queries,
+  &.index,
+  &.privacy,
+  &.system,
+  &.manage,
+  &.checkInstall,
+  &.logs,
+  &.about {
+    #global {
+      &:after {
+        /* Disable youlag loading overlay on settings pages. */
+        display: none;
+      }
+    }
+  }
+}
+
+#youlagTheaterModal {
+  position: fixed;
+  z-index: var(--yl-z-modal);
+  bottom: 0px;
+  right: 0px;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  background: var(--yl-color-surface-theater-modal);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  transition: var(--yl-duration-lg); /* Time to restore to fullscreen */
+  will-change: width, height, transform;
+  /* For browsers with subpixel rendering issues, hide background content peeking through. */
+  box-shadow: 0 0 0 10px var(--yl-color-surface-theater-modal);
+  transform-origin: bottom right;
+
+  &.youlag-modal-feed-item--text {
+    /* For feed items that are not video feeds. */
+
+    transition: var(
+      --yl-duration-sm
+    ); /* Time to restore articles to fullscreen. Use shorter time to avoid layout shift due to text wrapping. */
+
+    .youlag-iframe-container {
+      display: none;
+    }
+
+    .youlag-video-container {
+      /* For text feeds, the thumbnail is displayed in the video area instead. */
+      max-height: 50vh;
+
+      .youlag-thumbnail-container {
+        animation: none !important;
+        width: 100% !important;
+        height: auto !important;
+        padding-bottom: 0 !important;
+        mask-image: none;
+
+        .youlag-video-thumbnail {
+          position: static !important;
+          transform: none !important;
+          object-fit: cover;
+          max-height: 50vh;
+          object-position: 0% 20%;
+        }
+      }
+    }
+
+    .youlag-video-description-content {
+      margin: 0 auto;
+
+      a {
+        color: var(--yl-color-text-link);
+        box-shadow: var(--yl-color-text-underline) 0 -1px 0 inset;
+      }
+
+      ul {
+        list-style-position: inside;
+      }
+
+      img {
+        border-radius: var(--yl-radius-md);
+      }
+
+      pre {
+        overflow: auto;
+        background-color: var(--yl-color-bg-code);
+        border-radius: var(--yl-radius-md);
+        padding: var(--yl-space-xs);
+      }
+    }
+  }
+}
+
+.youlag-theater-modal-container {
+  width: 100%;
+}
+
+.youlag-theater-modal-content {
+  width: 100%;
+}
+
+.youlag-video-header {
+  display: flex;
+  gap: var(--yl-space-3xs);
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--yl-space-xs);
+  background: var(--yl-color-gradient-video-header-overlay);
+}
+
+#youlagVideoSource {
+  margin-right: auto;
+  border-radius: var(--yl-radius-lg);
+  padding-right: var(--yl-space-sm);
+  padding-left: var(--yl-space-sm);
+}
+
+.youlag-video-container {
+  position: relative;
+  max-height: 80vh;
+  overflow: hidden;
+
+  .youlag-iframe-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    .youlag-iframe {
+      width: 100%;
+      height: auto;
+      max-height: 80vh;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+    }
+  }
+
+  .youlag-thumbnail-container {
+    width: 100%;
+    height: 0;
+    padding-bottom: calc(
+      56.25% - 1px
+    ); /* HACK: Sets 16:9 aspect ratio to the container. */
+    position: relative;
+    overflow: hidden;
+    animation: pulse var(--yl-duration-thumbnail-pulse) infinite
+      var(--yl-easing-ease-in-out);
+    /* HACK: Enforce Fade out bottom edge to prevent subpixels from peeking below the video iframe. */
+    mask-image: linear-gradient(
+      to bottom,
+      #000 calc(100% - 50%),
+      transparent calc(100% - 5%)
+    );
+
+    .youlag-video-thumbnail {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.yl-video-blur-backdrop-effect {
+  --yl-effect: 60px;
+  position: absolute;
+  left: 0;
+  z-index: -1;
+
+  @supports (-webkit-hyphens: auto) and ((-webkit-line-clamp: unset)) {
+    /* SAFARI HACK: Prevent premature clipping of blur caused by CJK character titles on `youlag-video-metadata-title` by increasing the blur effect size. */
+    --yl-effect: 100px;
+  }
+
+  &__image {
+    width: 100vw;
+    max-height: var(--yl-effect);
+    object-fit: cover;
+    object-position: center;
+    filter: blur(var(--yl-effect));
+    transform: translateY(calc(var(--yl-effect) / -2));
+    opacity: 0.5;
+  }
+}
+
+.yl-button-menu {
+  @include yl-button-menu;
+}
+
+#ylVideoChaptersContainer {
+  #ylVideoChapterCurrentProgress {
+    /* Chapter progress indicator. */
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    z-index: -1;
+    transition: var(--yl-duration-xl) var(--yl-easing-linear);
+    background-color: var(--yl-color-bg-chapter-progress);
+    will-change: width;
+    pointer-events: none;
+
+    &:after {
+      /* Chapter progress indicator effect at the far end. */
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 100px;
+      background: var(--yl-color-gradient-chapter-shimmer);
+      opacity: 0.06;
+      border-radius: var(--yl-radius-xs);
+    }
+  }
+
+  .yl-video-chapter-current {
+    position: relative;
+    display: flex;
+    font-size: var(--yl-text-xs);
+    border-bottom: var(--yl-border-width-sm) solid
+      var(--yl-color-border-chapter-divider);
+
+    #ylVideoChaptersPanel {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding-top: var(--yl-space-xs);
+      padding-bottom: var(--yl-space-xs);
+      padding-left: var(--yl-space-xs);
+      padding-right: var(--yl-space-md);
+      flex: 1;
+      transition: var(--yl-duration-button);
+      opacity: 0.9;
+
+      &:hover {
+        background-color: var(--yl-color-bg-chapter-bar-hover);
+        cursor: pointer;
+        opacity: 1;
+
+        #ylVideoChapterToggle .yl-video-chapter-toggle-icon {
+          opacity: 1;
+        }
+      }
+    }
+
+    &__order {
+      margin-right: var(--yl-space-2xs);
+      border-color: var(--yl-color-border-chapter-number);
+      flex-shrink: 0;
+    }
+
+    &__label {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      line-clamp: 1;
+      overflow: hidden;
+      word-break: break-all;
+      max-width: 600px;
+    }
+
+    #ylVideoChapterToggle {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+
+      .yl-video-chapter-toggle-icon {
+        transform: rotate(-90deg);
+        transition: var(--yl-duration-md);
+        width: var(--yl-icon-size-xs);
+        height: var(--yl-icon-size-xs);
+        filter: var(--yl-filter-icon-chapter-toggle);
+        opacity: var(--yl-opacity-muted);
+        margin-right: var(--yl-space-2xs);
+      }
+    }
+  }
+
+  #ylVideoChaptersActionContainer {
+    display: flex;
+
+    .yl-video-chapter-action {
+      display: flex;
+      align-items: center;
+      padding: var(--yl-space-xs) var(--yl-space-sm);
+      border-left: var(--yl-border-width-sm) solid
+        var(--yl-color-border-chapter-divider);
+      transition: var(--yl-duration-button);
+
+      &:hover {
+        background-color: var(--yl-color-bg-chapter-bar-hover);
+        cursor: pointer;
+      }
+
+      &__icon {
+        opacity: var(--yl-opacity-muted);
+        width: var(--yl-icon-size-lg);
+        height: var(--yl-icon-size-lg);
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="%23fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 5v14M6 10.571v2.858c0 1.827 0 2.74.384 3.267a2 2 0 0 0 1.413.811c.648.066 1.437-.394 3.016-1.315l2.449-1.428.008-.005c1.552-.905 2.328-1.358 2.59-1.949a2 2 0 0 0 0-1.62c-.263-.591-1.041-1.045-2.598-1.954l-2.45-1.428c-1.578-.921-2.367-1.381-3.015-1.315a2 2 0 0 0-1.413.812C6 7.83 6 8.745 6 10.57Z"/></svg>');
+
+        &--next {
+          /* .yl-video-chapter-action__icon .yl-video-chapter-action__icon--next */
+          transform: rotate(0);
+        }
+
+        &--previous {
+          /* .yl-video-chapter-action__icon .yl-video-chapter-action__icon--previous */
+          transform: rotate(180deg);
+        }
+      }
+
+      &.is-disabled {
+        pointer-events: none;
+
+        .yl-video-chapter-action__icon {
+          /* Only faint icon and not the entire button to preserve borders. */
+          opacity: var(--yl-opacity-disabled);
+        }
+      }
+    }
+
+    .yl-video-sponsorblock-action {
+      gap: var(--yl-space-2xs);
+      font-size: var(--yl-text-xs);
+      color: var(--yl-color-text-medium);
+      background: none;
+      border-top: 0;
+      border-right: 0;
+      border-bottom: 0;
+      white-space: nowrap;
+
+      &__countdown {
+        /* Fixed width so the ticking digit doesn't shift the layout. */
+        display: inline-block;
+        min-width: 1ch;
+        font-variant-numeric: tabular-nums;
+      }
+    }
+  }
+
+  &:not(.is-chapterless) .yl-video-chapter-current {
+    /* Fixed height when chapters exist, to avoid dynamic content like sponsorblock button to the layout. */
+    height: 54px;
+  }
+
+  &.is-chapterless {
+    /* TODO: For chapterless videos, the bar grows when the sponsor button appears. Refactor the DOM to prevent this. */
+    #ylVideoChaptersPanel,
+    #ylVideoChapterCurrentProgress,
+    #ylVideoChaptersActionPrevious,
+    #ylVideoChaptersActionNext,
+    .yl-video-chapter-list-header,
+    .yl-video-chapter-list {
+      display: none !important;
+    }
+
+    .yl-video-chapter-action-container {
+      margin-left: auto;
+    }
+
+    .yl-video-chapter-current:not(
+      :has(.yl-video-sponsorblock-action:not(.display-none))
+    ) {
+      /* Without chapters, the bar only shows while the sponsor button does. */
+      border-bottom: 0;
+    }
+  }
+
+  .yl-video-chapter-list-header {
+    display: none; /* Shown with the chapter list */
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--yl-space-2xs) var(--yl-space-md) 0;
+    font-size: var(--yl-text-xs);
+    font-weight: var(--yl-font-weight-semibold);
+
+    &__hint {
+      display: none; /* Shown in edit mode */
+      font-weight: var(--yl-font-weight-regular);
+      opacity: var(--yl-opacity-muted);
+    }
+
+    #ylVideoChapterEdit {
+      /* Keeps the width steady while the label swaps between "Edit" and "Done". */
+      min-width: 100px;
+
+      @include yl-media-down(md) {
+        min-width: 70px;
+      }
+    }
+  }
+
+  &:has(.yl-video-chapter-list.is-editing) .yl-video-chapter-list-header__hint {
+    display: block;
+  }
+
+  .yl-video-chapter-list {
+    display: none; /* Hidden by default */
+    padding-top: var(--yl-space-xs);
+    padding-bottom: var(--yl-space-xs);
+    font-size: var(--yl-text-xs);
+    border-bottom: var(--yl-border-width-sm) solid
+      var(--yl-color-border-chapter-divider);
+    max-height: 600px;
+    overflow-y: auto;
+
+    &-item {
+      padding: var(--yl-space-2xs);
+      margin-left: calc(var(--yl-space-md) - var(--yl-space-2xs));
+      margin-right: calc(var(--yl-space-md) - var(--yl-space-2xs));
+      border-radius: var(--yl-radius-md);
+      display: flex;
+      align-items: center;
+      transition: var(--yl-duration-sm);
+
+      &:hover {
+        background-color: var(--yl-color-bg-chapter-item-hover);
+        cursor: pointer;
+      }
+
+      &.is-active {
+        background: var(--yl-color-gradient-active);
+        color: var(--yl-color-text-medium);
+      }
+
+      &.is-skipped {
+        /* Dim content only, so the checkbox still looks toggleable. */
+        .yl-video-chapter-list-item__time,
+        .yl-video-chapter-list-item__label {
+          opacity: var(--yl-opacity-disabled);
+        }
+      }
+
+      &__checkbox {
+        display: none;
+        pointer-events: none;
+        margin: 0 var(--yl-space-2xs) 0 0;
+        flex-shrink: 0;
+      }
+
+      &__time {
+        font-weight: var(--yl-font-weight-semibold);
+        margin-right: var(--yl-space-2xs);
+        background-color: var(--yl-color-bg-chapter-time);
+      }
+
+      &__label {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-clamp: 2;
+        overflow: hidden;
+      }
+    }
+
+    &.is-editing .yl-video-chapter-list-item__checkbox {
+      display: block;
+    }
+
+    &:not(.is-editing) .yl-video-chapter-list-item.is-skipped {
+      pointer-events: none;
+    }
+  }
+
+  .yl-video-chapter-current.is-expanded {
+    .yl-video-chapter-toggle-icon {
+      transform: rotate(0deg) !important;
+    }
+
+    & ~ .yl-video-chapter-list {
+      display: block;
+    }
+
+    & ~ .yl-video-chapter-list-header {
+      display: flex;
+    }
+  }
+}
+
+.youlag-video-details {
+  padding-top: var(--yl-space-xs);
+  padding-left: var(--yl-space-md);
+  padding-right: var(--yl-space-md);
+
+  .youlag-video-metadata-container {
+    margin-bottom: var(--yl-space-lg);
+
+    .youlag-video-metadata-title {
+      font-size: var(--yl-text-md);
+      line-height: var(--yl-line-height-md);
+      margin-bottom: var(--yl-space-sm);
+      max-width: max(750px, 80%);
+    }
+
+    .youlag-video-metadata-favicon {
+      width: 42px;
+      height: 42px;
+      background-color: var(--yl-color-bg-favicon);
+      padding: 8px;
+      box-sizing: border-box;
+      border-radius: var(--yl-radius-full);
+      margin-top: 2px;
+
+      &[src=""] {
+        display: none;
+      }
+    }
+  }
+}
+
+.youlag-video-metadata-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--yl-space-sm);
+  margin-bottom: var(--yl-space-md);
+
+  .youlag-video-author-section {
+    display: flex;
+    flex: 1;
+    gap: var(--yl-space-2xs);
+    align-items: center;
+    min-width: 400px;
+
+    .youlag-video-metadata-author a {
+      font-size: var(--yl-text-sm);
+      line-height: var(--yl-line-height-lg);
+      font-weight: var(--yl-font-weight-semibold);
+      color: var(--yl-color-text-medium);
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      line-clamp: 1;
+      overflow: hidden;
+      max-width: 300px;
+    }
+
+    .youlag-video-metadata-date {
+      font-size: var(--yl-text-xs);
+      line-height: var(--yl-line-height-xs);
+      opacity: var(--yl-opacity-muted);
+    }
+  }
+
+  .youlag-video-actions-container {
+    display: flex;
+    gap: var(--yl-space-2xs);
+    flex-wrap: wrap;
+
+    .icon.loading,
+    .icon.spinner {
+      background: var(--yl-loading-spinner-background-image) center center
+        no-repeat;
+      background-size: 1rem; /* Allow `var(--yl-loading-spinner-background-image)` to size correctly for the button containers. */
+      object-position: -9999px 0; /* Hide FreshRSS' default loading icon by positioning it x-coordinate: -9999px. */
+    }
+  }
+}
+
+.youlag-video-metadata-favicon-link {
+  display: flex;
+  align-items: center;
+
+  &:has(.youlag-video-metadata-favicon[src=""]) {
+    display: none;
+  }
+}
+
+.youlag-favorited {
+  min-width: 60px;
+
+  &.youlag-favorited--false .youlag-favorited-icon {
+    background-image: url("./themes/Mapco/icons/non-starred.svg");
+    filter: var(--yl-filter-icon-favorite);
+  }
+
+  &.youlag-favorited--true .youlag-favorited-icon {
+    background-image: url("./themes/Mapco/icons/starred.svg");
+    filter: var(--yl-filter-icon-starred);
+  }
+
+  .youlag-favorited-icon {
+    width: var(--yl-icon-size-lg);
+    height: var(--yl-icon-size-lg);
+    filter: var(--yl-filter-icon-favorite-base);
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+.yl-video-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--yl-color-gradient-button);
+  color: var(--yl-color-text-medium);
+  font-weight: var(--yl-font-weight-semibold);
+  font-size: var(--yl-text-xs);
+  border-radius: var(--yl-radius-full);
+  padding: var(--yl-space-xs) var(--yl-space-sm);
+  text-decoration: none;
+  transition: box-shadow var(--yl-duration-button);
+  min-width: 45px;
+  cursor: pointer;
+
+  @include yl-state-layer;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  span.yl-video-action-button__icon {
+    margin-right: var(--yl-space-2xs);
+  }
+
+  .icon {
+    filter: var(--yl-filter-icon-modal-button);
+  }
+}
+
+.yl-video-action-button-group {
+  /* For placing related buttons into one group */
+  display: flex;
+  border-radius: var(--yl-radius-full);
+  overflow: hidden;
+
+  a.yl-video-action-button {
+    /* Reset rounded corners of buttons in group */
+    border-radius: 0;
+  }
+
+  .yl-video-action-button:first-child {
+    border-top-left-radius: var(--yl-radius-full);
+    border-bottom-left-radius: var(--yl-radius-full);
+  }
+
+  .yl-video-action-button:last-child {
+    border-top-right-radius: var(--yl-radius-full);
+    border-bottom-right-radius: var(--yl-radius-full);
+  }
+
+  .yl-video-action-button:not(:last-child) {
+    border-right: var(--yl-border-width-sm) solid
+      var(--yl-color-border-button-group-divider);
+  }
+
+  .yl-video-action-button:only-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border: none;
+  }
+}
+
+a.yl-video-action-button[href=""] {
+  /* Hide button if no link was able to be fetched */
+  display: none;
+}
+
+#youlagCloseModal,
+#youlagMinimizeModal {
+  cursor: pointer;
+  padding: var(--yl-space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: var(--yl-line-height-xs);
+  border-radius: var(--yl-radius-full);
+  width: var(--yl-icon-button-size);
+  height: var(--yl-icon-button-size);
+  font-size: var(--yl-text-lg);
+  background-color: var(--yl-color-bg-modal-button);
+  box-shadow: 0px 4px 8px 0px var(--yl-shadow-floating);
+  transition: background-color var(--yl-duration-button);
+
+  &:hover {
+    background-color: var(--yl-color-bg-modal-button-hover);
+  }
+}
+
+#youlagMinimizeModal {
+  font-size: var(--yl-text-md);
+}
+
+#youlagVideoMoreContentContainer {
+  /* Container surrounding the video description and related videos. */
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--yl-space-sm) var(--yl-space-2xs);
+  margin-bottom: var(--yl-space-lg);
+
+  @include yl-media-down(lg) {
+    flex-direction: column;
+  }
+
+  .youlag-video-description-container {
+    background: var(--yl-color-gradient-video-description);
+    padding: var(--yl-space-sm);
+    border-radius: var(--yl-radius-xl);
+    flex: 1;
+    min-width: min(450px, 90%);
+
+    @include yl-media-down(lg) {
+      &--collapsed {
+        position: relative;
+        max-height: 100px;
+        box-sizing: border-box;
+        overflow: hidden;
+        cursor: pointer;
+
+        &:before {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 65%;
+          background: var(--yl-color-gradient-description-collapsed-fade);
+          z-index: 1;
+        }
+      }
+    }
+
+    .youlag-video-description-content {
+      font-size: var(--yl-text-sm);
+      word-break: break-word;
+      max-width: 700px;
+
+      a {
+        color: var(--yl-color-text-link);
+        box-shadow: var(--yl-color-text-underline) 0 -1px 0 inset;
+      }
+    }
+
+    &:has(.youlag-video-description-content:empty) {
+      /* Hide description container if no description within content. */
+      display: none;
+    }
+  }
+
+  #youlagRelatedVideosContainer {
+    /* Related videos container */
+
+    .youlag-video-related-title,
+    .youlag-related-video-item {
+      position: relative;
+      margin-top: 0;
+      padding-left: var(--yl-space-2xs);
+      padding-right: var(--yl-space-2xs);
+    }
+
+    .youlag-related-video-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--yl-space-2xs);
+      border-radius: var(--yl-radius-md);
+      padding-top: var(--yl-space-2xs);
+      padding-bottom: var(--yl-space-2xs);
+
+      &:hover {
+        cursor: pointer;
+        background: var(--yl-color-gradient-list-item-hover);
+      }
+
+      &__title {
+        color: var(--yl-color-text-highest);
+        font-size: var(--yl-text-xs);
+        line-height: var(--yl-line-height-md);
+        font-weight: var(--yl-font-weight-bold);
+        margin-bottom: var(--yl-space-3xs);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-clamp: 2;
+        overflow: hidden;
+      }
+
+      &__author {
+        font-size: var(--yl-text-xs);
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        line-clamp: 1;
+        overflow: hidden;
+        word-break: break-all;
+      }
+
+      &__author,
+      &__date {
+        color: var(--yl-color-text-medium);
+        opacity: var(--yl-opacity-muted);
+      }
+
+      &__thumbnail {
+        width: 145px;
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: var(--yl-radius-md);
+        aspect-ratio: 16 / 9;
+
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: var(--yl-radius-md);
+          aspect-ratio: 16 / 9;
+          object-fit: cover;
+        }
+      }
+
+      &__metadata {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 200px;
+        max-width: 230px;
+      }
+
+      &__link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+    }
+
+    @include yl-media-up(2xl) {
+      #youlagVideoMoreContentContainer {
+        gap: var(--yl-space-sm) var(--yl-space-sm);
+      }
+
+      .yl-form-category__video-label {
+        font-size: var(--yl-text-md);
+      }
+
+      .youlag-related-video-item {
+        &__thumbnail {
+          width: 240px;
+        }
+
+        &__metadata {
+          max-width: 300px;
+        }
+
+        &__title,
+        &__author {
+          font-size: var(--yl-text-sm);
+        }
+
+        &__date {
+          font-size: var(--yl-text-xs);
+        }
+      }
+    }
+
+    @include yl-media-between(sm, lg, -40px) {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--yl-space-xs);
+
+      .youlag-video-related-title {
+        grid-column: 1 / -1;
+        padding-left: 0;
+      }
+
+      .youlag-related-video-item {
+        flex-direction: column;
+
+        &__thumbnail {
+          width: 100%;
+        }
+
+        &__metadata {
+          max-width: 100%;
+        }
+      }
+    }
+
+    @include yl-media-between(sm, md, -40px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @include yl-media-down(sm, -40px) {
+      .youlag-video-related-title {
+        padding-left: 0;
+      }
+
+      .youlag-related-video-item {
+        padding-left: 0;
+        padding-right: 0;
+
+        &:hover {
+          background: none;
+        }
+      }
+
+      .youlag-related-video-item__metadata {
+        min-width: auto;
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+.youlag-mode--miniplayer {
+  overflow: auto; /* Allow scrolling the body when in miniplayer mode. */
+
+  @include yl-media-down(md) {
+    &:has(#nav_entries) #youlagTheaterModal {
+      /* Mobile: Place miniplayer video above bottom navigation bar. */
+      bottom: calc(
+        4.5rem + var(--yl-space-sm)
+      ); /* 4.5rem = height of bottom navigation bar */
+    }
+  }
+}
+
+.youlag-mode--miniplayer #youlagTheaterModal {
+  overflow: hidden;
+  z-index: var(--yl-z-nav);
+  transition: var(--yl-duration-md); /* Time to minimize to miniplayer */
+  will-change:
+    width, bottom, right, aspect-ratio, height, border-radius, background,
+    box-shadow, transform;
+
+  & {
+    width: var(--yl-video-miniplayer-width);
+    bottom: var(--yl-space-sm);
+    right: var(--yl-space-sm);
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border-radius: var(--yl-radius-lg);
+    background: var(--yl-color-surface-miniplayer);
+    box-shadow: 0 0 0 6px var(--yl-color-surface-miniplayer);
+  }
+
+  .youlag-video-header {
+    position: absolute; /* Header overlaps video instead of sticky, to not occupying vertical space in miniplayer mode. */
+    left: auto;
+    right: 0;
+    padding: var(--yl-space-4xs);
+    background: transparent;
+  }
+
+  #ylVideoChaptersContainer,
+  #youlagVideoSource {
+    display: none;
+  }
+
+  #youlagCloseModal,
+  #youlagMinimizeModal {
+    padding: var(--yl-space-xs);
+    width: var(--yl-text-2xl);
+    height: var(--yl-text-2xl);
+    font-size: var(--yl-text-md);
+  }
+
+  .youlag-video-details {
+    display: none; /* For videos, hide description from miniplayer mode. */
+  }
+
+  &.youlag-modal-feed-item--text {
+    .youlag-video-details {
+      display: block; /* Show article details if no thumbnail is available. */
+    }
+
+    .youlag-video-actions-container,
+    #youlagVideoMoreContentContainer {
+      /* Hide rest of the content that may peak up when article is in miniplayer mode. */
+      display: none;
+    }
+
+    .youlag-video-metadata-container {
+      pointer-events: none;
+    }
+
+    .youlag-video-metadata-title {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-clamp: 2;
+      overflow: hidden;
+      max-width: 100%;
+      padding-right: var(--yl-space-xl);
+
+      @include yl-media-down(sm) {
+        font-size: var(--yl-text-sm);
+        padding-right: 0;
+      }
+    }
+
+    .youlag-video-metadata-author a {
+      max-width: 150px;
+    }
+
+    &.youlag-modal-feed-item--no-thumbnail {
+      .youlag-thumbnail-container {
+        display: none;
+      }
+    }
+
+    &.youlag-modal-feed-item--has-thumbnail {
+      .youlag-video-container {
+        /* Place thumbnail behind article headline. */
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        filter: var(--yl-filter-miniplayer-thumbnail-backdrop);
+      }
+    }
+  }
+}

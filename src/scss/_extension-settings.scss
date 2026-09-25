@@ -1,0 +1,135 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+#yl-update-notice,
+#yl-update-howto {
+  margin-left: var(--yl-space-2xs);
+  filter: var(--yl-filter-update-notice);
+}
+
+.yl-extension-settings-container {
+  #yl_check_updates {
+    float: right;
+  }
+}
+
+.yl-extension-settings-form {
+  .yl-form-section {
+    border: var(--yl-border-width-sm) solid
+      var(--yl-color-border-settings-section);
+    padding: var(--yl-space-xs);
+    border-radius: var(--yl-radius-lg);
+    margin: var(--yl-space-xs) 0;
+
+    h1,
+    h2,
+    h3 {
+      margin-bottom: var(--yl-space-sm);
+    }
+  }
+
+  hr {
+    margin: var(--yl-space-sm) 0;
+  }
+
+  .yl-form-group-help {
+    font-size: var(--yl-text-sm);
+    color: var(--yl-color-text-low);
+    margin-bottom: var(--yl-space-3xs);
+    font-weight: var(--yl-font-weight-regular);
+    max-width: 450px;
+    text-wrap: balance;
+  }
+
+  .form-group {
+    padding: 0;
+    margin-bottom: var(--yl-space-xs);
+
+    .group-name,
+    .group-controls,
+    label,
+    input[type="radio"],
+    input[type="checkbox"] {
+      /* Reset FreshRSS form group styles */
+      display: block;
+      min-width: 0;
+      min-height: 0;
+      width: auto;
+      float: none;
+      text-align: left;
+      margin: 0;
+      padding: 0;
+    }
+
+    .group-name,
+    label {
+      margin-bottom: var(--yl-space-3xs);
+      line-height: var(--yl-line-height-xs);
+    }
+
+    input[readonly] {
+      color: var(--yl-color-text-readonly);
+      user-select: none;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
+  .form-group {
+    .yl-form-group--radio {
+      display: flex;
+      gap: var(--yl-space-2xs);
+      margin-bottom: var(--yl-space-2xs);
+
+      .yl-form-group--radio-input-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        label,
+        .yl-form-group-help {
+          /* Radio button + gap */
+          padding-left: calc(15px + var(--yl-space-2xs));
+        }
+
+        .yl-form-control-radio-input {
+          display: flex;
+          align-items: center;
+          gap: var(--yl-space-2xs);
+        }
+      }
+    }
+  }
+
+  .yl-form-category-container {
+    max-height: 190px;
+    overflow: auto;
+    border: var(--yl-border-width-sm) solid
+      var(--yl-color-border-settings-section);
+    padding: var(--yl-space-xs);
+    border-radius: var(--yl-radius-lg);
+
+    hr {
+      margin-top: var(--yl-space-2xs);
+      margin-bottom: var(--yl-space-2xs);
+    }
+  }
+
+  label:has(#yl_sponsorblock_enabled:not(:checked)) {
+    /* SponsorBlock options only apply when it's enabled. */
+    & ~ .yl-form-category-container:has([name="yl_sponsorblock_categories[]"]),
+    & ~ label[for="yl_sponsorblock_auto_skip_enabled"] {
+      display: none !important; /* Overrides the label's `.flex` helper. */
+    }
+  }
+
+  #yl_category_all:checked {
+    /* When "All pages and categories" is selected, disable other sub-options. */
+    & ~ .yl-form-category-subitem-container {
+      opacity: var(--yl-opacity-disabled);
+      pointer-events: none;
+      user-select: none;
+      filter: var(--yl-filter-disabled);
+    }
+  }
+}
