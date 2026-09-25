@@ -18,17 +18,17 @@ fs.mkdirSync(tempDir, { recursive: true });
 
 
 const srcFiles = [
-  '../src/db.js',
-  '../src/global.js',
-  '../src/utilities.js',
-  '../src/helpers.js',
-  '../src/ui.js',
-  '../src/ui-modals.js',
-  '../src/ui-video-control.js',
-  '../src/ui-modes.js',
-  '../src/forms.js',
-  '../src/events.js',
-  '../src/debug.js',
+  '../src/js/db.js',
+  '../src/js/global.js',
+  '../src/js/utilities.js',
+  '../src/js/helpers.js',
+  '../src/js/ui.js',
+  '../src/js/ui-modals.js',
+  '../src/js/ui-video-control.js',
+  '../src/js/ui-modes.js',
+  '../src/js/forms.js',
+  '../src/js/events.js',
+  '../src/js/debug.js',
 ];
 const minScriptPath = path.resolve(__dirname, '../static/script.min.js');
 const scriptTempDest = path.join(tempDir, 'script.min.js');
