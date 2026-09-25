@@ -502,18 +502,7 @@ function setupModalVideoEventListeners(videoObject) {
   // Expand description box on click
   handleModalDescription(videoObject);
 
-  // Escape key closes fullscreen modal
-  const escHandler = (event) => {
-    if (event.key === "Escape" && isModeFullscreen()) {
-      closeModalVideo();
-    }
-  };
-  document.addEventListener("keydown", escHandler);
-  modal._videoModalListeners.push({
-    el: document,
-    type: "keydown",
-    handler: escHandler,
-  });
+  setupModalVideoKeyListener(modal);
 
   // Select video source change handling: YouTube, Invidious
   const videoSourceSelect = modal.querySelector(`#${app.modal.id.source}`);
@@ -545,6 +534,100 @@ function setupModalVideoEventListeners(videoObject) {
     }
     return "";
   }
+}
+
+function setupModalVideoKeyListener(modal) {
+  // Keyboard shortcuts for the video modal
+  // Provides ability to control YouTube videos even when iframe is not focused.
+  const seekStep = 5;
+
+  const keyHandler = (event) => {
+    if (event.key === "Escape") {
+      if (!isModeFullscreen()) return;
+      // Prevent a second close step in history as `setupClickListener()` also closes on `Esc` key.
+      event.stopPropagation();
+      closeModalVideo();
+      return;
+    }
+
+    if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)
+      return;
+    if (event.isComposing || event.key === "Process") return;
+
+    const target = event.target;
+    if (target.isContentEditable || target.closest("input, textarea, select"))
+      return;
+    if (
+      document.body.classList.contains(app.modal.class.tagsModalOpen) ||
+      document.body.classList.contains(app.modal.class.shareModalOpen)
+    )
+      return;
+
+    const key = event.key.toLowerCase();
+
+    if (key === "i") {
+      if (event.repeat) return;
+      event.stopPropagation(); // Stops FreshRSS native key shortcuts.
+      event.preventDefault();
+      toggleModalMode();
+      return;
+    }
+
+    if (!isModeFullscreen()) return;
+
+    const iframe = modal.querySelector(`#${app.modal.id.videoIframe}`);
+    // Invidious embeds don't accept YouTube player commands.
+    if (iframe?.getAttribute("data-yl-is-video") !== "youtube") return;
+
+    const player = modal._ylPlayer || {};
+
+    switch (key) {
+      case " ": {
+        if (event.repeat) return;
+        // Put focus on video modal
+        if (
+          modal.contains(target) &&
+          target.closest('button, a, summary, [role="button"]') &&
+          target.matches(":focus-visible")
+        )
+          return;
+        const isPlaying = player.state === 1 || player.state === 3;
+        videoControlCommand(isPlaying ? "pauseVideo" : "playVideo");
+        player.state = isPlaying ? 2 : 1;
+        break;
+      }
+      case "arrowleft":
+      case "arrowright": {
+        if (typeof player.time !== "number") return;
+        const offset = key === "arrowleft" ? -seekStep : seekStep;
+        let seekTime = Math.max(0, player.time + offset);
+        if (player.duration) seekTime = Math.min(seekTime, player.duration);
+        videoControlCommand("seekTo", [seekTime, true]);
+        // Player time updates lag behind, so held keys would seek from a stale position.
+        player.time = seekTime;
+        break;
+      }
+      case "m": {
+        if (event.repeat) return;
+        videoControlCommand(player.muted ? "unMute" : "mute");
+        player.muted = !player.muted;
+        break;
+      }
+      default:
+        return;
+    }
+
+    // Stops FreshRSS native key shortcuts.
+    event.stopPropagation();
+    event.preventDefault();
+  };
+
+  document.body.addEventListener("keydown", keyHandler);
+  modal._videoModalListeners.push({
+    el: document.body,
+    type: "keydown",
+    handler: keyHandler,
+  });
 }
 
 function restoreModalEventListeners() {

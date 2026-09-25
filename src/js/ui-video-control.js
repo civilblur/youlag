@@ -441,6 +441,8 @@ function setupVideoPlaybackPosition(modal, onTimeUpdate) {
 
   let videoDuration = null;
   let currentPlayerState = null;
+  // Last known player state, read by keyboard shortcuts.
+  modal._ylPlayer = { state: null, time: null, duration: null, muted: false };
 
   const onIframeLoad = function () {
     try {
@@ -496,11 +498,17 @@ function setupVideoPlaybackPosition(modal, onTimeUpdate) {
     if (data.event === "infoDelivery") {
       if (typeof data.info?.duration === "number") {
         videoDuration = data.info.duration;
+        modal._ylPlayer.duration = videoDuration;
       }
       if (typeof data.info?.playerState === "number") {
         currentPlayerState = data.info.playerState;
+        modal._ylPlayer.state = currentPlayerState;
+      }
+      if (typeof data.info?.muted === "boolean") {
+        modal._ylPlayer.muted = data.info.muted;
       }
       if (typeof data.info?.currentTime === "number") {
+        modal._ylPlayer.time = data.info.currentTime;
         onTimeUpdate(data.info.currentTime, videoDuration, currentPlayerState);
       }
     }
@@ -848,6 +856,21 @@ function videoControlSeekTo(seconds, allowSeekAhead = true) {
       '", ' +
       allowSeekAhead +
       "]}",
+    "*",
+  );
+}
+
+function videoControlCommand(func, args = []) {
+  // Send a player command to the YouTube iframe video player.
+
+  const modal = getModalVideo();
+  if (!modal) return;
+
+  const iframe = modal.querySelector(`#${app.modal.id.videoIframe}`);
+  if (!iframe || !iframe.contentWindow) return;
+
+  iframe.contentWindow.postMessage(
+    JSON.stringify({ event: "command", func, args }),
     "*",
   );
 }
