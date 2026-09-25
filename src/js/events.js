@@ -89,7 +89,7 @@ function handleExperimentalFeature() {
 function removeYoulagLoadingState() {
   // By default, the youlag CSS is set to a loading state.
   // This will remove the loading state when the script is ready.
-  document.body.classList.add("youlag-loaded");
+  document.body.classList.add("yl-loaded");
 }
 
 function initFallback() {

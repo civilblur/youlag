@@ -8,7 +8,7 @@
   z-index: var(--yl-z-sticky);
   display: flex;
   flex-direction: column;
-  grid-column: 1 / -1; /* youlag-active: Span full width in video mode layout */
+  grid-column: 1 / -1; /* yl-mode-video: Span full width in video mode layout */
   transition:
     transform var(--yl-duration-md) var(--yl-easing-toolbar),
     opacity var(--yl-duration-md) var(--yl-easing-toolbar);
@@ -16,7 +16,7 @@
   box-shadow:
     -1px 0 0 var(--yl-color-body-background),
     1px 0 0 var(--yl-color-body-background),
-    0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
+    0 -1px 0 var(--yl-color-body-background); /* HACK: Address yl-mode-article (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
   background-color: var(--yl-color-body-background);
   padding-top: var(--yl-space-2xs);
   padding-bottom: var(--yl-space-2xs);
@@ -136,7 +136,7 @@
   }
 }
 
-body.youlag-sidenav--expanded:has(
+body.yl-sidenav--expanded:has(
     #stream > #new-article + .prompt.alert.alert-warn
   )
   .nav_menu {
@@ -478,7 +478,7 @@ figure.enclosure img.enclosure-thumbnail {
 /* Feed items are referred to as cards, as they are styled as grid cells opposed to FreshRSS table view. */
 
 /* Cards default state in feed */
-body.youlag-active:not(.reader) main#stream div.flux {
+body.yl-mode-video:not(.reader) main#stream div.flux {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -546,7 +546,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
   }
 
   &.current.active {
-    /* youlag-active: Styling for when card was triggered by FreshRSS bottom navigation 'Settings -> Display -> Show the navigation buttons',
+    /* yl-mode-video: Styling for when card was triggered by FreshRSS bottom navigation 'Settings -> Display -> Show the navigation buttons',
        and not captured byy youlag's eventlistener. */
     overflow-x: hidden;
 
@@ -703,7 +703,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
 }
 
 /* Card expanded state in feed */
-body.youlag-active:not(.reader) main#stream div.flux.active.current {
+body.yl-mode-video:not(.reader) main#stream div.flux.active.current {
   /* Card expanded header, serves as a top panel. */
   .flux_header {
     position: sticky;
@@ -778,7 +778,7 @@ body.youlag-active:not(.reader) main#stream div.flux.active.current {
 
 /* Turn the feed table view to grid view. */
 
-body.youlag-active:not(.reader) main#stream {
+body.yl-mode-video:not(.reader) main#stream {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
   gap: var(--yl-space-3xs);
@@ -850,7 +850,7 @@ body.youlag-active:not(.reader) main#stream {
     .flux_header {
       @include yl-media-up(md) {
         &:hover {
-          /* Desktop, youlag-active: only show the border around card actions on hover. */
+          /* Desktop, yl-mode-video: only show the border around card actions on hover. */
           li.item.manage,
           li.item.website.icon,
           li.item.link,
@@ -863,7 +863,7 @@ body.youlag-active:not(.reader) main#stream {
       }
 
       @include yl-media-down(md) {
-        /* Mobile, youlag-active: the buttons are always visible on mobile, so always show the card action borders. */
+        /* Mobile, yl-mode-video: the buttons are always visible on mobile, so always show the card action borders. */
         li.item.manage,
         li.item.website.icon,
         li.item.link,
@@ -875,7 +875,7 @@ body.youlag-active:not(.reader) main#stream {
       }
 
       .summary {
-        /* youlag-active: No support for summary on video cards. */
+        /* yl-mode-video: No support for summary on video cards. */
         display: none;
       }
 
@@ -1168,7 +1168,7 @@ body.youlag-active:not(.reader) main#stream {
     @include yl-media-down(md) {
       &:not(.active),
       &:not(.active).favorite:not(.current) {
-        /* Mobile, youlag-active:, always display hover effect/background */
+        /* Mobile, yl-mode-video:, always display hover effect/background */
         background: var(--yl-color-gradient-card-hover);
       }
     }
@@ -1176,7 +1176,7 @@ body.youlag-active:not(.reader) main#stream {
 }
 
 /* Mobile, setting: Card grid view enabled */
-body.youlag-active:not(.reader).youlag-mobile-layout--grid {
+body.yl-mode-video:not(.reader).yl-mobile-layout--grid {
   @include yl-media-down(sm) {
     main#stream {
       grid-template-columns: repeat(2, minmax(140px, 1fr));
@@ -1219,7 +1219,7 @@ body {
     }
   }
 
-  &.yl-feed-custom-thumbnail-title.youlag-loaded {
+  &.yl-feed-custom-thumbnail-title.yl-loaded {
     /* Once Youlag is ready, display the screencap thumbnail. Affects only video feed entries. */
     div.flux .flux_header {
       .item.titleAuthorSummaryDate,
@@ -1233,7 +1233,7 @@ body {
   }
 }
 
-body.youlag-active.youlag-video-unread-badge:not(.reader) main#stream {
+body.yl-mode-video.yl-video-unread-badge:not(.reader) main#stream {
   div.flux {
     &.not_read {
       position: relative;
@@ -1260,7 +1260,7 @@ body.youlag-active.youlag-video-unread-badge:not(.reader) main#stream {
   }
 }
 
-body.youlag-active.yl-page-watch_later:not(.reader) main#stream {
+body.yl-mode-video.yl-page-watch_later:not(.reader) main#stream {
   div.flux {
     &.favorite {
       background: none !important; /* Revert to normal background on favorites (watch later) page */
@@ -1276,7 +1276,7 @@ body.youlag-active.yl-page-watch_later:not(.reader) main#stream {
   }
 }
 
-.youlag-active {
+.yl-mode-video {
   @include yl-media-down(md) {
     #yl_nav_menu_container {
       &.yl-nav-menu-container--open {
@@ -1294,7 +1294,7 @@ body.youlag-active.yl-page-watch_later:not(.reader) main#stream {
   &.yl-page-playlists,
   &.yl-page-category,
   &.yl-page-search_results {
-    &.youlag-sidenav--collapsed {
+    &.yl-sidenav--collapsed {
       @include yl-media-up(md) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         main#stream .yl-category-toolbar--sticky {
@@ -1355,7 +1355,7 @@ body:has(.tree-folder.category.favorites.active) {
   }
 }
 
-.youlag-inactive {
+.yl-mode-article {
   @include yl-media-down(md) {
     #yl_category_toolbar {
       padding-left: var(--yl-space-sm);
@@ -1368,14 +1368,14 @@ body:has(.tree-folder.category.favorites.active) {
   }
 }
 
-.youlag-inactive:not(.yl-article-split-view) {
+.yl-mode-article:not(.yl-article-split-view) {
   &.yl-page-home,
   &.yl-page-important,
   &.yl-page-watch_later,
   &.yl-page-playlists,
   &.yl-page-category,
   &.yl-page-search_results {
-    &.youlag-sidenav--collapsed {
+    &.yl-sidenav--collapsed {
       $toggle-overlap-min: yl-fn-breakpoint(md) + 1px;
       @media (min-width: $toggle-overlap-min) and (max-width: $yl-breakpoint-sidenav-toggle-overlap) {
         /* HACK: On article expand mode: workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
@@ -1573,13 +1573,13 @@ body:has(.tree-folder.category.favorites.active) {
     }
 
     .text a {
-      /* youlag-inactive: article content links. */
+      /* yl-mode-article: article content links. */
       color: var(--yl-color-text-medium);
       box-shadow: var(--yl-color-text-medium) 0 -1px 0 inset;
     }
     header .author a,
     footer .link-tag {
-      /* youlag-inactive: article author and tags links. */
+      /* yl-mode-article: article author and tags links. */
       color: var(--yl-color-text-lowest);
       transition: color var(--yl-duration-md);
 
@@ -1589,7 +1589,7 @@ body:has(.tree-folder.category.favorites.active) {
       }
     }
     footer .link-tag {
-      /* youlag-inactive: article tags links. */
+      /* yl-mode-article: article tags links. */
       box-shadow: var(--yl-color-text-lowest) 0 -1px 0 inset;
     }
   }
@@ -1597,7 +1597,7 @@ body:has(.tree-folder.category.favorites.active) {
   footer ul.horizontal-list.bottom,
   .content header .subtitle {
     a {
-      /* youlag-inactive: Increase legibilty of blue-colored links in opened articles. */
+      /* yl-mode-article: Increase legibilty of blue-colored links in opened articles. */
       filter: var(--yl-filter-article-link);
     }
   }
@@ -1611,7 +1611,7 @@ body:has(.tree-folder.category.favorites.active) {
   }
 }
 
-body.youlag-inactive:not(.reader) {
+body.yl-mode-article:not(.reader) {
   &.yl-article-thumbnail-placement {
     &--left {
       /* Default placement for `$--right` already set on directly on `.titleAuthorSummaryDate`. */
@@ -1626,13 +1626,13 @@ body.youlag-inactive:not(.reader) {
     margin-top: var(--yl-space-sm);
   }
 
-  &.youlag-sidenav--expanded {
+  &.yl-sidenav--expanded {
     nav.aside_feed {
       .nav_menu {
         max-width: calc(
           var(--yl-article-list-max-width) + var(--yl-sidenav-width) +
             var(--yl-space-md) + var(--yl-space-md)
-        ); /* youlag-inactive: Match position of article */
+        ); /* yl-mode-article: Match position of article */
         margin: 0 auto;
       }
 
@@ -1641,13 +1641,13 @@ body.youlag-inactive:not(.reader) {
         max-width: calc(
           var(--yl-article-list-max-width) + var(--yl-sidenav-width) +
             var(--yl-space-md) + var(--yl-space-md)
-        ); /* youlag-inactive: Articles will effectively be max 900px */
+        ); /* yl-mode-article: Articles will effectively be max 900px */
       }
     }
   }
 }
 
-body.youlag-inactive:not(.reader) main#stream {
+body.yl-mode-article:not(.reader) main#stream {
   margin: 0 auto;
   padding-left: var(--yl-space-sm);
   padding-right: var(--yl-space-sm);
@@ -1674,7 +1674,7 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
     &.active.current {
-      /* youlag-inactive: article is opened */
+      /* yl-mode-article: article is opened */
 
       ul.flux_header {
         border-bottom-left-radius: 0;
@@ -1683,7 +1683,7 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
     &.current {
-      /* youlag-inactive: article is in focus */
+      /* yl-mode-article: article is in focus */
       border-left: none; /* Disable default blue/orange and  border indicator of focused feed item */
     }
 
@@ -1729,7 +1729,7 @@ body.youlag-inactive:not(.reader) main#stream {
       }
 
       .item {
-        /* Mobile, youlag-inactive: provide enough spacing between icons */
+        /* Mobile, yl-mode-article: provide enough spacing between icons */
         &.manage,
         &.labels,
         &.link,
@@ -1867,7 +1867,7 @@ body.youlag-inactive:not(.reader) main#stream {
             .author {
               display: block;
               padding: 0;
-              display: none; /* youlag-inactive: hide author from article preview. */
+              display: none; /* yl-mode-article: hide author from article preview. */
             }
           }
 
@@ -1960,11 +1960,11 @@ body.youlag-inactive:not(.reader) main#stream {
 
       .item.manage {
         &:has(.item-element.bookmark) {
-          order: -1; /* youlag-inactive: Place favorite first in the bottom row. */
+          order: -1; /* yl-mode-article: Place favorite first in the bottom row. */
         }
 
         a.item-element.bookmark {
-          /* youlag-inactive: Remove ellipsis from being added on 'favorite' icon.  */
+          /* yl-mode-article: Remove ellipsis from being added on 'favorite' icon.  */
           text-overflow: unset;
 
           img.icon[src$="icons/starred.svg"] {
@@ -1983,7 +1983,7 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
     &.not_read {
-      /* youlag-inactive: Unread items background color. */
+      /* yl-mode-article: Unread items background color. */
       background-color: var(--yl-color-bg-article-fallback);
       background: var(--yl-color-gradient-article-unread);
 
@@ -1995,7 +1995,7 @@ body.youlag-inactive:not(.reader) main#stream {
     }
 
     &.active.current {
-      /* youlag-inactive: expanaded feed item. */
+      /* yl-mode-article: expanaded feed item. */
 
       .flux_content {
         background-color: var(--yl-color-bg-article-fallback);
@@ -2013,8 +2013,8 @@ body.youlag-inactive:not(.reader) main#stream {
   }
 }
 
-body.youlag-inactive.yl-page-watch_later:not(.reader) main#stream {
-  /* youlag-inactive: Favorites (Watch later) page */
+body.yl-mode-article.yl-page-watch_later:not(.reader) main#stream {
+  /* yl-mode-article: Favorites (Watch later) page */
 
   div.flux {
     &.favorite {
@@ -2025,14 +2025,14 @@ body.youlag-inactive.yl-page-watch_later:not(.reader) main#stream {
       }
 
       li.item.manage {
-        /* youlag-inactive: Actions button hover effect have not yet been setup for article feed view,
+        /* yl-mode-article: Actions button hover effect have not yet been setup for article feed view,
            so to keep it consistent, disable background on hover for favorite button (which is a consequence
            of youlag global styling. */
         background: none !important;
       }
       a.item-element.bookmark {
-        /* On youlag-active interface, actions buttons/icons are normally hidden on desktop view.
-           Force it to show on youlag-inactive article feed view. */
+        /* On yl-mode-video interface, actions buttons/icons are normally hidden on desktop view.
+           Force it to show on yl-mode-article article feed view. */
         visibility: visible !important;
       }
     }
@@ -2093,7 +2093,7 @@ body:not(.reader) main#stream {
   }
 }
 
-.youlag-inactive:not(.reader).yl-article-split-view {
+.yl-mode-article:not(.reader).yl-article-split-view {
   #ylArticleSplitPane {
     display: none;
   }
@@ -2104,7 +2104,7 @@ body:not(.reader) main#stream {
 }
 
 @include yl-media-up(md) {
-  .youlag-inactive:not(.reader).yl-article-split-view {
+  .yl-mode-article:not(.reader).yl-article-split-view {
     /* Article: Split pane view */
     max-height: 100vh;
     overflow: hidden;
@@ -2149,7 +2149,7 @@ body:not(.reader) main#stream {
       scrollbar-width: thin;
     }
 
-    &.youlag-sidenav--collapsed {
+    &.yl-sidenav--collapsed {
       #stream {
         padding-left: 0;
         width: calc(100% * var(--yl-article-split-ratio));
@@ -2163,7 +2163,7 @@ body:not(.reader) main#stream {
       }
     }
 
-    &.youlag-sidenav--expanded {
+    &.yl-sidenav--expanded {
       #stream {
         width: calc(
           (100% - var(--yl-sidenav-width)) * var(--yl-article-split-ratio)
@@ -2296,7 +2296,7 @@ body:not(.reader) main#stream {
       }
     }
 
-    &.youlag-sidenav--collapsed {
+    &.yl-sidenav--collapsed {
       --yl-sidenav-width: 0;
     }
   }
@@ -2384,7 +2384,7 @@ body:not(.reader) main#stream {
   }
 }
 
-body.youlag-active:not(.reader) {
+body.yl-mode-video:not(.reader) {
   &.yl-stream-category-filter--active {
     #stream div.flux {
       // When category filter is active, hide all feeds by default and show only `.yl-stream-category-filter--#{$i}`.

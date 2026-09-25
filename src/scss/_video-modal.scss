@@ -2,13 +2,13 @@
 @use "variables" as *;
 @use "mixins" as *;
 
-.youlag-active {
+.yl-mode-video {
   main#stream > .flux {
     cursor: pointer;
   }
 }
 
-.youlag-mode--fullscreen {
+.yl-mode--fullscreen {
   overflow: hidden;
 }
 
@@ -45,7 +45,7 @@ body {
     pointer-events: none;
     border-radius: var(--yl-radius-lg);
     opacity: 0;
-    animation-name: fade-in--youlag-loading;
+    animation-name: fade-in--yl-loading;
     animation-duration: 2s;
     animation-timing-function: var(--yl-easing-ease-in-out);
     animation-fill-mode: forwards;
@@ -65,7 +65,7 @@ body {
     overflow-x: hidden;
 
     &:after {
-      /* before youlag-loaded: Black backdrop to hide feed content while loading Youlag script. */
+      /* before yl-loaded: Black backdrop to hide feed content while loading Youlag script. */
       content: "";
       position: fixed;
       top: 0;
@@ -96,7 +96,7 @@ body {
     }
   }
 
-  &.youlag-loaded {
+  &.yl-loaded {
     /* Youlag script has loaded, remove loading spinner and feed overlay. */
     &:before {
       display: none !important;
@@ -104,7 +104,7 @@ body {
 
     #global {
       &:after {
-        /* youlag-loaded: Remove black backdrop after Youlag script has loaded. */
+        /* yl-loaded: Remove black backdrop after Youlag script has loaded. */
         display: none !important;
       }
     }
@@ -141,7 +141,7 @@ body {
   }
 }
 
-#youlagTheaterModal {
+#ylTheaterModal {
   position: fixed;
   z-index: var(--yl-z-modal);
   bottom: 0px;
@@ -159,29 +159,29 @@ body {
   box-shadow: 0 0 0 10px var(--yl-color-surface-theater-modal);
   transform-origin: bottom right;
 
-  &.youlag-modal-feed-item--text {
+  &.yl-modal-feed-item--text {
     /* For feed items that are not video feeds. */
 
     transition: var(
       --yl-duration-sm
     ); /* Time to restore articles to fullscreen. Use shorter time to avoid layout shift due to text wrapping. */
 
-    .youlag-iframe-container {
+    .yl-iframe-container {
       display: none;
     }
 
-    .youlag-video-container {
+    .yl-video-container {
       /* For text feeds, the thumbnail is displayed in the video area instead. */
       max-height: 50vh;
 
-      .youlag-thumbnail-container {
+      .yl-thumbnail-container {
         animation: none !important;
         width: 100% !important;
         height: auto !important;
         padding-bottom: 0 !important;
         mask-image: none;
 
-        .youlag-video-thumbnail {
+        .yl-video-thumbnail {
           position: static !important;
           transform: none !important;
           object-fit: cover;
@@ -191,7 +191,7 @@ body {
       }
     }
 
-    .youlag-video-description-content {
+    .yl-video-description-content {
       margin: 0 auto;
 
       a {
@@ -217,15 +217,15 @@ body {
   }
 }
 
-.youlag-theater-modal-container {
+.yl-theater-modal-container {
   width: 100%;
 }
 
-.youlag-theater-modal-content {
+.yl-theater-modal-content {
   width: 100%;
 }
 
-.youlag-video-header {
+.yl-video-header {
   display: flex;
   gap: var(--yl-space-3xs);
   position: sticky;
@@ -238,25 +238,25 @@ body {
   background: var(--yl-color-gradient-video-header-overlay);
 }
 
-#youlagVideoSource {
+#ylVideoSource {
   margin-right: auto;
   border-radius: var(--yl-radius-lg);
   padding-right: var(--yl-space-sm);
   padding-left: var(--yl-space-sm);
 }
 
-.youlag-video-container {
+.yl-video-container {
   position: relative;
   max-height: 80vh;
   overflow: hidden;
 
-  .youlag-iframe-container {
+  .yl-iframe-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
 
-    .youlag-iframe {
+    .yl-iframe {
       width: 100%;
       height: auto;
       max-height: 80vh;
@@ -265,7 +265,7 @@ body {
     }
   }
 
-  .youlag-thumbnail-container {
+  .yl-thumbnail-container {
     width: 100%;
     height: 0;
     padding-bottom: calc(
@@ -282,7 +282,7 @@ body {
       transparent calc(100% - 5%)
     );
 
-    .youlag-video-thumbnail {
+    .yl-video-thumbnail {
       position: absolute;
       top: 50%;
       left: 0;
@@ -299,7 +299,7 @@ body {
   z-index: -1;
 
   @supports (-webkit-hyphens: auto) and ((-webkit-line-clamp: unset)) {
-    /* SAFARI HACK: Prevent premature clipping of blur caused by CJK character titles on `youlag-video-metadata-title` by increasing the blur effect size. */
+    /* SAFARI HACK: Prevent premature clipping of blur caused by CJK character titles on `yl-video-metadata-title` by increasing the blur effect size. */
     --yl-effect: 100px;
   }
 
@@ -610,22 +610,22 @@ body {
   }
 }
 
-.youlag-video-details {
+.yl-video-details {
   padding-top: var(--yl-space-xs);
   padding-left: var(--yl-space-md);
   padding-right: var(--yl-space-md);
 
-  .youlag-video-metadata-container {
+  .yl-video-metadata-container {
     margin-bottom: var(--yl-space-lg);
 
-    .youlag-video-metadata-title {
+    .yl-video-metadata-title {
       font-size: var(--yl-text-md);
       line-height: var(--yl-line-height-md);
       margin-bottom: var(--yl-space-sm);
       max-width: max(750px, 80%);
     }
 
-    .youlag-video-metadata-favicon {
+    .yl-video-metadata-favicon {
       width: 42px;
       height: 42px;
       background-color: var(--yl-color-bg-favicon);
@@ -641,21 +641,21 @@ body {
   }
 }
 
-.youlag-video-metadata-panel {
+.yl-video-metadata-panel {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--yl-space-sm);
   margin-bottom: var(--yl-space-md);
 
-  .youlag-video-author-section {
+  .yl-video-author-section {
     display: flex;
     flex: 1;
     gap: var(--yl-space-2xs);
     align-items: center;
     min-width: 400px;
 
-    .youlag-video-metadata-author a {
+    .yl-video-metadata-author a {
       font-size: var(--yl-text-sm);
       line-height: var(--yl-line-height-lg);
       font-weight: var(--yl-font-weight-semibold);
@@ -668,14 +668,14 @@ body {
       max-width: 300px;
     }
 
-    .youlag-video-metadata-date {
+    .yl-video-metadata-date {
       font-size: var(--yl-text-xs);
       line-height: var(--yl-line-height-xs);
       opacity: var(--yl-opacity-muted);
     }
   }
 
-  .youlag-video-actions-container {
+  .yl-video-actions-container {
     display: flex;
     gap: var(--yl-space-2xs);
     flex-wrap: wrap;
@@ -690,29 +690,29 @@ body {
   }
 }
 
-.youlag-video-metadata-favicon-link {
+.yl-video-metadata-favicon-link {
   display: flex;
   align-items: center;
 
-  &:has(.youlag-video-metadata-favicon[src=""]) {
+  &:has(.yl-video-metadata-favicon[src=""]) {
     display: none;
   }
 }
 
-.youlag-favorited {
+.yl-favorited {
   min-width: 60px;
 
-  &.youlag-favorited--false .youlag-favorited-icon {
+  &.yl-favorited--false .yl-favorited-icon {
     background-image: url("./themes/Mapco/icons/non-starred.svg");
     filter: var(--yl-filter-icon-favorite);
   }
 
-  &.youlag-favorited--true .youlag-favorited-icon {
+  &.yl-favorited--true .yl-favorited-icon {
     background-image: url("./themes/Mapco/icons/starred.svg");
     filter: var(--yl-filter-icon-starred);
   }
 
-  .youlag-favorited-icon {
+  .yl-favorited-icon {
     width: var(--yl-icon-size-lg);
     height: var(--yl-icon-size-lg);
     filter: var(--yl-filter-icon-favorite-base);
@@ -791,8 +791,8 @@ a.yl-video-action-button[href=""] {
   display: none;
 }
 
-#youlagCloseModal,
-#youlagMinimizeModal {
+#ylCloseModal,
+#ylMinimizeModal {
   cursor: pointer;
   padding: var(--yl-space-sm);
   display: flex;
@@ -813,11 +813,11 @@ a.yl-video-action-button[href=""] {
   }
 }
 
-#youlagMinimizeModal {
+#ylMinimizeModal {
   font-size: var(--yl-text-md);
 }
 
-#youlagVideoMoreContentContainer {
+#ylVideoMoreContentContainer {
   /* Container surrounding the video description and related videos. */
   display: flex;
   flex-wrap: wrap;
@@ -828,7 +828,7 @@ a.yl-video-action-button[href=""] {
     flex-direction: column;
   }
 
-  .youlag-video-description-container {
+  .yl-video-description-container {
     background: var(--yl-color-gradient-video-description);
     padding: var(--yl-space-sm);
     border-radius: var(--yl-radius-xl);
@@ -856,7 +856,7 @@ a.yl-video-action-button[href=""] {
       }
     }
 
-    .youlag-video-description-content {
+    .yl-video-description-content {
       font-size: var(--yl-text-sm);
       word-break: break-word;
       max-width: 700px;
@@ -867,24 +867,24 @@ a.yl-video-action-button[href=""] {
       }
     }
 
-    &:has(.youlag-video-description-content:empty) {
+    &:has(.yl-video-description-content:empty) {
       /* Hide description container if no description within content. */
       display: none;
     }
   }
 
-  #youlagRelatedVideosContainer {
+  #ylRelatedVideosContainer {
     /* Related videos container */
 
-    .youlag-video-related-title,
-    .youlag-related-video-item {
+    .yl-video-related-title,
+    .yl-related-video-item {
       position: relative;
       margin-top: 0;
       padding-left: var(--yl-space-2xs);
       padding-right: var(--yl-space-2xs);
     }
 
-    .youlag-related-video-item {
+    .yl-related-video-item {
       display: flex;
       align-items: flex-start;
       gap: var(--yl-space-2xs);
@@ -961,7 +961,7 @@ a.yl-video-action-button[href=""] {
     }
 
     @include yl-media-up(2xl) {
-      #youlagVideoMoreContentContainer {
+      #ylVideoMoreContentContainer {
         gap: var(--yl-space-sm) var(--yl-space-sm);
       }
 
@@ -969,7 +969,7 @@ a.yl-video-action-button[href=""] {
         font-size: var(--yl-text-md);
       }
 
-      .youlag-related-video-item {
+      .yl-related-video-item {
         &__thumbnail {
           width: 240px;
         }
@@ -994,12 +994,12 @@ a.yl-video-action-button[href=""] {
       grid-template-columns: 1fr 1fr 1fr;
       gap: var(--yl-space-xs);
 
-      .youlag-video-related-title {
+      .yl-video-related-title {
         grid-column: 1 / -1;
         padding-left: 0;
       }
 
-      .youlag-related-video-item {
+      .yl-related-video-item {
         flex-direction: column;
 
         &__thumbnail {
@@ -1017,11 +1017,11 @@ a.yl-video-action-button[href=""] {
     }
 
     @include yl-media-down(sm, -40px) {
-      .youlag-video-related-title {
+      .yl-video-related-title {
         padding-left: 0;
       }
 
-      .youlag-related-video-item {
+      .yl-related-video-item {
         padding-left: 0;
         padding-right: 0;
 
@@ -1030,7 +1030,7 @@ a.yl-video-action-button[href=""] {
         }
       }
 
-      .youlag-related-video-item__metadata {
+      .yl-related-video-item__metadata {
         min-width: auto;
         max-width: 100%;
       }
@@ -1038,11 +1038,11 @@ a.yl-video-action-button[href=""] {
   }
 }
 
-.youlag-mode--miniplayer {
+.yl-mode--miniplayer {
   overflow: auto; /* Allow scrolling the body when in miniplayer mode. */
 
   @include yl-media-down(md) {
-    &:has(#nav_entries) #youlagTheaterModal {
+    &:has(#nav_entries) #ylTheaterModal {
       /* Mobile: Place miniplayer video above bottom navigation bar. */
       bottom: calc(
         4.5rem + var(--yl-space-sm)
@@ -1051,7 +1051,7 @@ a.yl-video-action-button[href=""] {
   }
 }
 
-.youlag-mode--miniplayer #youlagTheaterModal {
+.yl-mode--miniplayer #ylTheaterModal {
   overflow: hidden;
   z-index: var(--yl-z-nav);
   transition: var(--yl-duration-md); /* Time to minimize to miniplayer */
@@ -1070,7 +1070,7 @@ a.yl-video-action-button[href=""] {
     box-shadow: 0 0 0 6px var(--yl-color-surface-miniplayer);
   }
 
-  .youlag-video-header {
+  .yl-video-header {
     position: absolute; /* Header overlaps video instead of sticky, to not occupying vertical space in miniplayer mode. */
     left: auto;
     right: 0;
@@ -1079,38 +1079,38 @@ a.yl-video-action-button[href=""] {
   }
 
   #ylVideoChaptersContainer,
-  #youlagVideoSource {
+  #ylVideoSource {
     display: none;
   }
 
-  #youlagCloseModal,
-  #youlagMinimizeModal {
+  #ylCloseModal,
+  #ylMinimizeModal {
     padding: var(--yl-space-xs);
     width: var(--yl-text-2xl);
     height: var(--yl-text-2xl);
     font-size: var(--yl-text-md);
   }
 
-  .youlag-video-details {
+  .yl-video-details {
     display: none; /* For videos, hide description from miniplayer mode. */
   }
 
-  &.youlag-modal-feed-item--text {
-    .youlag-video-details {
+  &.yl-modal-feed-item--text {
+    .yl-video-details {
       display: block; /* Show article details if no thumbnail is available. */
     }
 
-    .youlag-video-actions-container,
-    #youlagVideoMoreContentContainer {
+    .yl-video-actions-container,
+    #ylVideoMoreContentContainer {
       /* Hide rest of the content that may peak up when article is in miniplayer mode. */
       display: none;
     }
 
-    .youlag-video-metadata-container {
+    .yl-video-metadata-container {
       pointer-events: none;
     }
 
-    .youlag-video-metadata-title {
+    .yl-video-metadata-title {
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -1125,18 +1125,18 @@ a.yl-video-action-button[href=""] {
       }
     }
 
-    .youlag-video-metadata-author a {
+    .yl-video-metadata-author a {
       max-width: 150px;
     }
 
-    &.youlag-modal-feed-item--no-thumbnail {
-      .youlag-thumbnail-container {
+    &.yl-modal-feed-item--no-thumbnail {
+      .yl-thumbnail-container {
         display: none;
       }
     }
 
-    &.youlag-modal-feed-item--has-thumbnail {
-      .youlag-video-container {
+    &.yl-modal-feed-item--has-thumbnail {
+      .yl-video-container {
         /* Place thumbnail behind article headline. */
         position: absolute;
         z-index: -1;

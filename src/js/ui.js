@@ -221,7 +221,7 @@ function setupArticleClickListener() {
 
     if (
       isArticleNavEnabled() &&
-      document.body.classList.contains("youlag-inactive")
+      document.body.classList.contains("yl-mode-article")
     ) {
       // Remap article navigation "Up" (scroll to top) button.
       // Scroll to of article stream instead of the body.
@@ -536,8 +536,6 @@ function isHashUrl() {
  ****************************************/
 
 function setBodyClass() {
-  // TODO: Shorten class name prefix from 'youlag-' to 'yl-' as the amount of classes have grown.
-
   document.body.className += " " + getCurrentPage().class;
   currentPageParams = new URLSearchParams(window.location.search).get("get");
   if (isFeedPage()) {
@@ -553,13 +551,16 @@ function setBodyClass() {
   setUnreadBadgeClass();
   setPageSortingClass();
   setArticleThumbnailPlacementClass();
-  document.body.setAttribute("data-youlag-version", app.metadata.version);
+  document.body.setAttribute("data-yl-version", app.metadata.version);
   shouldCustomThumbnailTitle() &&
     document.body.classList.add("yl-feed-custom-thumbnail-title");
 }
 
 function setCategoryWhitelistClass() {
-  // Quickly apply youlag-category-whitelist class based on localStorage to reduce layout shifts.
+  // Quickly apply the mode class based on localStorage to reduce layout shifts.
+
+  // Only feed pages get a mode class: yl-mode-video or yl-mode-article.
+  if (!isFeedPage()) return false;
 
   let localStorageWhitelist = [];
   try {
@@ -575,8 +576,8 @@ function setCategoryWhitelistClass() {
   app.state.page.layout = isWhitelisted ? "video" : "article";
 
   // Apply class based on localStorage
-  document.body.classList.toggle("youlag-active", isWhitelisted);
-  document.body.classList.toggle("youlag-inactive", !isWhitelisted);
+  document.body.classList.toggle("yl-mode-video", isWhitelisted);
+  document.body.classList.toggle("yl-mode-article", !isWhitelisted);
 
   // Sync with actual whitelist from the user settings exposed in the DOM.
   const whitelist = getCategoryWhitelist();
@@ -588,9 +589,9 @@ function setCategoryWhitelistClass() {
 
   // If the actual whitelist status differs from localStorage, update class and localStorage.
   if (isWhitelistedUserSetting !== isWhitelisted) {
-    document.body.classList.toggle("youlag-active", isWhitelistedUserSetting);
+    document.body.classList.toggle("yl-mode-video", isWhitelistedUserSetting);
     document.body.classList.toggle(
-      "youlag-inactive",
+      "yl-mode-article",
       !isWhitelistedUserSetting,
     );
     try {
@@ -605,7 +606,7 @@ function setCategoryWhitelistClass() {
 }
 
 function setVideoLabelsClass() {
-  /* Adds css class 'youlag-video-labels' to body if video labels setting is enabled.
+  /* Adds css class 'yl-video-labels' to body if video labels setting is enabled.
    * The setting is stored in localStorage for faster access.
    * When active, labels like "My Labels" changes to "Playlists", and "Favorites" to "Watch Later".
    */
@@ -614,40 +615,40 @@ function setVideoLabelsClass() {
   const userSetting = getSetting("yl_video_labels_enabled") === true;
 
   if (userSetting) {
-    document.body.classList.add("youlag-video-labels");
+    document.body.classList.add("yl-video-labels");
     localStorage.setItem("youlagVideoLabels", "true");
     return true;
   } else if (userSetting === false) {
-    document.body.classList.remove("youlag-video-labels");
+    document.body.classList.remove("yl-video-labels");
     localStorage.setItem("youlagVideoLabels", "false");
     return false;
   } else if (localStorageSetting) {
-    document.body.classList.add("youlag-video-labels");
+    document.body.classList.add("yl-video-labels");
     return true;
   } else {
-    document.body.classList.remove("youlag-video-labels");
+    document.body.classList.remove("yl-video-labels");
     return false;
   }
 }
 
 function setUnreadBadgeClass() {
-  // Adds css class 'youlag-video-unread-badge' to body if video unread badge setting is enabled.
+  // Adds css class 'yl-video-unread-badge' to body if video unread badge setting is enabled.
   // If enabled, videos will show badge "New" for unwatched videos.
   const userSetting = getSetting("yl_video_unread_badge_enabled") === true;
   if (userSetting) {
-    document.body.classList.add("youlag-video-unread-badge");
+    document.body.classList.add("yl-video-unread-badge");
     return true;
   } else {
-    document.body.classList.remove("youlag-video-unread-badge");
+    document.body.classList.remove("yl-video-unread-badge");
     return false;
   }
 }
 
 function setPageSortingClass() {
-  // Adds css class e.g. `youlag-sort-watch_later--user-modified`.
+  // Adds css class e.g. `yl-sort-watch_later--user-modified`.
   // Used as a reference for determining the user settings, and run functions based on that.
   if (getSetting("yl_video_sort_modified_enabled") === true) {
-    document.body.classList.add("youlag-sort-watch_later--user-modified");
+    document.body.classList.add("yl-sort-watch_later--user-modified");
   }
 }
 
@@ -666,9 +667,9 @@ function setMobileLayoutGrid() {
   // Determine if mobile layout should use grid view based on user setting.
   const userSetting = getSetting("yl_feed_view_mobile_grid_enabled") === true;
   if (userSetting) {
-    document.body.classList.add("youlag-mobile-layout--grid");
+    document.body.classList.add("yl-mobile-layout--grid");
   } else {
-    document.body.classList.remove("youlag-mobile-layout--grid");
+    document.body.classList.remove("yl-mobile-layout--grid");
   }
   return userSetting;
 }
@@ -699,8 +700,8 @@ function setSidenavState() {
     sidenav.classList.contains("visible") ||
     sidenav.offsetWidth > expandedMinWidth;
   app.state.page.sidenavExpanded = expanded;
-  document.body.classList.toggle("youlag-sidenav--expanded", expanded);
-  document.body.classList.toggle("youlag-sidenav--collapsed", !expanded);
+  document.body.classList.toggle("yl-sidenav--expanded", expanded);
+  document.body.classList.toggle("yl-sidenav--collapsed", !expanded);
 }
 
 async function handleFeedDearrowFeatures() {
@@ -1292,7 +1293,7 @@ function showUpdateAvailableInSettings() {
             const extNameSpan = item.querySelector("span.ext_name");
             if (extNameSpan && extNameSpan.textContent.trim() === "Youlag") {
               // Add a notice next to the extension name.
-              if (!item.querySelector(".youlag-update-notice")) {
+              if (!item.querySelector("#yl-update-notice")) {
                 // "New Youlag update available" link
                 const updateNotice = document.createElement("a");
                 Object.assign(updateNotice, {
@@ -1606,7 +1607,7 @@ function clearPathHash() {
 }
 
 function updateVideoAuthor() {
-  // youlag-active: On video cards, use move out the `.author` element outside of the video title.
+  // yl-mode-video: On video cards, use move out the `.author` element outside of the video title.
   // This prevents the author from being truncated in the title line, and is always displayed regardless of title length.
 
   // TODO: refactor hardcoded querySelectorAll to use global `app` references.
@@ -1636,7 +1637,7 @@ function updateVideoAuthor() {
 }
 
 function updateVideoDateFormat() {
-  // youlag-active: On video cards, update to use relative date.
+  // yl-mode-video: On video cards, update to use relative date.
 
   // TODO: refactor hardcoded querySelectorAll to use global `app` references.
   const feedCards = document.querySelectorAll(

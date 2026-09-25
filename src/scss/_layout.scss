@@ -51,7 +51,7 @@ body {
     }
   }
 
-  &.youlag-sidenav--collapsed {
+  &.yl-sidenav--collapsed {
     @include yl-media-up(md) {
       header .item.title,
       #yl_freshrss_logo_container {
@@ -318,7 +318,7 @@ a.signout img.icon {
   display: none;
 }
 
-.youlag-sidenav--expanded {
+.yl-sidenav--expanded {
   nav.aside.aside_feed {
     /* Position and adjust behavior of "Subscriptions management" button */
     text-align: unset;
@@ -589,7 +589,7 @@ html {
   body.yl-page-search_results {
     /* Only implement fixed sidebar for feed pages (to exclude other pages like settings. */
 
-    &.youlag-sidenav--expanded {
+    &.yl-sidenav--expanded {
       @include yl-media-down(md) {
         #aside_feed {
           z-index: var(
@@ -829,7 +829,7 @@ html {
 }
 
 @include yl-media-up(md) {
-  .youlag-sidenav--collapsed {
+  .yl-sidenav--collapsed {
     #aside_feed {
       /* Sidenav is not visible, hide and show sidenav toggle button based on scroll down or up. */
       & ~ nav.nav_menu #nav_menu_toggle_aside {
@@ -949,11 +949,11 @@ body:not(.normal) {
   display: none;
 }
 
-.youlag-video-labels {
+.yl-video-labels {
   /* Change the labels and references to "Favorite" and "My Labels/Tags" based on user settings. */
 
   .yl-form-category {
-    /* Extension settings: display both labels in the DOM, show label according to `body.youlag-video-labels` */
+    /* Extension settings: display both labels in the DOM, show label according to `body.yl-video-labels` */
 
     &__video-label {
       display: inline-block;

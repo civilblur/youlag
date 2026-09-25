@@ -152,12 +152,12 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
 
   // Article: Thumbnail presence state handling
   modal.classList.remove(
-    "youlag-modal-feed-item--has-thumbnail",
-    "youlag-modal-feed-item--no-thumbnail",
+    "yl-modal-feed-item--has-thumbnail",
+    "yl-modal-feed-item--no-thumbnail",
   );
   videoObject.thumbnail
-    ? modal.classList.add("youlag-modal-feed-item--has-thumbnail")
-    : modal.classList.add("youlag-modal-feed-item--no-thumbnail");
+    ? modal.classList.add("yl-modal-feed-item--has-thumbnail")
+    : modal.classList.add("yl-modal-feed-item--no-thumbnail");
 
   // Video: Description box state handling
   const isMobile = window.innerWidth <= app.breakpoints.desktop_md_max;
@@ -177,7 +177,7 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
   container.innerHTML = `
     <div class="${app.modal.class.content}">
 
-      <div class="youlag-video-header">
+      <div class="yl-video-header">
         <select id="${app.modal.id.source}" class="${invidiousBaseUrl && videoObject.isVideoFeedItem ? "" : "display-none"}">
           <option value="youtube" ${youtubeSelected}>YouTube</option>
           <option value="invidious_1" ${invidiousSelected}>Invidious</option>
@@ -187,13 +187,13 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
         <button id="${app.modal.id.close}" title="Close">×</button>
       </div>
 
-      <div class="youlag-video-container">
-        <div class="youlag-thumbnail-container">
-          <img src="${thumbnail}" class="youlag-video-thumbnail" loading="lazy" />
+      <div class="yl-video-container">
+        <div class="yl-thumbnail-container">
+          <img src="${thumbnail}" class="yl-video-thumbnail" loading="lazy" />
         </div>
-        <div class="youlag-iframe-container">
+        <div class="yl-iframe-container">
           <iframe id="${app.modal.id.videoIframe}"
-                  class="youlag-iframe"
+                  class="yl-iframe"
                   data-yl-is-video="${videoSourceDefaultNormalized}"
                   src="${defaultEmbedUrl}" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen" allowfullscreen>
           </iframe>
@@ -237,30 +237,30 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
         </div>
       </div>
 
-      <div class="youlag-video-details">
+      <div class="yl-video-details">
 
-        <div class="youlag-video-metadata-container">
-          <h2 class="youlag-video-metadata-title">${videoObject.title}</h2>
-          <div class="youlag-video-metadata-panel">
+        <div class="yl-video-metadata-container">
+          <h2 class="yl-video-metadata-title">${videoObject.title}</h2>
+          <div class="yl-video-metadata-panel">
 
-            <section class="youlag-video-author-section">
-              <a class="youlag-video-metadata-favicon-link" href="${videoObject.author_filter_url}">
-                <img src="${videoObject.favicon}" class="youlag-video-metadata-favicon" />
+            <section class="yl-video-author-section">
+              <a class="yl-video-metadata-favicon-link" href="${videoObject.author_filter_url}">
+                <img src="${videoObject.favicon}" class="yl-video-metadata-favicon" />
               </a>
 
               <div class="yl-flex yl-flex-col">
-                <div class="youlag-video-metadata-author">
+                <div class="yl-video-metadata-author">
                   <a href="${videoObject.author_filter_url}">${videoObject.website_name}</a>
                 </div>
-                <div class="youlag-video-metadata-date">${videoObject.date}</div>
+                <div class="yl-video-metadata-date">${videoObject.date}</div>
               </div>
             </section>
 
-            <section class="youlag-video-actions-container">
+            <section class="yl-video-actions-container">
               <a href="#"
                 class="yl-video-action-button ${app.modal.class.favorite} ${app.modal.class.favorite}--${videoObject.favorited}"
                 id="${app.modal.id.favorite}">
-                <div class="youlag-favorited-icon"></div>
+                <div class="yl-favorited-icon"></div>
               </a>
 
               <a href="#"
@@ -299,8 +299,8 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
             class="${app.modal.class.descContainer} ${shouldCollapseDescription ? app.modal.class.descContainerCollapsed : ""}">
             ${videoObject.video_description}
           </div>
-          <div id="${app.modal.id.relatedContainer}" class="youlag-video-related-container display-none">
-            <h3 class="youlag-video-related-title">
+          <div id="${app.modal.id.relatedContainer}" class="yl-video-related-container display-none">
+            <h3 class="yl-video-related-title">
               <span class="yl-form-category__original-label">More from favorites</span>
               <span class="yl-form-category__video-label">Watch more</span>
             </h3>
@@ -791,7 +791,7 @@ function setupRelatedVideosClickListener() {
   });
 
   const relatedClickHandler = function (e) {
-    if (e.target.closest(".youlag-related-video-item__link")) {
+    if (e.target.closest(".yl-related-video-item__link")) {
       e.preventDefault();
     }
     const relatedItem = e.target.closest(
@@ -830,16 +830,16 @@ function renderRelatedVideos(videoObject) {
         <div class="${app.modal.class.relatedVideoEntryHTML} display-none">
           ${videoObject.feedItem.outerHTML}
         </div>
-        <div class="youlag-related-video-item__thumbnail"><img src="${thumbnail}" loading="lazy" ></div>
-        <div class="youlag-related-video-item__metadata">
-          <div class="youlag-related-video-item__title">${videoObject.title}</div>
-          <div class="youlag-related-video-item__author">${videoObject.website_name}</div>
-          <div class="youlag-related-video-item__date">
+        <div class="yl-related-video-item__thumbnail"><img src="${thumbnail}" loading="lazy" ></div>
+        <div class="yl-related-video-item__metadata">
+          <div class="yl-related-video-item__title">${videoObject.title}</div>
+          <div class="yl-related-video-item__author">${videoObject.website_name}</div>
+          <div class="yl-related-video-item__date">
             ${getRelativeDate(videoObject.date)}
           </div>
         </div>
 
-        <a href="${directLink}" class="youlag-related-video-item__link"></a>
+        <a href="${directLink}" class="yl-related-video-item__link"></a>
       </div>
     `;
   }
@@ -1230,7 +1230,7 @@ function renderTagsModal(entryId, tags) {
   }
 
   let container = document.createElement("div");
-  const useVideoLabels = document.querySelector("body.youlag-video-labels")
+  const useVideoLabels = document.querySelector("body.yl-video-labels")
     ? true
     : false;
   const modalTitle = useVideoLabels ? "Save to..." : "Tags";

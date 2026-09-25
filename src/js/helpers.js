@@ -259,7 +259,7 @@ function extractFeedItemData(feedItem) {
     video_embed_url: videoEmbedUrl,
     video_invidious_instance_1: invidiousInstance1 || "",
     video_source_default: videoSourceDefault || "youtube",
-    video_description: `<div class="youlag-video-description-content">
+    video_description: `<div class="yl-video-description-content">
         ${video_description}
       </div>`,
     video_chapters: videoChapters || null,
@@ -582,5 +582,5 @@ function setFreshRssUrlPrefix() {
 function isVideoLabelsEnabled() {
   // Check if video platform label setting is enabled.
   // TODO: Refactor this once `Minz_HookType::JsVars` is implemented.
-  return document.body.classList.contains("youlag-video-labels");
+  return document.body.classList.contains("yl-video-labels");
 }

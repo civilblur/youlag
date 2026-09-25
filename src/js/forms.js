@@ -38,10 +38,10 @@ function settingsPageEventListeners() {
         ? videoLabelCheckbox.checked
         : false;
       if (videoLabelIsChecked) {
-        document.body.classList.add("youlag-video-labels");
+        document.body.classList.add("yl-video-labels");
         localStorage.setItem("youlagVideoLabels", "true");
       } else {
-        document.body.classList.remove("youlag-video-labels");
+        document.body.classList.remove("yl-video-labels");
         localStorage.setItem("youlagVideoLabels", "false");
       }
     }

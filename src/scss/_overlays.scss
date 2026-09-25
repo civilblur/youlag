@@ -69,7 +69,7 @@
       * - Mark read button group within feed nav menu
       * - Feed actions button group within feed nav menu
       * - Sort button within feed nav menu
-      * - youlag-inactive: Article tags button within article feeds items
+      * - yl-mode-article: Article tags button within article feeds items
       */
 
     .dropdown-toggle:after {
@@ -389,13 +389,13 @@ main#stream,
   }
 }
 
-body.youlag-tags-modal-open,
-body.youlag-share-modal-open {
+body.yl-tags-modal-open,
+body.yl-share-modal-open {
   overflow: hidden;
 }
 
-#youlagTagsModal,
-#youlagShareModal {
+#ylTagsModal,
+#ylShareModal {
   position: fixed;
   z-index: var(--yl-z-modal-above); /* Above theater modal */
   top: 0;
@@ -501,8 +501,8 @@ body.youlag-share-modal-open {
 }
 
 @include yl-media-down(md) {
-  #youlagTagsModal,
-  #youlagShareModal {
+  #ylTagsModal,
+  #ylShareModal {
     align-items: flex-end;
     height: 100dvh;
 
