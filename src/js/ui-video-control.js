@@ -194,39 +194,13 @@ function setupModalVideoControlEventListeners(videoObject) {
   const chapterActionNext = modal.querySelector(
     `#${app.modal.id.chapterActionNext}`,
   );
-  const chapterItemsArr = Array.from(
-    modal.querySelectorAll(".yl-video-chapter-list-item"),
-  );
-
   // Chapter skip button initial state
   updateChapterActionButtons();
-
-  // Chapter skip handlers for previous/next buttons
-  function handleChapterSkip(direction) {
-    const activeIndex = chapterItemsArr.findIndex((item) =>
-      item.classList.contains("is-active"),
-    );
-    const targetIndex = findUnskippedChapterIndex(
-      chapterItemsArr,
-      activeIndex,
-      direction,
-    );
-    if (targetIndex === -1) return;
-    const targetItem = chapterItemsArr[targetIndex];
-    if (targetItem) {
-      const seconds = parseInt(targetItem.getAttribute("data-seconds"), 10);
-      videoControlSeekTo(seconds, true);
-      chapterItemsArr.forEach((item, idx) =>
-        item.classList.toggle("is-active", idx === targetIndex),
-      );
-      updateChapterActionButtons();
-    }
-  }
 
   if (chapterActionPrevious) {
     const prevHandler = (e) => {
       e.preventDefault();
-      handleChapterSkip(-1);
+      videoControlChapterSkip(-1);
     };
     chapterActionPrevious.addEventListener("click", prevHandler);
     modal._videoModalListeners.push({
@@ -238,7 +212,7 @@ function setupModalVideoControlEventListeners(videoObject) {
   if (chapterActionNext) {
     const nextHandler = (e) => {
       e.preventDefault();
-      handleChapterSkip(1);
+      videoControlChapterSkip(1);
     };
     chapterActionNext.addEventListener("click", nextHandler);
     modal._videoModalListeners.push({
@@ -858,6 +832,34 @@ function videoControlSeekTo(seconds, allowSeekAhead = true) {
       "]}",
     "*",
   );
+}
+
+function videoControlChapterSkip(direction) {
+  // Seek to the available previous/next chapter.
+  const modal = getModalVideo();
+  if (!modal) return false;
+
+  const chapterItems = Array.from(
+    modal.querySelectorAll(".yl-video-chapter-list-item"),
+  );
+  const activeIndex = chapterItems.findIndex((item) =>
+    item.classList.contains("is-active"),
+  );
+  const targetIndex = findUnskippedChapterIndex(
+    chapterItems,
+    activeIndex,
+    direction,
+  );
+  const targetItem = chapterItems[targetIndex];
+  if (!targetItem) return false;
+
+  const seconds = parseInt(targetItem.getAttribute("data-seconds"), 10);
+  videoControlSeekTo(seconds, true);
+  chapterItems.forEach((item, idx) =>
+    item.classList.toggle("is-active", idx === targetIndex),
+  );
+  updateChapterActionButtons();
+  return true;
 }
 
 function videoControlCommand(func, args = []) {

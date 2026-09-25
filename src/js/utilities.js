@@ -534,6 +534,12 @@ function isIOS() {
   );
 }
 
+function isMacOS() {
+  const platform =
+    navigator.userAgentData?.platform || navigator.platform || "";
+  return /mac/i.test(platform) && !isIOS();
+}
+
 function getRelatedVideosSetting() {
   return getSetting("yl_related_videos") || "none";
 }

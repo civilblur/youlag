@@ -546,7 +546,18 @@ function setupModalVideoKeyListener(modal) {
       return;
     }
 
-    if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)
+    // Chapter skip keys using OS-specific modifier keys.
+    const isChapterSkip =
+      (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+      !event.shiftKey &&
+      !event.metaKey &&
+      (isMacOS() || isIOS()
+        ? event.altKey && !event.ctrlKey
+        : event.ctrlKey && !event.altKey);
+    if (
+      !isChapterSkip &&
+      (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)
+    )
       return;
     if (event.isComposing || event.key === "Process") return;
 
@@ -594,6 +605,11 @@ function setupModalVideoKeyListener(modal) {
       }
       case "arrowleft":
       case "arrowright": {
+        if (isChapterSkip) {
+          if (event.repeat) return;
+          if (!videoControlChapterSkip(key === "arrowleft" ? -1 : 1)) return;
+          break;
+        }
         if (typeof player.time !== "number") return;
         const offset = key === "arrowleft" ? -seekStep : seekStep;
         let seekTime = Math.max(0, player.time + offset);
