@@ -1,10 +1,8 @@
-/*****************************************
+/**
+ * Mixins
  *
- * Youlag Sass mixins and functions
- *
- * Tools layer. Outputs no CSS, so any partial can use it.
- *
- ****************************************/
+ * Reusable Sass mixins and functions.
+ */
 
 @use "sass:list";
 @use "sass:map";
@@ -161,6 +159,17 @@
   padding: var(--yl-space-xs);
   border-radius: var(--yl-radius-md);
   line-height: var(--yl-line-height-md);
+}
+
+/* Swap FreshRSS text for a label, since the markup can't be changed. */
+@mixin yl-replace-text($label, $font-size: null) {
+  font-size: 0;
+
+  &:before {
+    content: $label;
+    font-size: $font-size;
+    @content;
+  }
 }
 
 /* State layer as an inset shadow, for buttons with a gradient background. */

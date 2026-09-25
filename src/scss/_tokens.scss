@@ -1,12 +1,8 @@
-/*****************************************
+/**
+ * Tokens
  *
- * Youlag design tokens
- *
- * All CSS variables. Palette tokens hold raw
- * values and are only used in this file.
- * theme.scss uses role tokens (named by purpose).
- *
- ****************************************/
+ * Source of truth for the theme's CSS variables, e.g. colors and spacing.
+ */
 
 @use "sass:list";
 @use "variables" as *;

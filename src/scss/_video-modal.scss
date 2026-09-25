@@ -1,144 +1,35 @@
+/**
+ * Video modal
+ *
+ * The video modal used in Youlag's video mode
+ * to display the video content.
+ * Mostly styles Youlag's own elements.
+ */
+
+/*****************************************
+ *
+ * INDEX
+ * - Modal container
+ * - Video player
+ * - Chapters
+ * - Details and actions
+ * - Close and minimize buttons
+ * - More content
+ * - Miniplayer
+ *
+ ****************************************/
+
 @use "sass:list";
 @use "variables" as *;
 @use "mixins" as *;
 
-.yl-mode-video {
-  main#stream > .flux {
-    cursor: pointer;
-  }
-}
+/*****************************************
+ * BEGIN "MODAL CONTAINER"
+ * The video modal wrapper.
+ ****************************************/
 
 .yl-mode--fullscreen {
   overflow: hidden;
-}
-
-body {
-  /* Youlag loading spinner */
-  &:has(#global main#stream):before {
-    /* Loading spinner, before the youlag script has fully loaded. Only on feed stream pages. */
-    content: "Loading";
-    position: fixed;
-    top: 89px;
-    left: 50%;
-    width: 260px;
-    height: 62px;
-    backdrop-filter: var(--yl-filter-blur-glass);
-    box-shadow: inset -8px 4px 70px 0px var(--yl-shadow-glow-loading-indicator);
-    border: var(--yl-border-width-sm) solid
-      var(--yl-color-border-loading-indicator);
-    background-image: var(--yl-loading-spinner-background-image);
-    background-repeat: no-repeat;
-    background-position: 82px;
-    background-size: 18px;
-    z-index: var(--yl-z-loading);
-    transition: opacity var(--yl-duration-md);
-    color: var(--yl-color-text-medium);
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding-left: 111px;
-    box-sizing: border-box;
-    font-family: arial;
-    font-size: var(--yl-text-xs);
-    letter-spacing: var(--yl-letter-spacing-sm);
-    white-space: pre;
-    pointer-events: none;
-    border-radius: var(--yl-radius-lg);
-    opacity: 0;
-    animation-name: fade-in--yl-loading;
-    animation-duration: 2s;
-    animation-timing-function: var(--yl-easing-ease-in-out);
-    animation-fill-mode: forwards;
-
-    @include yl-media-down(md) {
-      width: calc(100% - var(--yl-space-sm) * 2);
-      left: var(--yl-space-sm);
-      overflow: hidden;
-      padding-left: 40%;
-      background-position: calc(40% - 8px);
-    }
-  }
-
-  /* Display only the youlag loading on non-settings page, that is, feed pages. */
-  #global {
-    position: relative;
-    overflow-x: hidden;
-
-    &:after {
-      /* before yl-loaded: Black backdrop to hide feed content while loading Youlag script. */
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: calc(100% - var(--yl-sidenav-width));
-      margin-left: var(
-        --yl-sidenav-width
-      ); /* To display the sidenav while loading Youlag */
-      box-sizing: border-box;
-      background: var(--yl-color-body-background);
-      background: var(--yl-color-overlay-scrim-loading);
-      z-index: var(--yl-z-backdrop);
-      transition: var(--yl-duration-md);
-      opacity: 1;
-      backdrop-filter: var(--yl-filter-blur-loading-scrim);
-
-      @include yl-media-down(md) {
-        width: 100%;
-        margin-left: 0;
-      }
-    }
-
-    @include yl-media-down(md) {
-      padding-top: var(
-        --yl-topnav-height
-      ); /* Mobile: Height of top navigation bar, to avoid fixed top header to cover content underneath. */
-    }
-  }
-
-  &.yl-loaded {
-    /* Youlag script has loaded, remove loading spinner and feed overlay. */
-    &:before {
-      display: none !important;
-    }
-
-    #global {
-      &:after {
-        /* yl-loaded: Remove black backdrop after Youlag script has loaded. */
-        display: none !important;
-      }
-    }
-  }
-
-  @include yl-media-up(md) {
-    & > header.header {
-      /* Desktop: Place header above loading overlay, to not block access to the settings menu while youlag is in a blocking/loading state. */
-      position: relative;
-      z-index: var(--yl-z-docked);
-    }
-  }
-
-  &.profile,
-  &.display,
-  &.reading,
-  &.archiving,
-  &.integration,
-  &.shortcut,
-  &.queries,
-  &.index,
-  &.privacy,
-  &.system,
-  &.manage,
-  &.checkInstall,
-  &.logs,
-  &.about {
-    #global {
-      &:after {
-        /* Disable youlag loading overlay on settings pages. */
-        display: none;
-      }
-    }
-  }
 }
 
 #ylTheaterModal {
@@ -238,6 +129,15 @@ body {
   background: var(--yl-color-gradient-video-header-overlay);
 }
 
+/*****************************************
+ * END "MODAL CONTAINER"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "VIDEO PLAYER"
+ * The video player area.
+ ****************************************/
+
 #ylVideoSource {
   margin-right: auto;
   border-radius: var(--yl-radius-lg);
@@ -313,6 +213,15 @@ body {
     opacity: 0.5;
   }
 }
+
+/*****************************************
+ * END "VIDEO PLAYER"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "CHAPTERS"
+ * Video chapters and their controls.
+ ****************************************/
 
 .yl-button-menu {
   @include yl-button-menu;
@@ -610,6 +519,15 @@ body {
   }
 }
 
+/*****************************************
+ * END "CHAPTERS"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "DETAILS AND ACTIONS"
+ * Video info and actions below the player.
+ ****************************************/
+
 .yl-video-details {
   padding-top: var(--yl-space-xs);
   padding-left: var(--yl-space-md);
@@ -791,6 +709,15 @@ a.yl-video-action-button[href=""] {
   display: none;
 }
 
+/*****************************************
+ * END "DETAILS AND ACTIONS"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "CLOSE AND MINIMIZE BUTTONS"
+ * Video modal top bar action buttons.
+ ****************************************/
+
 #ylCloseModal,
 #ylMinimizeModal {
   cursor: pointer;
@@ -816,6 +743,16 @@ a.yl-video-action-button[href=""] {
 #ylMinimizeModal {
   font-size: var(--yl-text-md);
 }
+
+/*****************************************
+ * END "CLOSE AND MINIMIZE BUTTONS"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "MORE CONTENT"
+ * Content below the video, e.g. description, 
+ * and "watch more" section.
+ ****************************************/
 
 #ylVideoMoreContentContainer {
   /* Container surrounding the video description and related videos. */
@@ -1038,6 +975,15 @@ a.yl-video-action-button[href=""] {
   }
 }
 
+/*****************************************
+ * END "MORE CONTENT"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "MINIPLAYER"
+ * Video player displayed in miniplayer mode.
+ ****************************************/
+
 .yl-mode--miniplayer {
   overflow: auto; /* Allow scrolling the body when in miniplayer mode. */
 
@@ -1147,3 +1093,7 @@ a.yl-video-action-button[href=""] {
     }
   }
 }
+
+/*****************************************
+ * END "MINIPLAYER"
+ ****************************************/

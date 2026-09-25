@@ -1,3 +1,9 @@
+/**
+ * Extension settings
+ *
+ * Styles for the Youlag extension settings page.
+ */
+
 @use "variables" as *;
 @use "mixins" as *;
 
@@ -73,30 +79,28 @@
       cursor: default;
       pointer-events: none;
     }
-  }
 
-  .form-group {
     .yl-form-group--radio {
       display: flex;
       gap: var(--yl-space-2xs);
       margin-bottom: var(--yl-space-2xs);
+    }
 
-      .yl-form-group--radio-input-container {
+    .yl-form-group--radio .yl-form-group--radio-input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      label,
+      .yl-form-group-help {
+        /* Radio button + gap */
+        padding-left: calc(15px + var(--yl-space-2xs));
+      }
+
+      .yl-form-control-radio-input {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-
-        label,
-        .yl-form-group-help {
-          /* Radio button + gap */
-          padding-left: calc(15px + var(--yl-space-2xs));
-        }
-
-        .yl-form-control-radio-input {
-          display: flex;
-          align-items: center;
-          gap: var(--yl-space-2xs);
-        }
+        align-items: center;
+        gap: var(--yl-space-2xs);
       }
     }
   }

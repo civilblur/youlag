@@ -1,6 +1,38 @@
+/**
+ * Feed
+ *
+ * The feed page: toolbar, feed menu, cards in video and article mode,
+ * split view, reader view and category filter.
+ * Mostly restyles FreshRSS' native elements.
+ */
+
+/*****************************************
+ *
+ * INDEX
+ * - Category toolbar
+ * - Feed footer and bottom navigation
+ * - Feed menu
+ * - Feed items
+ * - Video mode
+ * - Custom thumbnail and title
+ * - Favorites page
+ * - Article typography
+ * - Article mode
+ * - Card states
+ * - Split view
+ * - Reader view
+ * - Category filter
+ *
+ ****************************************/
+
 @use "sass:list";
 @use "variables" as *;
 @use "mixins" as *;
+
+/*****************************************
+ * BEGIN "CATEGORY TOOLBAR"
+ * Feed title bar with the view options.
+ ****************************************/
 
 #yl_category_toolbar {
   position: sticky;
@@ -136,15 +168,23 @@
   }
 }
 
-body.yl-sidenav--expanded:has(
-    #stream > #new-article + .prompt.alert.alert-warn
-  )
+body.yl-sidenav--expanded:has(#stream > #new-article + .prompt.alert.alert-warn)
   .nav_menu {
   /* 
    1. Accommmodate fixed sidenav expanded state.
    2. For no article empty state, `#yl_nav_menu_container` is not available, thus target `.nav_menu` */
   padding-left: calc(var(--yl-sidenav-width) + var(--yl-space-sm));
 }
+
+/*****************************************
+ * END "CATEGORY TOOLBAR"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "FEED FOOTER AND BOTTOM NAVIGATION"
+ * End of feed message, previous/next buttons 
+ * and "Load more articles".
+ ****************************************/
 
 /* End of feed footer */
 main#stream :is(#stream-footer, .stream-footer),
@@ -262,7 +302,15 @@ main#stream :is(#stream-footer, .stream-footer),
   }
 }
 
-/* Feed menu */
+/*****************************************
+ * END "FEED FOOTER AND BOTTOM NAVIGATION"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "FEED MENU"
+ * Feed menu actions and date transitions.
+ ****************************************/
+
 .nav_menu {
   padding: var(--yl-space-sm) var(--yl-space-xs) 0 var(--yl-space-xs);
   box-sizing: border-box;
@@ -308,12 +356,10 @@ main#stream {
     }
 
     .transition-next {
-      font-size: 0;
       margin-left: var(--yl-space-3xs);
       opacity: 1;
 
-      &:before {
-        content: "→";
+      @include yl-replace-text("→", var(--yl-text-sm)) {
         line-height: var(--yl-line-height-xs);
         color: var(--yl-color-text-lowest);
         border: var(--yl-border-width-sm) solid
@@ -325,7 +371,6 @@ main#stream {
         align-items: center;
         justify-content: center;
         border-radius: var(--yl-radius-sm);
-        font-size: var(--yl-text-sm);
         font-family: monospace;
       }
     }
@@ -384,6 +429,16 @@ nav.nav_menu {
     }
   }
 }
+
+/*****************************************
+ * END "FEED MENU"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "FEED ITEMS"
+ * Video mode + article mode: "read" titles,
+ * new articles banner, hidden enclosures.
+ ****************************************/
 
 .flux {
   font-family: inherit;
@@ -475,138 +530,152 @@ figure.enclosure img.enclosure-thumbnail {
   display: none;
 }
 
-/* Feed items are referred to as cards, as they are styled as grid cells opposed to FreshRSS table view. */
+/*****************************************
+ * END "FEED ITEMS"
+ ****************************************/
 
-/* Cards default state in feed */
-body.yl-mode-video:not(.reader) main#stream div.flux {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: var(--yl-radius-lg);
-  margin-bottom: auto; /* Prevents card from becoming incredibly tall affected by other grid cells, e.g. #bigMarkAsRead. */
+/*****************************************
+ * BEGIN "VIDEO MODE"
+ * Youlag video mode, displayed in grid view.
+ * Feed items = "cards".
+ ****************************************/
 
-  /* Card hover effect */
-  &:not(.active):hover {
-    background: var(--yl-color-gradient-card-hover);
-  }
-
-  &:not(.not_read),
-  &.favorite:not(.current),
-  &:not(.current):hover .item .title {
-    background: unset;
-    background-color: unset;
-  }
-
-  &.favorite {
-    background: var(--yl-color-gradient-favorite-card) !important;
-  }
-
-  .yl-video-duration {
-    // If Dearrow provides a video duration, display it on the thumbnail.
-    position: absolute;
-    bottom: calc(var(--yl-space-3xs) * 1.5);
-    right: calc(var(--yl-space-3xs) * 1.5);
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--yl-space-3xs);
-    border-radius: var(--yl-radius-md);
-    background-color: var(--yl-color-bg-video-duration);
-    font-size: var(--yl-text-xs);
-    font-weight: var(--yl-font-weight-semibold);
-    color: var(--yl-color-text-medium);
-    line-height: var(--yl-line-height-xs);
-  }
-
-  &:not(.current):not(.active) .flux_header {
-    &:before {
-      /* Decorative attr(data-article-authors) text on thumbnail placeholder, visible for feeds without images */
-      /* Alternative: content:  attr(data-website-name); */
-      content: attr(data-article-authors);
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
-      width: calc(100% - 24px);
-      height: 0;
-      padding-top: 16%;
-      padding-bottom: calc(40.2% - 12px);
-      padding-left: 20px;
-      font-size: var(--yl-thumbnail-author-font-size);
-      color: var(--yl-color-text-medium);
-      box-sizing: border-box;
-      overflow: hidden;
-      background: var(--yl-color-gradient-thumbnail-author-text);
-      background-clip: border-box;
-      background-clip: border-box;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
-
-  &.current.active {
-    /* yl-mode-video: Styling for when card was triggered by FreshRSS bottom navigation 'Settings -> Display -> Show the navigation buttons',
-       and not captured byy youlag's eventlistener. */
-    overflow-x: hidden;
-
-    .flux_header {
-      background-color: var(--yl-color-surface-card-active-header) !important;
-      height: auto; /* Prevent expanding when parent element is stretched. */
-
-      .titleAuthorSummaryDate {
-        padding-left: 0 !important; /* Reset position, that otherwise would have been reserved for author avatar. */
-      }
-    }
-
-    .flux_content {
-      max-width: 100%;
-      flex: 1;
-      background: var(--yl-color-gradient-article-active-flux-content);
-
-      & > .content {
-        max-width: 100%;
-        margin: 0;
-      }
-    }
-  }
-
-  /* Card container */
-  .flux_header {
-    /* In card default state, the header is the card container itself, unlike in card expended view where it is used as a header/toolbar. */
-    border-radius: var(--yl-radius-lg);
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    height: 100%;
-    max-width: 100%;
-    padding: var(--yl-space-2xs);
-    box-sizing: border-box;
-    border: none;
-    background: unset;
-
-    &:hover,
-    &:hover:not(.current):hover .item .title {
-      /* Prevent background change on hover. */
-      background-color: unset;
-      background: unset;
-    }
-
-    .item.titleAuthorSummaryDate {
+body.yl-mode-video {
+  &:not(.reader) {
+    /* Cards default state in feed */
+    main#stream div.flux {
       display: flex;
       flex-direction: column;
-      width: 100%;
-      flex: 1 1 100%;
-      margin: var(--yl-space-3xs) 0 var(--yl-space-xs) 0;
+      align-items: center;
+      border-radius: var(--yl-radius-lg);
+      margin-bottom: auto; /* Prevents card from becoming incredibly tall affected by other grid cells, e.g. #bigMarkAsRead. */
 
-      @media (min-width: $yl-breakpoint-feed-grid-2-columns) {
-        & {
-          /* HACK: On desktop, keep position consistent while allowing 100% vertical stretch of .flux and .flux-header */
-          height: 115px;
+      /* Card hover effect */
+      &:not(.active):hover {
+        background: var(--yl-color-gradient-card-hover);
+      }
+
+      &:not(.not_read),
+      &.favorite:not(.current),
+      &:not(.current):hover .item .title {
+        background: unset;
+        background-color: unset;
+      }
+
+      &.favorite {
+        background: var(--yl-color-gradient-favorite-card) !important;
+      }
+
+      .yl-video-duration {
+        // If Dearrow provides a video duration, display it on the thumbnail.
+        position: absolute;
+        bottom: calc(var(--yl-space-3xs) * 1.5);
+        right: calc(var(--yl-space-3xs) * 1.5);
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--yl-space-3xs);
+        border-radius: var(--yl-radius-md);
+        background-color: var(--yl-color-bg-video-duration);
+        font-size: var(--yl-text-xs);
+        font-weight: var(--yl-font-weight-semibold);
+        color: var(--yl-color-text-medium);
+        line-height: var(--yl-line-height-xs);
+      }
+
+      &:not(.current):not(.active) .flux_header {
+        &:before {
+          /* Decorative attr(data-article-authors) text on thumbnail placeholder, visible for feeds without images */
+          /* Alternative: content:  attr(data-website-name); */
+          content: attr(data-article-authors);
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 0;
+          width: calc(100% - 24px);
+          height: 0;
+          padding-top: 16%;
+          padding-bottom: calc(40.2% - 12px);
+          padding-left: 20px;
+          font-size: var(--yl-thumbnail-author-font-size);
+          color: var(--yl-color-text-medium);
+          box-sizing: border-box;
+          overflow: hidden;
+          background: var(--yl-color-gradient-thumbnail-author-text);
+          background-clip: border-box;
+          background-clip: border-box;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
       }
 
-      a.item-element.title {
+      &.current.active {
+        /* yl-mode-video: Styling for when card was triggered by FreshRSS bottom navigation 'Settings -> Display -> Show the navigation buttons',
+           and not captured byy youlag's eventlistener. */
+        overflow-x: hidden;
+
+        .flux_header {
+          background-color: var(
+            --yl-color-surface-card-active-header
+          ) !important;
+          height: auto; /* Prevent expanding when parent element is stretched. */
+
+          .titleAuthorSummaryDate {
+            padding-left: 0 !important; /* Reset position, that otherwise would have been reserved for author avatar. */
+          }
+        }
+
+        .flux_content {
+          max-width: 100%;
+          flex: 1;
+          background: var(--yl-color-gradient-article-active-flux-content);
+
+          & > .content {
+            max-width: 100%;
+            margin: 0;
+          }
+        }
+      }
+
+      /* Card container */
+      .flux_header {
+        /* In card default state, the header is the card container itself, unlike in card expended view where it is used as a header/toolbar. */
+        border-radius: var(--yl-radius-lg);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        height: 100%;
+        max-width: 100%;
+        padding: var(--yl-space-2xs);
+        box-sizing: border-box;
+        border: none;
+        background: unset;
+      }
+
+      .flux_header:hover,
+      .flux_header:hover:not(.current):hover .item .title {
+        /* Prevent background change on hover. */
+        background-color: unset;
+        background: unset;
+      }
+
+      .flux_header .item.titleAuthorSummaryDate {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        flex: 1 1 100%;
+        margin: var(--yl-space-3xs) 0 var(--yl-space-xs) 0;
+
+        @media (min-width: $yl-breakpoint-feed-grid-2-columns) {
+          & {
+            /* HACK: On desktop, keep position consistent while allowing 100% vertical stretch of .flux and .flux-header */
+            height: 115px;
+          }
+        }
+      }
+
+      .flux_header .item.titleAuthorSummaryDate a.item-element.title {
         display: flex;
         flex-direction: column;
         position: static;
@@ -624,11 +693,11 @@ body.yl-mode-video:not(.reader) main#stream div.flux {
         overflow: hidden;
       }
 
-      & > a.title {
+      .flux_header .item.titleAuthorSummaryDate > a.title {
         padding-right: 0 !important;
       }
 
-      .author {
+      .flux_header .item.titleAuthorSummaryDate .author {
         padding: 0;
         display: block;
         margin-top: var(--yl-space-3xs);
@@ -640,7 +709,7 @@ body.yl-mode-video:not(.reader) main#stream div.flux {
         overflow: hidden;
       }
 
-      span.item-element.date {
+      .flux_header .item.titleAuthorSummaryDate span.item-element.date {
         padding: 0;
         position: static;
         text-align: left;
@@ -657,182 +726,174 @@ body.yl-mode-video:not(.reader) main#stream div.flux {
           overflow: hidden;
         }
       }
-    }
 
-    .item.thumbnail {
-      /* Card thumbnail */
-      position: relative;
-
-      order: -1; /* Position thumbnail first within card, at the top */
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      flex: 0 0 100%;
-      box-sizing: border-box;
-      margin-bottom: var(--yl-space-3xs);
-      padding: 0;
-      overflow: hidden;
-
-      img {
+      .flux_header .item.thumbnail {
+        /* Card thumbnail */
         position: relative;
+
+        order: -1; /* Position thumbnail first within card, at the top */
         width: 100%;
         height: auto;
-        border-radius: var(--yl-radius-lg);
-        background: var(--yl-color-thumbnail-background);
         aspect-ratio: 16 / 9;
-        object-fit: cover;
-        object-position: center;
-        z-index: 1;
-      }
+        flex: 0 0 100%;
+        box-sizing: border-box;
+        margin-bottom: var(--yl-space-3xs);
+        padding: 0;
+        overflow: hidden;
 
-      &:before {
-        /* Placeholder for empty thumbnails */
-        content: "";
-        width: 100%;
-        position: absolute;
-        top: 0;
+        img {
+          position: relative;
+          width: 100%;
+          height: auto;
+          border-radius: var(--yl-radius-lg);
+          background: var(--yl-color-thumbnail-background);
+          aspect-ratio: 16 / 9;
+          object-fit: cover;
+          object-position: center;
+          z-index: 1;
+        }
+
+        &:before {
+          /* Placeholder for empty thumbnails */
+          content: "";
+          width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          padding-top: 56.25%;
+          background-color: var(--yl-color-thumbnail-background);
+          background-image: var(--yl-color-gradient-empty-thumbnail);
+          border-radius: var(--yl-radius-lg);
+          z-index: 0;
+        }
+      }
+    }
+
+    /* Card expanded state in feed */
+    main#stream div.flux.active.current {
+      /* Card expanded header, serves as a top panel. */
+      .flux_header {
+        position: sticky;
+        top: -4px;
         left: 0;
-        padding-top: 56.25%;
-        background-color: var(--yl-color-thumbnail-background);
-        background-image: var(--yl-color-gradient-empty-thumbnail);
-        border-radius: var(--yl-radius-lg);
-        z-index: 0;
-      }
-    }
-  }
-}
-
-/* Card expanded state in feed */
-body.yl-mode-video:not(.reader) main#stream div.flux.active.current {
-  /* Card expanded header, serves as a top panel. */
-  .flux_header {
-    position: sticky;
-    top: -4px;
-    left: 0;
-    background-color: var(--frss-background-color, hsl(0 0% 100%));
-    z-index: 1;
-    padding: var(--yl-space-xs);
-    margin-top: -4px;
-    border-bottom-left-radius: var(--yl-radius-2xs);
-    border-bottom-right-radius: var(--yl-radius-2xs);
-    pointer-events: none; /* Prevents card header clicks from closing the rss item. */
-
-    .item a,
-    .item .dropdown-close,
-    .item .dropdown-menu {
-      /* Reenable action buttons within card header */
-      pointer-events: all;
-    }
-
-    .item .dropdown-menu {
-      z-index: var(--yl-z-dropdown);
-
-      li.item.share {
-        min-width: 100%;
-        margin: 0;
-      }
-    }
-
-    .item.titleAuthorSummaryDate {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      order: -1;
-      min-width: unset;
-      flex: 0 0 100%;
-      margin-bottom: var(--yl-space-3xs);
-      z-index: 10;
-      height: auto;
-
-      /* Card title */
-      a {
-        /* Shorten width to prevent overlap with close button. */
-        max-width: calc(100% - 50px);
-        pointer-events: none;
+        background-color: var(--frss-background-color, hsl(0 0% 100%));
+        z-index: 1;
+        padding: var(--yl-space-xs);
+        margin-top: -4px;
+        border-bottom-left-radius: var(--yl-radius-2xs);
+        border-bottom-right-radius: var(--yl-radius-2xs);
+        pointer-events: none; /* Prevents card header clicks from closing the rss item. */
       }
 
-      .item-element.date {
-        /* Hide date in theater mode to save vertical space */
+      .flux_header .item a,
+      .flux_header .item .dropdown-close,
+      .flux_header .item .dropdown-menu {
+        /* Reenable action buttons within card header */
+        pointer-events: all;
+      }
+
+      .flux_header .item .dropdown-menu {
+        z-index: var(--yl-z-dropdown);
+
+        li.item.share {
+          min-width: 100%;
+          margin: 0;
+        }
+      }
+
+      .flux_header .item.titleAuthorSummaryDate {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        order: -1;
+        min-width: unset;
+        flex: 0 0 100%;
+        margin-bottom: var(--yl-space-3xs);
+        z-index: 10;
+        height: auto;
+
+        /* Card title */
+        a {
+          /* Shorten width to prevent overlap with close button. */
+          max-width: calc(100% - 50px);
+          pointer-events: none;
+        }
+
+        .item-element.date {
+          /* Hide date in theater mode to save vertical space */
+          display: none;
+        }
+      }
+
+      .flux_header li.item.website {
+        /* Hide website icon in theater mode expanded view */
         display: none;
       }
-    }
 
-    li.item.website {
-      /* Hide website icon in theater mode expanded view */
-      display: none;
-    }
-
-    li.item.thumbnail {
-      /* Hide thumbnail in theater mode expanded view */
-      display: none;
-    }
-  }
-
-  /* Card content container */
-  article {
-    display: flex;
-    flex-direction: column;
-    background: var(--yl-color-gradient-article-content);
-  }
-}
-
-/* Turn the feed table view to grid view. */
-
-body.yl-mode-video:not(.reader) main#stream {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(150px, 1fr));
-  gap: var(--yl-space-3xs);
-  padding: 0 var(--yl-space-sm) var(--yl-space-sm) var(--yl-space-sm);
-
-  @include yl-media-down(md) {
-    grid-template-columns: minmax(200px, 1fr);
-    gap: var(--yl-space-xs);
-  }
-
-  @media (min-width: $yl-breakpoint-feed-grid-2-columns) {
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
-  }
-
-  @media (max-width: $yl-breakpoint-feed-grid-2-columns) {
-    grid-row-gap: var(--yl-space-xs);
-  }
-
-  @media (min-width: $yl-breakpoint-feed-grid-3-columns) {
-    grid-template-columns: repeat(3, minmax(200px, 1fr));
-  }
-
-  @media (min-width: $yl-breakpoint-feed-grid-4-columns) {
-    grid-template-columns: repeat(4, minmax(240px, 1fr));
-  }
-
-  @media (min-width: $yl-breakpoint-feed-grid-5-columns) {
-    grid-template-columns: repeat(5, minmax(200px, 1fr));
-  }
-
-  /* Card icons and button behavior */
-  div.flux {
-    position: relative;
-
-    li.item.share,
-    li.item.labels {
-      /**
-      * Specific adjustment due to these card buttons containing dropdown menu
-      * - Share button
-      * - Playlists button (labels)
-      */
-
-      &:has(.dropdown-target:target) {
-        /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
-        z-index: 15;
+      .flux_header li.item.thumbnail {
+        /* Hide thumbnail in theater mode expanded view */
+        display: none;
       }
 
-      .item-element.dropdown {
+      /* Card content container */
+      article {
         display: flex;
-        width: 100%;
-        height: 100%;
-        padding: 0;
+        flex-direction: column;
+        background: var(--yl-color-gradient-article-content);
+      }
+    }
 
-        a.dropdown-toggle {
+    /* Turn the feed table view to grid view. */
+    main#stream {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(150px, 1fr));
+      gap: var(--yl-space-3xs);
+      padding: 0 var(--yl-space-sm) var(--yl-space-sm) var(--yl-space-sm);
+
+      @include yl-media-down(md) {
+        grid-template-columns: minmax(200px, 1fr);
+        gap: var(--yl-space-xs);
+      }
+
+      @media (max-width: $yl-breakpoint-feed-grid-2-columns) {
+        grid-row-gap: var(--yl-space-xs);
+      }
+
+      @each $columns, $step in $yl-feed-grid-columns {
+        @media (min-width: list.nth($step, 1)) {
+          grid-template-columns: repeat(
+            $columns,
+            minmax(list.nth($step, 2), 1fr)
+          );
+        }
+      }
+
+      /* Card icons and button behavior */
+      div.flux {
+        position: relative;
+      }
+
+      div.flux li.item.share,
+      div.flux li.item.labels {
+        /**
+        * Specific adjustment due to these card buttons containing dropdown menu
+        * - Share button
+        * - Playlists button (labels)
+        */
+
+        &:has(.dropdown-target:target) {
+          /* Temporarily elevate z-index to prevent other buttons to show on top of dropdown. */
+          z-index: 15;
+        }
+
+        .item-element.dropdown {
+          display: flex;
+          width: 100%;
+          height: 100%;
+          padding: 0;
+        }
+
+        .item-element.dropdown a.dropdown-toggle {
           /* Make button clickable across the entire button area, opposed to only the icon. */
           width: 100%;
           display: inline-flex;
@@ -845,12 +906,24 @@ body.yl-mode-video:not(.reader) main#stream {
           gap: var(--yl-space-3xs);
         }
       }
-    }
 
-    .flux_header {
-      @include yl-media-up(md) {
-        &:hover {
-          /* Desktop, yl-mode-video: only show the border around card actions on hover. */
+      div.flux .flux_header {
+        @include yl-media-up(md) {
+          &:hover {
+            /* Desktop, yl-mode-video: only show the border around card actions on hover. */
+            li.item.manage,
+            li.item.website.icon,
+            li.item.link,
+            li.item.labels,
+            li.item.share {
+              box-shadow: inset 0 0 0 var(--yl-border-width-sm)
+                var(--yl-color-border-card-action);
+            }
+          }
+        }
+
+        @include yl-media-down(md) {
+          /* Mobile, yl-mode-video: the buttons are always visible on mobile, so always show the card action borders. */
           li.item.manage,
           li.item.website.icon,
           li.item.link,
@@ -862,28 +935,16 @@ body.yl-mode-video:not(.reader) main#stream {
         }
       }
 
-      @include yl-media-down(md) {
-        /* Mobile, yl-mode-video: the buttons are always visible on mobile, so always show the card action borders. */
-        li.item.manage,
-        li.item.website.icon,
-        li.item.link,
-        li.item.labels,
-        li.item.share {
-          box-shadow: inset 0 0 0 var(--yl-border-width-sm)
-            var(--yl-color-border-card-action);
-        }
-      }
-
-      .summary {
+      div.flux .flux_header .summary {
         /* yl-mode-video: No support for summary on video cards. */
         display: none;
       }
 
-      li.item.manage a,
-      li.item.website.icon a,
-      li.item.link a,
-      li.item.labels a,
-      li.item.share > a {
+      div.flux .flux_header li.item.manage a,
+      div.flux .flux_header li.item.website.icon a,
+      div.flux .flux_header li.item.link a,
+      div.flux .flux_header li.item.labels a,
+      div.flux .flux_header li.item.share > a {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -891,8 +952,8 @@ body.yl-mode-video:not(.reader) main#stream {
         box-sizing: border-box;
       }
 
-      li.item.website.full,
-      li.item.website.name {
+      div.flux .flux_header li.item.website.full,
+      div.flux .flux_header li.item.website.name {
         /* For user's who set website setting to "icon and name" or "name" */
         a {
           color: var(--yl-color-text-medium);
@@ -900,12 +961,12 @@ body.yl-mode-video:not(.reader) main#stream {
         }
       }
 
-      li.item.manage,
-      li.item.website.icon,
-      li.item.website.full,
-      li.item.link,
-      li.item.labels,
-      li.item.share {
+      div.flux .flux_header li.item.manage,
+      div.flux .flux_header li.item.website.icon,
+      div.flux .flux_header li.item.website.full,
+      div.flux .flux_header li.item.link,
+      div.flux .flux_header li.item.labels,
+      div.flux .flux_header li.item.share {
         flex: 1;
         background-color: unset;
         display: inline-flex;
@@ -940,47 +1001,44 @@ body.yl-mode-video:not(.reader) main#stream {
         }
       }
 
-      li.item.manage {
+      div.flux .flux_header li.item.manage {
         order: 4; /* Put 'Mark as read' button far right. */
       }
 
-      li.item.labels {
-        .dropdown-header {
-          display: flex;
-          font-size: 0;
-
-          &:before {
-            content: "Playlists";
-            letter-spacing: var(--yl-letter-spacing-sm);
-            text-transform: uppercase;
-            font-size: var(--yl-text-sm);
-          }
-
-          a[href="./?c=tag"] {
-            margin-left: var(--yl-space-2xs);
-            font-size: var(--yl-text-sm);
-            visibility: visible;
-            width: unset;
-          }
+      div.flux .flux_header li.item.labels .dropdown-header {
+        display: flex;
+        @include yl-replace-text("Playlists", var(--yl-text-sm)) {
+          letter-spacing: var(--yl-letter-spacing-sm);
+          text-transform: uppercase;
         }
 
-        .item-element.dropdown:not(:has(.dropdown-target:target)) {
-          /* Playlists button (labels) on card: Hide close button as it displays even after onblur. */
-          a.dropdown-close {
-            display: none;
-          }
+        a[href="./?c=tag"] {
+          margin-left: var(--yl-space-2xs);
+          font-size: var(--yl-text-sm);
+          visibility: visible;
+          width: unset;
         }
       }
 
-      li.item.manage:hover,
-      li.item.website.icon:hover,
-      li.item.link:hover,
-      li.item.labels:hover,
-      li.item.share:hover {
+      div.flux
+        .flux_header
+        li.item.labels
+        .item-element.dropdown:not(:has(.dropdown-target:target)) {
+        /* Playlists button (labels) on card: Hide close button as it displays even after onblur. */
+        a.dropdown-close {
+          display: none;
+        }
+      }
+
+      div.flux .flux_header li.item.manage:hover,
+      div.flux .flux_header li.item.website.icon:hover,
+      div.flux .flux_header li.item.link:hover,
+      div.flux .flux_header li.item.labels:hover,
+      div.flux .flux_header li.item.share:hover {
         background-color: var(--yl-color-bg-card-action-hover);
       }
 
-      &:not(.active) {
+      div.flux .flux_header:not(.active) {
         li.item.manage a,
         li.item.website.icon a,
         li.item.link a,
@@ -1014,42 +1072,40 @@ body.yl-mode-video:not(.reader) main#stream {
         }
       }
 
-      .website a:hover .favicon,
-      a.website:hover .favicon {
+      div.flux .flux_header .website a:hover .favicon,
+      div.flux .flux_header a.website:hover .favicon {
         /* Disable grayscale effect on website icon hover */
         filter: unset;
       }
 
-      li.item.share {
+      div.flux .flux_header li.item.share {
         order: 3;
       }
-    }
 
-    &.active.current .flux_header {
-      li.item.manage a,
-      li.item.website.icon a,
-      li.item.link a,
-      li.item.labels a,
-      li.item.share a {
-        visibility: visible;
+      div.flux.active.current .flux_header {
+        li.item.manage a,
+        li.item.website.icon a,
+        li.item.link a,
+        li.item.labels a,
+        li.item.share a {
+          visibility: visible;
+        }
       }
-    }
 
-    /* Favorites (bookmark) button */
-    &.favorite {
-      .flux_header li.item.manage {
+      /* Favorites (bookmark) button */
+      div.flux.favorite .flux_header li.item.manage {
         a.bookmark {
           filter: var(--yl-filter-icon-starred);
         }
       }
-    }
 
-    /* Favicon as avatar */
-    .flux_header {
-      position: relative;
+      /* Favicon as avatar */
+      div.flux .flux_header {
+        position: relative;
+      }
 
-      li.item.website.icon,
-      li.item.website {
+      div.flux .flux_header li.item.website.icon,
+      div.flux .flux_header li.item.website {
         /* If user set "Website: Icon" in Display settings */
         display: flex;
         width: 100%;
@@ -1114,169 +1170,139 @@ body.yl-mode-video:not(.reader) main#stream {
           margin-top: 2px;
         }
       }
+
+      div.flux.active.current article.flux_content {
+        .content .text {
+          overflow-x: hidden;
+        }
+      }
+
+      /* Video: Custom link to allow right-click and open video card in new tab. */
+      div.flux .yl-video-card__link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9;
+      }
+
+      div.flux {
+        @include yl-media-down(md) {
+          &:not(.active),
+          &:not(.active).favorite:not(.current) {
+            /* Mobile, yl-mode-video:, always display hover effect/background */
+            background: var(--yl-color-gradient-card-hover);
+          }
+        }
+      }
     }
 
     /* Change card footer from "My labels" to "+ Add to playlist" */
-    &.active.current article.flux_content {
+    main#stream
+      div.flux.active.current
+      article.flux_content
       footer
-        ul.horizontal-list.bottom
-        .item.labels
-        .item-element.dropdown
-        a[href^="#dropdown-labels-"] {
-        font-size: 0;
-        white-space: nowrap;
-        color: var(--yl-color-text-medium);
+      ul.horizontal-list.bottom
+      .item.labels
+      .item-element.dropdown
+      a[href^="#dropdown-labels-"] {
+      font-size: 0;
+      white-space: nowrap;
+      color: var(--yl-color-text-medium);
 
-        & + .dropdown-menu .dropdown-header {
-          font-size: 0;
-
-          &:before {
-            content: "Playlists";
-            letter-spacing: var(--yl-letter-spacing-sm);
-            text-transform: uppercase;
-            font-size: var(--yl-text-sm);
-          }
-
-          a[href="./?c=tag"] {
-            margin-left: var(--yl-space-2xs);
-            font-size: var(--yl-text-sm);
-          }
+      & + .dropdown-menu .dropdown-header {
+        @include yl-replace-text("Playlists", var(--yl-text-sm)) {
+          letter-spacing: var(--yl-letter-spacing-sm);
+          text-transform: uppercase;
         }
 
-        .icon {
-          display: none;
+        a[href="./?c=tag"] {
+          margin-left: var(--yl-space-2xs);
+          font-size: var(--yl-text-sm);
         }
       }
 
-      .content .text {
-        overflow-x: hidden;
-      }
-    }
-
-    /* Video: Custom link to allow right-click and open video card in new tab. */
-    .yl-video-card__link {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 9;
-    }
-  }
-
-  div.flux {
-    @include yl-media-down(md) {
-      &:not(.active),
-      &:not(.active).favorite:not(.current) {
-        /* Mobile, yl-mode-video:, always display hover effect/background */
-        background: var(--yl-color-gradient-card-hover);
-      }
-    }
-  }
-}
-
-/* Mobile, setting: Card grid view enabled */
-body.yl-mode-video:not(.reader).yl-mobile-layout--grid {
-  @include yl-media-down(sm) {
-    main#stream {
-      grid-template-columns: repeat(2, minmax(140px, 1fr));
-      grid-column-gap: var(--yl-space-xs);
-      padding: var(--yl-space-2xs);
-    }
-
-    div.flux .flux_header .item {
-      &.website a.item-element {
-        display: none !important;
-      }
-
-      &.titleAuthorSummaryDate {
-        padding-left: 0 !important;
-
-        a.item-element.title {
-          font-size: var(--yl-text-sm) !important;
-          line-height: var(--yl-line-height-sm);
-          padding: 0 !important;
-        }
-      }
-    }
-  }
-}
-
-/* Video, article: If setting to use screencap thumbnail is enabled */
-body {
-  &.yl-feed-custom-thumbnail-title {
-    /* Hide the original thumbnail */
-    div.flux .flux_header {
-      &:before {
-        /* Hide fallback title on thumbnail */
+      .icon {
         display: none;
       }
+    }
 
-      .item.titleAuthorSummaryDate,
-      .item.thumbnail {
-        opacity: 0;
+    /* Mobile, setting: Card grid view enabled */
+    &.yl-mobile-layout--grid {
+      @include yl-media-down(sm) {
+        main#stream {
+          grid-template-columns: repeat(2, minmax(140px, 1fr));
+          grid-column-gap: var(--yl-space-xs);
+          padding: var(--yl-space-2xs);
+        }
+
+        div.flux .flux_header .item {
+          &.website a.item-element {
+            display: none !important;
+          }
+
+          &.titleAuthorSummaryDate {
+            padding-left: 0 !important;
+
+            a.item-element.title {
+              font-size: var(--yl-text-sm) !important;
+              line-height: var(--yl-line-height-sm);
+              padding: 0 !important;
+            }
+          }
+        }
+      }
+    }
+
+    &.yl-video-unread-badge main#stream {
+      div.flux {
+        &.not_read {
+          position: relative;
+          background-color: unset;
+
+          &:after {
+            content: "New";
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            padding: var(--yl-space-4xs) var(--yl-space-2xs);
+            background: var(--yl-color-gradient-badge-unread);
+            background-color: var(--yl-color-accent-unread-fallback);
+            border: var(--yl-border-width-sm) solid
+              var(--yl-color-border-badge-unread);
+            box-shadow: 0 2px 8px 3px var(--yl-shadow-badge-unread);
+            border-radius: var(--yl-radius-full);
+            font-size: var(--yl-text-2xs);
+            font-weight: var(--yl-font-weight-bold);
+            pointer-events: none;
+            z-index: 1;
+          }
+        }
+      }
+    }
+
+    &.yl-page-watch_later main#stream {
+      div.flux {
+        &.favorite {
+          background: none !important; /* Revert to normal background on favorites (watch later) page */
+
+          @include yl-media-down(md) {
+            background: var(--yl-color-gradient-card-hover) !important;
+          }
+
+          &:hover {
+            background: var(--yl-color-gradient-card-hover) !important;
+          }
+        }
       }
     }
   }
 
-  &.yl-feed-custom-thumbnail-title.yl-loaded {
-    /* Once Youlag is ready, display the screencap thumbnail. Affects only video feed entries. */
-    div.flux .flux_header {
-      .item.titleAuthorSummaryDate,
-      .item.thumbnail {
-        /* Add an artificial loading delay on page init,
-         * reduces chance of content flash when switching to custom thumbnail and title. */
-        animation: fade-in 0s forwards;
-        animation-delay: 0.25s;
-      }
-    }
+  main#stream > .flux {
+    cursor: pointer;
   }
-}
 
-body.yl-mode-video.yl-video-unread-badge:not(.reader) main#stream {
-  div.flux {
-    &.not_read {
-      position: relative;
-      background-color: unset;
-
-      &:after {
-        content: "New";
-        position: absolute;
-        top: 18px;
-        left: 18px;
-        padding: var(--yl-space-4xs) var(--yl-space-2xs);
-        background: var(--yl-color-gradient-badge-unread);
-        background-color: var(--yl-color-accent-unread-fallback);
-        border: var(--yl-border-width-sm) solid
-          var(--yl-color-border-badge-unread);
-        box-shadow: 0 2px 8px 3px var(--yl-shadow-badge-unread);
-        border-radius: var(--yl-radius-full);
-        font-size: var(--yl-text-2xs);
-        font-weight: var(--yl-font-weight-bold);
-        pointer-events: none;
-        z-index: 1;
-      }
-    }
-  }
-}
-
-body.yl-mode-video.yl-page-watch_later:not(.reader) main#stream {
-  div.flux {
-    &.favorite {
-      background: none !important; /* Revert to normal background on favorites (watch later) page */
-
-      @include yl-media-down(md) {
-        background: var(--yl-color-gradient-card-hover) !important;
-      }
-
-      &:hover {
-        background: var(--yl-color-gradient-card-hover) !important;
-      }
-    }
-  }
-}
-
-.yl-mode-video {
   @include yl-media-down(md) {
     #yl_nav_menu_container {
       &.yl-nav-menu-container--open {
@@ -1288,12 +1314,7 @@ body.yl-mode-video.yl-page-watch_later:not(.reader) main#stream {
     }
   }
 
-  &.yl-page-home,
-  &.yl-page-important,
-  &.yl-page-watch_later,
-  &.yl-page-playlists,
-  &.yl-page-category,
-  &.yl-page-search_results {
+  &:is(#{$yl-feed-pages}) {
     &.yl-sidenav--collapsed {
       @include yl-media-up(md) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
@@ -1333,6 +1354,55 @@ body.yl-mode-video.yl-page-watch_later:not(.reader) main#stream {
   }
 }
 
+/*****************************************
+ * END "VIDEO MODE"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "CUSTOM THUMBNAIL AND TITLE"
+ * Video mode + article mode, when the setting
+ * to use screencap thumbnails is enabled.
+ ****************************************/
+
+body {
+  &.yl-feed-custom-thumbnail-title {
+    /* Hide the original thumbnail */
+    div.flux .flux_header {
+      &:before {
+        /* Hide fallback title on thumbnail */
+        display: none;
+      }
+
+      .item.titleAuthorSummaryDate,
+      .item.thumbnail {
+        opacity: 0;
+      }
+    }
+  }
+
+  &.yl-feed-custom-thumbnail-title.yl-loaded {
+    /* Once Youlag is ready, display the screencap thumbnail. Affects only video feed entries. */
+    div.flux .flux_header {
+      .item.titleAuthorSummaryDate,
+      .item.thumbnail {
+        /* Add an artificial loading delay on page init,
+         * reduces chance of content flash when switching to custom thumbnail and title. */
+        animation: fade-in 0s forwards;
+        animation-delay: 0.25s;
+      }
+    }
+  }
+}
+
+/*****************************************
+ * END "CUSTOM THUMBNAIL AND TITLE"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "FAVORITES PAGE"
+ * The "watch later" page.
+ ****************************************/
+
 body:has(.tree-folder.category.favorites.active) {
   main#stream div.flux.favorite:not(.active) {
     .flux_header {
@@ -1355,37 +1425,15 @@ body:has(.tree-folder.category.favorites.active) {
   }
 }
 
-.yl-mode-article {
-  @include yl-media-down(md) {
-    #yl_category_toolbar {
-      padding-left: var(--yl-space-sm);
-      padding-right: var(--yl-space-sm);
-    }
-  }
+/*****************************************
+ * END "FAVORITES PAGE"
+ ****************************************/
 
-  .flux.current {
-    scroll-margin-top: var(--yl-topnav-height);
-  }
-}
-
-.yl-mode-article:not(.yl-article-split-view) {
-  &.yl-page-home,
-  &.yl-page-important,
-  &.yl-page-watch_later,
-  &.yl-page-playlists,
-  &.yl-page-category,
-  &.yl-page-search_results {
-    &.yl-sidenav--collapsed {
-      $toggle-overlap-min: yl-fn-breakpoint(md) + 1px;
-      @media (min-width: $toggle-overlap-min) and (max-width: $yl-breakpoint-sidenav-toggle-overlap) {
-        /* HACK: On article expand mode: workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
-        main#stream .yl-category-toolbar--sticky {
-          padding-left: var(--yl-sidenav-toggle-button-width);
-        }
-      }
-    }
-  }
-}
+/*****************************************
+ * BEGIN "ARTICLE TYPOGRAPHY"
+ * Shared by the opened article and the 
+ * split view pane, through @extend.
+ ****************************************/
 
 %article-typography {
   header {
@@ -1422,58 +1470,61 @@ body:has(.tree-folder.category.favorites.active) {
         border-bottom-left-radius: var(--yl-radius-lg);
         border-bottom-right-radius: var(--yl-radius-lg);
       }
+    }
 
-      li {
-        /* Article, active: Footer action buttons */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
+    & > ul li {
+      /* Article, active: Footer action buttons */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
 
-        &:empty {
-          display: none;
-        }
+    & > ul li:empty {
+      display: none;
+    }
 
-        &.item.manage:has(.item-element.bookmark) {
-          order: -3; /* Article, active: Place favorite button to far left. */
-        }
-        &.item.manage:has(.item-element.read) {
-          order: 2; /* Article, active: Place mark as read button right. */
-        }
-        &.item.share {
-          order: 3; /* Article, active: Place share button right. */
-        }
-        &.item.date {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          flex: 1;
-          order: 4; /* Article, active: Place date to far right. */
-        }
+    & > ul li.item.manage:has(.item-element.bookmark) {
+      order: -3; /* Article, active: Place favorite button to far left. */
+    }
 
-        div {
-          padding: 0;
-          margin: 0;
-        }
+    & > ul li.item.manage:has(.item-element.read) {
+      order: 2; /* Article, active: Place mark as read button right. */
+    }
 
-        a {
-          padding: var(--yl-space-2xs);
-          min-width: 25px;
-          min-height: 25px;
-          border-radius: var(--yl-radius-md);
-          --main-first: var(--yl-color-text-lowest); /* Link color */
-          filter: unset !important;
+    & > ul li.item.share {
+      order: 3; /* Article, active: Place share button right. */
+    }
 
-          &:hover {
-            background-color: var(--yl-color-bg-article-footer-link-hover);
-          }
+    & > ul li.item.date {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1;
+      order: 4; /* Article, active: Place date to far right. */
+    }
 
-          img {
-            filter: var(--yl-filter-icon-article-footer);
-          }
-        }
+    & > ul li div {
+      padding: 0;
+      margin: 0;
+    }
+
+    & > ul li a {
+      padding: var(--yl-space-2xs);
+      min-width: 25px;
+      min-height: 25px;
+      border-radius: var(--yl-radius-md);
+      --main-first: var(--yl-color-text-lowest); /* Link color */
+      filter: unset !important;
+
+      &:hover {
+        background-color: var(--yl-color-bg-article-footer-link-hover);
+      }
+
+      img {
+        filter: var(--yl-filter-icon-article-footer);
       }
     }
   }
@@ -1564,7 +1615,7 @@ body:has(.tree-folder.category.favorites.active) {
       li {
         font-size: var(--yl-text-sm);
         line-height: var(--yl-line-height-lg);
-        letter-spacing: var(--yl-letter-spacing-sm);
+        letter-spacing: var(--yl-letter-spacing-xs);
       }
     }
 
@@ -1611,435 +1662,482 @@ body:has(.tree-folder.category.favorites.active) {
   }
 }
 
-body.yl-mode-article:not(.reader) {
-  &.yl-article-thumbnail-placement {
-    &--left {
-      /* Default placement for `$--right` already set on directly on `.titleAuthorSummaryDate`. */
+/*****************************************
+ * END "ARTICLE TYPOGRAPHY"
+ ****************************************/
 
-      #stream div.flux > ul.flux_header .titleAuthorSummaryDate {
-        /* Place headline after the thumbnail, thumbnail is positioned left. */
-        order: -3 !important;
-      }
-    }
-  }
-  .yl-article-video-iframe {
-    margin-top: var(--yl-space-sm);
-  }
+/*****************************************
+ * BEGIN "ARTICLE MODE"
+ * Youlag article mode, suitable for viewing 
+ * text-based feed content. 
+ ****************************************/
 
-  &.yl-sidenav--expanded {
-    nav.aside_feed {
-      .nav_menu {
-        max-width: calc(
-          var(--yl-article-list-max-width) + var(--yl-sidenav-width) +
-            var(--yl-space-md) + var(--yl-space-md)
-        ); /* yl-mode-article: Match position of article */
-        margin: 0 auto;
-      }
-
-      main#stream {
-        /* Desktop: sidenav opened */
-        max-width: calc(
-          var(--yl-article-list-max-width) + var(--yl-sidenav-width) +
-            var(--yl-space-md) + var(--yl-space-md)
-        ); /* yl-mode-article: Articles will effectively be max 900px */
-      }
-    }
-  }
-}
-
-body.yl-mode-article:not(.reader) main#stream {
-  margin: 0 auto;
-  padding-left: var(--yl-space-sm);
-  padding-right: var(--yl-space-sm);
-  max-width: var(--yl-article-list-max-width);
-
+body.yl-mode-article {
   @include yl-media-down(md) {
-    padding: 0;
+    #yl_category_toolbar {
+      padding-left: var(--yl-space-sm);
+      padding-right: var(--yl-space-sm);
+    }
   }
 
-  div.flux {
-    border-radius: var(--yl-radius-lg);
-    transition: all var(--yl-duration-sm);
-    margin-bottom: var(--yl-space-xs);
+  .flux.current {
+    scroll-margin-top: var(--yl-topnav-height);
+  }
 
-    @include yl-media-down(md) {
-      margin-bottom: 0;
-      border-radius: 0;
+  &:not(.yl-article-split-view) {
+    &:is(#{$yl-feed-pages}) {
+      &.yl-sidenav--collapsed {
+        $toggle-overlap-min: yl-fn-breakpoint(md) + 1px;
+        @media (min-width: $toggle-overlap-min) and (max-width: $yl-breakpoint-sidenav-toggle-overlap) {
+          /* HACK: On article expand mode: workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
+          main#stream .yl-category-toolbar--sticky {
+            padding-left: var(--yl-sidenav-toggle-button-width);
+          }
+        }
+      }
+    }
+  }
+
+  &:not(.reader) {
+    &.yl-article-thumbnail-placement {
+      &--left {
+        /* Default placement for `$--right` already set on directly on `.titleAuthorSummaryDate`. */
+
+        #stream div.flux > ul.flux_header .titleAuthorSummaryDate {
+          /* Place headline after the thumbnail, thumbnail is positioned left. */
+          order: -3 !important;
+        }
+      }
+    }
+    .yl-article-video-iframe {
+      margin-top: var(--yl-space-sm);
     }
 
-    &:focus {
-      /* Used when an article is closed, to easier visually navigate where one last left off. */
-      outline: none;
-      background-color: var(--yl-color-surface-article-row-focus);
-    }
+    &.yl-sidenav--expanded {
+      nav.aside_feed {
+        .nav_menu {
+          max-width: calc(
+            var(--yl-article-list-max-width) + var(--yl-sidenav-width) +
+              var(--yl-space-md) + var(--yl-space-md)
+          ); /* yl-mode-article: Match position of article */
+          margin: 0 auto;
+        }
 
-    &.active.current {
-      /* yl-mode-article: article is opened */
-
-      ul.flux_header {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+        main#stream {
+          /* Desktop: sidenav opened */
+          max-width: calc(
+            var(--yl-article-list-max-width) + var(--yl-sidenav-width) +
+              var(--yl-space-md) + var(--yl-space-md)
+          ); /* yl-mode-article: Articles will effectively be max 900px */
+        }
       }
     }
 
-    &.current {
-      /* yl-mode-article: article is in focus */
-      border-left: none; /* Disable default blue/orange and  border indicator of focused feed item */
-    }
-
-    &.favorite,
-    &.favorite.not_read {
-      background: var(
-        --yl-color-gradient-favorite-article
-      ); /* Orange glow effect for favorite articles */
-    }
-
-    &:hover ul.flux_header {
-      .titleAuthorSummaryDate .title {
-        /* FreshRSS shrinks the padding-right from '155px' to '0.5rem' on hover.
-           Force it to remain the same to avoid layout shift. */
-        padding-right: 155px;
-      }
-    }
-
-    ul.flux_header {
-      display: flex;
-      flex-wrap: wrap;
-      border: var(--yl-border-width-sm) solid var(--yl-color-border-article-row);
-      border-radius: var(--yl-radius-xl);
-      box-sizing: border-box;
-      padding: var(--yl-space-2xs) var(--yl-space-2xs);
-      margin: 0;
+    main#stream {
+      margin: 0 auto;
+      padding-left: var(--yl-space-sm);
+      padding-right: var(--yl-space-sm);
+      max-width: var(--yl-article-list-max-width);
 
       @include yl-media-down(md) {
-        border-radius: 0;
-        border-bottom: none;
-        border-left: none;
-        border-right: none;
+        padding: 0;
       }
 
-      @include yl-media-down(sm) {
-        --yl-article-thumbnail-width: 80px;
+      div.flux {
+        border-radius: var(--yl-radius-lg);
+        transition: all var(--yl-duration-sm);
+        margin-bottom: var(--yl-space-xs);
+
+        @include yl-media-down(md) {
+          margin-bottom: 0;
+          border-radius: 0;
+        }
       }
 
-      &.not_read {
+      div.flux:focus {
+        /* Used when an article is closed, to easier visually navigate where one last left off. */
+        outline: none;
+        background-color: var(--yl-color-surface-article-row-focus);
+      }
+
+      div.flux.active.current {
+        /* yl-mode-article: article is opened */
+
+        ul.flux_header {
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+      }
+
+      div.flux.current {
+        /* yl-mode-article: article is in focus */
+        border-left: none; /* Disable default blue/orange and  border indicator of focused feed item */
+      }
+
+      div.flux.favorite,
+      div.flux.favorite.not_read {
+        background: var(
+          --yl-color-gradient-favorite-article
+        ); /* Orange glow effect for favorite articles */
+      }
+
+      div.flux:hover ul.flux_header {
+        .titleAuthorSummaryDate .title {
+          /* FreshRSS shrinks the padding-right from '155px' to '0.5rem' on hover.
+             Force it to remain the same to avoid layout shift. */
+          padding-right: 155px;
+        }
+      }
+
+      div.flux ul.flux_header {
+        display: flex;
+        flex-wrap: wrap;
+        border: var(--yl-border-width-sm) solid
+          var(--yl-color-border-article-row);
+        border-radius: var(--yl-radius-xl);
+        box-sizing: border-box;
+        padding: var(--yl-space-2xs) var(--yl-space-2xs);
+        margin: 0;
+
+        @include yl-media-down(md) {
+          border-radius: 0;
+          border-bottom: none;
+          border-left: none;
+          border-right: none;
+        }
+
+        @include yl-media-down(sm) {
+          --yl-article-thumbnail-width: 80px;
+        }
+      }
+
+      div.flux ul.flux_header.not_read {
         .item .title {
           font-weight: var(--yl-font-weight-semibold);
         }
       }
 
-      .item {
-        /* Mobile, yl-mode-article: provide enough spacing between icons */
-        &.manage,
-        &.labels,
-        &.link,
-        &.share {
+      /* Mobile, yl-mode-article: provide enough spacing between icons */
+      div.flux ul.flux_header .item.manage,
+      div.flux ul.flux_header .item.labels,
+      div.flux ul.flux_header .item.link,
+      div.flux ul.flux_header .item.share {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        padding: var(--yl-space-2xs) 0;
+
+        & > a,
+        & > div a {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: auto;
-          padding: var(--yl-space-2xs) 0;
+          padding: var(--yl-space-3xs);
+          width: 32px;
+          height: 24px;
+          border: var(--yl-border-width-sm) solid
+            var(--yl-color-border-button-menu);
+          border-radius: var(--yl-radius-full);
+          margin-left: var(--yl-space-2xs);
+          background-color: var(--yl-color-bg-button-menu);
+          transition: background-color var(--yl-duration-button);
 
-          & > a,
-          & > div a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--yl-space-3xs);
-            width: 32px;
-            height: 24px;
-            border: var(--yl-border-width-sm) solid
-              var(--yl-color-border-button-menu);
-            border-radius: var(--yl-radius-full);
-            margin-left: var(--yl-space-2xs);
-            background-color: var(--yl-color-bg-button-menu);
-            transition: background-color var(--yl-duration-button);
-
-            &:hover {
-              background-color: var(--yl-color-bg-button-menu-hover);
-            }
-          }
-
-          &.labels {
-            .item-element {
-              /* Remove additional padding that dropdown elements gets from freshrss. */
-              padding: 0;
-            }
+          &:hover {
+            background-color: var(--yl-color-bg-button-menu-hover);
           }
         }
 
-        &.manage {
-          order: 3;
+        &.labels {
+          .item-element {
+            /* Remove additional padding that dropdown elements gets from freshrss. */
+            padding: 0;
+          }
         }
+      }
 
-        &:first-child {
-          padding-left: 0;
-        }
+      div.flux ul.flux_header .item.manage {
+        order: 3;
+      }
 
+      div.flux ul.flux_header .item:first-child {
+        padding-left: 0;
+      }
+
+      div.flux ul.flux_header .item {
         @include yl-media-down(md) {
         }
+      }
 
-        &.thumbnail {
-          /* Place thumbnail first. */
-          order: -3;
-          box-sizing: border-box;
-          padding: 0;
+      div.flux ul.flux_header .item.thumbnail {
+        /* Place thumbnail first. */
+        order: -3;
+        box-sizing: border-box;
+        padding: 0;
+        position: relative;
+        width: var(--yl-article-thumbnail-width);
+        height: var(--yl-article-thumbnail-height);
+        background: var(--yl-color-bg-article-thumbnail);
+        border-radius: var(--yl-radius-md);
+        overflow: hidden;
+        margin-top: var(--yl-space-3xs);
+        margin-bottom: var(--yl-space-3xs);
+        margin-left: var(--yl-space-2xs);
+        margin-right: var(--yl-space-2xs);
+
+        @include yl-media-down(sm) {
+          height: var(--yl-article-thumbnail-width);
+          max-height: 100%;
+        }
+
+        &:before {
+          content: "";
+          background-image: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0OTAuMDgyIDQ5MC4wODIiPjxwYXRoIGQ9Ik00NTAuOTkxIDBoLTQxMS44Yy0yMC45IDAtMzguNiAxNi43LTM4LjYgMzguNnYyNzMuMWMwIDIwLjkgMTYuNyAzOC42IDM4LjYgMzguNmgyNXYxMTkuOWMwIDguMyA1LjIgMTUuNiAxMi41IDE4LjggMi4xIDEgMTQuOSAzLjQgMjIuOS01LjJsMTI3LjItMTM0LjVoMjI0LjFjMjAuOSAwIDM4LjYtMTYuNyAzOC42LTM4LjZWMzguNmMuMS0yMC45LTE2LjYtMzguNi0zOC41LTM4LjZtLTEgMzA5LjZoLTIzMS41Yy01LjIgMC0xMC40IDIuMS0xNC42IDYuM2wtOTkgMTAzLjJ2LTg4LjZjMC0xMS41LTkuNC0yMC45LTIwLjktMjAuOWgtNDIuN3YtMjY5aDQwOC43eiIvPjwvc3ZnPg==);
+          background-repeat: no-repeat;
+          background-size: 32px;
+          background-position: center;
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          opacity: 0.24;
+          z-index: 0;
+        }
+
+        img {
           position: relative;
-          width: var(--yl-article-thumbnail-width);
-          height: var(--yl-article-thumbnail-height);
-          background: var(--yl-color-bg-article-thumbnail);
-          border-radius: var(--yl-radius-md);
-          overflow: hidden;
-          margin-top: var(--yl-space-3xs);
-          margin-bottom: var(--yl-space-3xs);
-          margin-left: var(--yl-space-2xs);
-          margin-right: var(--yl-space-2xs);
+          z-index: 1;
+        }
+      }
 
-          @include yl-media-down(sm) {
-            height: var(--yl-article-thumbnail-width);
-            max-height: 100%;
-          }
+      div.flux ul.flux_header .item.titleAuthorSummaryDate {
+        order: -4; /* Place headline and description before thumbnail. */
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        align-content: baseline;
+        column-gap: var(--yl-space-2xs);
+        flex-wrap: wrap;
+        flex-basis: calc(
+          100% - var(--yl-article-thumbnail-width) - (var(--yl-space-2xs) * 2)
+        );
+        padding: var(--yl-space-3xs) var(--yl-space-2xs) 0 var(--yl-space-2xs);
+        box-sizing: border-box;
 
-          &:before {
-            content: "";
-            background-image: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA0OTAuMDgyIDQ5MC4wODIiPjxwYXRoIGQ9Ik00NTAuOTkxIDBoLTQxMS44Yy0yMC45IDAtMzguNiAxNi43LTM4LjYgMzguNnYyNzMuMWMwIDIwLjkgMTYuNyAzOC42IDM4LjYgMzguNmgyNXYxMTkuOWMwIDguMyA1LjIgMTUuNiAxMi41IDE4LjggMi4xIDEgMTQuOSAzLjQgMjIuOS01LjJsMTI3LjItMTM0LjVoMjI0LjFjMjAuOSAwIDM4LjYtMTYuNyAzOC42LTM4LjZWMzguNmMuMS0yMC45LTE2LjYtMzguNi0zOC41LTM4LjZtLTEgMzA5LjZoLTIzMS41Yy01LjIgMC0xMC40IDIuMS0xNC42IDYuM2wtOTkgMTAzLjJ2LTg4LjZjMC0xMS41LTkuNC0yMC45LTIwLjktMjAuOWgtNDIuN3YtMjY5aDQwOC43eiIvPjwvc3ZnPg==);
-            background-repeat: no-repeat;
-            background-size: 32px;
-            background-position: center;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0.24;
-            z-index: 0;
-          }
+        @media (max-width: $yl-breakpoint-article-row-wrap) {
+          flex-basis: 100%;
+        }
+      }
 
-          img {
-            position: relative;
-            z-index: 1;
-          }
+      div.flux ul.flux_header .item.titleAuthorSummaryDate .title,
+      div.flux ul.flux_header .item.titleAuthorSummaryDate .title.multiline {
+        order: -2; /* Place headline first within container. */
+        flex: 1;
+        /* Force headline to allow 2 rows of text */
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: unset;
+        text-wrap: auto;
+        position: relative;
+        max-height: calc(var(--yl-text-xs) * 5.5);
+        font-size: calc(var(--yl-text-sm) / 1.1);
+        line-height: var(--yl-line-height-md);
+        box-sizing: border-box;
+        padding: 0;
+
+        @include yl-media-down(md) {
+          flex-basis: 100%;
+          font-size: var(--yl-text-sm);
         }
 
-        &.titleAuthorSummaryDate {
-          order: -4; /* Place headline and description before thumbnail. */
-          display: flex;
-          align-items: flex-start;
-          justify-content: flex-start;
-          align-content: baseline;
-          column-gap: var(--yl-space-2xs);
-          flex-wrap: wrap;
-          flex-basis: calc(
-            100% - var(--yl-article-thumbnail-width) - (var(--yl-space-2xs) * 2)
-          );
-          padding: var(--yl-space-3xs) var(--yl-space-2xs) 0 var(--yl-space-2xs);
-          box-sizing: border-box;
-
-          @media (max-width: $yl-breakpoint-article-row-wrap) {
-            flex-basis: 100%;
-          }
-
-          .title,
-          .title.multiline {
-            order: -2; /* Place headline first within container. */
-            flex: 1;
-            /* Force headline to allow 2 rows of text */
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-width: unset;
-            text-wrap: auto;
-            position: relative;
-            max-height: calc(var(--yl-text-xs) * 5.5);
-            font-size: calc(var(--yl-text-sm) / 1.1);
-            line-height: var(--yl-line-height-md);
-            box-sizing: border-box;
-            padding: 0;
-
-            @include yl-media-down(md) {
-              flex-basis: 100%;
-              font-size: var(--yl-text-sm);
-            }
-
-            .author {
-              display: block;
-              padding: 0;
-              display: none; /* yl-mode-article: hide author from article preview. */
-            }
-          }
-
-          .summary {
-            --frss-font-color-grey-dark: var(--yl-color-text-lowest);
-            margin: var(--yl-space-3xs) 0 var(--yl-space-3xs) 0;
-            flex-basis: 100%;
-            max-width: unset;
-            padding-right: min(var(--yl-space-3xl), 10%);
-            font-size: var(--yl-text-xs);
-            line-height: var(--yl-line-height-sm);
-
-            @include yl-media-down(md) {
-              flex-basis: 100%;
-              font-size: var(--yl-text-xs);
-              padding-right: unset;
-              /* Mobile: Override FreshRSS 'line-clamp:2' */
-              -webkit-line-clamp: 1;
-              line-clamp: 1;
-            }
-          }
-
-          .date {
-            order: -1; /* Place headline and date next to each other. */
-            /* Reset styling */
-            padding-bottom: 0;
-            line-height: var(--yl-line-height-xs);
-            position: static;
-            top: unset;
-            right: unset;
-            width: auto;
-            z-index: auto;
-
-            @include yl-media-down(md) {
-              order: 0; /* Mobile: Place date below description */
-              display: block; /* Force display on mobile. */
-              padding-bottom: var(--yl-space-3xs);
-            }
-          }
+        .author {
+          display: block;
+          padding: 0;
+          display: none; /* yl-mode-article: hide author from article preview. */
         }
+      }
 
-        &.website {
-          /* Place website icon and name to the far right. */
-          order: 4;
-          margin-left: auto;
-          width: auto;
+      div.flux ul.flux_header .item.titleAuthorSummaryDate .summary {
+        --frss-font-color-grey-dark: var(--yl-color-text-lowest);
+        margin: var(--yl-space-3xs) 0 var(--yl-space-3xs) 0;
+        flex-basis: 100%;
+        max-width: unset;
+        padding-right: min(var(--yl-space-3xl), 10%);
+        font-size: var(--yl-text-xs);
+        line-height: var(--yl-line-height-sm);
 
-          &,
-          a {
-            display: flex;
-            align-items: center;
+        @include yl-media-down(md) {
+          flex-basis: 100%;
+          font-size: var(--yl-text-xs);
+          padding-right: unset;
+          /* Mobile: Override FreshRSS 'line-clamp:2' */
+          -webkit-line-clamp: 1;
+          line-clamp: 1;
+        }
+      }
 
-            &:hover {
-              .favicon {
-                filter: unset; /* Disable grayscale effect on website icon hover */
-              }
+      div.flux ul.flux_header .item.titleAuthorSummaryDate .date {
+        order: -1; /* Place headline and date next to each other. */
+        /* Reset styling */
+        padding-bottom: 0;
+        line-height: var(--yl-line-height-xs);
+        position: static;
+        top: unset;
+        right: unset;
+        width: auto;
+        z-index: auto;
 
-              .websiteName {
-                opacity: 1;
-                /* Underline workaround, since the websiteName has 'overflow:hidden','text-decoration:underline' can't be applied. */
-                box-shadow: var(--yl-color-text-underline) 0 -1px 0 inset;
-              }
-            }
+        @include yl-media-down(md) {
+          order: 0; /* Mobile: Place date below description */
+          display: block; /* Force display on mobile. */
+          padding-bottom: var(--yl-space-3xs);
+        }
+      }
+
+      div.flux ul.flux_header .item.website {
+        /* Place website icon and name to the far right. */
+        order: 4;
+        margin-left: auto;
+        width: auto;
+      }
+
+      div.flux ul.flux_header .item.website,
+      div.flux ul.flux_header .item.website a {
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          .favicon {
+            filter: unset; /* Disable grayscale effect on website icon hover */
           }
 
           .websiteName {
-            max-width: 140px;
-            display: inline-block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            line-height: var(--yl-line-height-xs);
-            font-size: var(--yl-text-xs);
-            opacity: var(--yl-opacity-muted);
-          }
-
-          @include yl-media-down(md) {
-            width: unset;
-            max-width: 200px;
-
-            .websiteName {
-              font-size: var(--yl-text-2xs);
-            }
-          }
-
-          a {
-            text-decoration: none;
+            opacity: 1;
+            /* Underline workaround, since the websiteName has 'overflow:hidden','text-decoration:underline' can't be applied. */
+            box-shadow: var(--yl-color-text-underline) 0 -1px 0 inset;
           }
         }
       }
 
-      .item.manage {
-        &:has(.item-element.bookmark) {
-          order: -1; /* yl-mode-article: Place favorite first in the bottom row. */
-        }
+      div.flux ul.flux_header .item.website .websiteName {
+        max-width: 140px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: var(--yl-line-height-xs);
+        font-size: var(--yl-text-xs);
+        opacity: var(--yl-opacity-muted);
+      }
 
-        a.item-element.bookmark {
-          /* yl-mode-article: Remove ellipsis from being added on 'favorite' icon.  */
-          text-overflow: unset;
+      div.flux ul.flux_header .item.website {
+        @include yl-media-down(md) {
+          width: unset;
+          max-width: 200px;
 
-          img.icon[src$="icons/starred.svg"] {
-            filter: var(--yl-filter-icon-starred);
+          .websiteName {
+            font-size: var(--yl-text-2xs);
           }
         }
       }
 
-      .item.share {
+      div.flux ul.flux_header .item.website a {
+        text-decoration: none;
+      }
+
+      div.flux ul.flux_header .item.manage:has(.item-element.bookmark) {
+        order: -1; /* yl-mode-article: Place favorite first in the bottom row. */
+      }
+
+      div.flux ul.flux_header .item.manage a.item-element.bookmark {
+        /* yl-mode-article: Remove ellipsis from being added on 'favorite' icon.  */
+        text-overflow: unset;
+
+        img.icon[src$="icons/starred.svg"] {
+          filter: var(--yl-filter-icon-starred);
+        }
+      }
+
+      div.flux ul.flux_header .item.share {
         a.dropdown-close {
           // FreshRSS' dropdown menu shows "close" button only when Share is open.
           // Hide it as Youlag is using custom Share dialog `handleShareOption()`.
           display: none;
         }
       }
-    }
 
-    &.not_read {
-      /* yl-mode-article: Unread items background color. */
-      background-color: var(--yl-color-bg-article-fallback);
-      background: var(--yl-color-gradient-article-unread);
+      div.flux.not_read {
+        /* yl-mode-article: Unread items background color. */
+        background-color: var(--yl-color-bg-article-fallback);
+        background: var(--yl-color-gradient-article-unread);
+      }
 
-      ul.flux_header {
+      div.flux.not_read ul.flux_header {
         .summary {
           --frss-font-color-grey-dark: var(--yl-color-text-low);
         }
       }
+
+      div.flux.active.current {
+        /* yl-mode-article: expanaded feed item. */
+
+        .flux_content {
+          background-color: var(--yl-color-bg-article-fallback);
+          background: var(--yl-color-gradient-article-content);
+          border-bottom-left-radius: var(--yl-radius-lg);
+          border-bottom-right-radius: var(--yl-radius-lg);
+          border-left: var(--yl-border-width-sm) solid
+            var(--yl-color-border-article-row);
+          border-right: var(--yl-border-width-sm) solid
+            var(--yl-color-border-article-row);
+
+          @extend %article-typography;
+        }
+      }
     }
 
-    &.active.current {
-      /* yl-mode-article: expanaded feed item. */
+    &.yl-page-watch_later main#stream {
+      /* yl-mode-article: Favorites (Watch later) page */
 
-      .flux_content {
-        background-color: var(--yl-color-bg-article-fallback);
-        background: var(--yl-color-gradient-article-content);
-        border-bottom-left-radius: var(--yl-radius-lg);
-        border-bottom-right-radius: var(--yl-radius-lg);
-        border-left: var(--yl-border-width-sm) solid
-          var(--yl-color-border-article-row);
-        border-right: var(--yl-border-width-sm) solid
-          var(--yl-color-border-article-row);
+      div.flux {
+        &.favorite {
+          background: none; /* Revert to normal background on favorites (watch later) page */
 
-        @extend %article-typography;
+          &.not_read {
+            background: var(--yl-color-gradient-article-unread);
+          }
+
+          li.item.manage {
+            /* yl-mode-article: Actions button hover effect have not yet been setup for article feed view,
+               so to keep it consistent, disable background on hover for favorite button (which is a consequence
+               of youlag global styling. */
+            background: none !important;
+          }
+          a.item-element.bookmark {
+            /* On yl-mode-video interface, actions buttons/icons are normally hidden on desktop view.
+               Force it to show on yl-mode-article article feed view. */
+            visibility: visible !important;
+          }
+        }
       }
     }
   }
 }
 
-body.yl-mode-article.yl-page-watch_later:not(.reader) main#stream {
-  /* yl-mode-article: Favorites (Watch later) page */
+/*****************************************
+ * END "ARTICLE MODE"
+ ****************************************/
 
-  div.flux {
-    &.favorite {
-      background: none; /* Revert to normal background on favorites (watch later) page */
-
-      &.not_read {
-        background: var(--yl-color-gradient-article-unread);
-      }
-
-      li.item.manage {
-        /* yl-mode-article: Actions button hover effect have not yet been setup for article feed view,
-           so to keep it consistent, disable background on hover for favorite button (which is a consequence
-           of youlag global styling. */
-        background: none !important;
-      }
-      a.item-element.bookmark {
-        /* On yl-mode-video interface, actions buttons/icons are normally hidden on desktop view.
-           Force it to show on yl-mode-article article feed view. */
-        visibility: visible !important;
-      }
-    }
-  }
-}
-
-/* Card states for both modes: after the mode rules, so hover and active states win */
+/*****************************************
+ * BEGIN "CARD STATES"
+ * Video mode + article mode, shared styles.
+ * Placed after the two mode sections, 
+ * to provide easier overrides.
+ ****************************************/
 
 body:not(.reader) main#stream {
   div.flux {
@@ -2093,6 +2191,17 @@ body:not(.reader) main#stream {
   }
 }
 
+/*****************************************
+ * END "CARD STATES"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "SPLIT VIEW"
+ * Article mode: split view layout, where
+ * feed items are on the left side and
+ * content is opened on the right side.
+ ****************************************/
+
 .yl-mode-article:not(.reader).yl-article-split-view {
   #ylArticleSplitPane {
     display: none;
@@ -2101,10 +2210,8 @@ body:not(.reader) main#stream {
   main#stream {
     max-width: unset;
   }
-}
 
-@include yl-media-up(md) {
-  .yl-mode-article:not(.reader).yl-article-split-view {
+  @include yl-media-up(md) {
     /* Article: Split pane view */
     max-height: 100vh;
     overflow: hidden;
@@ -2208,52 +2315,54 @@ body:not(.reader) main#stream {
       div.flux {
         margin-bottom: 0;
         border-radius: 0;
+      }
 
-        & > ul.flux_header {
-          border-radius: 0;
-          border-left: none;
-          border-bottom: none;
-          border-right: none;
+      div.flux > ul.flux_header {
+        border-radius: 0;
+        border-left: none;
+        border-bottom: none;
+        border-right: none;
+      }
 
-          .titleAuthorSummaryDate {
-            flex-basis: calc(
-              100% - var(--yl-article-thumbnail-width) - var(--yl-space-2xs) * 2
-            ) !important;
+      div.flux > ul.flux_header .titleAuthorSummaryDate {
+        flex-basis: calc(
+          100% - var(--yl-article-thumbnail-width) - var(--yl-space-2xs) * 2
+        ) !important;
 
-            .summary {
-              padding-right: var(--yl-space-2xs) !important;
-              -webkit-line-clamp: 1 !important;
-              line-clamp: 1 !important;
-            }
-          }
+        .summary {
+          padding-right: var(--yl-space-2xs) !important;
+          -webkit-line-clamp: 1 !important;
+          line-clamp: 1 !important;
+        }
+      }
 
-          .date {
-            order: 2 !important;
-            padding-bottom: var(--yl-space-2xs) !important;
+      div.flux > ul.flux_header .date {
+        order: 2 !important;
+        padding-bottom: var(--yl-space-2xs) !important;
+      }
+
+      div.flux > ul.flux_header .item.thumbnail {
+        margin-bottom: var(--yl-space-2xs) !important;
+      }
+
+      div.flux > ul.flux_header {
+        @container (max-width: 320px) {
+          --yl-article-thumbnail-width: 0;
+
+          .title {
+            font-size: calc(var(--yl-text-sm) / 1.3) !important;
           }
 
           .item.thumbnail {
-            margin-bottom: var(--yl-space-2xs) !important;
+            display: none;
           }
 
-          @container (max-width: 320px) {
-            --yl-article-thumbnail-width: 0;
+          .item.website {
+            margin-left: unset;
+          }
 
-            .title {
-              font-size: calc(var(--yl-text-sm) / 1.3) !important;
-            }
-
-            .item.thumbnail {
-              display: none;
-            }
-
-            .item.website {
-              margin-left: unset;
-
-              .websiteName {
-                max-width: 190px;
-              }
-            }
+          .item.website .websiteName {
+            max-width: 190px;
           }
         }
       }
@@ -2306,6 +2415,14 @@ body:not(.reader) main#stream {
   @extend %article-typography;
 }
 
+/*****************************************
+ * END "SPLIT VIEW"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "READER VIEW"
+ ****************************************/
+
 #stream.reader .flux {
   border-bottom: var(--yl-border-width-sm) solid var(--yl-color-border-divider);
 
@@ -2327,6 +2444,15 @@ body:not(.reader) main#stream {
     background: var(--yl-color-body-background);
   }
 }
+
+/*****************************************
+ * END "READER VIEW"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "CATEGORY FILTER"
+ * Watch later category filter. Experimental, hidden by default.
+ ****************************************/
 
 #yl_stream_category_filter_toggle {
   /* NOTE 2026-02-03: Experiemental feature, hidden by default. */
@@ -2401,3 +2527,7 @@ body.yl-mode-video:not(.reader) {
     display: flex !important;
   }
 }
+
+/*****************************************
+ * END "CATEGORY FILTER"
+ ****************************************/

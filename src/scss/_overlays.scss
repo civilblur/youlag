@@ -1,5 +1,29 @@
+/**
+ * Overlays
+ *
+ * Elements shown on top of the page.
+ * Mostly restyles FreshRSS' native elements.
+ */
+
+/*****************************************
+ *
+ * INDEX
+ * - Dropdowns
+ * - Boxes
+ * - Overlay panel
+ * - Modals
+ * - Alerts and notifications
+ * - Badge
+ *
+ ****************************************/
+
 @use "variables" as *;
 @use "mixins" as *;
+
+/*****************************************
+ * BEGIN "DROPDOWNS"
+ * Dropdown menus, on desktop and mobile.
+ ****************************************/
 
 .dropdown-menu {
   list-style: none;
@@ -302,6 +326,15 @@ li.item.feed .item-title {
   }
 }
 
+/*****************************************
+ * END "DROPDOWNS"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "BOXES"
+ * FreshRSS boxes.
+ ****************************************/
+
 .box .box-title {
   background-color: var(--yl-color-bg-box-title);
   color: var(--yl-color-text-medium);
@@ -340,6 +373,15 @@ main#stream .box.category {
     }
   }
 }
+
+/*****************************************
+ * END "BOXES"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "OVERLAY PANEL"
+ * FreshRSS overlay panel.
+ ****************************************/
 
 #global #overlay {
   #panel {
@@ -388,6 +430,15 @@ main#stream,
     }
   }
 }
+
+/*****************************************
+ * END "OVERLAY PANEL"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "MODALS"
+ * Youlag's custom modals, e.g. tags and share.
+ ****************************************/
 
 body.yl-tags-modal-open,
 body.yl-share-modal-open {
@@ -523,6 +574,16 @@ body.yl-share-modal-open {
   }
 }
 
+/*****************************************
+ * END "MODALS"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "ALERTS AND NOTIFICATIONS"
+ * Alerts and notifications, from FreshRSS
+ * and Youlag.
+ ****************************************/
+
 html {
   .alert-warn {
     @include yl-gradient-bg(warning, false);
@@ -649,6 +710,15 @@ html {
   }
 }
 
+/*****************************************
+ * END "ALERTS AND NOTIFICATIONS"
+ ****************************************/
+
+/*****************************************
+ * BEGIN "BADGE"
+ * Small inline label.
+ ****************************************/
+
 .yl-badge {
   display: inline-flex;
   align-items: center;
@@ -671,3 +741,7 @@ html {
     color: var(--yl-color-accent-success-alt);
   }
 }
+
+/*****************************************
+ * END "BADGE"
+ ****************************************/

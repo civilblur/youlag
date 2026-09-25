@@ -1,11 +1,8 @@
-/*****************************************
+/**
+ * Variables
  *
- * Youlag Sass variables
- *
- * Settings layer: Sass maps and breakpoints.
- * Outputs no CSS, so any partial can use it.
- *
- ****************************************/
+ * Sass variables for building the CSS variables and media queries.
+ */
 
 /* Overlay alpha: strength of the translucent layer for hovers, borders and dividers */
 $yl-overlay-alpha: (
@@ -177,12 +174,39 @@ $yl-breakpoints: (
 /* Feed grid columns */
 /* Ambiguous sizes derived from testing on various real-life devices */
 $yl-breakpoint-feed-grid-2-columns: 600px;
-$yl-breakpoint-feed-grid-3-columns: 1144px;
-$yl-breakpoint-feed-grid-4-columns: 1360px;
-$yl-breakpoint-feed-grid-5-columns: 1800px;
+
+/* Column count: (breakpoint, minimum card width) */
+$yl-feed-grid-columns: (
+  2: (
+    $yl-breakpoint-feed-grid-2-columns,
+    200px,
+  ),
+  3: (
+    1144px,
+    200px,
+  ),
+  4: (
+    1360px,
+    240px,
+  ),
+  5: (
+    1800px,
+    200px,
+  ),
+);
 
 $yl-breakpoint-article-row-wrap: 291px;
 
 $yl-breakpoint-sidenav-toggle-overlap: 1020px;
 
 $yl-breakpoint-short-viewport: 900px;
+
+/* Feed pages, as opposed to settings pages. Used inside :is() */
+$yl-feed-pages: (
+  ".yl-page-home",
+  ".yl-page-important",
+  ".yl-page-watch_later",
+  ".yl-page-playlists",
+  ".yl-page-category",
+  ".yl-page-search_results"
+);
