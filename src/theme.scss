@@ -104,7 +104,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--yl-p-2xs) var(--yl-p-sm);
+  padding: var(--yl-space-2xs) var(--yl-space-sm);
   border: var(--yl-border-width-sm) solid var(--yl-color-border-button-menu);
   border-radius: var(--yl-radius-full);
   background-color: var(--yl-color-bg-button-menu);
@@ -118,6 +118,13 @@
     background-color: var(--yl-color-bg-button-menu-hover);
     text-decoration: none;
   }
+}
+
+/* Sidenav item: e.g. sidenav buttons in feed, settings. */
+@mixin yl-sidenav-item {
+  padding: var(--yl-space-xs);
+  border-radius: var(--yl-radius-md);
+  line-height: var(--yl-line-height-md);
 }
 
 /* State layer as an inset shadow, for buttons with a gradient background. */
@@ -147,12 +154,12 @@
 body.youlag-active:not(.reader) main#stream {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
-  gap: 4px;
-  padding: 0 var(--yl-p-sm) var(--yl-p-sm) var(--yl-p-sm);
+  gap: var(--yl-space-3xs);
+  padding: 0 var(--yl-space-sm) var(--yl-space-sm) var(--yl-space-sm);
 
   @include yl-media-down(md) {
     grid-template-columns: minmax(200px, 1fr);
-    gap: var(--yl-m-xs);
+    gap: var(--yl-space-xs);
   }
 
   @media (min-width: $yl-breakpoint-feed-grid-2-columns) {
@@ -160,7 +167,7 @@ body.youlag-active:not(.reader) main#stream {
   }
 
   @media (max-width: $yl-breakpoint-feed-grid-2-columns) {
-    grid-row-gap: var(--yl-m-xs);
+    grid-row-gap: var(--yl-space-xs);
   }
 
   @media (min-width: $yl-breakpoint-feed-grid-3-columns) {
@@ -398,8 +405,8 @@ body {
     1px 0 0 var(--yl-color-body-background),
     0 -1px 0 var(--yl-color-body-background); /* HACK: Address youlag-inactive (article view), if browser is zoomed out, make sure to still overlap half-pixels on the edges. */
   background-color: var(--yl-color-body-background);
-  padding-top: var(--yl-p-2xs);
-  padding-bottom: var(--yl-p-2xs);
+  padding-top: var(--yl-space-2xs);
+  padding-bottom: var(--yl-space-2xs);
   padding-left: 0;
   padding-right: 0;
   box-sizing: border-box;
@@ -412,7 +419,7 @@ body {
     display: flex;
     align-items: center;
     width: 100%;
-    gap: var(--yl-m-2xs);
+    gap: var(--yl-space-2xs);
 
     a,
     button {
@@ -474,10 +481,10 @@ body {
   &.yl-toolbar-open--viewOptions {
     #yl_nav_menu_container_content {
       display: flex;
-      gap: var(--yl-m-xs);
+      gap: var(--yl-space-xs);
       align-items: flex-start;
       flex-wrap: wrap;
-      padding-top: var(--yl-p-xs);
+      padding-top: var(--yl-space-xs);
 
       & > * {
         margin: 0; /* Reset margin (gutter for nav_menu groups), prioritize flex gap instead. */
@@ -489,7 +496,7 @@ body {
     .yl-stream-category-filter {
       display: flex;
       flex-direction: column;
-      gap: var(--yl-m-3xs);
+      gap: var(--yl-space-3xs);
 
       &-options {
         width: 100%;
@@ -499,10 +506,10 @@ body {
     .yl-stream-category-filter__actions {
       display: flex;
       justify-content: flex-end;
-      gap: var(--yl-m-3xs);
+      gap: var(--yl-space-3xs);
 
       .yl-stream-category-filter__button {
-        padding: var(--yl-p-2xs) var(--yl-p-sm);
+        padding: var(--yl-space-2xs) var(--yl-space-sm);
         border-radius: var(--yl-radius-full);
         cursor: pointer;
         transition: background-color var(--yl-duration-button);
@@ -519,8 +526,8 @@ body {
 .youlag-inactive {
   @include yl-media-down(md) {
     #yl_category_toolbar {
-      padding-left: var(--yl-p-sm);
-      padding-right: var(--yl-p-sm);
+      padding-left: var(--yl-space-sm);
+      padding-right: var(--yl-space-sm);
     }
   }
 
@@ -536,7 +543,7 @@ body.youlag-sidenav--expanded:has(
   /* 
    1. Accommmodate fixed sidenav expanded state.
    2. For no article empty state, `#yl_nav_menu_container` is not available, thus target `.nav_menu` */
-  padding-left: calc(var(--yl-sidenav-width) + var(--yl-p-sm));
+  padding-left: calc(var(--yl-sidenav-width) + var(--yl-space-sm));
 }
 
 .youlag-sidenav--expanded {
@@ -887,7 +894,7 @@ body.youlag-sidenav--expanded:has(
       padding-bottom: 0;
 
       img {
-        height: var(--yl-m-md) !important;
+        height: var(--yl-space-md) !important;
       }
 
       @include yl-media-up(md) {
@@ -895,7 +902,7 @@ body.youlag-sidenav--expanded:has(
           /* Logo, make room for sidenav toggle button */
           margin-left: 46px;
           margin-top: 4px;
-          /* Set fixed size to allow sidenav logo to replicate exact sizing. See '.youlag-loaded #aside_feed::before'. */
+          /* Set fixed size to allow sidenav logo to replicate exact sizing. See '#yl_freshrss_logo_container'. */
           width: 130px;
           height: 26px !important;
         }
@@ -910,7 +917,7 @@ body.youlag-sidenav--expanded:has(
 
   .item {
     /* Header items padding top and padding bottom. */
-    --frss-padding-top-bottom: var(--yl-p-2xs);
+    --frss-padding-top-bottom: var(--yl-space-2xs);
   }
 
   /* Header search bar */
@@ -928,7 +935,7 @@ body.youlag-sidenav--expanded:has(
     input {
       width: 600px;
       height: 40px;
-      padding: 0.8rem 1.6rem;
+      padding: var(--yl-space-xs) var(--yl-space-md);
       border-top-left-radius: var(--yl-radius-full);
       border-bottom-left-radius: var(--yl-radius-full);
       background: transparent;
@@ -959,7 +966,7 @@ body.youlag-sidenav--expanded:has(
 
   /* Header settings button */
   .item.configure {
-    width: calc(40px + var(--yl-p-sm));
+    width: calc(40px + var(--yl-space-sm));
     text-align: left;
 
     .btn {
@@ -993,7 +1000,7 @@ body.youlag-sidenav--expanded:has(
       align-items: center;
       height: 100%;
       justify-content: flex-end;
-      padding-right: 14px;
+      padding-right: var(--yl-space-xs);
       box-sizing: border-box;
 
       .btn {
@@ -1047,7 +1054,7 @@ main#stream :is(#stream-footer, .stream-footer),
 #overlay #panel :is(#stream-footer, .stream-footer) {
   grid-column: 1 / -1;
   border-top: none;
-  margin-top: 3rem;
+  margin-top: var(--yl-space-xl);
 
   .stream-footer-inner {
     /* Hide text, then, apply new text using psuedo element :before/:after */
@@ -1058,7 +1065,7 @@ main#stream :is(#stream-footer, .stream-footer),
     &:before {
       content: "(╯°□°)╯︵ ┻━┻";
       font-size: var(--yl-feed-end-emoticon-font-size);
-      margin-bottom: 2rem;
+      margin-bottom: var(--yl-space-md);
       opacity: 0.75;
     }
 
@@ -1066,7 +1073,7 @@ main#stream :is(#stream-footer, .stream-footer),
       content: "You've reached the end";
       font-size: var(--yl-feed-end-title-font-size);
       order: -1;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--yl-space-2xs);
       opacity: 0.75;
     }
   }
@@ -1078,11 +1085,11 @@ main#stream :is(#stream-footer, .stream-footer),
     justify-content: center;
     align-items: center;
     border-radius: var(--yl-radius-lg);
-    margin-top: var(--yl-m-md);
-    padding-left: var(--yl-p-md);
-    padding-right: var(--yl-p-md);
-    padding-top: var(--yl-p-sm);
-    padding-bottom: var(--yl-p-sm);
+    margin-top: var(--yl-space-md);
+    padding-left: var(--yl-space-md);
+    padding-right: var(--yl-space-md);
+    padding-top: var(--yl-space-sm);
+    padding-bottom: var(--yl-space-sm);
     margin-bottom: 0;
     width: 100%;
     max-width: 600px;
@@ -1160,7 +1167,7 @@ main#stream :is(#stream-footer, .stream-footer),
 
 /* Feed menu */
 .nav_menu {
-  padding: var(--yl-p-sm) var(--yl-p-xs) 0 var(--yl-p-xs);
+  padding: var(--yl-space-sm) var(--yl-space-xs) 0 var(--yl-space-xs);
   box-sizing: border-box;
 
   div[id^="nav_menu"] > a:only-child,
@@ -1194,7 +1201,7 @@ main#stream {
     text-transform: none;
     line-height: var(--yl-line-height-xs);
     margin: 0;
-    padding: var(--yl-m-2xs) 0;
+    padding: var(--yl-space-2xs) 0;
     height: var(--yl-feed-nav-menu-height);
     box-sizing: border-box;
 
@@ -1205,7 +1212,7 @@ main#stream {
 
     .transition-next {
       font-size: 0;
-      margin-left: 4px;
+      margin-left: var(--yl-space-3xs);
       opacity: 1;
 
       &:before {
@@ -1250,7 +1257,7 @@ main#stream {
       @include yl-media-up(md) {
         /* HACK: Workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         main#stream .yl-category-toolbar--sticky {
-          padding-left: 52px; /* About the width of sidenav toggle button. */
+          padding-left: var(--yl-sidenav-toggle-button-width);
         }
       }
     }
@@ -1276,7 +1283,7 @@ main#stream {
       @media (min-width: $toggle-overlap-min) and (max-width: $yl-breakpoint-sidenav-toggle-overlap) {
         /* HACK: On article expand mode: workaround for now, when the sidenav toggle button overlaps the transtion (category) title. */
         main#stream .yl-category-toolbar--sticky {
-          padding-left: 52px; /* About the width of sidenav toggle button. */
+          padding-left: var(--yl-sidenav-toggle-button-width);
         }
       }
     }
@@ -1377,13 +1384,13 @@ body.youlag-active:not(.reader) main#stream div.flux {
   .yl-video-duration {
     // If Dearrow provides a video duration, display it on the thumbnail.
     position: absolute;
-    bottom: calc(var(--yl-p-3xs) * 1.5);
-    right: calc(var(--yl-p-3xs) * 1.5);
+    bottom: calc(var(--yl-space-3xs) * 1.5);
+    right: calc(var(--yl-space-3xs) * 1.5);
     z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--yl-p-3xs);
+    padding: var(--yl-space-3xs);
     border-radius: var(--yl-radius-md);
     background-color: var(--yl-color-bg-video-duration);
     font-size: var(--yl-text-xs);
@@ -1453,7 +1460,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
     flex-wrap: wrap;
     height: 100%;
     max-width: 100%;
-    padding: 8px;
+    padding: var(--yl-space-2xs);
     box-sizing: border-box;
     border: none;
     background: unset;
@@ -1470,7 +1477,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       flex-direction: column;
       width: 100%;
       flex: 1 1 100%;
-      margin: 4px 0 var(--yl-m-xs) 0;
+      margin: var(--yl-space-3xs) 0 var(--yl-space-xs) 0;
 
       @media (min-width: $yl-breakpoint-feed-grid-2-columns) {
         & {
@@ -1485,8 +1492,8 @@ body.youlag-active:not(.reader) main#stream div.flux {
         position: static;
         padding-top: 0;
         padding-bottom: 0;
-        padding-left: 2px;
-        padding-right: 2px;
+        padding-left: var(--yl-space-4xs);
+        padding-right: var(--yl-space-4xs);
         min-width: unset;
         font-size: var(--yl-text-sm);
         white-space: normal;
@@ -1504,7 +1511,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       .author {
         padding: 0;
         display: block;
-        margin-top: var(--yl-m-3xs);
+        margin-top: var(--yl-space-3xs);
         font-size: var(--yl-text-xs);
         line-height: var(--yl-line-height-sm);
         color: var(--yl-color-text-low);
@@ -1517,9 +1524,9 @@ body.youlag-active:not(.reader) main#stream div.flux {
         padding: 0;
         position: static;
         text-align: left;
-        margin-top: 4px;
+        margin-top: var(--yl-space-3xs);
         padding-left: 0;
-        padding-right: 2px;
+        padding-right: var(--yl-space-4xs);
         display: flex;
         width: 100%;
         font-size: var(--yl-text-xs);
@@ -1542,7 +1549,7 @@ body.youlag-active:not(.reader) main#stream div.flux {
       aspect-ratio: 16 / 9;
       flex: 0 0 100%;
       box-sizing: border-box;
-      margin-bottom: 4px;
+      margin-bottom: var(--yl-space-3xs);
       padding: 0;
       overflow: hidden;
 
@@ -1584,7 +1591,7 @@ body.youlag-active:not(.reader) main#stream div.flux.active.current {
     left: 0;
     background-color: var(--frss-background-color, hsl(0 0% 100%));
     z-index: 1;
-    padding: 12px;
+    padding: var(--yl-space-xs);
     margin-top: -4px;
     border-bottom-left-radius: var(--yl-radius-2xs);
     border-bottom-right-radius: var(--yl-radius-2xs);
@@ -1613,7 +1620,7 @@ body.youlag-active:not(.reader) main#stream div.flux.active.current {
       order: -1;
       min-width: unset;
       flex: 0 0 100%;
-      margin-bottom: 6px;
+      margin-bottom: var(--yl-space-3xs);
       z-index: 10;
       height: auto;
 
@@ -1683,7 +1690,7 @@ body.youlag-active:not(.reader) main#stream {
           border-radius: var(--yl-radius-full);
           justify-content: center;
           align-items: center;
-          gap: 4px;
+          gap: var(--yl-space-3xs);
         }
       }
     }
@@ -1754,7 +1761,7 @@ body.youlag-active:not(.reader) main#stream {
         height: auto;
         justify-content: center;
         border-radius: var(--yl-radius-full);
-        margin: 0 2px;
+        margin: 0 var(--yl-space-4xs);
         padding: 0;
         z-index: 10;
         transition: background-color var(--yl-duration-button);
@@ -1766,7 +1773,7 @@ body.youlag-active:not(.reader) main#stream {
         }
 
         a {
-          padding: 4px 6px;
+          padding: var(--yl-space-3xs);
           text-align: center;
           width: 100%;
         }
@@ -1798,7 +1805,7 @@ body.youlag-active:not(.reader) main#stream {
           }
 
           a[href="./?c=tag"] {
-            margin-left: 8px;
+            margin-left: var(--yl-space-2xs);
             font-size: var(--yl-text-sm);
             visibility: visible;
             width: unset;
@@ -1979,7 +1986,7 @@ body.youlag-active:not(.reader) main#stream {
           }
 
           a[href="./?c=tag"] {
-            margin-left: 8px;
+            margin-left: var(--yl-space-2xs);
             font-size: var(--yl-text-sm);
           }
         }
@@ -2011,8 +2018,8 @@ body.youlag-active:not(.reader).youlag-mobile-layout--grid {
   @include yl-media-down(sm) {
     main#stream {
       grid-template-columns: repeat(2, minmax(140px, 1fr));
-      grid-column-gap: var(--yl-m-xs);
-      padding: var(--yl-m-2xs);
+      grid-column-gap: var(--yl-space-xs);
+      padding: var(--yl-space-2xs);
     }
 
     div.flux .flux_header .item {
@@ -2144,14 +2151,14 @@ html {
 
       @include yl-media-up(md) {
         #aside_feed {
-          padding-top: 57px; /* Desktop: Match desktop header toolbar height. */
+          padding-top: var(--yl-topnav-height); /* Desktop: Match desktop header toolbar height. */
         }
 
         /* Desktop: Sidenav is visible. */
         main#stream {
           box-sizing: border-box;
           padding-left: calc(
-            var(--yl-sidenav-width) + var(--yl-p-sm)
+            var(--yl-sidenav-width) + var(--yl-space-sm)
           ); /* Set aside space for the sidebar */
         }
       }
@@ -2341,9 +2348,9 @@ html {
     /* Desktop dropdown menu, prevent overflowing viewport height. */
     max-height: calc(
       100dvh - var(--yl-topnav-height) - var(--yl-feed-nav-menu-height) - var(
-          --yl-m-3xl
+          --yl-space-3xl
         )
-    ); /* `var(--yl-m-3xl)` is arbitrary padding to prevent touching the viewport edge. */
+    ); /* `var(--yl-space-3xl)` is arbitrary padding to prevent touching the viewport edge. */
   }
 
   form .search {
@@ -2375,7 +2382,7 @@ html {
 
   .help {
     font-size: var(--yl-text-sm);
-    margin-top: var(--yl-m-sm);
+    margin-top: var(--yl-space-sm);
   }
 }
 
@@ -2415,14 +2422,14 @@ html {
       font-size: var(--yl-text-md);
 
       label {
-        padding: 10px;
+        padding: var(--yl-space-2xs);
         text-indent: 0;
       }
 
       input[type="checkbox"] {
         width: 1.4rem !important;
         height: 1.4rem !important;
-        margin-right: 1rem;
+        margin-right: var(--yl-space-xs);
       }
     }
 
@@ -2442,7 +2449,7 @@ html {
       @include yl-media-down(md) {
         max-height: 60vh;
         margin-bottom: calc(
-          var(--yl-m-xs) * -1
+          var(--yl-space-xs) * -1
         ); /* HACK: Nudge mobile dropdown (bottom sheet) to bottom edge. */
 
         & + .dropdown-close {
@@ -2455,11 +2462,11 @@ html {
         li.item a {
           /* Add separation between check icon and label text. */
           display: flex;
-          gap: 1rem;
-          padding-left: var(--yl-p-xl);
+          gap: var(--yl-space-xs);
+          padding-left: var(--yl-space-xl);
 
           &::before {
-            margin-left: calc(var(--yl-p-lg) * -1);
+            margin-left: calc(var(--yl-space-lg) * -1);
           }
         }
       }
@@ -2604,7 +2611,7 @@ li.item.feed .item-title {
 
 main#stream .box.category {
   .box-content {
-    padding: var(--yl-p-sm);
+    padding: var(--yl-space-sm);
 
     li.item.feed {
       border: none;
@@ -2656,11 +2663,11 @@ main.post {
     }
 
     .box-title {
-      padding: var(--yl-p-sm);
+      padding: var(--yl-space-sm);
     }
 
     .box-content {
-      padding: var(--yl-p-sm);
+      padding: var(--yl-space-sm);
       background-color: var(--yl-color-surface-settings-box-content);
 
       .item,
@@ -2677,7 +2684,7 @@ main.post {
       .emptyCategory {
         .alert-warn {
           color: var(--yl-color-text-medium);
-          padding: var(--yl-p-2xs);
+          padding: var(--yl-space-2xs);
           border-radius: var(--yl-radius-md);
           text-indent: 0;
         }
@@ -2700,7 +2707,7 @@ main.post {
 
     .flux .flux_header {
       border-color: var(--yl-color-border-overlay-panel-item);
-      padding: 1rem;
+      padding: var(--yl-space-xs);
       box-sizing: border-box;
 
       &:hover {
@@ -2778,13 +2785,12 @@ main.post {
 .tree {
   .tree-folder {
     border: none;
-    margin: 0 8px;
+    margin: 0 var(--yl-space-2xs);
 
     .tree-folder-title {
       display: flex;
       align-items: center;
-      padding: var(--yl-p-xs);
-      border-radius: var(--yl-radius-md);
+      @include yl-sidenav-item;
       text-transform: unset;
       font-size: var(--yl-sidenav-label-font-size);
       font-weight: var(--yl-font-weight-regular);
@@ -2970,8 +2976,8 @@ main.post {
     margin: 0;
     font-weight: var(--yl-font-weight-bold);
     font-size: var(--yl-text-3xs);
-    padding-left: var(--yl-p-3xs);
-    padding-right: var(--yl-p-3xs);
+    padding-left: var(--yl-space-3xs);
+    padding-right: var(--yl-space-3xs);
     border: var(--yl-border-width-sm) solid var(--yl-color-border-sidenav-count);
     @include yl-gradient-btn-bg(sidenav-count);
   }
@@ -3018,14 +3024,13 @@ main.post {
 /* Settings page side nav */
 body:not(.normal) {
   .nav.nav-list.aside {
-    padding-top: 2rem;
+    padding-top: var(--yl-space-md);
 
     .item.nav-section {
       li.item {
-        margin: 0 8px;
-        border-radius: var(--yl-radius-lg);
+        margin: 0 var(--yl-space-2xs);
+        border-radius: var(--yl-radius-md);
         min-height: 1rem;
-        line-height: var(--yl-line-height-xs);
 
         &.active,
         &.active a,
@@ -3038,9 +3043,8 @@ body:not(.normal) {
       }
 
       li.item a {
-        padding: 16px;
-        line-height: var(--yl-line-height-xs);
-        font-size: var(--yl-text-sm);
+        @include yl-sidenav-item;
+        font-size: var(--yl-sidenav-label-font-size);
       }
     }
   }
@@ -3084,8 +3088,8 @@ body:not(.normal) {
       /* Article, active: Footer action buttons container */
       display: flex;
       align-items: center;
-      gap: var(--yl-m-xs);
-      padding: var(--yl-m-3xs) var(--yl-m-sm);
+      gap: var(--yl-space-xs);
+      padding: var(--yl-space-3xs) var(--yl-space-sm);
       box-sizing: border-box;
 
       @include yl-media-up(md) {
@@ -3133,7 +3137,7 @@ body:not(.normal) {
         }
 
         a {
-          padding: var(--yl-p-2xs);
+          padding: var(--yl-space-2xs);
           min-width: 25px;
           min-height: 25px;
           border-radius: var(--yl-radius-md);
@@ -3185,12 +3189,12 @@ body:not(.normal) {
     border: none;
     border-top-right-radius: var(--yl-radius-md);
     border-bottom-right-radius: var(--yl-radius-md);
-    padding-bottom: var(--yl-p-sm);
-    padding-top: var(--yl-p-sm);
-    padding-left: var(--yl-p-md);
-    padding-right: var(--yl-p-md);
-    margin-top: var(--yl-m-xs);
-    margin-bottom: var(--yl-m-xs);
+    padding-bottom: var(--yl-space-sm);
+    padding-top: var(--yl-space-sm);
+    padding-left: var(--yl-space-md);
+    padding-right: var(--yl-space-md);
+    margin-top: var(--yl-space-xs);
+    margin-bottom: var(--yl-space-xs);
 
     &::before {
       content: "";
@@ -3209,7 +3213,7 @@ body:not(.normal) {
   }
 
   hr {
-    margin: var(--yl-m-xs) 0;
+    margin: var(--yl-space-xs) 0;
     border-color: var(--yl-color-border-article-divider);
   }
 
@@ -3219,14 +3223,14 @@ body:not(.normal) {
   h4,
   h5,
   h6 {
-    margin: var(--yl-m-lg) 0 var(--yl-m-xs) 0;
+    margin: var(--yl-space-lg) 0 var(--yl-space-xs) 0;
   }
 
   ul {
-    margin-bottom: var(--yl-m-xs);
+    margin-bottom: var(--yl-space-xs);
 
     li {
-      margin-bottom: var(--yl-m-3xs);
+      margin-bottom: var(--yl-space-3xs);
     }
   }
 
@@ -3296,7 +3300,7 @@ body.youlag-active.youlag-video-unread-badge:not(.reader) main#stream {
         position: absolute;
         top: 18px;
         left: 18px;
-        padding: 3px 10px;
+        padding: var(--yl-space-4xs) var(--yl-space-2xs);
         background: var(--yl-color-gradient-badge-unread);
         background-color: var(--yl-color-accent-unread-fallback);
         border: var(--yl-border-width-sm) solid
@@ -3324,14 +3328,14 @@ body.youlag-inactive:not(.reader) {
     }
   }
   .yl-article-video-iframe {
-    margin-top: var(--yl-m-sm);
+    margin-top: var(--yl-space-sm);
   }
 
   &.youlag-sidenav--expanded {
     nav.aside_feed {
       .nav_menu {
         max-width: calc(
-          900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)
+          900px + var(--yl-sidenav-width) + var(--yl-space-md) + var(--yl-space-md)
         ); /* youlag-inactive: Match position of article */
         margin: 0 auto;
       }
@@ -3339,7 +3343,7 @@ body.youlag-inactive:not(.reader) {
       main#stream {
         /* Desktop: sidenav opened */
         max-width: calc(
-          900px + var(--yl-sidenav-width) + var(--yl-p-md) + var(--yl-p-md)
+          900px + var(--yl-sidenav-width) + var(--yl-space-md) + var(--yl-space-md)
         ); /* youlag-inactive: Articles will effectively be max 900px */
       }
     }
@@ -3348,8 +3352,8 @@ body.youlag-inactive:not(.reader) {
 
 body.youlag-inactive:not(.reader) main#stream {
   margin: 0 auto;
-  padding-left: var(--yl-p-sm);
-  padding-right: var(--yl-p-sm);
+  padding-left: var(--yl-space-sm);
+  padding-right: var(--yl-space-sm);
   max-width: 900px;
 
   @include yl-media-down(md) {
@@ -3359,7 +3363,7 @@ body.youlag-inactive:not(.reader) main#stream {
   div.flux {
     border-radius: var(--yl-radius-lg);
     transition: all var(--yl-duration-sm);
-    margin-bottom: var(--yl-m-xs);
+    margin-bottom: var(--yl-space-xs);
 
     @include yl-media-down(md) {
       margin-bottom: 0;
@@ -3407,7 +3411,7 @@ body.youlag-inactive:not(.reader) main#stream {
       border: var(--yl-border-width-sm) solid var(--yl-color-border-article-row);
       border-radius: var(--yl-radius-xl);
       box-sizing: border-box;
-      padding: var(--yl-p-2xs) var(--yl-p-2xs);
+      padding: var(--yl-space-2xs) var(--yl-space-2xs);
       margin: 0;
 
       @include yl-media-down(md) {
@@ -3437,20 +3441,20 @@ body.youlag-inactive:not(.reader) main#stream {
           align-items: center;
           justify-content: center;
           width: auto;
-          padding: var(--yl-p-2xs) 0;
+          padding: var(--yl-space-2xs) 0;
 
           & > a,
           & > div a {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--yl-p-3xs);
+            padding: var(--yl-space-3xs);
             width: 32px;
             height: 24px;
             border: var(--yl-border-width-sm) solid
               var(--yl-color-border-button-menu);
             border-radius: var(--yl-radius-full);
-            margin-left: 8px;
+            margin-left: var(--yl-space-2xs);
             background-color: var(--yl-color-bg-button-menu);
             transition: background-color var(--yl-duration-button);
 
@@ -3489,10 +3493,10 @@ body.youlag-inactive:not(.reader) main#stream {
           background: var(--yl-color-bg-article-thumbnail);
           border-radius: var(--yl-radius-md);
           overflow: hidden;
-          margin-top: var(--yl-m-3xs);
-          margin-bottom: var(--yl-m-3xs);
-          margin-left: var(--yl-m-2xs);
-          margin-right: var(--yl-m-2xs);
+          margin-top: var(--yl-space-3xs);
+          margin-bottom: var(--yl-space-3xs);
+          margin-left: var(--yl-space-2xs);
+          margin-right: var(--yl-space-2xs);
 
           @include yl-media-down(sm) {
             height: var(--yl-article-thumbnail-width);
@@ -3526,12 +3530,12 @@ body.youlag-inactive:not(.reader) main#stream {
           align-items: flex-start;
           justify-content: flex-start;
           align-content: baseline;
-          column-gap: var(--yl-m-2xs);
+          column-gap: var(--yl-space-2xs);
           flex-wrap: wrap;
           flex-basis: calc(
-            100% - var(--yl-article-thumbnail-width) - (var(--yl-m-2xs) * 2)
+            100% - var(--yl-article-thumbnail-width) - (var(--yl-space-2xs) * 2)
           );
-          padding: var(--yl-p-3xs) var(--yl-p-2xs) 0 var(--yl-p-2xs);
+          padding: var(--yl-space-3xs) var(--yl-space-2xs) 0 var(--yl-space-2xs);
           box-sizing: border-box;
 
           @media (max-width: $yl-breakpoint-article-row-wrap) {
@@ -3566,17 +3570,16 @@ body.youlag-inactive:not(.reader) main#stream {
             .author {
               display: block;
               padding: 0;
-              margin-top: 4px;
               display: none; /* youlag-inactive: hide author from article preview. */
             }
           }
 
           .summary {
             --frss-font-color-grey-dark: var(--yl-color-text-lowest);
-            margin: var(--yl-m-3xs) 0 var(--yl-m-3xs) 0;
+            margin: var(--yl-space-3xs) 0 var(--yl-space-3xs) 0;
             flex-basis: 100%;
             max-width: unset;
-            padding-right: min(var(--yl-p-3xl), 10%);
+            padding-right: min(var(--yl-space-3xl), 10%);
             font-size: var(--yl-text-xs);
             line-height: var(--yl-line-height-sm);
 
@@ -3604,7 +3607,7 @@ body.youlag-inactive:not(.reader) main#stream {
             @include yl-media-down(md) {
               order: 0; /* Mobile: Place date below description */
               display: block; /* Force display on mobile. */
-              padding-bottom: var(--yl-m-3xs);
+              padding-bottom: var(--yl-space-3xs);
             }
           }
         }
@@ -3842,10 +3845,10 @@ main#stream,
 #new-article {
   /* Feed updated notification banner */
   position: sticky;
-  top: var(--yl-m-2xs);
+  top: var(--yl-space-2xs);
   z-index: var(--yl-z-sticky);
   grid-column: 1 / -1;
-  margin: var(--yl-m-sm) 0;
+  margin: var(--yl-space-sm) 0;
   overflow: hidden;
   background: unset;
   margin-left: 0;
@@ -3853,20 +3856,20 @@ main#stream,
   font-size: var(--yl-text-xs);
 
   @include yl-media-down(md) {
-    top: calc(54px + var(--yl-m-2xs)); /* Account for mobile top nav height */
-    margin: 0 var(--yl-m-xs);
+    top: calc(var(--yl-topnav-height) + var(--yl-space-2xs)); /* Account for mobile top nav height */
+    margin: 0 var(--yl-space-xs);
     margin-top: 0;
-    margin-left: var(--yl-m-2xs);
-    margin-right: var(--yl-m-2xs);
+    margin-left: var(--yl-space-2xs);
+    margin-right: var(--yl-space-2xs);
     margin-bottom: var(
-      --yl-m-sm
+      --yl-space-sm
     ); /* Prevent getting overlapped by transition (category) title. */
   }
 
   a {
     @include yl-gradient-bg(info);
     border-radius: var(--yl-radius-md);
-    padding: var(--yl-p-xs);
+    padding: var(--yl-space-xs);
   }
 }
 
@@ -3876,8 +3879,8 @@ main#stream,
   /* #actualizeProgress: feed update progress */
 
   border-radius: var(--yl-radius-lg);
-  margin: var(--yl-m-xs);
-  max-width: calc(100% - var(--yl-m-xs) * 2);
+  margin: var(--yl-space-xs);
+  max-width: calc(100% - var(--yl-space-xs) * 2);
 
   &.good {
     @include yl-gradient-bg(success);
@@ -4065,17 +4068,17 @@ body:has(.tree-folder.category.favorites.active) {
       width: 100%;
       font-size: var(--yl-text-sm);
       text-align: center;
-      padding: var(--yl-p-lg);
+      padding: var(--yl-space-lg);
       box-sizing: border-box;
       opacity: 0.6;
     }
 
     #new-article {
-      margin-right: var(--yl-m-xs);
-      margin-left: var(--yl-m-xs);
+      margin-right: var(--yl-space-xs);
+      margin-left: var(--yl-space-xs);
       margin-top: 0 !important;
-      margin-bottom: var(--yl-m-xs);
-      top: var(--yl-m-3xs);
+      margin-bottom: var(--yl-space-xs);
+      top: var(--yl-space-3xs);
 
       a {
         max-height: 60px;
@@ -4129,8 +4132,8 @@ body:has(.tree-folder.category.favorites.active) {
     }
 
     #yl_category_toolbar {
-      padding-left: var(--yl-p-sm);
-      padding-right: var(--yl-p-sm);
+      padding-left: var(--yl-space-sm);
+      padding-right: var(--yl-space-sm);
     }
 
     #stream {
@@ -4145,8 +4148,8 @@ body:has(.tree-folder.category.favorites.active) {
       }
 
       :is(#stream-footer, .stream-footer) {
-        padding-left: var(--yl-p-sm);
-        padding-right: var(--yl-p-sm);
+        padding-left: var(--yl-space-sm);
+        padding-right: var(--yl-space-sm);
       }
 
       div.flux {
@@ -4161,11 +4164,11 @@ body:has(.tree-folder.category.favorites.active) {
 
           .titleAuthorSummaryDate {
             flex-basis: calc(
-              100% - var(--yl-article-thumbnail-width) - var(--yl-m-2xs) * 2
+              100% - var(--yl-article-thumbnail-width) - var(--yl-space-2xs) * 2
             ) !important;
 
             .summary {
-              padding-right: var(--yl-p-2xs) !important;
+              padding-right: var(--yl-space-2xs) !important;
               -webkit-line-clamp: 1 !important;
               line-clamp: 1 !important;
             }
@@ -4173,11 +4176,11 @@ body:has(.tree-folder.category.favorites.active) {
 
           .date {
             order: 2 !important;
-            padding-bottom: var(--yl-p-2xs) !important;
+            padding-bottom: var(--yl-space-2xs) !important;
           }
 
           .item.thumbnail {
-            margin-bottom: var(--yl-m-2xs) !important;
+            margin-bottom: var(--yl-space-2xs) !important;
           }
 
           @container (max-width: 320px) {
@@ -4230,7 +4233,7 @@ body:has(.tree-folder.category.favorites.active) {
         header,
         .text,
         .footer {
-          padding: 0 1rem;
+          padding: 0 var(--yl-space-xs);
         }
       }
 
@@ -4373,8 +4376,8 @@ body {
     animation-fill-mode: forwards;
 
     @include yl-media-down(md) {
-      width: calc(100% - var(--yl-p-sm) * 2);
-      left: var(--yl-p-sm);
+      width: calc(100% - var(--yl-space-sm) * 2);
+      left: var(--yl-space-sm);
       overflow: hidden;
       padding-left: 40%;
       background-position: calc(40% - 8px);
@@ -4412,7 +4415,7 @@ body {
     }
 
     @include yl-media-down(md) {
-      padding-top: 54px; /* Mobile: Height of top navigation bar, to avoid fixed top header to cover content underneath. */
+      padding-top: var(--yl-topnav-height); /* Mobile: Height of top navigation bar, to avoid fixed top header to cover content underneath. */
     }
   }
 
@@ -4531,7 +4534,7 @@ body {
         overflow: auto;
         background-color: var(--yl-color-bg-code);
         border-radius: var(--yl-radius-md);
-        padding: 1rem;
+        padding: var(--yl-space-xs);
       }
     }
   }
@@ -4547,22 +4550,22 @@ body {
 
 .youlag-video-header {
   display: flex;
-  gap: var(--yl-m-3xs);
+  gap: var(--yl-space-3xs);
   position: sticky;
   top: 0;
   left: 0;
   z-index: 2;
   display: flex;
   justify-content: flex-end;
-  padding: var(--yl-p-xs);
+  padding: var(--yl-space-xs);
   background: var(--yl-color-gradient-video-header-overlay);
 }
 
 #youlagVideoSource {
   margin-right: auto;
   border-radius: var(--yl-radius-lg);
-  padding-right: var(--yl-p-sm);
-  padding-left: var(--yl-p-sm);
+  padding-right: var(--yl-space-sm);
+  padding-left: var(--yl-space-sm);
 }
 
 .youlag-video-container {
@@ -4673,10 +4676,10 @@ body {
       position: relative;
       display: flex;
       align-items: center;
-      padding-top: var(--yl-p-xs);
-      padding-bottom: var(--yl-p-xs);
-      padding-left: var(--yl-p-xs);
-      padding-right: var(--yl-p-md);
+      padding-top: var(--yl-space-xs);
+      padding-bottom: var(--yl-space-xs);
+      padding-left: var(--yl-space-xs);
+      padding-right: var(--yl-space-md);
       flex: 1;
       transition: var(--yl-duration-button);
       opacity: 0.9;
@@ -4693,7 +4696,7 @@ body {
     }
 
     &__order {
-      margin-right: var(--yl-m-2xs);
+      margin-right: var(--yl-space-2xs);
       border-color: var(--yl-color-border-chapter-number);
       flex-shrink: 0;
     }
@@ -4720,7 +4723,7 @@ body {
         height: 12px;
         filter: var(--yl-filter-icon-chapter-toggle);
         opacity: var(--yl-opacity-muted);
-        margin-right: var(--yl-m-2xs);
+        margin-right: var(--yl-space-2xs);
       }
     }
   }
@@ -4731,7 +4734,7 @@ body {
     .yl-video-chapter-action {
       display: flex;
       align-items: center;
-      padding: var(--yl-p-xs) var(--yl-p-sm);
+      padding: var(--yl-space-xs) var(--yl-space-sm);
       border-left: var(--yl-border-width-sm) solid
         var(--yl-color-border-chapter-divider);
       transition: var(--yl-duration-button);
@@ -4819,7 +4822,7 @@ body {
     display: none; /* Shown with the chapter list */
     align-items: center;
     justify-content: space-between;
-    padding: var(--yl-space-2xs) var(--yl-p-md) 0;
+    padding: var(--yl-space-2xs) var(--yl-space-md) 0;
     font-size: var(--yl-text-xs);
     font-weight: var(--yl-font-weight-semibold);
 
@@ -4855,8 +4858,8 @@ body {
 
     &-item {
       padding: var(--yl-space-2xs);
-      margin-left: calc(var(--yl-p-md) - var(--yl-space-2xs));
-      margin-right: calc(var(--yl-p-md) - var(--yl-space-2xs));
+      margin-left: calc(var(--yl-space-md) - var(--yl-space-2xs));
+      margin-right: calc(var(--yl-space-md) - var(--yl-space-2xs));
       border-radius: var(--yl-radius-md);
       display: flex;
       align-items: center;
@@ -4883,13 +4886,13 @@ body {
       &__checkbox {
         display: none;
         pointer-events: none;
-        margin: 0 var(--yl-m-2xs) 0 0;
+        margin: 0 var(--yl-space-2xs) 0 0;
         flex-shrink: 0;
       }
 
       &__time {
         font-weight: var(--yl-font-weight-semibold);
-        margin-right: var(--yl-m-2xs);
+        margin-right: var(--yl-space-2xs);
         background-color: var(--yl-color-bg-chapter-time);
       }
 
@@ -4927,17 +4930,17 @@ body {
 }
 
 .youlag-video-details {
-  padding-top: var(--yl-p-xs);
-  padding-left: var(--yl-p-md);
-  padding-right: var(--yl-p-md);
+  padding-top: var(--yl-space-xs);
+  padding-left: var(--yl-space-md);
+  padding-right: var(--yl-space-md);
 
   .youlag-video-metadata-container {
-    margin-bottom: var(--yl-m-lg);
+    margin-bottom: var(--yl-space-lg);
 
     .youlag-video-metadata-title {
       font-size: var(--yl-text-md);
       line-height: var(--yl-line-height-md);
-      margin-bottom: var(--yl-m-sm);
+      margin-bottom: var(--yl-space-sm);
       max-width: max(750px, 80%);
     }
 
@@ -4961,13 +4964,13 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--yl-m-sm);
-  margin-bottom: var(--yl-m-md);
+  gap: var(--yl-space-sm);
+  margin-bottom: var(--yl-space-md);
 
   .youlag-video-author-section {
     display: flex;
     flex: 1;
-    gap: var(--yl-m-2xs);
+    gap: var(--yl-space-2xs);
     align-items: center;
     min-width: 400px;
 
@@ -4993,7 +4996,7 @@ body {
 
   .youlag-video-actions-container {
     display: flex;
-    gap: var(--yl-m-2xs);
+    gap: var(--yl-space-2xs);
     flex-wrap: wrap;
 
     .icon.loading,
@@ -5047,7 +5050,7 @@ body {
   font-weight: var(--yl-font-weight-semibold);
   font-size: var(--yl-text-xs);
   border-radius: var(--yl-radius-full);
-  padding: var(--yl-p-xs) var(--yl-p-sm);
+  padding: var(--yl-space-xs) var(--yl-space-sm);
   text-decoration: none;
   transition: box-shadow var(--yl-duration-button);
   min-width: 45px;
@@ -5060,7 +5063,7 @@ body {
   }
 
   span.yl-video-action-button__icon {
-    margin-right: var(--yl-m-2xs);
+    margin-right: var(--yl-space-2xs);
   }
 
   .icon {
@@ -5111,7 +5114,7 @@ a.yl-video-action-button[href=""] {
 #youlagCloseModal,
 #youlagMinimizeModal {
   cursor: pointer;
-  padding: var(--yl-p-sm);
+  padding: var(--yl-space-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5138,8 +5141,8 @@ a.yl-video-action-button[href=""] {
   /* Container surrounding the video description and related videos. */
   display: flex;
   flex-wrap: wrap;
-  gap: var(--yl-m-sm) var(--yl-m-2xs);
-  margin-bottom: var(--yl-m-lg);
+  gap: var(--yl-space-sm) var(--yl-space-2xs);
+  margin-bottom: var(--yl-space-lg);
 
   @include yl-media-down(lg) {
     flex-direction: column;
@@ -5147,7 +5150,7 @@ a.yl-video-action-button[href=""] {
 
   .youlag-video-description-container {
     background: var(--yl-color-gradient-video-description);
-    padding: var(--yl-p-sm);
+    padding: var(--yl-space-sm);
     border-radius: var(--yl-radius-xl);
     flex: 1;
     min-width: min(450px, 90%);
@@ -5197,17 +5200,17 @@ a.yl-video-action-button[href=""] {
     .youlag-related-video-item {
       position: relative;
       margin-top: 0;
-      padding-left: var(--yl-p-2xs);
-      padding-right: var(--yl-p-2xs);
+      padding-left: var(--yl-space-2xs);
+      padding-right: var(--yl-space-2xs);
     }
 
     .youlag-related-video-item {
       display: flex;
       align-items: flex-start;
-      gap: var(--yl-m-2xs);
+      gap: var(--yl-space-2xs);
       border-radius: var(--yl-radius-md);
-      padding-top: var(--yl-p-2xs);
-      padding-bottom: var(--yl-p-2xs);
+      padding-top: var(--yl-space-2xs);
+      padding-bottom: var(--yl-space-2xs);
 
       &:hover {
         cursor: pointer;
@@ -5219,7 +5222,7 @@ a.yl-video-action-button[href=""] {
         font-size: var(--yl-text-xs);
         line-height: var(--yl-line-height-md);
         font-weight: var(--yl-font-weight-bold);
-        margin-bottom: var(--yl-m-3xs);
+        margin-bottom: var(--yl-space-3xs);
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -5279,7 +5282,7 @@ a.yl-video-action-button[href=""] {
 
     @include yl-media-up(2xl) {
       #youlagVideoMoreContentContainer {
-        gap: var(--yl-m-sm) var(--yl-m-sm);
+        gap: var(--yl-space-sm) var(--yl-space-sm);
       }
 
       .yl-form-category__video-label {
@@ -5309,7 +5312,7 @@ a.yl-video-action-button[href=""] {
     @include yl-media-between(sm, lg, -40px) {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: var(--yl-m-xs);
+      gap: var(--yl-space-xs);
 
       .youlag-video-related-title {
         grid-column: 1 / -1;
@@ -5371,7 +5374,7 @@ a.yl-video-action-button[href=""] {
     &:has(#nav_entries) #youlagTheaterModal {
       /* Mobile: Place miniplayer video above bottom navigation bar. */
       bottom: calc(
-        4.5rem + var(--yl-m-sm)
+        4.5rem + var(--yl-space-sm)
       ); /* 4.5rem = height of bottom navigation bar */
     }
   }
@@ -5387,8 +5390,8 @@ a.yl-video-action-button[href=""] {
 
   & {
     width: var(--yl-video-miniplayer-width);
-    bottom: var(--yl-m-sm);
-    right: var(--yl-m-sm);
+    bottom: var(--yl-space-sm);
+    right: var(--yl-space-sm);
     aspect-ratio: 16 / 9;
     height: auto;
     border-radius: var(--yl-radius-lg);
@@ -5400,7 +5403,7 @@ a.yl-video-action-button[href=""] {
     position: absolute; /* Header overlaps video instead of sticky, to not occupying vertical space in miniplayer mode. */
     left: auto;
     right: 0;
-    padding: 3px;
+    padding: var(--yl-space-4xs);
     background: transparent;
   }
 
@@ -5411,7 +5414,7 @@ a.yl-video-action-button[href=""] {
 
   #youlagCloseModal,
   #youlagMinimizeModal {
-    padding: var(--yl-p-xs);
+    padding: var(--yl-space-xs);
     width: var(--yl-text-2xl);
     height: var(--yl-text-2xl);
     font-size: var(--yl-text-md);
@@ -5443,7 +5446,7 @@ a.yl-video-action-button[href=""] {
       line-clamp: 2;
       overflow: hidden;
       max-width: 100%;
-      padding-right: var(--yl-p-xl);
+      padding-right: var(--yl-space-xl);
 
       @include yl-media-down(sm) {
         font-size: var(--yl-text-sm);
@@ -5511,8 +5514,8 @@ body.youlag-share-modal-open {
     max-height: 80vh;
     max-height: 80dvh;
     overflow-y: auto;
-    padding: var(--yl-p-md);
-    margin: var(--yl-p-md);
+    padding: var(--yl-space-md);
+    margin: var(--yl-space-md);
   }
 
   .yl-tags-modal-title,
@@ -5522,8 +5525,8 @@ body.youlag-share-modal-open {
     justify-content: space-between;
     font-size: var(--yl-text-md);
     font-weight: var(--yl-font-weight-bold);
-    margin-bottom: var(--yl-p-xs);
-    padding-left: var(--yl-p-xs);
+    margin-bottom: var(--yl-space-xs);
+    padding-left: var(--yl-space-xs);
 
     .icon {
       filter: var(--yl-filter-icon-title);
@@ -5542,8 +5545,8 @@ body.youlag-share-modal-open {
     .yl-share-list-item {
       display: flex;
       align-items: center;
-      gap: var(--yl-m-2xs);
-      padding: var(--yl-p-2xs) var(--yl-p-xs);
+      gap: var(--yl-space-2xs);
+      padding: var(--yl-space-2xs) var(--yl-space-xs);
       color: var(--yl-color-text-medium);
       font-size: var(--yl-text-sm);
       border-radius: var(--yl-radius-md);
@@ -5584,8 +5587,8 @@ body.youlag-share-modal-open {
   .yl-tags-modal-actions,
   .yl-share-modal-actions {
     display: flex;
-    gap: var(--yl-p-2xs);
-    margin-top: var(--yl-m-md);
+    gap: var(--yl-space-2xs);
+    margin-top: var(--yl-space-md);
 
     #yl-tags-modal-close,
     #yl-share-modal-close {
@@ -5642,25 +5645,25 @@ body.youlag-share-modal-open {
   .yl-form-section {
     border: var(--yl-border-width-sm) solid
       var(--yl-color-border-settings-section);
-    padding: 1rem;
+    padding: var(--yl-space-xs);
     border-radius: var(--yl-radius-lg);
-    margin: 1rem 0;
+    margin: var(--yl-space-xs) 0;
 
     h1,
     h2,
     h3 {
-      margin-bottom: 1.2rem;
+      margin-bottom: var(--yl-space-sm);
     }
   }
 
   hr {
-    margin: 1.4rem 0;
+    margin: var(--yl-space-sm) 0;
   }
 
   .yl-form-group-help {
     font-size: var(--yl-text-sm);
     color: var(--yl-color-text-low);
-    margin-bottom: 0.25rem;
+    margin-bottom: var(--yl-space-3xs);
     font-weight: var(--yl-font-weight-regular);
     max-width: 450px;
     text-wrap: balance;
@@ -5668,7 +5671,7 @@ body.youlag-share-modal-open {
 
   .form-group {
     padding: 0;
-    margin-bottom: 1rem;
+    margin-bottom: var(--yl-space-xs);
 
     .group-name,
     .group-controls,
@@ -5688,7 +5691,7 @@ body.youlag-share-modal-open {
 
     .group-name,
     label {
-      margin-bottom: 4px;
+      margin-bottom: var(--yl-space-3xs);
       line-height: var(--yl-line-height-xs);
     }
 
@@ -5703,8 +5706,8 @@ body.youlag-share-modal-open {
   .form-group {
     .yl-form-group--radio {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
+      gap: var(--yl-space-2xs);
+      margin-bottom: var(--yl-space-2xs);
 
       .yl-form-group--radio-input-container {
         display: flex;
@@ -5714,13 +5717,13 @@ body.youlag-share-modal-open {
         label,
         .yl-form-group-help {
           /* Radio button + gap */
-          padding-left: calc(15px + 0.5rem);
+          padding-left: calc(15px + var(--yl-space-2xs));
         }
 
         .yl-form-control-radio-input {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: var(--yl-space-2xs);
         }
       }
     }
@@ -5731,12 +5734,12 @@ body.youlag-share-modal-open {
     overflow: auto;
     border: var(--yl-border-width-sm) solid
       var(--yl-color-border-settings-section);
-    padding: 1rem;
+    padding: var(--yl-space-xs);
     border-radius: var(--yl-radius-lg);
 
     hr {
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
+      margin-top: var(--yl-space-2xs);
+      margin-bottom: var(--yl-space-2xs);
     }
   }
 
@@ -5834,7 +5837,7 @@ body.youlag-share-modal-open {
 }
 
 .yl-mb-md {
-  margin-bottom: var(--yl-m-md);
+  margin-bottom: var(--yl-space-md);
 }
 
 .w-100 {
@@ -5868,7 +5871,7 @@ body.youlag-share-modal-open {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
+  padding: var(--yl-space-4xs) var(--yl-space-3xs);
   border: var(--yl-border-width-sm) solid var(--yl-color-border-badge);
   border-radius: var(--yl-radius-xs);
   background-color: var(--yl-color-bg-badge);
@@ -5956,7 +5959,7 @@ body.youlag-share-modal-open {
       display: flex;
       align-items: center;
       gap: var(--yl-space-3xs);
-      padding: var(--yl-p-3xs) var(--yl-p-2xs);
+      padding: var(--yl-space-3xs) var(--yl-space-2xs);
     }
 
     &__name {
@@ -5992,7 +5995,7 @@ body.youlag-active:not(.reader) {
 #yl_notification {
   @include yl-gradient-bg(action);
   position: fixed;
-  bottom: var(--yl-m-sm);
+  bottom: var(--yl-space-sm);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -6001,7 +6004,7 @@ body.youlag-active:not(.reader) {
   width: min(50vw, 500px);
   min-width: 320px;
   color: var(--yl-color-text-medium);
-  padding: var(--yl-p-sm) var(--yl-p-sm);
+  padding: var(--yl-space-sm) var(--yl-space-sm);
   border-radius: var(--yl-radius-lg);
   box-shadow: 0px 4px 8px var(--yl-shadow-floating);
   z-index: var(--yl-z-nav);
@@ -6010,20 +6013,20 @@ body.youlag-active:not(.reader) {
     &-title {
       font-size: var(--yl-text-xs);
       font-weight: var(--yl-font-weight-semibold);
-      margin-bottom: var(--yl-m-3xs);
+      margin-bottom: var(--yl-space-3xs);
     }
 
     &-message {
       font-size: var(--yl-text-xs);
       text-wrap: pretty;
-      margin-bottom: var(--yl-m-2xs);
+      margin-bottom: var(--yl-space-2xs);
     }
 
     &-action {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--yl-p-2xs) var(--yl-p-sm);
+      padding: var(--yl-space-2xs) var(--yl-space-sm);
       border: var(--yl-border-width-sm) solid var(--yl-color-border-button-menu);
       border-radius: var(--yl-radius-full);
       background-color: var(--yl-color-bg-button-menu);
@@ -6047,7 +6050,7 @@ body.youlag-active:not(.reader) {
       align-items: center;
       font-size: var(--yl-text-md);
       line-height: var(--yl-line-height-xs);
-      padding: var(--yl-p-2xs) var(--yl-p-xs);
+      padding: var(--yl-space-2xs) var(--yl-space-xs);
       font-size: var(--yl-text-md);
       border-radius: var(--yl-radius-full);
 

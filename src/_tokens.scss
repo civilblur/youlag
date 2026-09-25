@@ -101,7 +101,14 @@ $yl-radius-scale: (
   full: 999px,
 );
 
-$yl-space-sizes: 3xs, 2xs, xs, sm, md, lg, xl, 2xl, 3xl;
+/* Icon sizes: square icons */
+$yl-icon-sizes: (
+  xs: 12px,
+  sm: 16px,
+  md: 18px,
+  lg: 20px,
+  xl: 24px,
+);
 
 /* State layers */
 $yl-state-layers: (
@@ -274,6 +281,7 @@ $yl-breakpoint-short-viewport: 900px;
 }
 
 :root {
+  --yl-space-4xs: 2px;
   --yl-space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
   --yl-space-2xs: clamp(0.5625rem, 0.5408rem + 0.1087vw, 0.625rem);
   --yl-space-xs: clamp(0.875rem, 0.8533rem + 0.1087vw, 0.9375rem);
@@ -284,14 +292,6 @@ $yl-breakpoint-short-viewport: 900px;
   --yl-space-2xl: clamp(4.5rem, 4.3261rem + 0.8696vw, 5rem);
   --yl-space-3xl: clamp(6.75rem, 6.4891rem + 1.3043vw, 7.5rem);
 
-  @each $size in $yl-space-sizes {
-    --yl-p-#{$size}: var(--yl-space-#{$size});
-  }
-
-  @each $size in $yl-space-sizes {
-    --yl-m-#{$size}: var(--yl-space-#{$size});
-  }
-
   --yl-text-3xs: clamp(0.6563rem, 0.6455rem + 0.0217vw, 0.6875rem);
   --yl-text-2xs: clamp(0.7813rem, 0.7747rem + 0.0326vw, 0.8rem);
   --yl-text-xs: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem);
@@ -301,6 +301,10 @@ $yl-breakpoint-short-viewport: 900px;
   --yl-text-xl: clamp(1.944rem, 1.771rem + 0.8651vw, 2.4414rem);
   --yl-text-2xl: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
   --yl-text-3xl: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
+
+  @each $size, $value in $yl-icon-sizes {
+    --yl-icon-size-#{$size}: #{$value};
+  }
 
   @each $size, $value in $yl-radius-scale {
     --yl-radius-#{$size}: #{$value};
@@ -353,12 +357,16 @@ $yl-breakpoint-short-viewport: 900px;
   --yl-article-thumbnail-width: 120px;
   --yl-article-thumbnail-height: 90px;
   --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
+  --yl-search-max-width: 600px;
+  --yl-icon-button-size: 40px; /* Round button holding only an icon */
   --yl-feed-nav-menu-height: 61px; /* Desktop: Youlag custom feed `.nav_menu` default height */
   --yl-sidenav-width: 280px;
   --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
   --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
-  --yl-sidenav-icon-size: 16px;
+  --yl-sidenav-icon-size: var(--yl-icon-size-sm);
   --yl-sidenav-icon-label-gap: var(--yl-space-sm);
+  --yl-sidenav-toggle-button-width: 52px;
+  --yl-article-list-max-width: 900px; /* Article mode */
 
   /* Article split view */
   --yl-article-split-ratio: 0.4;
@@ -728,7 +736,7 @@ $yl-breakpoint-short-viewport: 900px;
     --yl-favicon-avatar-size: 36px;
     --yl-sidenav-label-font-size: calc(var(--yl-text-md) * 0.9);
     --yl-sidenav-sublabel-font-size: var(--yl-text-sm);
-    --yl-sidenav-icon-size: 20px;
+    --yl-sidenav-icon-size: var(--yl-icon-size-lg);
     --yl-sidenav-icon-label-gap: var(--yl-space-sm);
     --yl-topnav-height: 54px;
   }
