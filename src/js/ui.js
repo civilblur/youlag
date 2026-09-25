@@ -1509,8 +1509,7 @@ function setPageTitle(title) {
   }
 }
 
-function toggleFavorite(url, container, feedItemEl = null) {
-  const hasFeedStream = isFeedPage();
+function toggleFavorite(url, container) {
   const favoriteButton = container.querySelector(`#${app.modal.id.favorite}`);
   const favoriteButtonIcon = favoriteButton
     ? favoriteButton.querySelector(`.${app.modal.class.favoriteIcon}`)
@@ -1553,38 +1552,10 @@ function toggleFavorite(url, container, feedItemEl = null) {
           `${app.modal.class.favorite}--${!currentlyTrue}`,
         );
 
-        if (
-          (!feedItemEl && hasFeedStream) ||
-          (feedItemEl && !(feedItemEl instanceof Element) && hasFeedStream)
-        ) {
-          // Try to find the feed entry in the feed stream if not provided.
-          // This may be needed when restoring modal event listeners after `visibilitychange`: `setupVisibilityEventListeners()`.
-          const entryId = getModalVideo()?.getAttribute("data-entry");
-          if (entryId) {
-            feedItemEl = document.querySelector(
-              `${app.frss.el.feedRoot} div.flux${app.frss.el.entry}[data-entry="${entryId}"]`,
-            );
-          }
-        }
-
-        // Keep the feed entry in the feed stream in sync, if the current page is a feed page and the entry exists in the feed stream.
-        // The miniplayer video modal could be restored to a different page/state, meaning that the feed entry might not exist in the view.
-        if (feedItemEl && feedItemEl instanceof Element && hasFeedStream) {
-          const bookmarkIcon = feedItemEl.querySelector(
-            ".item-element.bookmark img.icon",
-          );
-          if (currentlyTrue) {
-            feedItemEl.classList.remove(app.modal.class.favorite);
-            if (bookmarkIcon) {
-              bookmarkIcon.src = app.frss.img.favoriteInactive;
-            }
-          } else {
-            feedItemEl.classList.add(app.modal.class.favorite);
-            if (bookmarkIcon) {
-              bookmarkIcon.src = app.frss.img.favoriteActive;
-            }
-          }
-        }
+        updateFeedEntryFavorite(
+          container.getAttribute("data-entry"),
+          !currentlyTrue,
+        );
       } else {
         console.error("Youlag: Failed to toggle favorite status");
       }
@@ -1592,6 +1563,66 @@ function toggleFavorite(url, container, feedItemEl = null) {
     .catch((error) => {
       console.error("Youlag: Error toggling favorite status:", error);
     });
+}
+
+function updateFeedEntryFavorite(entryId, isFavorited) {
+  // Mirror the video modal favorite state on the feed entry.
+  if (!entryId || !isFeedPage()) return;
+
+  const feedItemEl = document.querySelector(
+    `${app.frss.el.feedRoot} ${app.frss.el.entry}[data-entry="${entryId}"]`,
+  );
+  if (!feedItemEl) return;
+
+  feedItemEl.classList.toggle(app.frss.class.favorite, isFavorited);
+
+  feedItemEl.querySelectorAll(app.frss.el.bookmark).forEach((bookmark) => {
+    // Next click unfavorites via `is_favorite=0`, otherwise favorites.
+    const toggleUrl = new URL(bookmark.href);
+    toggleUrl.searchParams.delete("is_favorite");
+    if (isFavorited) toggleUrl.searchParams.set("is_favorite", "0");
+    bookmark.href = toggleUrl.toString();
+
+    const icon = bookmark.querySelector("img.icon");
+    if (icon) {
+      icon.src = isFavorited
+        ? app.frss.img.favoriteActive
+        : app.frss.img.favoriteInactive;
+    }
+  });
+}
+
+function setupFeedEntryFavoriteObserver() {
+  // Mirror the feed entry favorite state in the video modal.
+  const feedRoot = getFeedRoot();
+  if (!feedRoot) return;
+
+  const observer = new MutationObserver((mutations) => {
+    const modal = getModalVideo();
+    const entryId = modal?.getAttribute("data-entry");
+    if (!entryId) return;
+
+    const feedItemEl = mutations
+      .map((mutation) => mutation.target)
+      .find((target) => target.getAttribute("data-entry") === entryId);
+    const favoriteButton = modal.querySelector(`#${app.modal.id.favorite}`);
+    if (!feedItemEl || !favoriteButton) return;
+
+    const isFavorited = feedItemEl.classList.contains(app.frss.class.favorite);
+    favoriteButton.classList.toggle(
+      `${app.modal.class.favorite}--true`,
+      isFavorited,
+    );
+    favoriteButton.classList.toggle(
+      `${app.modal.class.favorite}--false`,
+      !isFavorited,
+    );
+  });
+  observer.observe(feedRoot, {
+    attributes: true,
+    attributeFilter: ["class"],
+    subtree: true,
+  });
 }
 
 function clearPathHash() {

@@ -239,7 +239,7 @@ function extractFeedItemData(feedItem) {
     website_name:
       feedItem.querySelector(".website .websiteName")?.textContent.trim() || "",
     favorite_toggle_url:
-      feedItem.querySelector("a.item-element.bookmark")?.href || "",
+      feedItem.querySelector(app.frss.el.bookmark)?.href || "",
     favorited: !feedItem.querySelector('.bookmark img[src*="non-starred"]'),
     thumbnail,
     thumbnail_video: thumbnail_video || "",

@@ -138,6 +138,10 @@ app.frss = {
     global: "#global",
     sidebar: "#aside_feed",
     articleNav: "#nav_entries",
+    bookmark: "a.item-element.bookmark", // Feed entry favorite link.
+  },
+  class: {
+    favorite: "favorite", // Favorited feed entry.
   },
   img: {
     spinner: "../themes/icons/spinner.svg",

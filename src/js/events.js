@@ -16,6 +16,7 @@ function init() {
     setupVisibilityEventListeners(); // Restore event listeners after page inactvity, e.g. when switching tabs.
     setupTagsDropdownOverride();
     setupShareDropdownOverride();
+    setupFeedEntryFavoriteObserver();
     renderToolbar();
     if (isLayoutVideo()) {
       updateVideoAuthor();

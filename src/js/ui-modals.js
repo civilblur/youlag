@@ -434,11 +434,7 @@ function setupModalVideoEventListeners(videoObject) {
   if (favoriteBtn) {
     const favoriteHandler = (e) => {
       e.preventDefault();
-      toggleFavorite(
-        videoObject.favorite_toggle_url,
-        modal,
-        videoObject.feedItemEl,
-      );
+      toggleFavorite(videoObject.favorite_toggle_url, modal);
     };
     favoriteBtn.addEventListener("click", favoriteHandler);
     modal._videoModalListeners.push({
