@@ -1,0 +1,743 @@
+/*****************************************
+ *
+ * Youlag design tokens
+ *
+ * All CSS variables. Palette tokens hold raw
+ * values and are only used in this file.
+ * theme.scss uses role tokens (named by purpose).
+ *
+ ****************************************/
+
+@use "sass:list";
+@use "sass:map";
+@use "sass:math";
+@use "sass:string";
+
+/* Overlay alpha: strength of the translucent layer for hovers, borders and dividers */
+$yl-overlay-alpha: (
+  2xs: 4%,
+  xs: 6%,
+  sm: 8%,
+  md: 12%,
+  lg: 18%,
+  xl: 26%,
+);
+
+/* Gradient pairs (start, end) for the gradient mixins */
+$yl-gradients: (
+  action: (
+    hsl(217 100% 45%),
+    hsl(225 89.2% 39.8%),
+  ),
+  active: (
+    hsl(220 69% 49.4%),
+    hsl(219.8 74.77% 41.96%),
+  ),
+  warning: (
+    hsl(40 96.4% 56.3%),
+    hsl(39 86.9% 38.8%),
+  ),
+  info: (
+    hsl(51.2 86.83% 52.35%),
+    hsl(47 97% 38.6%),
+  ),
+  success: (
+    hsl(143 86.8% 52.4%),
+    hsl(133 88% 32.7%),
+  ),
+  success-alt: (
+    hsl(133.7 61.35% 40.59%),
+    hsl(133.4 60.95% 33.14%),
+  ),
+  error: (
+    hsl(0 96.4% 56.3%),
+    hsl(0 86.9% 38.8%),
+  ),
+  sidenav-count: (
+    var(--yl-color-bg-sidenav-count),
+    var(--yl-color-bg-sidenav-count-dark),
+  ),
+);
+
+/* Surface levels */
+$yl-color-surface-levels: (
+  lowest: hsl(0 0% 12%),
+  low: hsl(225 5% 15.7%),
+  medium: hsl(230 6% 20%),
+  high: hsl(230 4% 27%),
+  highest: hsl(240 1.7% 34.7%),
+);
+
+/* Icon tones: control color tone of Mapco icons through brightness filter */
+$yl-filter-icon-tones: (
+  lowest: 0.537,
+  low: 0.667,
+  medium: 0.87,
+  high: 0.92,
+  highest: 1,
+);
+
+$yl-filter-glass-blur-sizes: (
+  sm: 40px,
+  md: 60px,
+  lg: 80px,
+);
+
+/* Shadow alpha */
+$yl-shadow-alpha: (
+  sm: hsl(0 0% 0% / 13%),
+  md: hsl(0 0% 0% / 40%),
+  lg: hsl(0 0% 0% / 50%),
+);
+
+$yl-radius-scale: (
+  2xs: 2px,
+  xs: 4px,
+  sm: 6px,
+  md: 8px,
+  lg: 12px,
+  xl: 16px,
+  2xl: 24px,
+  full: 999px,
+);
+
+$yl-space-sizes: 3xs, 2xs, xs, sm, md, lg, xl, 2xl, 3xl;
+
+/* State layers */
+$yl-state-layers: (
+  hover: 8%,
+  focus: 10%,
+  pressed: 10%,
+  dragged: 16%,
+);
+
+/* Above the FreshRSS notification (9999) */
+$yl-z-modal: 10000;
+
+/* Stacking */
+$yl-z-layers: (
+  raised: 10,
+  sticky: 20,
+  backdrop: 40,
+  docked: 45,
+  nav: 50,
+  nav-above: 55,
+  sidenav: 60,
+  header-open: 110,
+  dropdown: 1100,
+  loading: 5000,
+  modal: $yl-z-modal,
+  modal-above: $yl-z-modal + 1,
+);
+
+$yl-border-widths: (
+  sm: 1px,
+  md: 2px,
+  lg: 3px,
+);
+
+$yl-letter-spacings: (
+  xs: 0.5px,
+  sm: 1px,
+  md: 1.5px,
+);
+
+$yl-font-weights: (
+  regular: 400,
+  semibold: 600,
+  bold: 700,
+);
+
+$yl-durations: (
+  xs: 50ms,
+  sm: 0.1s,
+  md: 0.2s,
+  lg: 0.3s,
+  xl: 0.5s,
+);
+
+$yl-line-heights: (
+  xs: 1,
+  sm: 1.2,
+  md: 1.4,
+  lg: 1.6,
+);
+
+/* Breakpoints */
+$yl-breakpoints: (
+  xs: 480px,
+  sm: 600px,
+  md: 840px,
+  lg: 960px,
+  xl: 1200px,
+  2xl: 1400px,
+);
+
+/* Feed grid columns */
+/* Ambiguous sizes derived from testing on various real-life devices */
+$yl-breakpoint-feed-grid-2-columns: 600px;
+$yl-breakpoint-feed-grid-3-columns: 1144px;
+$yl-breakpoint-feed-grid-4-columns: 1360px;
+$yl-breakpoint-feed-grid-5-columns: 1800px;
+
+$yl-breakpoint-article-row-wrap: 291px;
+
+$yl-breakpoint-sidenav-toggle-overlap: 1020px;
+
+$yl-breakpoint-short-viewport: 900px;
+
+@function yl-fn-breakpoint($name) {
+  @if not map.has-key($yl-breakpoints, $name) {
+    @error "Unknown breakpoint: #{$name}. Use one of #{map.keys($yl-breakpoints)}.";
+  }
+  @return map.get($yl-breakpoints, $name);
+}
+
+/* Adjust is for device-tested exceptions only */
+@mixin yl-media-down($name, $adjust: 0px) {
+  $max: yl-fn-breakpoint($name) + $adjust;
+  @media (max-width: $max) {
+    @content;
+  }
+}
+
+@mixin yl-media-up($name, $adjust: 0px) {
+  $min: yl-fn-breakpoint($name) + 1px + $adjust;
+  @media (min-width: $min) {
+    @content;
+  }
+}
+
+@mixin yl-media-between($from, $to, $from-adjust: 0px, $to-adjust: 0px) {
+  $min: yl-fn-breakpoint($from) + 1px + $from-adjust;
+  $max: yl-fn-breakpoint($to) + $to-adjust;
+  @media (min-width: $min) and (max-width: $max) {
+    @content;
+  }
+}
+
+@function yl-fn-overlay($step) {
+  @if not map.has-key($yl-overlay-alpha, $step) {
+    @error "Unknown overlay step: #{$step}. Use one of #{map.keys($yl-overlay-alpha)}.";
+  }
+  @return string.unquote(
+    "hsl(var(--yl-overlay-hsl) / #{map.get($yl-overlay-alpha, $step)})"
+  );
+}
+
+@function yl-fn-state-layer($state) {
+  @return hsl(var(--yl-overlay-hsl) / var(--yl-state-#{$state}));
+}
+
+@function yl-fn-state-on($base, $state) {
+  @return color-mix(
+    in srgb,
+    $base,
+    hsl(var(--yl-overlay-hsl)) var(--yl-state-#{$state})
+  );
+}
+
+@function yl-fn-tint-on($base, $tint, $amount) {
+  @return color-mix(in srgb, $tint $amount, $base);
+}
+
+@function yl-fn-tint($color, $amount) {
+  @return color-mix(in oklab, $color $amount, transparent);
+}
+
+@function yl-fn-gradient-pair($name) {
+  @if not map.has-key($yl-gradients, $name) {
+    @error "Unknown gradient: #{$name}. Use one of #{map.keys($yl-gradients)}.";
+  }
+  @return map.get($yl-gradients, $name);
+}
+
+@function yl-fn-gradient-btn-bg($name) {
+  $pair: yl-fn-gradient-pair($name);
+  @return radial-gradient(
+    circle at center right,
+    list.nth($pair, 2),
+    list.nth($pair, 1)
+  );
+}
+
+@function yl-fn-gradient-surface($start, $middle, $end, $angle: 135deg) {
+  @return linear-gradient($angle, $start 0%, $middle 40%, $end 100%);
+}
+
+@function yl-fn-gradient-badge($color, $colorDarker) {
+  @return linear-gradient(
+    to bottom,
+    yl-fn-tint($color, 35%),
+    yl-fn-tint($colorDarker, 60%)
+  );
+}
+
+:root {
+  --yl-space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
+  --yl-space-2xs: clamp(0.5625rem, 0.5408rem + 0.1087vw, 0.625rem);
+  --yl-space-xs: clamp(0.875rem, 0.8533rem + 0.1087vw, 0.9375rem);
+  --yl-space-sm: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --yl-space-md: clamp(1.6875rem, 1.6223rem + 0.3261vw, 1.875rem);
+  --yl-space-lg: clamp(2.25rem, 2.163rem + 0.4348vw, 2.5rem);
+  --yl-space-xl: clamp(3.375rem, 3.2446rem + 0.6522vw, 3.75rem);
+  --yl-space-2xl: clamp(4.5rem, 4.3261rem + 0.8696vw, 5rem);
+  --yl-space-3xl: clamp(6.75rem, 6.4891rem + 1.3043vw, 7.5rem);
+
+  @each $size in $yl-space-sizes {
+    --yl-p-#{$size}: var(--yl-space-#{$size});
+  }
+
+  @each $size in $yl-space-sizes {
+    --yl-m-#{$size}: var(--yl-space-#{$size});
+  }
+
+  --yl-text-3xs: clamp(0.6563rem, 0.6455rem + 0.0217vw, 0.6875rem);
+  --yl-text-2xs: clamp(0.7813rem, 0.7747rem + 0.0326vw, 0.8rem);
+  --yl-text-xs: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem);
+  --yl-text-sm: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --yl-text-md: clamp(1.35rem, 1.2761rem + 0.3696vw, 1.5625rem);
+  --yl-text-lg: clamp(1.62rem, 1.5041rem + 0.5793vw, 1.9531rem);
+  --yl-text-xl: clamp(1.944rem, 1.771rem + 0.8651vw, 2.4414rem);
+  --yl-text-2xl: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
+  --yl-text-3xl: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
+
+  @each $size, $value in $yl-radius-scale {
+    --yl-radius-#{$size}: #{$value};
+  }
+
+  @each $state, $value in $yl-state-layers {
+    --yl-state-#{$state}: #{$value};
+  }
+
+  @each $layer, $value in $yl-z-layers {
+    --yl-z-#{$layer}: #{$value};
+  }
+
+  @each $size, $value in $yl-border-widths {
+    --yl-border-width-#{$size}: #{$value};
+  }
+
+  @each $size, $value in $yl-letter-spacings {
+    --yl-letter-spacing-#{$size}: #{$value};
+  }
+
+  @each $weight, $value in $yl-font-weights {
+    --yl-font-weight-#{$weight}: #{$value};
+  }
+
+  --yl-opacity-disabled: 0.4;
+  --yl-opacity-muted: 0.75;
+
+  --yl-easing-toolbar: cubic-bezier(0.4, 0, 0.2, 1);
+  --yl-easing-ease-in-out: ease-in-out;
+  --yl-easing-ease-out: ease-out;
+  --yl-easing-linear: linear;
+  --yl-duration-thumbnail-pulse: 4s;
+
+  @each $size, $value in $yl-durations {
+    --yl-duration-#{$size}: #{$value};
+  }
+
+  @each $size, $value in $yl-line-heights {
+    --yl-line-height-#{$size}: #{$value};
+  }
+
+  --yl-favicon-avatar-display: block;
+  --yl-favicon-avatar-size: 34px;
+  --yl-favicon-avatar-size-margin: 6px;
+  --yl-feed-end-title-font-size: 1.4rem;
+  --yl-feed-end-emoticon-font-size: 2.4rem;
+  --yl-thumbnail-author-font-size: min(1.7rem, 5vw);
+  --yl-video-miniplayer-width: min(460px, 60%);
+  --yl-article-thumbnail-width: 120px;
+  --yl-article-thumbnail-height: 90px;
+  --yl-topnav-height: 57px; /* Desktop: Youlag topnav height */
+  --yl-feed-nav-menu-height: 61px; /* Desktop: Youlag custom feed `.nav_menu` default height */
+  --yl-sidenav-width: 280px;
+  --yl-sidenav-label-font-size: calc(var(--yl-text-xs) * 0.95);
+  --yl-sidenav-sublabel-font-size: var(--yl-text-2xs);
+  --yl-sidenav-icon-size: 16px;
+  --yl-sidenav-icon-label-gap: var(--yl-space-sm);
+
+  /* Article split view */
+  --yl-article-split-ratio: 0.4;
+  --yl-article-split-content-width: calc(
+    (100% - var(--yl-sidenav-width)) * (1 - var(--yl-article-split-ratio))
+  );
+
+  /* Palette: surfaces */
+  @each $level, $value in $yl-color-surface-levels {
+    --yl-color-surface-#{$level}: #{$value};
+  }
+
+  /* Palette: overlays */
+  --yl-overlay-hsl: 0 0% 100%;
+  @each $step, $alpha in $yl-overlay-alpha {
+    --yl-color-overlay-#{$step}: #{yl-fn-overlay($step)};
+  }
+
+  /* Palette: filters and shadows */
+  @each $tone, $amount in $yl-filter-icon-tones {
+    --yl-filter-icon-#{$tone}: brightness(0) invert(#{$amount});
+  }
+  @each $size, $value in $yl-filter-glass-blur-sizes {
+    --yl-filter-glass-blur-#{$size}: blur(#{$value});
+  }
+  @each $size, $value in $yl-shadow-alpha {
+    --yl-shadow-#{$size}: #{$value};
+  }
+
+  /* Accents */
+  --yl-color-accent-action: #{list.nth(yl-fn-gradient-pair(action), 1)};
+  --yl-color-accent-warning: #{list.nth(yl-fn-gradient-pair(warning), 1)};
+  --yl-color-accent-success-alt: #{list.nth(
+      yl-fn-gradient-pair(success-alt),
+      1
+    )};
+  --yl-color-accent-important: hsl(25 100% 50%);
+  --yl-color-accent-important-dark: hsl(357 100% 44.5%);
+  --yl-color-accent-important-border: hsl(16.6 77.33% 48.43% / 84%);
+  --yl-color-accent-favorite: hsl(31 100% 45%);
+  --yl-color-accent-unread: hsl(25.6 45.05% 35.69%);
+  --yl-color-accent-unread-dark: hsl(17 90.6% 29.2%);
+  --yl-color-accent-unread-fallback: hsl(0 86% 33% / 60%);
+  --yl-color-accent-count-badge: hsl(0 0% 53.7% / 44%);
+
+  /* Page */
+  --yl-color-body-background: hsl(240 2% 10%);
+  --yl-color-gradient-active: #{yl-fn-gradient-btn-bg(active)};
+
+  /* Text */
+  --yl-color-text-highest: hsl(
+    240 27.3% 97.8%
+  ); /* Stronger contrast than default text color, e.g. for titles */
+  --yl-color-text-high: hsl(240 14% 93%);
+  --yl-color-text-medium: hsl(240 10% 88.2%);
+  --yl-color-text-low: hsl(
+    0 0% 66.7%
+  ); /* TODO: Refactored past usage of #b3b3b3 and #b7b7b7, double-check legibility later */
+  --yl-color-text-lowest: hsl(
+    0 0% 53.7%
+  ); /* TODO: Refactored past usage of #ababab, double-check legibility later */
+  --yl-color-text-read: var(
+    --yl-color-text-low
+  ); /* "Read" feed item text color */
+  --yl-color-text-readonly: var(--yl-color-text-lowest);
+  --yl-color-text-link: var(--yl-color-text-medium);
+  --yl-color-text-underline: var(--yl-color-text-highest);
+  --main-font-color: var(
+    --yl-color-text-medium
+  ); /* Replace FreshRSS default font color */
+
+  /* Mixins */
+  --yl-color-bg-button-menu: var(--yl-color-overlay-2xs);
+  --yl-color-bg-button-menu-hover: #{yl-fn-state-layer(hover)};
+  --yl-color-border-button-menu: var(--yl-color-overlay-sm);
+  --yl-filter-gradient-bg-hover: brightness(1.3) saturate(1.4);
+  --yl-filter-blur-glass: var(--yl-filter-glass-blur-md);
+  --yl-filter-pulse-base: brightness(1);
+  --yl-filter-pulse-dim: brightness(0.6);
+
+  /* Loading state */
+  --yl-color-overlay-scrim-loading: hsl(0 0% 9.8% / 80%);
+  --yl-filter-blur-loading-scrim: var(--yl-filter-glass-blur-sm);
+  --yl-color-border-loading-indicator: #{yl-fn-tint(hsl(0 0% 100%), 28%)};
+  --yl-shadow-glow-loading-indicator: hsl(0 0% 100% / 11.4%);
+  --yl-color-border-load-more: #{yl-fn-tint(var(--yl-color-accent-action), 30%)};
+  --yl-shadow-glow-load-more: hsl(208.4deg 100% 41.56% / 13%);
+
+  /* Header and top navigation */
+  --yl-filter-logo: var(--yl-filter-icon-highest);
+  --yl-color-gradient-nav: #{yl-fn-gradient-surface(
+      hsl(0 0% 19% / 69%),
+      hsl(0 0% 14.5% / 85%),
+      hsl(0 0% 17.6% / 63%)
+    )};
+  --yl-filter-blur-nav: var(--yl-filter-glass-blur-lg);
+  --yl-color-bg-header-button: var(--yl-color-surface-low);
+  --yl-color-bg-header-button-hover: #{yl-fn-state-on(
+      var(--yl-color-bg-header-button),
+      hover
+    )};
+  --yl-filter-icon-header-button: var(--yl-filter-icon-highest);
+  --yl-filter-icon-search: var(--yl-filter-icon-highest);
+  --yl-color-border-search: var(--yl-color-overlay-md);
+  --yl-color-bg-search-hover: #{yl-fn-state-layer(hover)};
+  --yl-color-bg-search-button-focus: var(--yl-color-surface-low);
+
+  /* Sidenav */
+  --yl-color-gradient-sidenav-item-active: #{yl-fn-gradient-surface(
+      hsl(0 0% 19%),
+      hsl(204 4.1% 23.7%),
+      hsl(0 0% 17.6%)
+    )};
+  --yl-color-border-sidenav: var(--yl-color-overlay-md);
+  --yl-color-bg-sidenav-item-hover: #{yl-fn-state-layer(hover)};
+  --yl-filter-icon-sidenav: var(--yl-filter-icon-highest);
+  --yl-filter-icon-sidenav-category: var(--yl-filter-icon-highest);
+  --yl-color-bg-sidenav-count: hsl(0 0% 20.4%);
+  --yl-color-bg-sidenav-count-dark: hsl(0 0% 19%);
+  --yl-color-border-sidenav-count: var(--yl-color-overlay-md);
+  --yl-color-gradient-badge-important: #{yl-fn-gradient-badge(
+      var(--yl-color-accent-important),
+      var(--yl-color-accent-important-dark)
+    )};
+  --yl-color-border-badge-important: #{yl-fn-tint(
+      var(--yl-color-accent-important-border),
+      30%
+    )};
+
+  /* Controls */
+  --yl-duration-button: var(--yl-duration-md);
+  --yl-color-bg-control: var(--yl-color-surface-medium);
+  --yl-color-bg-control-hover: #{yl-fn-state-on(
+      var(--yl-color-bg-control),
+      hover
+    )};
+  --yl-filter-icon-control: var(--yl-filter-icon-low);
+  --yl-filter-icon-control-active: var(--yl-filter-icon-highest);
+  --yl-color-gradient-input-disabled-stripes: repeating-linear-gradient(
+    45deg,
+    hsl(230 6% 20%),
+    hsl(230 6% 20%) 10px,
+    hsl(230 4% 27%) 10px,
+    hsl(230 4% 27%) 20px
+  );
+  --yl-color-gradient-button: #{yl-fn-gradient-surface(
+      hsl(0 0% 19%),
+      hsl(0 0% 13.7%),
+      hsl(0 0% 9.4%),
+      180deg
+    )};
+  --yl-filter-kbd-link: brightness(1.6) saturate(0.8);
+  --yl-color-bg-table-header: var(--yl-color-overlay-md);
+
+  /* Menus and panels */
+  --yl-color-surface-menu: var(--yl-color-surface-medium);
+  --yl-color-bg-menu-control: var(--yl-color-surface-high);
+  --yl-color-gradient-list-item-hover: #{yl-fn-gradient-surface(
+      hsl(0 0% 19%),
+      hsl(204 4.1% 23.7%),
+      hsl(0 0% 17.6%)
+    )};
+  --yl-color-bg-menu-item-hover: #{yl-fn-state-layer(hover)};
+  --yl-color-border-divider: hsl(0 0% 39.2%);
+  --yl-color-bg-box-title: var(--yl-color-surface-high);
+  --yl-filter-icon-title: var(--yl-filter-icon-highest);
+
+  /* Feed stream */
+  --yl-color-bg-transition-chip: var(--yl-color-overlay-sm);
+  --yl-color-border-transition-chip: var(--yl-color-overlay-md);
+  --yl-color-border-overlay-panel-item: hsl(0 0% 39.2% / 42%);
+  --yl-color-surface-overlay-panel-hover: #{yl-fn-state-layer(hover)};
+  --yl-filter-icon-mark-read: var(--yl-filter-icon-highest);
+
+  /* Video cards */
+  --yl-color-gradient-card-hover: #{yl-fn-gradient-surface(
+      hsl(0 1.3% 29.8%),
+      hsl(240 4.3% 13.5%),
+      hsl(0 0% 20%),
+      209deg
+    )};
+  --yl-color-gradient-favorite-card: #{yl-fn-gradient-surface(
+      yl-fn-tint-on(
+        var(--yl-color-body-background),
+        var(--yl-color-accent-favorite),
+        33%
+      ),
+      var(--yl-color-body-background),
+      yl-fn-tint-on(
+        var(--yl-color-body-background),
+        var(--yl-color-accent-favorite),
+        18%
+      ),
+      209deg
+    )};
+  --yl-color-bg-video-duration: hsl(0 0% 0% / 70%);
+  --yl-color-thumbnail-background: var(--yl-color-surface-medium);
+  --yl-color-gradient-empty-thumbnail: linear-gradient(
+    45deg,
+    hsl(216 12% 8%),
+    hsl(219 46.5% 16.9%)
+  );
+  --yl-color-gradient-thumbnail-author-text: linear-gradient(
+    to right,
+    hsl(222 100% 68%),
+    hsl(168.6 100% 64.9%)
+  );
+  --yl-color-surface-card-active-header: var(--yl-color-surface-low);
+  --yl-color-gradient-article-active-flux-content: #{yl-fn-gradient-surface(
+      hsl(0 0% 16%),
+      hsl(0 0% 14.5%),
+      hsl(0 0% 15.7%)
+    )};
+  --yl-color-border-card-action: var(--yl-color-overlay-md);
+  --yl-color-bg-card-action-hover: #{yl-fn-state-layer(hover)};
+  --yl-color-bg-favicon: var(--yl-color-overlay-lg);
+  --yl-filter-icon-card-action: var(--yl-filter-icon-low);
+  --yl-filter-icon-card-action-unread: var(--yl-filter-icon-lowest);
+  --yl-filter-icon-starred: brightness(1.5) sepia(1) hue-rotate(-25deg)
+    saturate(4) contrast(1.2);
+  --yl-color-gradient-badge-unread: #{yl-fn-gradient-badge(
+      var(--yl-color-accent-unread),
+      var(--yl-color-accent-unread-dark)
+    )};
+  --yl-color-border-badge-unread: #{yl-fn-tint(
+      var(--yl-color-accent-important-border),
+      30%
+    )};
+  --yl-shadow-badge-unread: var(--yl-shadow-sm);
+
+  /* Article rows */
+  --yl-color-surface-article-row-focus: #{yl-fn-state-layer(focus)};
+  --yl-color-surface-card-opened: var(--yl-color-surface-low);
+  --yl-color-bg-article-row-hover: #{yl-fn-state-layer(hover)};
+  --yl-color-border-article-row: var(--yl-color-overlay-md);
+  --yl-color-bg-article-thumbnail: var(--yl-color-overlay-xs);
+  --yl-color-gradient-favorite-article: #{yl-fn-gradient-surface(
+      yl-fn-tint-on(
+        var(--yl-color-body-background),
+        var(--yl-color-accent-favorite),
+        27%
+      ),
+      yl-fn-tint-on(
+        var(--yl-color-body-background),
+        var(--yl-color-accent-favorite),
+        4%
+      ),
+      yl-fn-tint-on(
+        var(--yl-color-body-background),
+        var(--yl-color-accent-favorite),
+        18%
+      )
+    )};
+  --yl-color-gradient-article-unread: #{yl-fn-gradient-surface(
+      hsl(0 0% 19%),
+      hsl(240 4.5% 8.6%),
+      hsl(0 0% 17.6%)
+    )};
+  --yl-color-bg-article-fallback: var(--yl-color-surface-low);
+  --yl-color-border-split-pane: var(--yl-color-overlay-md);
+
+  /* Article content */
+  --yl-color-gradient-article-content: #{yl-fn-gradient-surface(
+      hsl(0 0% 19%),
+      hsl(0 0% 13.7%),
+      hsl(0 0% 9.4%)
+    )};
+  --yl-color-border-article-footer: var(--yl-color-overlay-md);
+  --yl-color-bg-article-footer-link-hover: #{yl-fn-state-layer(hover)};
+  --yl-filter-icon-article-footer: var(--yl-filter-icon-low);
+  --yl-filter-article-link: brightness(1.6);
+  --yl-color-bg-code: var(--yl-color-overlay-sm);
+  --yl-color-gradient-blockquote: #{yl-fn-gradient-surface(
+      hsl(0 0% 22.7%),
+      hsl(0 0% 19.2%),
+      hsl(0 0% 19.2%)
+    )};
+  --yl-color-gradient-blockquote-bar: linear-gradient(
+    to bottom,
+    hsl(0 0% 66.7%),
+    hsl(0 0% 49%)
+  );
+  --yl-color-border-article-divider: var(--yl-color-overlay-lg);
+
+  /* Settings and login pages */
+  --yl-color-surface-prompt: var(--yl-color-surface-medium);
+  --yl-color-surface-settings-box-content: var(--yl-color-surface-low);
+  --yl-filter-feed-link: brightness(2);
+
+  /* Video modal */
+  --yl-color-surface-theater-modal: hsl(0 0% 2.4%);
+  --yl-color-gradient-video-header-overlay: linear-gradient(
+    to bottom,
+    hsl(0 0% 0%) 0%,
+    transparent 100%
+  );
+  --yl-color-gradient-video-description: #{yl-fn-gradient-surface(
+      hsl(0 0% 19%),
+      hsl(0 0% 13.7%),
+      hsl(0 0% 9.4%)
+    )};
+  --yl-color-gradient-description-collapsed-fade: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--yl-color-body-background) 100%
+  );
+  --yl-color-bg-modal-button: var(--yl-color-surface-medium);
+  --yl-color-bg-modal-button-hover: #{yl-fn-state-on(
+      var(--yl-color-bg-modal-button),
+      hover
+    )};
+  --yl-filter-icon-modal-button: var(--yl-filter-icon-low);
+  --yl-color-border-button-group-divider: var(--yl-color-overlay-xl);
+  --yl-filter-icon-favorite: var(--yl-filter-icon-low);
+  --yl-filter-icon-favorite-base: var(--yl-filter-icon-highest);
+  --yl-color-bg-chapter-progress: var(--yl-color-overlay-2xs);
+  --yl-color-gradient-chapter-shimmer: linear-gradient(
+    to right,
+    transparent 0%,
+    hsl(var(--yl-overlay-hsl) / 5%) 30%,
+    hsl(var(--yl-overlay-hsl) / 25%) 60%,
+    hsl(var(--yl-overlay-hsl) / 65%) 85%,
+    hsl(var(--yl-overlay-hsl)) 95%,
+    hsl(var(--yl-overlay-hsl)) 100%
+  );
+  --yl-color-border-chapter-divider: var(--yl-color-overlay-sm);
+  --yl-color-bg-chapter-bar-hover: #{yl-fn-state-layer(hover)};
+  --yl-color-bg-chapter-item-hover: #{yl-fn-state-layer(hover)};
+  --yl-color-border-chapter-number: var(--yl-color-overlay-xl);
+  --yl-color-bg-chapter-time: var(--yl-color-overlay-md);
+  --yl-filter-icon-chapter-toggle: var(--yl-filter-icon-highest);
+
+  /* Miniplayer */
+  --yl-color-surface-miniplayer: var(--yl-color-surface-medium);
+  --yl-filter-miniplayer-thumbnail-backdrop: grayscale(0.3) brightness(0.5)
+    blur(30px);
+
+  /* Tags and share dialogs */
+  --yl-color-overlay-scrim-modal: hsl(0 0% 0% / 50%);
+  --yl-color-surface-modal: var(--yl-color-surface-lowest);
+  --yl-shadow-modal: var(--yl-shadow-lg);
+  --yl-color-bg-modal-item-hover: #{yl-fn-state-layer(hover)};
+
+  /* Youlag settings page */
+  --yl-filter-update-notice: brightness(1.4);
+  --yl-color-border-settings-section: var(--yl-color-overlay-xl);
+  --yl-filter-disabled: grayscale(1);
+
+  /* Helpers and notifications */
+  --yl-color-bg-badge: var(--yl-color-overlay-2xs);
+  --yl-color-border-badge: var(--yl-color-overlay-sm);
+  --yl-shadow-floating: var(--yl-shadow-md);
+
+  /* FreshRSS overrides */
+  --yl-loading-spinner-background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%23fff' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
+  --frss-loading-image: var(
+    --yl-loading-spinner-background-image
+  ); /* Replace FreshRSS loading spinner icon. */
+
+  --frss-noThumbnailImage-background-color: hsl(
+    0 0% 30%
+  ); /* FreshRSS striped background color, when image is not yet loaded */
+}
+
+@include yl-media-down(md) {
+  :root {
+    --yl-favicon-avatar-size: 36px;
+    --yl-sidenav-label-font-size: calc(var(--yl-text-md) * 0.9);
+    --yl-sidenav-sublabel-font-size: var(--yl-text-sm);
+    --yl-sidenav-icon-size: 20px;
+    --yl-sidenav-icon-label-gap: var(--yl-space-sm);
+    --yl-topnav-height: 54px;
+  }
+}
+
+@include yl-media-down(xs) {
+  :root {
+    --yl-sidenav-width: max(80%, 280px);
+    --yl-favicon-avatar-size: 0px;
+    --yl-favicon-avatar-display: none;
+  }
+}
