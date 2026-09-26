@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const archiver = require('archiver');
+const { ZipArchive } = require('archiver');
 
 const metadata = require('../metadata.json');
 const version = metadata.version;
@@ -83,7 +83,7 @@ const preprocessScss = async () => {
   const zipName = `youlag-${version}.zip`;
   const zipPath = path.join(distDir, zipName);
   const output = fs.createWriteStream(zipPath);
-  const archive = archiver('zip', { zlib: { level: 9 } });
+  const archive = new ZipArchive({ zlib: { level: 9 } });
 
   output.on('close', () => {
     const sizeMB = (archive.pointer() / (1024 * 1024)).toFixed(2);
