@@ -30,5 +30,10 @@
   "bugs": {
     "url": "https://github.com/civilblur/youlag/issues"
   },
-  "homepage": "https://github.com/civilblur/youlag#readme"
+  "homepage": "https://github.com/civilblur/youlag#readme",
+  "overrides": {
+    "minimatch": {
+      "brace-expansion": "5.0.9"
+    }
+  }
 }
