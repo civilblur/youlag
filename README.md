@@ -29,30 +29,28 @@ Subscribe to creators via RSS without a Google account, stay free of algorithms,
 - [Features](#features)
 - [Install](#install)
 - [Update](#update)
-- [Additional Resources](#additional-resources)
+- [Keyboard shortcuts & gestures](#keyboard-shortcuts--gestures)
 - [Contribution](#contribution)
 - [Attributions](#attributions)
 
 ## Features
 
 - 📺 **Videos & Articles**
-  - Browse YouTube subscriptions through a video-tailored inferface
+  - Browse YouTube subscriptions in a video-focused interface
+  - Auto-skip sponsored segments and chapters you choose
+  - Replace clickbait titles, and thumbnails with screencaps
   - Miniplayer: keep video in corner while reading articles
-  - Video chapters navigation
-  - Replace clickbait thumbnails with screen captures
-  - Modernized article viewing experience
+  - Modern article reading experience
 - ⚙️ **Customization**
   - Block YouTube shorts
-  - Apply video mode layout to chosen categories
-  - Switch between YouTube and Invidious playback sources
-  - Hide video-description intros with links to avoid sponsored content
+  - Video mode for chosen categories
+  - Play via YouTube or [Invidious](https://invidious.io/)
+  - Hide sponsored links in video description intros
 - 🖥️ **Desktop & Mobile**
-  - Article split view: Browse and view articles side by side
-  - Swipe down in video mode to activate miniplayer
-  - Swipe to open/close sidebar
-  - Use `Esc` key or the browser's `Back` navigation to exit videos and articles
+  - Browse and view articles side by side
+  - [Keyboard shortcuts & gestures](#keyboard-shortcuts--gestures)
 - 📰 **FreshRSS features**
-  - Subscribe to YouTube creators without needing an account
+  - Subscribe to YouTube creators without an account
   - Manage article and video RSS feeds
 
 ## Install
@@ -74,12 +72,27 @@ Before installing Youlag, please make sure to update FreshRSS to `1.30.0` or hig
 
 1. Repeat the same steps from the ["Install" instructions](#install).
 
-## Additional resources
+## Keyboard shortcuts & gestures
 
-- [Video Background Play Fix](https://addons.mozilla.org/en-US/firefox/addon/video-background-play-fix/)
-  - Enables background playback of YouTube videos in Firefox-based browsers on Android devices.
-- [Invidious](https://invidious.io/)
-  - An open source alternative front-end to YouTube.
+### Keyboard shortcuts
+
+These shortcuts control the video in video mode. Clicking on the video hands the keyboard over to YouTube's player, so click anywhere outside the video to use these shortcuts again.
+
+- `Space`: play/pause
+- `←` `→`: seek 5s
+- `Ctrl`/`Option` + `←` `→`: previous/next chapter
+  - `Ctrl` on Windows and Linux, `Option` on macOS.
+- `M`: mute
+- `I`: miniplayer
+- `Esc`: close video or article
+  - The browser's `Back` navigation works too.
+
+### Touch gestures
+
+- In an open video, swipe down to switch to the miniplayer.
+  - Swipe outside the video itself. Swipes on the video aren't recognized.
+- From the left edge of the screen, swipe right to open the sidebar.
+  - To close, swipe left on the sidebar.
 
 ## Contribution
 
