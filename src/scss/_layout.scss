@@ -49,8 +49,8 @@ body {
       }
 
       @include yl-media-down(md) {
-        width: 121px !important;
-        height: 24px !important;
+        width: 121px;
+        height: 24px;
         top: 6px;
         left: 54px;
       }
@@ -99,7 +99,7 @@ body {
 
     .configure .dropdown .dropdown-menu {
       /* Remove gap on left side. */
-      left: 0 !important;
+      left: 0 !important; /* Beats an important FreshRSS rule. */
       width: max(80%, 280px);
 
       & ~ .dropdown-close {
@@ -177,7 +177,7 @@ body {
       padding-bottom: 0;
 
       img {
-        height: var(--yl-space-md) !important;
+        height: var(--yl-space-md) !important; /* Beats FreshRSS. */
       }
 
       @include yl-media-up(md) {
@@ -187,7 +187,7 @@ body {
           margin-top: 4px;
           /* Set fixed size to allow sidenav logo to replicate exact sizing. See '#yl_freshrss_logo_container'. */
           width: 130px;
-          height: 26px !important;
+          height: 26px !important; /* Beats FreshRSS. */
         }
       }
     }
@@ -655,7 +655,7 @@ html {
       box-sizing: border-box;
 
       .toggle_aside {
-        display: none !important; /* Hide existing mobile sidenav toggle button to priotize the 'nav_menu_toggle_aside' (which has been made 'position:fixed'). */
+        display: none; /* Hide existing mobile sidenav toggle button to priotize the 'nav_menu_toggle_aside' (which has been made 'position:fixed'). */
       }
 
       & ~ .close-aside {
@@ -702,7 +702,7 @@ html {
       margin-right: var(--yl-sidenav-icon-label-gap);
       filter: var(
         --yl-filter-icon-sidenav
-      ) !important; /* Prevent chevron icon from having its filter removed on hover */
+      ); /* Prevent chevron icon from having its filter removed on hover */
     }
 
     .tree-folder-title button.dropdown-toggle {
@@ -738,7 +738,7 @@ html {
     ul.tree-folder-items li.item {
       border-radius: var(--yl-radius-sm);
       background-color: unset;
-      display: list-item !important; /* Always display all labels on side navigation expand */
+      display: list-item; /* Always display all labels on side navigation expand */
       font-size: var(--yl-sidenav-sublabel-font-size);
     }
 
@@ -1013,7 +1013,7 @@ body:not(.normal) {
     /* Playlists ("My labels") button */
     :is(#mark-read-aside, .mark-read-aside) ul#sidebar #tags {
       /* Always display Playlist ("My Labels") button */
-      display: list-item !important;
+      display: list-item;
 
       .tree-folder-title .title {
         @include yl-replace-text("Playlists") {
@@ -1092,7 +1092,7 @@ body:not(.normal) {
 
 body {
   /* Youlag loading spinner */
-  &:has(#global main#stream):before {
+  &:not(.yl-loaded):has(#global main#stream):before {
     /* Loading spinner, before the youlag script has fully loaded. Only on feed stream pages. */
     content: "Loading";
     position: fixed;
@@ -1175,15 +1175,11 @@ body {
   }
 
   &.yl-loaded {
-    /* Youlag script has loaded, remove loading spinner and feed overlay. */
-    &:before {
-      display: none !important;
-    }
-
+    /* Youlag script has loaded, remove the feed overlay. */
     #global {
       &:after {
         /* yl-loaded: Remove black backdrop after Youlag script has loaded. */
-        display: none !important;
+        display: none;
       }
     }
   }

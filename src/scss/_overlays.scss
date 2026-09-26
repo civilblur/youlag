@@ -112,8 +112,8 @@
       }
 
       input[type="checkbox"] {
-        width: 1.4rem !important;
-        height: 1.4rem !important;
+        width: 1.4rem !important; /* Beats an important FreshRSS rule. */
+        height: 1.4rem;
         margin-right: var(--yl-space-xs);
       }
     }
@@ -123,8 +123,8 @@
       position: fixed;
       bottom: 0;
       height: calc(100vh - 50%);
-      left: 0 !important;
-      right: 0 !important;
+      left: 0 !important; /* Beats an important FreshRSS rule. */
+      right: 0 !important; /* Beats an important FreshRSS rule. */
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       overflow: auto;
@@ -313,9 +313,9 @@ li.item.feed .item-title {
 
   #yl_nav_menu_container:has(.dropdown-target:target ~ .dropdown-menu) {
     /* Mobile: Force `#yl_nav_menu_container` to show, otherwise the dropdown menu will be hidden. */
-    transform: translateY(0) !important;
-    opacity: 1 !important;
-    pointer-events: all !important;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
   }
 }
 

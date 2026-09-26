@@ -66,15 +66,15 @@
       max-height: 50vh;
 
       .yl-thumbnail-container {
-        animation: none !important;
-        width: 100% !important;
-        height: auto !important;
-        padding-bottom: 0 !important;
+        animation: none;
+        width: 100%;
+        height: auto;
+        padding-bottom: 0;
         mask-image: none;
 
         .yl-video-thumbnail {
-          position: static !important;
-          transform: none !important;
+          position: static;
+          transform: none;
           object-fit: cover;
           max-height: 50vh;
           object-position: 0% 20%;
@@ -393,7 +393,7 @@
     #ylVideoChaptersActionNext,
     .yl-video-chapter-list-header,
     .yl-video-chapter-list {
-      display: none !important;
+      display: none;
     }
 
     .yl-video-chapter-action-container {
@@ -506,7 +506,7 @@
 
   .yl-video-chapter-current.is-expanded {
     .yl-video-chapter-toggle-icon {
-      transform: rotate(0deg) !important;
+      transform: rotate(0deg);
     }
 
     & ~ .yl-video-chapter-list {
