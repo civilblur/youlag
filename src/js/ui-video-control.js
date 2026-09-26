@@ -912,9 +912,15 @@ function videoControlPlay() {
 function updateFeedEntryDuration(youtubeId, videoDuration) {
   // Update or create the .yl-video-duration badge on a feed entry thumbnail.
   // Finds the entry by matching youtubeId in the img src or data-yl-original-src (set when dearrow replaces the thumbnail).
-  const entryImg = document.querySelector(
-    `img[data-yl-original-src*="${youtubeId}"], ${app.frss.el.feedRoot} .item.thumbnail img[src*="${youtubeId}"]`,
+  const entryTitle = document.querySelector(
+    `${app.frss.el.feedRoot} .flux_header .titleAuthorSummaryDate a.title[href*="${youtubeId}"]`,
   );
+  const entryImg =
+    document.querySelector(
+      `img[data-yl-original-src*="${youtubeId}"], ${app.frss.el.feedRoot} .item.thumbnail img[src*="${youtubeId}"]`,
+    ) ||
+    (entryTitle &&
+      getEntryRootElement(entryTitle)?.querySelector(".item.thumbnail img"));
   if (!entryImg) return;
 
   const videoDurationText = formatTime(videoDuration);

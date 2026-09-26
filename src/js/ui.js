@@ -704,6 +704,11 @@ function setSidenavState() {
   document.body.classList.toggle("yl-sidenav--collapsed", !expanded);
 }
 
+function getEntryRootElement(entryImg) {
+  // The root element of a feed entry, which contains the data-yl-is-video attribute. Used for setting attributes like data-yl-video-duration.
+  return entryImg.closest(`${app.frss.el.entry}[data-entry]`);
+}
+
 async function handleFeedDearrowFeatures() {
   // Video, article: Replace the thumbnails in stream and related videos (but not the video modal).
 
@@ -721,11 +726,6 @@ async function handleFeedDearrowFeatures() {
   const pageLayoutVideo = isLayoutVideo();
   const useCustomThumbTitle = shouldCustomThumbnailTitle();
 
-  function getEntryRootElement(entryImg) {
-    // The root element of a feed entry, which contains the data-yl-is-video attribute. Used for setting attributes like data-yl-video-duration.
-    return entryImg.closest(`${app.frss.el.entry}[data-entry]`);
-  }
-
   // Store dearrow for batch processing.
   const videoIdEntryMap = [];
   const videoIdTitleMap = [];
@@ -733,7 +733,11 @@ async function handleFeedDearrowFeatures() {
 
   // Build videoIdEntryMap for thumbnails, needed for custom thumbnail and video length badge.
   for (const entryImg of feedEntriesThumbnail) {
-    const videoId = getVideoIdFromUrl(entryImg.src);
+    const entryTitle = getEntryRootElement(entryImg)?.querySelector(
+      ".flux_header .titleAuthorSummaryDate a.title",
+    );
+    const videoId =
+      getVideoIdFromUrl(entryImg.src) || getVideoIdFromUrl(entryTitle?.href);
     if (videoId) {
       videoIdEntryMap.push({ entryImg, videoId });
       videoIdSet.add(videoId);
