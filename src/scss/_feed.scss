@@ -1568,6 +1568,11 @@ body.yl-mode-video:has(.tree-folder.category.favorites.active) {
     margin-top: var(--yl-space-xs);
     margin-bottom: var(--yl-space-xs);
 
+    p {
+      /* Restores FreshRSS paragraph spacing. */
+      margin: 1rem 0 0.5rem;
+    }
+
     &::before {
       content: "";
       position: absolute;
@@ -1614,7 +1619,7 @@ body.yl-mode-video:has(.tree-folder.category.favorites.active) {
       li {
         font-size: var(--yl-text-sm);
         line-height: var(--yl-line-height-lg);
-        letter-spacing: var(--yl-letter-spacing-xs);
+        letter-spacing: var(--yl-letter-spacing-2xs);
       }
     }
 

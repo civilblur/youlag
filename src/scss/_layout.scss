@@ -1086,7 +1086,10 @@ body:not(.normal) {
   /* Settings page buttons */
   #aside_feed .item.nav-section a[href="./?c=tag"] {
     transition: background-color var(--yl-duration-button);
-    @include yl-replace-text("Playlist management", var(--yl-text-sm));
+    @include yl-replace-text(
+      "Playlist management",
+      var(--yl-sidenav-label-font-size)
+    );
   }
 
   /* Change text in settings page containing "Label" to "Playlist" */
