@@ -234,6 +234,7 @@ body {
       border-bottom-left-radius: var(--yl-radius-full);
       background: transparent;
       border: var(--yl-border-width-sm) solid var(--yl-color-border-search);
+      color: var(--yl-color-text-medium);
 
       &:focus,
       &:hover {
@@ -775,6 +776,7 @@ html {
     ul.tree-folder-items li.item a.item-title {
       padding-left: 15px;
       width: calc(100% - 70px);
+      color: var(--yl-color-text-highest);
 
       &:not(.active) {
         padding-left: 62px;
