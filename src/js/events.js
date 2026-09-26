@@ -7,6 +7,7 @@
 function init() {
   if (app.state.youlag.init) return;
 
+  applyDebugTheme();
   clearPathHash();
   setFreshRssUrlPrefix();
   setBodyClass();
@@ -47,6 +48,7 @@ function init() {
   app.state.youlag.init = true;
 
   if (isDebugEnabled()) {
+    document.body.classList.add("yl-debug");
     renderDebugButtons();
     autoOpenDebugPanels();
   }

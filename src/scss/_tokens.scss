@@ -162,6 +162,7 @@
   --yl-color-text-readonly: var(--yl-color-text-lowest);
   --yl-color-text-link: var(--yl-color-text-medium);
   --yl-color-text-underline: var(--yl-color-text-highest);
+  --yl-color-text-on-accent: hsl(240 10% 88.2%);
   --main-font-color: var(
     --yl-color-text-medium
   ); /* Replace FreshRSS default font color */
@@ -386,6 +387,7 @@
 
   /* Video modal */
   --yl-color-surface-theater-modal: hsl(0 0% 2.4%);
+  --yl-opacity-video-blur-backdrop: 0.5;
   --yl-color-gradient-video-header-overlay: linear-gradient(
     to bottom,
     hsl(0 0% 0%) 0%,
@@ -425,7 +427,10 @@
   --yl-color-bg-chapter-item-hover: #{yl-fn-state-layer(hover)};
   --yl-color-border-chapter-number: var(--yl-color-overlay-xl);
   --yl-color-bg-chapter-time: var(--yl-color-overlay-md);
+  --yl-color-bg-chapter-time-active: hsl(0 0% 100% / 12%);
+  --yl-color-border-chapter-time-active: hsl(0 0% 100% / 8%);
   --yl-filter-icon-chapter-toggle: var(--yl-filter-icon-highest);
+  --yl-filter-icon-chapter-action: var(--yl-filter-icon-highest);
 
   /* Miniplayer */
   --yl-color-surface-miniplayer: var(--yl-color-surface-medium);
@@ -476,4 +481,175 @@
     --yl-favicon-avatar-size: 0px;
     --yl-favicon-avatar-display: none;
   }
+}
+
+/* Light mode (experimental) */
+:root[data-yl-theme="light"] {
+  /* Palette: surfaces */
+  --yl-color-surface-lowest: hsl(40 33% 97.5%);
+  --yl-color-surface-low: hsl(40 10% 86.5%);
+  --yl-color-surface-medium: hsl(40 9% 83%);
+  --yl-color-surface-high: hsl(40 8% 78.5%);
+  --yl-color-surface-highest: hsl(40 6% 71%);
+
+  /* Palette: overlays */
+  --yl-overlay-hsl: 30 20% 15%;
+
+  /* Palette: filters and shadows */
+  --yl-filter-icon-lowest: brightness(0) invert(0.4);
+  --yl-filter-icon-low: brightness(0) invert(0.32);
+  --yl-filter-icon-medium: brightness(0) invert(0.22);
+  --yl-filter-icon-high: brightness(0) invert(0.16);
+  --yl-filter-icon-highest: brightness(0) invert(0.1);
+  --yl-shadow-sm: hsl(30 25% 18% / 10%);
+  --yl-shadow-md: hsl(30 25% 18% / 18%);
+  --yl-shadow-lg: hsl(30 25% 18% / 24%);
+  --yl-shadow-floating: transparent;
+  --yl-shadow-badge-unread: transparent;
+
+  /* Page */
+  --yl-color-body-background: hsl(40 12% 90.5%);
+
+  /* Text */
+  --yl-color-text-highest: hsl(30 14% 8%);
+  --yl-color-text-high: hsl(30 10% 13%);
+  --yl-color-text-medium: hsl(30 7% 19%);
+  --yl-color-text-low: hsl(30 5% 33%);
+  --yl-color-text-lowest: hsl(30 4% 40%);
+
+  /* Mixins */
+  --yl-filter-gradient-bg-hover: brightness(0.94) saturate(1.3);
+
+  /* Loading state */
+  --yl-color-overlay-scrim-loading: hsl(40 12% 90.5% / 80%);
+  --yl-color-border-loading-indicator: #{yl-fn-tint(hsl(30 20% 15%), 24%)};
+  --yl-shadow-glow-loading-indicator: hsl(30 20% 15% / 6%);
+
+  /* Header and top navigation */
+  --yl-color-gradient-nav: #{yl-fn-gradient-surface(
+      hsl(40 14% 92% / 78%),
+      hsl(40 12% 89.5% / 88%),
+      hsl(40 14% 91% / 74%)
+    )};
+
+  /* Sidenav */
+  --yl-color-gradient-sidenav-item-active: #{yl-fn-gradient-surface(
+      hsl(40 10% 83.5%),
+      hsl(40 8% 81.5%),
+      hsl(40 10% 84%)
+    )};
+  --yl-color-bg-sidenav-count: hsl(40 9% 82%);
+  --yl-color-bg-sidenav-count-dark: hsl(40 8% 77%);
+
+  /* Controls */
+  --yl-color-gradient-input-disabled-stripes: repeating-linear-gradient(
+    45deg,
+    hsl(40 8% 84%),
+    hsl(40 8% 84%) 10px,
+    hsl(40 6% 78%) 10px,
+    hsl(40 6% 78%) 20px
+  );
+  --yl-color-gradient-button: #{yl-fn-gradient-surface(
+      hsl(40 33% 98.5%),
+      hsl(40 22% 95.5%),
+      hsl(40 14% 92%),
+      180deg
+    )};
+  --yl-filter-kbd-link: none;
+
+  /* Menus and panels */
+  --yl-color-surface-menu: hsl(40 18% 94%);
+  --yl-color-gradient-list-item-hover: #{yl-fn-gradient-surface(
+      hsl(40 10% 83.5%),
+      hsl(40 8% 81.5%),
+      hsl(40 10% 84%)
+    )};
+  --yl-color-border-divider: hsl(40 7% 76%);
+
+  /* Feed stream */
+  --yl-color-border-overlay-panel-item: hsl(30 20% 15% / 14%);
+
+  /* Video cards */
+  --yl-color-gradient-card-hover: #{yl-fn-gradient-surface(
+      hsl(40 13% 78%),
+      hsl(40 10% 88.5%),
+      hsl(40 11% 83%),
+      209deg
+    )};
+  --yl-color-gradient-empty-thumbnail: linear-gradient(
+    45deg,
+    hsl(216 18% 84%),
+    hsl(219 30% 74%)
+  );
+  --yl-color-gradient-thumbnail-author-text: linear-gradient(
+    to right,
+    hsl(222 75% 45%),
+    hsl(172 85% 28%)
+  );
+  --yl-color-gradient-article-active-flux-content: #{yl-fn-gradient-surface(
+      hsl(40 22% 95%),
+      hsl(40 28% 96.5%),
+      hsl(40 22% 95.5%)
+    )};
+
+  /* Article rows */
+  --yl-color-surface-card-opened: var(--yl-color-surface-lowest);
+  --yl-color-gradient-article-unread: #{yl-fn-gradient-surface(
+      hsl(40 24% 95%),
+      hsl(40 33% 97.5%),
+      hsl(40 24% 95.5%)
+    )};
+
+  /* Article content */
+  --yl-color-gradient-article-content: #{yl-fn-gradient-surface(
+      hsl(40 33% 98%),
+      hsl(40 30% 97%),
+      hsl(40 22% 95%)
+    )};
+  --yl-filter-article-link: none;
+  --yl-color-gradient-blockquote: #{yl-fn-gradient-surface(
+      hsl(40 12% 90%),
+      hsl(40 12% 92%),
+      hsl(40 12% 92%)
+    )};
+  --yl-color-gradient-blockquote-bar: linear-gradient(
+    to bottom,
+    hsl(30 4% 55%),
+    hsl(30 4% 40%)
+  );
+
+  /* Settings and login pages */
+  --yl-color-surface-prompt: var(--yl-color-surface-lowest);
+  --yl-color-surface-settings-box-content: var(--yl-color-surface-lowest);
+  --yl-filter-feed-link: none;
+
+  /* Video modal */
+  --yl-color-surface-theater-modal: var(--yl-color-body-background);
+  --yl-opacity-video-blur-backdrop: 0.8;
+  --yl-color-gradient-video-header-overlay: linear-gradient(
+    to bottom,
+    var(--yl-color-surface-theater-modal) 0%,
+    transparent 100%
+  );
+  --yl-color-gradient-video-description: #{yl-fn-gradient-surface(
+      hsl(40 33% 98%),
+      hsl(40 30% 97%),
+      hsl(40 22% 95%)
+    )};
+
+  /* Miniplayer */
+  --yl-color-surface-miniplayer: var(--yl-color-surface-lowest);
+  --yl-filter-miniplayer-thumbnail-backdrop: grayscale(0.3) opacity(0.3)
+    blur(30px);
+
+  /* Tags and share dialogs */
+  --yl-color-overlay-scrim-modal: hsl(30 20% 10% / 35%);
+  --yl-color-surface-modal: var(--yl-color-surface-menu);
+
+  /* Youlag settings page */
+  --yl-filter-update-notice: none;
+
+  /* FreshRSS overrides */
+  --yl-loading-spinner-background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' stroke='%2357534e' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3E.spinner_V8m1%7Btransform-origin%3Acenter%3Banimation%3Aspinner_zKoa 2s linear infinite%7D.spinner_V8m1 circle%7Bstroke-linecap%3Around%3Banimation%3Aspinner_YpZS 1.5s ease-in-out infinite%7D%40keyframes spinner_zKoa%7B100%25%7Btransform%3Arotate(360deg)%7D%7D%40keyframes spinner_YpZS%7B0%25%7Bstroke-dasharray%3A0 150%3Bstroke-dashoffset%3A0%7D47.5%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-16%7D95%25%2C100%25%7Bstroke-dasharray%3A42 150%3Bstroke-dashoffset%3A-59%7D%7D%3C/style%3E%3Cg class='spinner_V8m1'%3E%3Ccircle cx='12' cy='12' r='9.5' fill='none' stroke-width='3'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
+  --frss-noThumbnailImage-background-color: hsl(40 8% 80%);
 }

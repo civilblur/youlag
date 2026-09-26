@@ -210,7 +210,7 @@
     object-position: center;
     filter: blur(var(--yl-effect));
     transform: translateY(calc(var(--yl-effect) / -2));
-    opacity: 0.5;
+    opacity: var(--yl-opacity-video-blur-backdrop);
   }
 }
 
@@ -336,6 +336,7 @@
 
       &__icon {
         opacity: var(--yl-opacity-muted);
+        filter: var(--yl-filter-icon-chapter-action);
         width: var(--yl-icon-size-lg);
         height: var(--yl-icon-size-lg);
         background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="%23fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 5v14M6 10.571v2.858c0 1.827 0 2.74.384 3.267a2 2 0 0 0 1.413.811c.648.066 1.437-.394 3.016-1.315l2.449-1.428.008-.005c1.552-.905 2.328-1.358 2.59-1.949a2 2 0 0 0 0-1.62c-.263-.591-1.041-1.045-2.598-1.954l-2.45-1.428c-1.578-.921-2.367-1.381-3.015-1.315a2 2 0 0 0-1.413.812C6 7.83 6 8.745 6 10.57Z"/></svg>');
@@ -462,7 +463,13 @@
 
       &.is-active {
         background: var(--yl-color-gradient-active);
-        color: var(--yl-color-text-medium);
+        color: var(--yl-color-text-on-accent);
+
+        .yl-video-chapter-list-item__time {
+          border-color: var(--yl-color-border-chapter-time-active);
+          background-color: var(--yl-color-bg-chapter-time-active);
+          color: var(--yl-color-text-on-accent);
+        }
       }
 
       &.is-skipped {

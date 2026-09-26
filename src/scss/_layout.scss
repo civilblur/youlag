@@ -25,6 +25,22 @@
  * The top header.
  ****************************************/
 
+header.header .item.title a {
+  .logo,
+  &:hover .logo {
+    filter: var(--yl-filter-logo);
+  }
+}
+
+#yl_freshrss_logo_container,
+header.header .item.title a {
+  transition: opacity var(--yl-duration-md) var(--yl-easing-ease-in-out);
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
 body {
   &:is(#{$yl-feed-pages}) {
     /* Use custom FreshRSS logo on feed pages only, where fixed sidenav is used. */
@@ -36,11 +52,6 @@ body {
       top: 9px;
       left: 57px;
       padding: 8px;
-      transition: opacity var(--yl-duration-md) var(--yl-easing-ease-in-out);
-
-      &:hover {
-        opacity: 0.8;
-      }
 
       img {
         width: 130px;
@@ -240,9 +251,14 @@ body {
       border-top-right-radius: var(--yl-radius-full);
       border-bottom-right-radius: var(--yl-radius-full);
       width: 64px;
+      background-color: var(--yl-color-bg-header-button);
 
       &:hover {
         background-color: var(--yl-color-bg-header-button-hover);
+      }
+
+      .icon {
+        filter: var(--yl-filter-icon-search) !important;
       }
     }
   }
@@ -271,6 +287,10 @@ body {
         /* Sizing for default settings button */
         width: var(--yl-icon-size-md);
         height: var(--yl-icon-size-md);
+      }
+
+      .icon {
+        filter: var(--yl-filter-icon-header-button);
       }
     }
   }
@@ -950,6 +970,11 @@ body:not(.normal) {
   .nav.nav-list.aside {
     padding-top: var(--yl-space-md);
 
+    .item a,
+    .item .as-link {
+      color: var(--yl-color-text-highest);
+    }
+
     .item.nav-section li.item {
       margin: 0 var(--yl-space-2xs);
       border-radius: var(--yl-radius-md);
@@ -958,7 +983,8 @@ body:not(.normal) {
       &.active,
       &.active a,
       &:hover,
-      &:hover a {
+      &:hover a,
+      &:hover .as-link {
         background-color: var(--yl-color-bg-sidenav-item-hover);
         background: var(--yl-color-gradient-sidenav-item-active);
         max-width: calc(100% - 1rem);

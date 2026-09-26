@@ -20,6 +20,15 @@ function isDebugEnabled() {
   }
 }
 
+function applyDebugTheme() {
+  if (!isDebugEnabled()) return;
+  try {
+    if (localStorage.getItem("ylDebugTheme") === "light") {
+      document.documentElement.setAttribute("data-yl-theme", "light");
+    }
+  } catch (e) {}
+}
+
 function renderDebugButtons() {
   if (!isDebugEnabled()) return;
 
@@ -85,8 +94,32 @@ function renderDebugButtons() {
     renderLocalStorageStates();
   });
 
+  // Theme button (T)
+  const btnT = document.createElement("button");
+  btnT.type = "button";
+  btnT.textContent = "T";
+  btnT.title = "Toggle light mode";
+  btnT.style.cssText = btnStyle;
+  btnT.addEventListener("click", function () {
+    const root = document.documentElement;
+    const toLight = root.getAttribute("data-yl-theme") !== "light";
+    if (toLight) {
+      root.setAttribute("data-yl-theme", "light");
+    } else {
+      root.removeAttribute("data-yl-theme");
+    }
+    try {
+      if (toLight) {
+        localStorage.setItem("ylDebugTheme", "light");
+      } else {
+        localStorage.removeItem("ylDebugTheme");
+      }
+    } catch (e) {}
+  });
+
   btns.appendChild(btnC);
   btns.appendChild(btnL);
+  btns.appendChild(btnT);
   document.body.appendChild(btns);
 }
 
