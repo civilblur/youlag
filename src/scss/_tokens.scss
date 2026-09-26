@@ -456,6 +456,7 @@
   --yl-filter-disabled: grayscale(1);
 
   /* Helpers and notifications */
+  --yl-color-text-badge: var(--yl-color-text-medium);
   --yl-color-text-badge-warning: var(--yl-color-accent-warning);
   --yl-color-text-badge-success: var(--yl-color-accent-success-alt);
   --yl-color-text-badge-accent: var(--yl-color-text-highest);
@@ -654,11 +655,7 @@
   /* Video modal */
   --yl-color-surface-theater-modal: var(--yl-color-body-background);
   --yl-opacity-video-blur-backdrop: 0.8;
-  --yl-color-gradient-video-header-overlay: linear-gradient(
-    to bottom,
-    var(--yl-color-surface-theater-modal) 0%,
-    transparent 100%
-  );
+  --yl-color-gradient-video-header-overlay: none;
   --yl-color-gradient-video-description: #{yl-fn-gradient-surface(
       hsl(40 33% 98%),
       hsl(40 30% 97%),

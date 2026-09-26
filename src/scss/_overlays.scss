@@ -646,6 +646,9 @@ html {
   --yl-color-bg-button-menu-hover: var(--yl-color-bg-button-on-accent-hover);
   --yl-color-border-button-menu: var(--yl-color-border-button-on-accent);
   --yl-color-text-button-menu: var(--yl-color-text-on-accent);
+  --yl-color-bg-badge: var(--yl-color-bg-button-on-accent);
+  --yl-color-border-badge: var(--yl-color-border-button-on-accent);
+  --yl-color-text-badge: var(--yl-color-text-on-accent);
   position: fixed;
   bottom: var(--yl-space-sm);
   left: 50%;
@@ -716,7 +719,7 @@ html {
   border-radius: var(--yl-radius-xs);
   background-color: var(--yl-color-bg-badge);
   font-size: var(--yl-text-2xs);
-  color: var(--yl-color-text-medium);
+  color: var(--yl-color-text-badge);
   cursor: default;
 
   &--warning {
