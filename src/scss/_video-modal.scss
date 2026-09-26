@@ -197,6 +197,7 @@
   position: absolute;
   left: 0;
   z-index: -1;
+  animation: fade-in var(--yl-duration-xl) var(--yl-easing-ease-out);
 
   @supports (-webkit-hyphens: auto) and ((-webkit-line-clamp: unset)) {
     /* SAFARI HACK: Prevent premature clipping of blur caused by CJK character titles on `yl-video-metadata-title` by increasing the blur effect size. */
