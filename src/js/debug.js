@@ -20,10 +20,21 @@ function isDebugEnabled() {
   }
 }
 
-function applyDebugTheme() {
-  if (!isDebugEnabled()) return;
+function applyTheme() {
+  if (document.readyState !== "complete") {
+    // Reapplies the theme on page load, as a fallback.
+    window.addEventListener("load", applyTheme, { once: true });
+  }
   try {
-    if (localStorage.getItem("ylDebugTheme") === "light") {
+    const themeLight = getComputedStyle(document.documentElement)
+      .getPropertyValue("--yl-theme-light")
+      .trim();
+    const isLight =
+      themeLight === "true" ||
+      (themeLight === "" &&
+        isDebugEnabled() &&
+        localStorage.getItem("ylDebugTheme") === "light");
+    if (isLight) {
       document.documentElement.setAttribute("data-yl-theme", "light");
     }
   } catch (e) {}

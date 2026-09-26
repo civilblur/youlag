@@ -7,7 +7,7 @@
 function init() {
   if (app.state.youlag.init) return;
 
-  applyDebugTheme();
+  applyTheme(); // Experimental light theme
   clearPathHash();
   setFreshRssUrlPrefix();
   setBodyClass();
