@@ -848,7 +848,8 @@ html {
 
   .tree .tree-folder ul.tree-folder-items li.item.active a:after,
   .tree .tree-folder ul.tree-folder-items li.item a:after {
-    background: transparent;
+    background: var(--yl-color-bg-sidenav-feed-count);
+    color: var(--yl-color-text-highest);
   }
 
   .category.important .title:not([data-unread="0"]):after {

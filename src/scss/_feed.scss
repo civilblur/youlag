@@ -526,6 +526,7 @@ nav.nav_menu {
     @include yl-gradient-bg(info);
     border-radius: var(--yl-radius-md);
     padding: var(--yl-space-xs);
+    color: var(--yl-color-text-on-accent);
   }
 }
 
@@ -1276,6 +1277,7 @@ body.yl-mode-video {
             font-weight: var(--yl-font-weight-bold);
             pointer-events: none;
             z-index: 1;
+            color: var(--yl-color-text-badge-accent);
           }
         }
       }

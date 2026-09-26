@@ -88,35 +88,46 @@
   @return linear-gradient($angle, $start 0%, $middle 40%, $end 100%);
 }
 
+/* Applies solidness to a tint by scaling its opacity and darkness. Used for gradient backgrounds and badges. */
+@function yl-fn-tint-solid($color, $amount, $solid-amount) {
+  $shaded: color-mix(
+    in oklab,
+    $color,
+    black calc(var(--yl-tint-solidness) * 30%)
+  );
+  @return color-mix(
+    in oklab,
+    $shaded calc(#{$amount} + var(--yl-tint-solidness) * #{$solid-amount}),
+    transparent
+  );
+}
+
 @function yl-fn-gradient-badge($color, $colorDarker) {
   @return linear-gradient(
     to bottom,
-    yl-fn-tint($color, 35%),
-    yl-fn-tint($colorDarker, 60%)
+    yl-fn-tint-solid($color, 35%, 40%),
+    yl-fn-tint-solid($colorDarker, 60%, 25%)
   );
 }
 
 @mixin yl-gradient-bg($name, $hover: true) {
   $pair: yl-fn-gradient-pair($name);
-  $color: list.nth($pair, 1);
-  $colorDarker: list.nth($pair, 2);
-
-  background: linear-gradient(
+  $color: var(--yl-color-tint-#{$name}-start, #{list.nth($pair, 1)});
+  $colorDarker: var(--yl-color-tint-#{$name}-end, #{list.nth($pair, 2)});
+  $background: linear-gradient(
     to bottom,
-    yl-fn-tint($color, 10%),
-    yl-fn-tint($colorDarker, 15%)
+    yl-fn-tint-solid($color, 10%, 45%),
+    yl-fn-tint-solid($colorDarker, 15%, 45%)
   );
+
+  background: $background;
   backdrop-filter: var(--yl-filter-blur-glass);
-  border: var(--yl-border-width-sm) solid yl-fn-tint($color, 30%);
+  border: var(--yl-border-width-sm) solid yl-fn-tint-solid($color, 30%, 40%);
   transition: filter var(--yl-duration-button) var(--yl-easing-ease-in-out);
 
   @if $hover {
     &:hover {
-      background: linear-gradient(
-        to bottom,
-        yl-fn-tint($color, 10%),
-        yl-fn-tint($colorDarker, 15%)
-      );
+      background: $background;
       filter: var(--yl-filter-gradient-bg-hover);
     }
   }
@@ -144,7 +155,7 @@
   background-color: var(--yl-color-bg-button-menu);
   cursor: pointer;
   font-size: var(--yl-text-xs);
-  color: var(--yl-color-text-medium);
+  color: var(--yl-color-text-button-menu);
   line-height: var(--yl-line-height-lg);
   transition: background-color var(--yl-duration-button);
 
