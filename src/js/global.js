@@ -11,8 +11,11 @@ app.metadata = {
 };
 
 app.db = {
-  name: "youlag-cache", // IndexedDB database name
-  userStores: ["playback", "chapterSkip", "watchHistory", "syncQueue"], // Stores kept apart per FreshRSS user.
+  prefix: "youlag", // Database name prefix, followed by the FreshRSS user.
+  version: 1, // Bump when adding a store.
+  stores: ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback", "watchHistory", "syncQueue"],
+  legacyStores: ["dearrow", "duration", "sponsorblock", "chapterSkip"], // Released as one database per store, 'youlag-cache-<store>'.
+  branchStores: ["playback", "chapterSkip", "watchHistory", "syncQueue"], // Unreleased per-user layout, 'youlag-cache-<user>-<store>'.
 };
 
 app.sync = {
@@ -61,7 +64,7 @@ app.state = {
     flushing: null, // Promise of the running flush.
     flushAgain: false, // Whether a flush was asked for during the running one.
     hideSent: false, // Whether the page-hide send ran since the page was last visible.
-    adopted: null, // Promise of the one-time adoption of skipped chapters saved before databases were per user.
+    migrated: null, // Promise of the one-time move of data from the old databases.
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
     pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.

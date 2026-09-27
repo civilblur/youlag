@@ -80,9 +80,7 @@ async function syncFlushQueue() {
     if (items.length) await syncPost("sync", { items });
     // Keys changed during the request were queued again and stay for the next flush.
     for (const { queueKey, queuedAt, item } of sent) {
-      if ((await dbGetRecord(app.sync.queueStore, queueKey)) === queuedAt) {
-        await dbDelete(app.sync.queueStore, queueKey);
-      }
+      await dbDeleteIfUnchanged(app.sync.queueStore, queueKey, queuedAt);
       if (item && app.state.sync.unsent.get(queueKey)?.updatedAt === item.updatedAt) {
         app.state.sync.unsent.delete(queueKey);
       }
@@ -153,26 +151,31 @@ function syncIsEmptyList(storeName, record) {
   );
 }
 
-async function syncAdoptLegacyChapterSkip() {
-  // Skipped chapters saved before databases were per user go to the first user who loads Youlag in this browser.
-  if (localStorage.getItem("ylChapterSkipAdopted") === "true") return;
-  const legacyName = `${app.db.name}-chapterSkip`;
-  const entries = await dbGetAllEntries("chapterSkip", legacyName).catch(() => []);
-  const adopted = entries
-    .filter(([, record]) => Array.isArray(record?.value) && record.value.length > 0)
-    .map(([key, record]) => [key, { ...record, ttlMs: 0 }]);
-  if (adopted.length) await dbPutMany("chapterSkip", adopted);
-  dbConnections[legacyName]?.close();
-  delete dbConnections[legacyName];
-  indexedDB.deleteDatabase(legacyName);
-  localStorage.setItem("ylChapterSkipAdopted", "true");
+async function syncMigrateLegacy() {
+  // Moves data from before databases were per user into this user's database, once per browser.
+  // The released layout had no owner, so the first user who loads Youlag here adopts it.
+  if (localStorage.getItem("ylLegacyMigrated") === "true") return;
+  const user = getSetting("yl_user");
+  const sources = [
+    ...app.db.legacyStores.map((storeName) => [`youlag-cache-${storeName}`, storeName]),
+    ...app.db.branchStores.map((storeName) => [`youlag-cache-${user}-${storeName}`, storeName]),
+  ];
+  for (const [legacyName, storeName] of sources) {
+    const entries = (await dbReadLegacy(legacyName, storeName)).filter(
+      ([, record]) => storeName !== "chapterSkip" || record?.value?.length > 0,
+    );
+    if (entries.length) await dbPutMany(storeName, entries);
+    indexedDB.deleteDatabase(legacyName);
+  }
+  localStorage.setItem("ylLegacyMigrated", "true");
+  localStorage.removeItem("ylChapterSkipAdopted");
 }
 
 async function syncBackfill() {
   // Queues the data saved before syncing existed, once per user and browser.
   const flag = `ylSyncBackfilled:${getSetting("yl_user")}`;
   if (localStorage.getItem(flag) === "true") return;
-  await app.state.sync.adopted;
+  await app.state.sync.migrated;
   const now = Date.now();
   for (const storeName of app.sync.stores) {
     const entries = await dbGetAllEntries(storeName).catch(() => []);
@@ -187,7 +190,7 @@ async function syncBackfill() {
 
 function setupSync() {
   app.state.sync.positionsLoaded = loadPlaybackPositions();
-  app.state.sync.adopted = syncAdoptLegacyChapterSkip().catch(() => {});
+  app.state.sync.migrated = syncMigrateLegacy().catch(() => {});
   if (!syncEnabled()) return;
   // Applies clears made on another device first, so the flush doesn't send the cleared data back.
   Promise.all([applyVideoDataClear(), applyWatchHistoryClear()])

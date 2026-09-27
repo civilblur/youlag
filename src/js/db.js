@@ -1,71 +1,62 @@
 /**
- * IndexedDB wrapper for caching
- * Primarily for storing dearrow data, to reduce API calls.
+ * IndexedDB wrapper
  *
- * Features:
- * - Connection caching for efficiency
- * - TTL-based expiration (4 weeks default, configurable per operation)
- *   - youlag-cache-dearrow: Stores dearrow API responses for 4 weeks.
- *   - youlag-cache-duration: Stores video duration for 52 weeks (1y).
- *   - youlag-cache-sponsorblock: Stores SponsorBlock segments for 1 week.
- * - Proper transaction error handling
- * - Each store gets its own database: '{app.db.name}-{storeName}' (e.g. 'youlag-cache-dearrow').
- *   This sidesteps IndexedDB versioning — no version bump needed when adding new stores.
+ * Youlag's local data: DeArrow data, video durations, SponsorBlock segments, skipped chapters,
+ * playback positions, watch history and the sync queue.
  *
- * Usage:
- *   await dbSet('dearrow', videoId, data);              // Store data for a videoId (4-week TTL)
- *   await dbSet('dearrow', videoId, data, 4);           // Store with custom 4-week TTL
- *   await dbGet('dearrow', videoId);                    // Retrieve data (returns undefined if expired)
- *
+ * - One database per FreshRSS user, 'youlag-<user>', with one store for each kind of data.
+ *   Users sharing a browser never see each other's data.
+ * - Records are { value, timestamp, ttlMs, checkedAt? }. The TTL marks when data is due to be
+ *   checked again, it never hides stored data (see dbIsFresh).
+ * - Adding a store: add it to app.db.stores and bump app.db.version.
  */
 
 const dbConnections = {};
 
-function dbGetName(storeName) {
-  // Personal stores and the sync queue get one database per FreshRSS user, so users sharing a browser stay apart.
-  const base = app?.db?.name || "youlag-cache";
-  const user = getSetting("yl_user");
-  return user && app.db.userStores.includes(storeName)
-    ? `${base}-${user}-${storeName}`
-    : `${base}-${storeName}`;
+function dbGetName() {
+  // One database per FreshRSS user, so users sharing a browser keep their data apart.
+  return `${app.db.prefix}-${getSetting("yl_user") || "default"}`;
 }
 
-function dbOpen(dbName, storeName) {
+function dbOpen(dbName) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(dbName, 1);
-    request.onupgradeneeded = function (event) {
-      const db = event.target.result;
-      if (!db.objectStoreNames.contains(storeName)) {
-        db.createObjectStore(storeName);
+    const request = indexedDB.open(dbName, app.db.version);
+    request.onupgradeneeded = () => {
+      // Creates the stores this version adds. Existing stores keep their data.
+      const db = request.result;
+      for (const storeName of app.db.stores) {
+        if (!db.objectStoreNames.contains(storeName)) db.createObjectStore(storeName);
       }
     };
-    request.onsuccess = function (event) {
-      const db = event.target.result;
-      dbConnections[dbName] = db; // Cache connection
+    request.onsuccess = () => {
+      const db = request.result;
+      // Lets another tab upgrade the database. The next use reopens it.
+      db.onversionchange = () => {
+        db.close();
+        delete dbConnections[dbName];
+      };
+      db.onclose = () => delete dbConnections[dbName];
+      dbConnections[dbName] = db;
       resolve(db);
     };
-    request.onerror = function (event) {
-      console.error(
-        `Youlag (DB): Failed to open IndexedDB '${dbName}':`,
-        event.target.error,
-      );
-      reject(event.target.error);
+    request.onblocked = () => {
+      console.warn(`Youlag (DB): '${dbName}' upgrade waits for other tabs to close it.`);
+    };
+    request.onerror = () => {
+      console.error(`Youlag (DB): Failed to open IndexedDB '${dbName}':`, request.error);
+      reject(request.error);
     };
   });
 }
 
-// Return cached connection if available, otherwise open
-async function dbGetConnection(dbName, storeName) {
-  if (dbConnections[dbName]) {
-    return dbConnections[dbName];
-  }
-  return await dbOpen(dbName, storeName);
+async function dbGetConnection() {
+  const dbName = dbGetName();
+  return dbConnections[dbName] || dbOpen(dbName);
 }
 
 async function dbSet(storeName, key, value, ttlWeeks = 4) {
   try {
-    const dbName = dbGetName(storeName);
-    const db = await dbGetConnection(dbName, storeName);
+    const db = await dbGetConnection();
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(storeName, "readwrite");
@@ -108,8 +99,7 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
 
 async function dbGet(storeName, key) {
   try {
-    const dbName = dbGetName(storeName);
-    const db = await dbGetConnection(dbName, storeName);
+    const db = await dbGetConnection();
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(storeName, "readonly");
@@ -144,8 +134,8 @@ async function dbGet(storeName, key) {
 }
 
 // Runs one request in its own transaction and resolves with its result once the transaction completes.
-async function dbRun(storeName, mode, makeRequest, dbName = dbGetName(storeName)) {
-  const db = await dbGetConnection(dbName, storeName);
+async function dbRun(storeName, mode, makeRequest) {
+  const db = await dbGetConnection();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(storeName, mode);
     const req = makeRequest(tx.objectStore(storeName));
@@ -182,7 +172,7 @@ function dbGetAllKeys(storeName) {
   return dbRun(storeName, "readonly", (store) => store.getAllKeys());
 }
 
-async function dbGetAllEntries(storeName, dbName = dbGetName(storeName)) {
+async function dbGetAllEntries(storeName) {
   const entries = [];
   await dbRun(
     storeName,
@@ -197,7 +187,6 @@ async function dbGetAllEntries(storeName, dbName = dbGetName(storeName)) {
       };
       return req;
     },
-    dbName,
   );
   return entries;
 }
@@ -249,4 +238,49 @@ async function dbDropQueuedMissing(storeNames) {
       app.state.sync.unsent.delete(queueKey);
     }
   }
+}
+
+function dbDeleteIfUnchanged(storeName, key, expected) {
+  // Deletes the record only if it still holds the expected value, checked and deleted in one transaction.
+  return dbRun(storeName, "readwrite", (store) => {
+    const req = store.get(key);
+    req.onsuccess = () => {
+      if (req.result === expected) store.delete(key);
+    };
+    return req;
+  });
+}
+
+function dbReadLegacy(dbName, storeName) {
+  // Reads a database from before databases were per user. Resolves empty, without creating it, when it doesn't exist.
+  return new Promise((resolve) => {
+    const request = indexedDB.open(dbName);
+    request.onupgradeneeded = () => request.transaction.abort();
+    request.onerror = () => resolve([]);
+    request.onsuccess = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(storeName)) {
+        db.close();
+        resolve([]);
+        return;
+      }
+      const entries = [];
+      const tx = db.transaction(storeName, "readonly");
+      const cursorReq = tx.objectStore(storeName).openCursor();
+      cursorReq.onsuccess = () => {
+        const cursor = cursorReq.result;
+        if (!cursor) return;
+        entries.push([cursor.key, cursor.value]);
+        cursor.continue();
+      };
+      tx.oncomplete = () => {
+        db.close();
+        resolve(entries);
+      };
+      tx.onerror = () => {
+        db.close();
+        resolve([]);
+      };
+    };
+  });
 }
