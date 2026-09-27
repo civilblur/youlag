@@ -65,18 +65,25 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
       // Store value with TTL metadata (4 weeks default, configurable per operation)
       const dataWithMetadata = {
         value,
-        timestamp: Date.now(),
+        timestamp: syncNow(),
         ttlMs: ttlWeeks * 7 * 24 * 60 * 60 * 1000,
       };
 
-      const req = store.put(dataWithMetadata, key);
-
-      req.onerror = (e) => {
-        console.error(
-          `Youlag (DB): Failed to set key '${key}':`,
-          e.target.error,
-        );
-        reject(e.target.error);
+      const previous = store.get(key);
+      previous.onsuccess = () => {
+        // Newer than the value it replaces, so the server keeps it even after the clock offset changes.
+        const previousTimestamp = previous.result?.timestamp || 0;
+        if (previousTimestamp >= dataWithMetadata.timestamp) {
+          dataWithMetadata.timestamp = previousTimestamp + 1;
+        }
+        const req = store.put(dataWithMetadata, key);
+        req.onerror = (e) => {
+          console.error(
+            `Youlag (DB): Failed to set key '${key}':`,
+            e.target.error,
+          );
+          reject(e.target.error);
+        };
       };
 
       tx.oncomplete = () => {
@@ -197,7 +204,7 @@ function dbIsFresh(record) {
   // Fresh until the TTL passes since the value was last confirmed. A TTL of 0 never expires.
   if (!record) return false;
   if (!record.ttlMs) return true;
-  return Date.now() - (record.checkedAt || record.timestamp) <= record.ttlMs;
+  return syncNow() - (record.checkedAt || record.timestamp) <= record.ttlMs;
 }
 
 async function dbSetIfChanged(storeName, key, value, previous, ttlWeeks) {
@@ -206,7 +213,7 @@ async function dbSetIfChanged(storeName, key, value, previous, ttlWeeks) {
     return dbPutRecord(storeName, key, {
       ...previous,
       ttlMs: ttlWeeks * DB_WEEK_MS,
-      checkedAt: Date.now(),
+      checkedAt: syncNow(),
     });
   }
   return dbSet(storeName, key, value, ttlWeeks);

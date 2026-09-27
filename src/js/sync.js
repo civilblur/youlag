@@ -10,7 +10,29 @@ function syncEnabled() {
   return typeof context !== "undefined" && context.anonymous === false;
 }
 
+function syncNow() {
+  // The server's clock, so conflicts and clears are judged on the one clock every device shares.
+  if (app.state.sync.clockOffset === null) {
+    try {
+      app.state.sync.clockOffset = Number(localStorage.getItem("ylClockOffset")) || 0;
+    } catch (e) {
+      app.state.sync.clockOffset = 0;
+    }
+  }
+  return Date.now() + app.state.sync.clockOffset;
+}
+
+function syncSetClockOffset(serverTime, sentAt, receivedAt) {
+  // Kept per browser, since the offset belongs to the device clock, and pages can be served from cache.
+  if (!Number.isFinite(serverTime)) return;
+  app.state.sync.clockOffset = Math.round(serverTime - (sentAt + receivedAt) / 2);
+  try {
+    localStorage.setItem("ylClockOffset", String(app.state.sync.clockOffset));
+  } catch (e) {}
+}
+
 async function syncPost(action, body, keepalive = false) {
+  const sentAt = Date.now();
   const response = await fetch(`./?c=youlag&a=${action}`, {
     method: "POST",
     headers: { "Content-Type": "application/json; charset=UTF-8" },
@@ -20,7 +42,9 @@ async function syncPost(action, body, keepalive = false) {
   if (!response.ok) {
     throw new Error(`Youlag (sync): ${action} failed with ${response.status}`);
   }
-  return response.json();
+  const data = await response.json();
+  syncSetClockOffset(data.serverTime, sentAt, Date.now());
+  return data;
 }
 
 function syncItem(storeName, key, record) {

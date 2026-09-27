@@ -69,6 +69,7 @@ app.state = {
     pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.
     positionsLoaded: null, // Promise of the saved positions loaded into memory at init.
+    clockOffset: null, // Milliseconds to add to this device's clock to get the server's, see syncNow().
   },
   modal: {
     active: false, // Whether an article/video is currently active. Miniplayer does not count as active.

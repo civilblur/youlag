@@ -10,7 +10,7 @@ function recordWatchHistory(feedItem) {
   if (!syncEnabled() || getSetting("yl_watch_history_enabled") !== true) return;
   const entryId = feedItem?.getAttribute("data-entry")?.match(/([0-9]+)$/)?.[1];
   if (!entryId) return;
-  dbSet("watchHistory", entryId, { viewedAt: Date.now() }, 0).catch(() => {});
+  dbSet("watchHistory", entryId, { viewedAt: syncNow() }, 0).catch(() => {});
 }
 
 async function removeWatchHistory(entryIds) {

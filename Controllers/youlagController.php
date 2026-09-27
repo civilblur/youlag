@@ -197,7 +197,8 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     {
         http_response_code($status);
         header("Content-Type: application/json; charset=UTF-8");
-        echo json_encode($data);
+        // The browser stamps its changes with this clock, so every device compares times from the server's clock.
+        echo json_encode($data + ["serverTime" => (int) floor(microtime(true) * 1000)]);
         exit();
     }
 }

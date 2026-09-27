@@ -467,16 +467,16 @@ async function getSponsorSegments(youtubeId, dateIso) {
   }
   // SponsorBlock segments may not immediately be available for new videos, thus
   // cache them shorter: 30min under a day old, 12h under a week old, otherwise 1 week.
-  const ageHours = (Date.now() - new Date(dateIso)) / (60 * 60 * 1000);
+  const ageHours = (syncNow() - new Date(dateIso)) / (60 * 60 * 1000);
   const ttlHours = ageHours < 24 ? 0.5 : ageHours < 24 * 7 ? 12 : 24 * 7;
   const ttlWeeks = ttlHours / (24 * 7);
   if (segments.length === 0 && !lastGood?.length) {
     // "No segments" is kept locally, and only synced when it replaces segments the video had before.
     dbPutRecord("sponsorblock", youtubeId, {
       value: [],
-      timestamp: cached?.timestamp || Date.now(),
+      timestamp: cached?.timestamp || syncNow(),
       ttlMs: ttlWeeks * DB_WEEK_MS,
-      checkedAt: Date.now(),
+      checkedAt: syncNow(),
     }).catch(() => {});
   } else {
     dbSetIfChanged("sponsorblock", youtubeId, segments, cached, ttlWeeks).catch(() => {});
