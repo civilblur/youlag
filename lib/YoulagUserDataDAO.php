@@ -15,6 +15,8 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         "playback" => 10000,
         "watchHistory" => 10000,
     ];
+    /** Entries shown on the watch history page, most recent first. */
+    public const WATCH_HISTORY_PAGE_SIZE = 100;
     private const SCHEMA_VERSION = 1;
 
     /**
@@ -64,7 +66,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
             "mysql" => <<<'SQL'
                 CREATE TABLE IF NOT EXISTS `_yl_data` (
                 	`store` VARCHAR(32) NOT NULL,
-                	`item_key` VARCHAR(64) NOT NULL,
+                	`item_key` VARCHAR(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
                 	`value` TEXT NOT NULL,
                 	`updated_at` BIGINT NOT NULL,
                 	`ttl_ms` BIGINT NOT NULL DEFAULT 0,

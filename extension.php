@@ -130,8 +130,6 @@ class YoulagExtension extends Minz_Extension
      */
     public $yl_sponsorblock_auto_skip_enabled = true;
 
-    private const WATCH_HISTORY_LIMIT = 100;
-
     /**
      * Source of truth for user settings.
      * Key = setting name, property name, configure.phtml field name, and JS key.
@@ -302,7 +300,7 @@ class YoulagExtension extends Minz_Extension
 
         if (Minz_Request::paramString("yl_watch_history") === "1") {
             $youlag["yl_watch_history_order"] =
-                YoulagUserDataDAO::open()?->watchHistoryEntryIds(self::WATCH_HISTORY_LIMIT) ?? [];
+                YoulagUserDataDAO::open()?->watchHistoryEntryIds(YoulagUserDataDAO::WATCH_HISTORY_PAGE_SIZE) ?? [];
         }
         $vars["youlag"] = $youlag;
 

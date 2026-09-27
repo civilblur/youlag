@@ -9,7 +9,6 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     private const MAX_ITEMS = 500;
     private const MAX_VALUE_BYTES = 16384;
     private const KEY_PATTERN = '/^[A-Za-z0-9_-]{1,64}$/';
-    private const WATCH_HISTORY_LIMIT = 100;
     private const VIDEO_DATA_STORES = ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback"];
 
     #[\Override]
@@ -89,7 +88,7 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
         if (!YoulagExtension::isWatchHistoryEnabled()) {
             Minz_Request::forward(["c" => "index", "a" => "index"], redirect: true);
         }
-        $ids = YoulagUserDataDAO::open()?->watchHistoryEntryIds(self::WATCH_HISTORY_LIMIT) ?? [];
+        $ids = YoulagUserDataDAO::open()?->watchHistoryEntryIds(YoulagUserDataDAO::WATCH_HISTORY_PAGE_SIZE) ?? [];
         Minz_Request::forward([
             "c" => "index",
             "a" => "normal",
@@ -98,7 +97,7 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
                 "get" => "A",
                 "search" => "e:" . ($ids === [] ? "0" : implode(",", $ids)),
                 "state" => (string) FreshRSS_Entry::STATE_ALL,
-                "nb" => (string) self::WATCH_HISTORY_LIMIT,
+                "nb" => (string) YoulagUserDataDAO::WATCH_HISTORY_PAGE_SIZE,
                 "yl_watch_history" => "1",
             ],
         ]);
