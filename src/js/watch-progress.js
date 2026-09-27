@@ -68,17 +68,19 @@ function isContinueWatching(youtubeId) {
 function renderContinueWatchingToggle() {
   // Filters the history page to videos started but not finished.
   if (getCurrentPage().name !== "watch_history") return;
-  const titleContainer = document.getElementById("yl_category_title_container");
+  const menuContent = document.getElementById("yl_nav_menu_container_content");
   const stream = getFeedRoot();
-  if (!titleContainer || !stream || document.getElementById(app.watchProgress.continueToggleId)) return;
+  if (!menuContent || !stream || document.getElementById(app.watchProgress.continueToggleId)) return;
   const toggle = document.createElement("button");
   toggle.id = app.watchProgress.continueToggleId;
   toggle.type = "button";
+  toggle.className = "btn";
   toggle.textContent = "Continue watching";
   toggle.setAttribute("aria-pressed", "false");
   toggle.addEventListener("click", () => {
     const filtered = toggle.getAttribute("aria-pressed") !== "true";
     toggle.setAttribute("aria-pressed", String(filtered));
+    toggle.classList.toggle("active", filtered);
     stream.querySelectorAll(app.frss.el.entry).forEach((entry) => {
       entry.classList.toggle(
         app.watchProgress.hiddenClass,
@@ -87,9 +89,8 @@ function renderContinueWatchingToggle() {
     });
   });
   const anchor =
-    document.getElementById(app.watchHistory.clearId) ||
-    titleContainer.querySelector("#yl_nav_menu_container_toggle");
-  anchor?.before(toggle);
+    document.getElementById(app.watchHistory.clearId) || document.getElementById("yl_nav_menu_settings_shortcut");
+  menuContent.insertBefore(toggle, anchor);
 }
 
 async function clearLocalVideoData(clearedAt = Infinity) {

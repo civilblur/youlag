@@ -117,11 +117,12 @@ function renderWatchHistoryControls() {
     header.appendChild(item);
   });
 
-  const titleContainer = document.getElementById("yl_category_title_container");
-  if (!titleContainer || document.getElementById(app.watchHistory.clearId)) return;
+  const menuContent = document.getElementById("yl_nav_menu_container_content");
+  if (!menuContent || document.getElementById(app.watchHistory.clearId)) return;
   const clearButton = document.createElement("button");
   clearButton.id = app.watchHistory.clearId;
   clearButton.type = "button";
+  clearButton.className = "btn";
   clearButton.textContent = "Clear watch history";
   clearButton.addEventListener("click", () => {
     if (!confirm("Clear the whole watch history?")) return;
@@ -129,7 +130,8 @@ function renderWatchHistoryControls() {
       .then(() => stream.querySelectorAll(app.frss.el.entry).forEach((entry) => entry.remove()))
       .catch((e) => console.error("Youlag: Could not clear watch history:", e));
   });
-  titleContainer.querySelector("#yl_nav_menu_container_toggle")?.before(clearButton);
+  // Before "More settings", which stays last in the view menu.
+  menuContent.insertBefore(clearButton, document.getElementById("yl_nav_menu_settings_shortcut"));
 }
 
 function setupWatchHistorySettings() {

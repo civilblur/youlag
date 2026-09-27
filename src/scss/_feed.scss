@@ -2532,7 +2532,7 @@ body.yl-mode-video:not(.reader) {
 
 /*****************************************
  * BEGIN "WATCH HISTORY"
- * Remove and clear controls on the watch history page.
+ * The watch history page: entry remove control, no day separators.
  ****************************************/
 
 /* Day separators don't match the last viewed order. */
@@ -2544,24 +2544,6 @@ div.flux .flux_header li.item.yl-watch-history-remove img {
   filter: var(--yl-filter-icon-card-action);
 }
 
-#yl_watch_history_clear {
-  @include yl-button-menu;
-}
-
-/* Three buttons don't fit next to the title on narrow screens, so the row scrolls instead of squeezing the title. */
-body.yl-page-watch_history #yl_category_toolbar #yl_category_title_container {
-  overflow-x: auto;
-  scrollbar-width: none;
-
-  & > * {
-    flex: none;
-    white-space: nowrap;
-  }
-
-  & #yl_category_title {
-    flex: 1 0 auto;
-  }
-}
 
 /*****************************************
  * END "WATCH HISTORY"
@@ -2605,14 +2587,6 @@ body.yl-page-watch_history #yl_category_toolbar #yl_category_title_container {
 
 .yl-watch-history-hidden {
   display: none !important; /* Overrides FreshRSS's entry display. */
-}
-
-#yl_watch_history_continue {
-  @include yl-button-menu;
-
-  &[aria-pressed="true"] {
-    background-color: var(--yl-color-bg-button-menu-hover);
-  }
 }
 
 /*****************************************
