@@ -29,7 +29,7 @@ function handleActiveVideo(eventOrVideoObject, isVideoObject = false) {
 
     videoObject = extractFeedItemData(feedItem);
     videoObject.feedItemEl = feedItem;
-    videoObject.playbackTime = getStoredPlaybackTime(videoObject.entryId);
+    applySavedPlayback(videoObject);
     videoObject.autoplay = 1;
     setVideoQueue(videoObject);
   }
@@ -901,6 +901,11 @@ function renderRelatedVideos(videoObject) {
         .querySelectorAll(`.${app.modal.class.relatedVideoEntry}`)
         .forEach((el) => el.remove());
 
+      // Related videos aren't in the feed, so their saved data is pulled here.
+      syncPull(
+        videos.map((video) => getVideoIdFromUrl(video.external_link)).filter(Boolean),
+      );
+
       videos.forEach(async (videoObject) => {
         let thumbnail;
         const isVideoFeedItem = getVideoIdFromUrl(videoObject.external_link)
@@ -947,6 +952,19 @@ function getStoredPlaybackTime(entryId) {
     }
   } catch (e) {}
   return 0;
+}
+
+function applySavedPlayback(videoObject) {
+  // The miniplayer queue has the latest position of this tab, the saved position covers other devices.
+  // A finished video starts over.
+  const saved = getSavedPlayback(videoObject.youtubeId);
+  videoObject.playbackTime =
+    getStoredPlaybackTime(videoObject.entryId) ||
+    (saved?.finished ? 0 : saved?.seconds) ||
+    0;
+  if (!videoObject.videoDuration && saved?.duration) {
+    videoObject.videoDuration = saved.duration;
+  }
 }
 
 function setVideoQueue(videoObject) {
@@ -1154,7 +1172,9 @@ async function handleVideoDirectLink() {
     const entryElement = doc.querySelector(`[data-entry="${ylvideoEntryId}"]`);
     if (entryElement) {
       const videoObject = extractFeedItemData(entryElement);
-      videoObject.playbackTime = getStoredPlaybackTime(videoObject.entryId);
+      // A direct link isn't in the feed, so its saved data is pulled first. No click is waiting here.
+      await syncPull([videoObject.youtubeId].filter(Boolean));
+      applySavedPlayback(videoObject);
       videoObject.autoplay = 1;
       // Set the direct link entry as active in video queue.
       const queueObj = {

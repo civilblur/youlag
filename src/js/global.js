@@ -45,7 +45,7 @@ app.state = {
     hideSent: false, // Whether the page-hide send ran since the page was last visible.
     adopted: null, // Promise of the one-time adoption of skipped chapters saved before databases were per user.
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
-    pulled: new Set(), // Video IDs already pulled from the server on this page.
+    pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.
   },
   modal: {

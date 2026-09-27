@@ -321,6 +321,7 @@ function setupModalVideoControlEventListeners(videoObject) {
   let lastPlayingTime = -1; // -1 so a segment at 0s is reached on play start.
   let lastVideoDuration = null;
   let unfavoriteWatchedFrom = null;
+  let lastSavedPlaybackSecond = -1;
 
   setupVideoPlaybackPosition(
     modal,
@@ -406,6 +407,25 @@ function setupModalVideoControlEventListeners(videoObject) {
             }
           }
         } catch (e) {}
+      }
+
+      // Saves the position while playing, on pause and at the end, so the video resumes on any device.
+      const playbackSecond = Math.floor(currentTime);
+      if (
+        youtubeId &&
+        playbackSecond > 0 &&
+        playbackSecond !== lastSavedPlaybackSecond &&
+        (playerState === 0 ||
+          playerState === 2 ||
+          Math.abs(playbackSecond - lastSavedPlaybackSecond) >=
+            app.sync.playbackSaveIntervalSeconds)
+      ) {
+        lastSavedPlaybackSecond = playbackSecond;
+        savePlaybackPosition(
+          youtubeId,
+          playerState === 0 ? Math.floor(videoDuration || playbackSecond) : playbackSecond,
+          Math.floor(videoDuration || 0),
+        );
       }
     },
   );
@@ -946,4 +966,26 @@ async function saveChapterSkip(youtubeId, skippedSeconds) {
   const hadSkips = Array.isArray(previous?.value) && previous.value.length > 0;
   if (!skippedSeconds.length && !hadSkips) return;
   return dbSetIfChanged("chapterSkip", youtubeId, skippedSeconds, previous, 0);
+}
+
+async function loadPlaybackPositions() {
+  // Loads saved positions into memory, so opening a video resumes without waiting on IndexedDB.
+  const entries = await dbGetAllEntries("playback").catch(() => []);
+  for (const [videoId, record] of entries) {
+    if (record?.value?.seconds > 0) {
+      app.state.sync.playbackPositions.set(videoId, record.value);
+    }
+  }
+}
+
+function getSavedPlayback(youtubeId) {
+  return app.state.sync.playbackPositions.get(youtubeId) || null;
+}
+
+function savePlaybackPosition(youtubeId, seconds, duration) {
+  // From 95% the video counts as finished: its progress bar shows full and it starts over next time.
+  const finished = duration > 0 && seconds >= duration * 0.95;
+  const position = finished ? { seconds, duration, finished } : { seconds, duration };
+  app.state.sync.playbackPositions.set(youtubeId, position);
+  dbSet("playback", youtubeId, position, 0).catch(() => {});
 }

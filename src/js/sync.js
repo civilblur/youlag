@@ -173,6 +173,7 @@ async function syncBackfill() {
 }
 
 function setupSync() {
+  loadPlaybackPositions();
   app.state.sync.adopted = syncAdoptLegacyChapterSkip().catch(() => {});
   if (!syncEnabled()) return;
   syncBackfill().catch((e) => console.error("Youlag (sync): Backfill failed:", e));
@@ -189,8 +190,15 @@ function setupSync() {
 
 async function syncPull(videoIds) {
   // Merges the server's rows for these videos into IndexedDB, keeping whichever is newer.
+  // Videos already being pulled wait for that pull, so a video opened during the page pull still gets its data.
   const pending = videoIds.filter((id) => !app.state.sync.pulled.has(id));
-  pending.forEach((id) => app.state.sync.pulled.add(id));
+  const inFlight = videoIds.filter((id) => app.state.sync.pulled.has(id)).map((id) => app.state.sync.pulled.get(id));
+  const pulling = syncPullBatches(pending);
+  pending.forEach((id) => app.state.sync.pulled.set(id, pulling));
+  await Promise.all([pulling, ...inFlight]);
+}
+
+async function syncPullBatches(pending) {
   for (let i = 0; i < pending.length; i += app.sync.batchSize) {
     try {
       const { rows } = await syncPost("fetch", {
