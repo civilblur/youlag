@@ -70,7 +70,9 @@ const extensionFiles = [
   { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
   { src: '../extension.php', dest: 'extension.php' },
   { src: '../configure.phtml', dest: 'configure.phtml' },
-  { src: '../metadata.json', dest: 'metadata.json' }
+  { src: '../metadata.json', dest: 'metadata.json' },
+  { src: '../Controllers/youlagController.php', dest: 'Controllers/youlagController.php' },
+  { src: '../lib/YoulagUserDataDAO.php', dest: 'lib/YoulagUserDataDAO.php' }
 ];
 
 const freshrssDevFolder = process.env.FRESHRSS_DEV_FOLDER;
@@ -109,7 +111,10 @@ if (require.main === module) {
       const scriptWatcher = chokidar.watch(srcFiles.map(f => path.resolve(__dirname, f)), { ignoreInitial: true });
       const metaWatcher = chokidar.watch(path.resolve(__dirname, '../metadata.json'), { ignoreInitial: true });
       const configureWatcher = chokidar.watch(path.resolve(__dirname, '../configure.phtml'), { ignoreInitial: true });
-      const extensionWatcher = chokidar.watch(path.resolve(__dirname, '../extension.php'), { ignoreInitial: true });
+      const extensionWatcher = chokidar.watch(
+        ['../extension.php', '../Controllers', '../lib'].map((p) => path.resolve(__dirname, p)),
+        { ignoreInitial: true },
+      );
 
       const onScriptOrMetaChange = async () => {
         if (await minifyAndInjectVersion()) {

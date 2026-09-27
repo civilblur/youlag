@@ -77,6 +77,11 @@ class YoulagExtension extends Minz_Extension
      * @var bool
      */
     public $yl_video_sort_modified_enabled = false;
+    /**
+     * Save opened entries to the watch history.
+     * @var bool
+     */
+    public $yl_watch_history_enabled = true;
 
     /**
      * Remove entry from Watch later after this percentage of the video is watched. "off" disables it.
@@ -135,6 +140,7 @@ class YoulagExtension extends Minz_Extension
         "yl_video_labels_enabled" => ["type" => "bool", "default" => true],
         "yl_video_unread_badge_enabled" => ["type" => "bool", "default" => false],
         "yl_video_sort_modified_enabled" => ["type" => "bool", "default" => false],
+        "yl_watch_history_enabled" => ["type" => "bool", "default" => true],
         "yl_watch_later_auto_remove" => ["type" => "string", "default" => "off"],
         "yl_update_check_enabled" => ["type" => "bool", "default" => true],
         "yl_invidious_enabled" => ["type" => "bool", "default" => false],
@@ -152,6 +158,7 @@ class YoulagExtension extends Minz_Extension
      */
     public function init(): void
     {
+        $this->registerController("youlag");
         $this->registerHook("js_vars", [$this, "setJsVars"]);
         $this->registerHook("entry_before_display", [$this, "setInvidiousURL"]);
         $this->registerHook("entry_before_display", [
@@ -192,6 +199,22 @@ class YoulagExtension extends Minz_Extension
             $this,
             "blockYoutubeShorts",
         ]);
+    }
+
+    /**
+     * Loads Youlag's PHP classes on first use.
+     */
+    public function autoload(string $class_name): void
+    {
+        if ($class_name === "YoulagUserDataDAO") {
+            require __DIR__ . "/lib/YoulagUserDataDAO.php";
+        }
+    }
+
+    public static function isWatchHistoryEnabled(): bool
+    {
+        return FreshRSS_Context::userConf()->attributeBool("yl_watch_history_enabled")
+            ?? self::SETTINGS["yl_watch_history_enabled"]["default"];
     }
 
     /**
