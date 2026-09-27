@@ -118,18 +118,7 @@ async function dbGet(storeName, key) {
 
       req.onsuccess = () => {
         const data = req.result;
-
-        // Check if data has expired
-        if (data && data.timestamp && data.ttlMs) {
-          const age = Date.now() - data.timestamp;
-          if (age > data.ttlMs) {
-            // Data expired
-            resolve(undefined);
-            return;
-          }
-        }
-
-        resolve(data?.value);
+        resolve(dbIsFresh(data) ? data.value : undefined);
       };
 
       req.onerror = (e) => {
@@ -211,4 +200,25 @@ async function dbGetAllEntries(storeName, dbName = dbGetName(storeName)) {
     dbName,
   );
   return entries;
+}
+
+const DB_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+function dbIsFresh(record) {
+  // Fresh until the TTL passes since the value was last confirmed. A TTL of 0 never expires.
+  if (!record) return false;
+  if (!record.ttlMs) return true;
+  return Date.now() - (record.checkedAt || record.timestamp) <= record.ttlMs;
+}
+
+async function dbSetIfChanged(storeName, key, value, previous, ttlWeeks) {
+  // Saves and syncs only a changed value. An unchanged value is marked as confirmed locally.
+  if (previous && JSON.stringify(previous.value) === JSON.stringify(value)) {
+    return dbPutRecord(storeName, key, {
+      ...previous,
+      ttlMs: ttlWeeks * DB_WEEK_MS,
+      checkedAt: Date.now(),
+    });
+  }
+  return dbSet(storeName, key, value, ttlWeeks);
 }

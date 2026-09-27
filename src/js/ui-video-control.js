@@ -54,10 +54,15 @@ async function renderModalVideoChapters(videoChapters, youtubeId) {
 
   // Restore the chapters the user chose to skip for this video.
   if (!youtubeId) return;
-  const skippedSeconds = await dbGet("chapterSkip", youtubeId).catch(
-    () => null,
-  );
-  if (!Array.isArray(skippedSeconds)) return;
+  const record = await dbGetRecord("chapterSkip", youtubeId).catch(() => undefined);
+  const savedSeconds = Array.isArray(record?.value) ? record.value : [];
+  if (!savedSeconds.length) return;
+  // Drops skips whose chapter no longer exists, in case the video's chapters changed.
+  const chapterSeconds = videoChapters.map((chapter) => chapter.seconds);
+  const skippedSeconds = savedSeconds.filter((seconds) => chapterSeconds.includes(seconds));
+  if (skippedSeconds.length !== savedSeconds.length) {
+    saveChapterSkip(youtubeId, skippedSeconds).catch(() => {});
+  }
   chapterList
     .querySelectorAll(".yl-video-chapter-list-item")
     .forEach((item) => {
@@ -168,9 +173,7 @@ function setupModalVideoControlEventListeners(videoObject) {
           const skippedSeconds = Array.from(chapterItems)
             .filter((i) => i.classList.contains("is-skipped"))
             .map((i) => parseInt(i.getAttribute("data-seconds"), 10));
-          dbSet("chapterSkip", videoObject.youtubeId, skippedSeconds, 52).catch(
-            () => {},
-          );
+          saveChapterSkip(videoObject.youtubeId, skippedSeconds).catch(() => {});
         }
         return;
       }
@@ -338,7 +341,7 @@ function setupModalVideoControlEventListeners(videoObject) {
       if (youtubeId && videoDuration && videoDuration !== cachedVideoDuration) {
         cachedVideoDuration = videoDuration;
         const durationFloor = Math.floor(videoDuration);
-        dbSet("duration", youtubeId, durationFloor, 52).catch(() => {});
+        saveVideoDuration(youtubeId, durationFloor).catch(() => {});
         updateFeedEntryDuration(youtubeId, durationFloor);
       }
 
@@ -935,4 +938,12 @@ function updateFeedEntryDuration(youtubeId, videoDuration) {
     "data-yl-video-duration",
     videoDurationText,
   );
+}
+
+async function saveChapterSkip(youtubeId, skippedSeconds) {
+  // Saves only videos with skipped chapters. Clearing all skips saves one empty list, so other devices drop the old skips.
+  const previous = await dbGetRecord("chapterSkip", youtubeId).catch(() => undefined);
+  const hadSkips = Array.isArray(previous?.value) && previous.value.length > 0;
+  if (!skippedSeconds.length && !hadSkips) return;
+  return dbSetIfChanged("chapterSkip", youtubeId, skippedSeconds, previous, 0);
 }

@@ -347,83 +347,81 @@ function extractVideoDescriptionChapters(videoDescription) {
   return [];
 }
 
+async function fetchDearrowData(youtubeId) {
+  // Returns null when DeArrow can't be reached. A 404 is a valid answer: the video has no DeArrow data.
+  const apiUrl = `https://sponsor.ajay.app/api/branding?videoID=${encodeURIComponent(youtubeId)}`;
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok && response.status !== 404) return null;
+    return await response.json().catch(() => ({}));
+  } catch (e) {
+    return null;
+  }
+}
+
+async function buildDearrowData(youtubeId, data) {
+  // Ignore Dearrow thumbnail data and rely on `getVideoScreencapWithFallback()`.
+  const thumbnailWithFallback = await getVideoScreencapWithFallback(youtubeId);
+  return {
+    thumbnails: [
+      {
+        timestamp: null,
+        original: true,
+        votes: 0,
+        locked: false,
+        UUID: "",
+        userID: "",
+        url: thumbnailWithFallback,
+      },
+    ],
+    titles: Array.isArray(data.titles) ? data.titles : [],
+    randomTime: data.randomTime ?? null,
+    videoDuration: data.videoDuration ?? null,
+  };
+}
+
+async function withStoredDuration(youtubeId, dearrowData) {
+  // DeArrow often has no duration. The permanent duration store has it once the video played.
+  if (dearrowData.videoDuration) return dearrowData;
+  const stored = await dbGetRecord("duration", youtubeId).catch(() => undefined);
+  return { ...dearrowData, videoDuration: stored?.value || null };
+}
+
+async function saveVideoDuration(youtubeId, seconds) {
+  // Duration is permanent, and saved only when it changes.
+  const duration = Math.floor(seconds);
+  if (!youtubeId || !duration) return;
+  const previous = await dbGetRecord("duration", youtubeId).catch(() => undefined);
+  if (previous?.value === duration && !previous.ttlMs) return;
+  return dbSet("duration", youtubeId, duration, 0);
+}
+
 async function getDearrowData(youtubeId) {
   if (!youtubeId) return null;
   // Check if data is cached in indexdb before making API call.
-  let cached = null;
-  try {
-    cached = await dbGet("dearrow", youtubeId);
-    if (cached) {
-      // If youlag-cache-dearrow has no duration, check the persistent (1y TTL) youlag-cache-duration store.
-      // The youlag-cache-duration picks video duration from the YouTube iframe API when the video plays.
-      if (!cached.videoDuration) {
-        cached.videoDuration =
-          (await dbGet("duration", youtubeId).catch(() => null)) || null;
-      }
-      return cached;
-    }
-  } catch (e) {}
+  const cached = await dbGetRecord("dearrow", youtubeId).catch(() => undefined);
+  if (dbIsFresh(cached)) return withStoredDuration(youtubeId, cached.value);
 
-  const apiUrl = `https://sponsor.ajay.app/api/branding?videoID=${encodeURIComponent(youtubeId)}`;
-  let randomTime = null;
-  let videoDuration = null;
-  let thumbnails = [];
-  let titles = [];
-  try {
-    const response = await fetch(apiUrl);
-    if (response.ok) {
-      const data = await response.json();
-      randomTime = data.randomTime;
-      videoDuration = data.videoDuration;
-      if (Array.isArray(data.thumbnails)) {
-        thumbnails = data.thumbnails;
-      }
-      if (Array.isArray(data.titles)) {
-        titles = data.titles;
-      }
-    }
-  } catch (e) {}
-
-  // Dearrow has no duration — check the persistent duration store (may have been set by the YouTube iframe API).
-  if (!videoDuration) {
-    videoDuration =
-      (await dbGet("duration", youtubeId).catch(() => null)) || null;
+  const data = await fetchDearrowData(youtubeId);
+  if (!data && cached) {
+    // DeArrow is down: keep the last good data.
+    return withStoredDuration(youtubeId, cached.value);
   }
-
-  // Ignore Dearrow thumbnail data and rely on `getVideoScreencapWithFallback()`.
-  const thumbnailWithFallback = await getVideoScreencapWithFallback(youtubeId);
-  thumbnails = [
-    {
-      timestamp: null,
-      original: true,
-      votes: 0,
-      locked: false,
-      UUID: "",
-      userID: "",
-      url: thumbnailWithFallback,
-    },
-  ];
-  const resultObj = {
-    thumbnails,
-    titles,
-    randomTime,
-    videoDuration,
-  };
-  try {
-    await dbSet("dearrow", youtubeId, resultObj);
-    // Also persist duration separately so it survives dearrow cache expiry.
-    if (videoDuration) await dbSet("duration", youtubeId, videoDuration, 52);
-  } catch (e) {}
-
-  return resultObj;
+  const resultObj = await buildDearrowData(youtubeId, data || {});
+  if (data) {
+    await dbSetIfChanged("dearrow", youtubeId, resultObj, cached, 4).catch(() => {});
+    if (resultObj.videoDuration) {
+      await saveVideoDuration(youtubeId, resultObj.videoDuration).catch(() => {});
+    }
+  }
+  return withStoredDuration(youtubeId, resultObj);
 }
 
 async function getSponsorSegments(youtubeId, dateIso) {
   if (!youtubeId) return [];
-  try {
-    const cached = await dbGet("sponsorblock", youtubeId);
-    if (Array.isArray(cached)) return cached;
-  } catch (e) {}
+  const cached = await dbGetRecord("sponsorblock", youtubeId).catch(() => undefined);
+  const lastGood = Array.isArray(cached?.value) ? cached.value : null;
+  if (lastGood && dbIsFresh(cached)) return lastGood;
 
   const categories = [
     "sponsor",
@@ -456,18 +454,27 @@ async function getSponsorSegments(youtubeId, dateIso) {
         }))
         .sort((a, b) => a.start - b.start);
     } else {
-      return [];
+      return lastGood || []; // SponsorBlock is down: keep the last good segments.
     }
   } catch (e) {
-    return []; // Skip caching, so the next open retries.
+    return lastGood || []; // SponsorBlock is down: keep the last good segments.
   }
   // SponsorBlock segments may not immediately be available for new videos, thus
   // cache them shorter: 30min under a day old, 12h under a week old, otherwise 1 week.
   const ageHours = (Date.now() - new Date(dateIso)) / (60 * 60 * 1000);
   const ttlHours = ageHours < 24 ? 0.5 : ageHours < 24 * 7 ? 12 : 24 * 7;
-  dbSet("sponsorblock", youtubeId, segments, ttlHours / (24 * 7)).catch(
-    () => {},
-  );
+  const ttlWeeks = ttlHours / (24 * 7);
+  if (segments.length === 0 && !lastGood?.length) {
+    // "No segments" is kept locally, and only synced when it replaces segments the video had before.
+    dbPutRecord("sponsorblock", youtubeId, {
+      value: [],
+      timestamp: cached?.timestamp || Date.now(),
+      ttlMs: ttlWeeks * DB_WEEK_MS,
+      checkedAt: Date.now(),
+    }).catch(() => {});
+  } else {
+    dbSetIfChanged("sponsorblock", youtubeId, segments, cached, ttlWeeks).catch(() => {});
+  }
   return segments;
 }
 
