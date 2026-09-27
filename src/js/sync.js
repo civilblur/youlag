@@ -55,9 +55,24 @@ function syncScheduleFlush() {
   }, app.sync.flushDelayMs);
 }
 
-async function syncFlush() {
-  if (!syncEnabled() || app.state.sync.flushing) return;
-  app.state.sync.flushing = true;
+function syncFlush() {
+  // A flush asked for during another one runs right after it, so callers wait until their changes are sent.
+  if (!syncEnabled()) return Promise.resolve();
+  if (app.state.sync.flushing) {
+    app.state.sync.flushAgain = true;
+    return app.state.sync.flushing;
+  }
+  app.state.sync.flushing = syncFlushQueue().finally(() => {
+    app.state.sync.flushing = null;
+    if (app.state.sync.flushAgain) {
+      app.state.sync.flushAgain = false;
+      return syncFlush();
+    }
+  });
+  return app.state.sync.flushing;
+}
+
+async function syncFlushQueue() {
   let sent = [];
   let items = [];
   let bytes = 0;
@@ -105,8 +120,6 @@ async function syncFlush() {
     await send();
   } catch (e) {
     console.error("Youlag (sync): Flush failed:", e);
-  } finally {
-    app.state.sync.flushing = false;
   }
 }
 
@@ -176,8 +189,8 @@ function setupSync() {
   app.state.sync.positionsLoaded = loadPlaybackPositions();
   app.state.sync.adopted = syncAdoptLegacyChapterSkip().catch(() => {});
   if (!syncEnabled()) return;
-  // Clears this browser's video data first if it was cleared on another device, so the flush doesn't send it back.
-  applyVideoDataClear()
+  // Applies clears made on another device first, so the flush doesn't send the cleared data back.
+  Promise.all([applyVideoDataClear(), applyWatchHistoryClear()])
     .catch(() => {})
     .finally(() => {
       syncBackfill().catch((e) => console.error("Youlag (sync): Backfill failed:", e));

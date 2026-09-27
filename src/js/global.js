@@ -58,7 +58,8 @@ app.state = {
   },
   sync: {
     flushTimer: null,
-    flushing: false,
+    flushing: null, // Promise of the running flush.
+    flushAgain: false, // Whether a flush was asked for during the running one.
     hideSent: false, // Whether the page-hide send ran since the page was last visible.
     adopted: null, // Promise of the one-time adoption of skipped chapters saved before databases were per user.
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.

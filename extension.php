@@ -297,6 +297,8 @@ class YoulagExtension extends Minz_Extension
         $youlag["yl_user"] = Minz_User::name() ?? "";
         $youlag["yl_video_data_cleared_at"] =
             FreshRSS_Context::userConf()->attributeInt("yl_video_data_cleared_at") ?? 0;
+        $youlag["yl_watch_history_cleared_at"] =
+            FreshRSS_Context::userConf()->attributeInt("yl_watch_history_cleared_at") ?? 0;
 
         if (Minz_Request::paramString("yl_watch_history") === "1") {
             $youlag["yl_watch_history_order"] =

@@ -352,8 +352,9 @@ async function fetchDearrowData(youtubeId) {
   const apiUrl = `https://sponsor.ajay.app/api/branding?videoID=${encodeURIComponent(youtubeId)}`;
   try {
     const response = await fetch(apiUrl);
-    if (!response.ok && response.status !== 404) return null;
-    return await response.json().catch(() => ({}));
+    if (response.status === 404) return await response.json().catch(() => ({}));
+    if (!response.ok) return null;
+    return await response.json().catch(() => null);
   } catch (e) {
     return null;
   }

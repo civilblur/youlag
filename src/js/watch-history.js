@@ -15,7 +15,29 @@ function recordWatchHistory(feedItem) {
 
 async function removeWatchHistory(entryIds) {
   // Removes entries from the watch history, or all of it when no entries are given.
-  await syncPost("watchHistoryRemove", entryIds ? { ids: entryIds } : { all: true });
+  const { clearedAt } = await syncPost("watchHistoryRemove", entryIds ? { ids: entryIds } : { all: true });
+  await dropLocalWatchHistory(entryIds);
+  if (clearedAt) {
+    localStorage.setItem(`ylWatchHistoryClearedAt:${getSetting("yl_user")}`, String(clearedAt));
+  }
+}
+
+async function applyWatchHistoryClear() {
+  // Clears this browser's watch history when it was cleared on another device since the last visit.
+  const clearedAt = Number(getSetting("yl_watch_history_cleared_at")) || 0;
+  const flag = `ylWatchHistoryClearedAt:${getSetting("yl_user")}`;
+  if (clearedAt <= (Number(localStorage.getItem(flag)) || 0)) return;
+  await dropLocalWatchHistory(null);
+  localStorage.setItem(flag, String(clearedAt));
+}
+
+async function dropLocalWatchHistory(entryIds) {
+  // Drops local history records and their unsent changes, all of them when no entries are given.
+  for (const queueKey of [...app.state.sync.unsent.keys()]) {
+    if (queueKey.startsWith("watchHistory:") && (!entryIds || entryIds.includes(queueKey.slice("watchHistory:".length)))) {
+      app.state.sync.unsent.delete(queueKey);
+    }
+  }
   const queueKeys = await dbGetAllKeys(app.sync.queueStore).catch(() => []);
   const removedKeys = entryIds || (await dbGetAllKeys("watchHistory").catch(() => []));
   for (const key of removedKeys) {

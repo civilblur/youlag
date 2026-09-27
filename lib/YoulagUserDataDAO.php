@@ -89,10 +89,10 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
     }
 
     /**
-     * Saves rows, keeping whichever version of a row is newer.
+     * Saves rows, keeping whichever version of a row is newer. Returns null when the write fails.
      * @param list<array{store:string,key:string,value:string,updatedAt:int,ttlMs:int}> $rows
      */
-    public function upsert(array $rows): int
+    public function upsert(array $rows): ?int
     {
         if ($rows === []) {
             return 0;
@@ -113,17 +113,24 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
                 SQL;
         $stm = $this->pdo->prepare($sql);
         if ($stm === false) {
-            return 0;
+            return null;
         }
-        $saved = 0;
         $this->pdo->beginTransaction();
         foreach ($rows as $row) {
-            if ($stm->execute([$row["store"], $row["key"], $row["value"], $row["updatedAt"], $row["ttlMs"]])) {
-                $saved++;
+            if (!$stm->execute([$row["store"], $row["key"], $row["value"], $row["updatedAt"], $row["ttlMs"]])) {
+                $this->pdo->rollBack();
+                return null;
             }
         }
-        $this->pdo->commit();
-        return $saved;
+        return $this->pdo->commit() ? count($rows) : null;
+    }
+
+    /**
+     * Creates the table if it's missing.
+     */
+    public function ensureSchema(): bool
+    {
+        return $this->createSchema();
     }
 
     /**
