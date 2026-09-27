@@ -159,6 +159,18 @@ declare(strict_types=1)
           </div>
         </div>
       </label>
+      <label for="yl_watch_progress_enabled" class="flex">
+          <input type="checkbox" id="yl_watch_progress_enabled" name="yl_watch_progress_enabled" value="1" class="mb-auto"
+            <?php echo $this->yl_watch_progress_enabled
+                ? ' checked="checked"'
+                : ""; ?>>
+        <div class="inline-block">
+          Show watch progress
+          <div class="yl-form-group-help">
+            A bar on the thumbnail shows where you left off.
+          </div>
+        </div>
+      </label>
 
       <h4 class="mb-0">
         Labels
@@ -553,6 +565,14 @@ declare(strict_types=1)
         </div>
       </label>
       <button type="button" id="yl_watch_history_clear_settings" class="btn">Clear watch history</button>
+      <h4 class="mb-0">
+        Saved video data
+
+        <div class="yl-form-group-help">
+          Removes saved titles, thumbnails, video lengths, sponsor segments, skipped chapters and watch progress on all your devices. Watch history is cleared separately.
+        </div>
+      </h4>
+      <button type="button" id="yl_video_data_clear" class="btn">Clear saved video data</button>
       <h4 class="mb-0">
         Updates
       </h4>

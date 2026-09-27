@@ -162,7 +162,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
             0,
             self::positional(["watchHistory"]),
         );
-        return array_map("strval", $rows ?? []);
+        return array_values(array_filter(array_map("strval", $rows ?? []), "ctype_digit"));
     }
 
     /**

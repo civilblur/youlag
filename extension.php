@@ -79,6 +79,11 @@ class YoulagExtension extends Minz_Extension
      */
     public $yl_video_unread_badge_enabled = false;
     /**
+     * Show how much of each video was watched, as a bar on its thumbnail.
+     * @var bool
+     */
+    public $yl_watch_progress_enabled = true;
+    /**
      * Enable sorting by modified date for Watch later/Playlists
      * @var bool
      */
@@ -147,6 +152,7 @@ class YoulagExtension extends Minz_Extension
         "yl_description_hide_intro_enabled" => ["type" => "bool", "default" => false],
         "yl_video_labels_enabled" => ["type" => "bool", "default" => true],
         "yl_video_unread_badge_enabled" => ["type" => "bool", "default" => false],
+        "yl_watch_progress_enabled" => ["type" => "bool", "default" => true],
         "yl_video_sort_modified_enabled" => ["type" => "bool", "default" => false],
         "yl_watch_history_enabled" => ["type" => "bool", "default" => true],
         "yl_watch_later_auto_remove" => ["type" => "string", "default" => "off"],
@@ -289,6 +295,8 @@ class YoulagExtension extends Minz_Extension
         }
         $youlag["yl_invidious_instance"] = $this->instance;
         $youlag["yl_user"] = Minz_User::name() ?? "";
+        $youlag["yl_video_data_cleared_at"] =
+            FreshRSS_Context::userConf()->attributeInt("yl_video_data_cleared_at") ?? 0;
 
         if (Minz_Request::paramString("yl_watch_history") === "1") {
             $youlag["yl_watch_history_order"] =

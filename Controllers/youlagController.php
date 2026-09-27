@@ -10,6 +10,7 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     private const MAX_VALUE_BYTES = 16384;
     private const KEY_PATTERN = '/^[A-Za-z0-9_-]{1,64}$/';
     private const WATCH_HISTORY_LIMIT = 100;
+    private const VIDEO_DATA_STORES = ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback"];
 
     #[\Override]
     public function firstAction(): void
@@ -26,10 +27,16 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     {
         $dao = $this->requirePostAndStore();
         $historyEnabled = YoulagExtension::isWatchHistoryEnabled();
+        $clearedAt = FreshRSS_Context::userConf()->attributeInt("yl_video_data_cleared_at") ?? 0;
         $rows = [];
         foreach (array_slice(Minz_Request::paramArray("items", plaintext: true), 0, self::MAX_ITEMS) as $item) {
             $row = $this->parseItem($item);
-            if ($row === null || ($row["store"] === "watchHistory" && !$historyEnabled)) {
+            if (
+                $row === null ||
+                ($row["store"] === "watchHistory" && !$historyEnabled) ||
+                // Changes made before the last clear would bring cleared data back.
+                (in_array($row["store"], self::VIDEO_DATA_STORES, true) && $row["updatedAt"] < $clearedAt)
+            ) {
                 continue;
             }
             $rows[] = $row;
@@ -104,6 +111,24 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     }
 
     /**
+     * Deletes the saved video data. Watch history stays.
+     */
+    public function clearVideoDataAction(): void
+    {
+        $dao = $this->requirePostAndStore();
+        $ok = true;
+        foreach (self::VIDEO_DATA_STORES as $store) {
+            $ok = $dao->deleteStore($store) && $ok;
+        }
+        // Other devices compare this time with their own last clear on their next page load.
+        $clearedAt = (int) floor(microtime(true) * 1000);
+        $conf = FreshRSS_Context::userConf();
+        $conf->_attribute("yl_video_data_cleared_at", $clearedAt);
+        $ok = $conf->save() && $ok;
+        $this->respond(["ok" => $ok, "clearedAt" => $clearedAt], $ok ? 200 : 500);
+    }
+
+    /**
      * @return array{store:string,key:string,value:string,updatedAt:int,ttlMs:int}|null
      */
     private function parseItem(mixed $item): ?array
@@ -123,6 +148,10 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
             !is_int($updatedAt) || $updatedAt <= 0 ||
             !is_int($ttlMs) || $ttlMs < 0
         ) {
+            return null;
+        }
+        if ($store === "watchHistory" && !ctype_digit($key)) {
+            // Watch history keys are entry IDs, anything else would break the page's entry search.
             return null;
         }
         json_decode($value);

@@ -36,6 +36,15 @@ app.watchHistory = {
   removeClass: "yl-watch-history-remove",
 };
 
+app.watchProgress = {
+  className: "yl-watch-progress",
+  continueMin: 0.05, // "Continue watching" shows videos watched from 5%...
+  continueMax: 0.9, // ...up to 90%.
+  continueToggleId: "yl_watch_history_continue",
+  hiddenClass: "yl-watch-history-hidden",
+  clearDataId: "yl_video_data_clear",
+};
+
 app.state = {
   youlag: {
     init: false, // Whether the Youlag script has initialized.
@@ -55,6 +64,7 @@ app.state = {
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
     pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.
+    positionsLoaded: null, // Promise of the saved positions loaded into memory at init.
   },
   modal: {
     active: false, // Whether an article/video is currently active. Miniplayer does not count as active.

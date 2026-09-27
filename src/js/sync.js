@@ -173,11 +173,16 @@ async function syncBackfill() {
 }
 
 function setupSync() {
-  loadPlaybackPositions();
+  app.state.sync.positionsLoaded = loadPlaybackPositions();
   app.state.sync.adopted = syncAdoptLegacyChapterSkip().catch(() => {});
   if (!syncEnabled()) return;
-  syncBackfill().catch((e) => console.error("Youlag (sync): Backfill failed:", e));
-  syncFlush(); // Sends what the last visit left unsent.
+  // Clears this browser's video data first if it was cleared on another device, so the flush doesn't send it back.
+  applyVideoDataClear()
+    .catch(() => {})
+    .finally(() => {
+      syncBackfill().catch((e) => console.error("Youlag (sync): Backfill failed:", e));
+      syncFlush(); // Sends what the last visit left unsent.
+    });
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
       syncSendOnHide();

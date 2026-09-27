@@ -39,6 +39,8 @@ function init() {
   renderWatchHistoryLink();
   setupWatchHistoryPage();
   setupWatchHistorySettings();
+  renderContinueWatchingToggle();
+  setupVideoDataSettings();
   settingsPageEventListeners();
   setVideoLabelsTitle("playlists", "Playlists");
   setVideoLabelsTitle("watch_later", "Watch later");

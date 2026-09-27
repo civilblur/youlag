@@ -28,6 +28,7 @@ const srcFiles = [
   '../src/js/ui-video-control.js',
   '../src/js/ui-modes.js',
   '../src/js/watch-history.js',
+  '../src/js/watch-progress.js',
   '../src/js/forms.js',
   '../src/js/events.js',
   '../src/js/debug.js',

@@ -987,5 +987,6 @@ function savePlaybackPosition(youtubeId, seconds, duration) {
   const finished = duration > 0 && seconds >= duration * 0.95;
   const position = finished ? { seconds, duration, finished } : { seconds, duration };
   app.state.sync.playbackPositions.set(youtubeId, position);
+  updateFeedWatchProgress(youtubeId);
   dbSet("playback", youtubeId, position, 0).catch(() => {});
 }

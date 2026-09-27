@@ -818,6 +818,9 @@ async function handleFeedDearrowFeatures() {
       }
     }
   }
+
+  await app.state.sync.positionsLoaded;
+  renderWatchProgress();
 }
 
 function setupSwipeSidebar() {

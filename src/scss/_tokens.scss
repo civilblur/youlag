@@ -299,6 +299,8 @@
       209deg
     )};
   --yl-color-bg-video-duration: hsl(0 0% 0% / 70%);
+  --yl-color-fill-watch-progress: var(--yl-color-accent-important-dark);
+  --yl-color-bg-watch-progress: var(--yl-color-bg-video-duration);
   --yl-color-thumbnail-background: var(--yl-color-surface-medium);
   --yl-color-gradient-empty-thumbnail: linear-gradient(
     45deg,

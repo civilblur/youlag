@@ -2551,3 +2551,55 @@ div.flux .flux_header li.item.yl-watch-history-remove img {
 /*****************************************
  * END "WATCH HISTORY"
  ****************************************/
+
+/*****************************************
+ * BEGIN "WATCH PROGRESS"
+ * Saved playback position along the bottom of a video thumbnail.
+ ****************************************/
+
+.item.thumbnail:has(> .yl-watch-progress) {
+  /* Clips the bar to the thumbnail's rounded corners. */
+  border-radius: var(--yl-radius-lg);
+}
+
+.yl-watch-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 100%;
+  height: var(--yl-space-3xs);
+  border: none;
+  appearance: none;
+  background: var(--yl-color-bg-watch-progress);
+  pointer-events: none;
+
+  &::-webkit-progress-bar {
+    background: var(--yl-color-bg-watch-progress);
+  }
+
+  &::-webkit-progress-value {
+    background: var(--yl-color-fill-watch-progress);
+  }
+
+  &::-moz-progress-bar {
+    background: var(--yl-color-fill-watch-progress);
+  }
+}
+
+.yl-watch-history-hidden {
+  display: none !important; /* Overrides FreshRSS's entry display. */
+}
+
+#yl_watch_history_continue {
+  @include yl-button-menu;
+
+  &[aria-pressed="true"] {
+    background-color: var(--yl-color-bg-button-menu-hover);
+  }
+}
+
+/*****************************************
+ * END "WATCH PROGRESS"
+ ****************************************/
