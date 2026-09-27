@@ -27,7 +27,9 @@ async function applyWatchHistoryClear() {
   const clearedAt = Number(getSetting("yl_watch_history_cleared_at")) || 0;
   const flag = `ylWatchHistoryClearedAt:${getSetting("yl_user")}`;
   if (clearedAt <= (Number(localStorage.getItem(flag)) || 0)) return;
-  await dropLocalWatchHistory(null);
+  // Only entries viewed before the clear, so a new device keeps what it just pulled or recorded.
+  await dbDeleteOlderThan("watchHistory", clearedAt).catch(() => {});
+  await dbDropQueuedMissing(["watchHistory"]);
   localStorage.setItem(flag, String(clearedAt));
 }
 

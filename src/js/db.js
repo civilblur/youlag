@@ -222,3 +222,31 @@ async function dbSetIfChanged(storeName, key, value, previous, ttlWeeks) {
   }
   return dbSet(storeName, key, value, ttlWeeks);
 }
+
+function dbDeleteOlderThan(storeName, before) {
+  // Deletes the records last changed before the given time, in one transaction.
+  return dbRun(storeName, "readwrite", (store) => {
+    const req = store.openCursor();
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (!cursor) return;
+      if ((cursor.value?.timestamp || 0) < before) cursor.delete();
+      cursor.continue();
+    };
+    return req;
+  });
+}
+
+async function dbDropQueuedMissing(storeNames) {
+  // Drops queued keys of these stores whose record is gone, and their unsent copies.
+  const queueKeys = await dbGetAllKeys(app.sync.queueStore).catch(() => []);
+  for (const queueKey of queueKeys) {
+    const separator = queueKey.indexOf(":");
+    const storeName = queueKey.slice(0, separator);
+    if (!storeNames.includes(storeName)) continue;
+    if ((await dbGetRecord(storeName, queueKey.slice(separator + 1)).catch(() => undefined)) === undefined) {
+      await dbDelete(app.sync.queueStore, queueKey).catch(() => {});
+      app.state.sync.unsent.delete(queueKey);
+    }
+  }
+}

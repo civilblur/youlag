@@ -92,24 +92,19 @@ function renderContinueWatchingToggle() {
   anchor?.before(toggle);
 }
 
-async function clearLocalVideoData() {
+async function clearLocalVideoData(clearedAt = Infinity) {
+  // Removes the video data saved before the clear. Data pulled or saved after it stays.
   for (const storeName of app.sync.videoStores) {
-    await dbClear(storeName).catch(() => {});
+    await dbDeleteOlderThan(storeName, clearedAt).catch(() => {});
   }
-  const queueKeys = await dbGetAllKeys(app.sync.queueStore).catch(() => []);
-  for (const queueKey of queueKeys) {
-    if (app.sync.videoStores.includes(queueKey.slice(0, queueKey.indexOf(":")))) {
-      await dbDelete(app.sync.queueStore, queueKey).catch(() => {});
+  await dbDropQueuedMissing(app.sync.videoStores);
+  for (const videoId of [...app.state.sync.playbackPositions.keys()]) {
+    if (!(await dbGetRecord("playback", videoId).catch(() => undefined))) {
+      app.state.sync.playbackPositions.delete(videoId);
     }
   }
-  for (const queueKey of [...app.state.sync.unsent.keys()]) {
-    if (!queueKey.startsWith("watchHistory:")) app.state.sync.unsent.delete(queueKey);
-  }
-  app.state.sync.playbackPositions.clear();
-  app.state.sync.pulled.clear();
-  getFeedRoot()
-    ?.querySelectorAll(`.${app.watchProgress.className}`)
-    .forEach((bar) => bar.remove());
+  if (clearedAt === Infinity) app.state.sync.pulled.clear();
+  renderWatchProgress();
 }
 
 async function clearSavedVideoData() {
@@ -124,7 +119,7 @@ async function applyVideoDataClear() {
   const clearedAt = Number(getSetting("yl_video_data_cleared_at")) || 0;
   const flag = `ylVideoDataClearedAt:${getSetting("yl_user")}`;
   if (clearedAt <= (Number(localStorage.getItem(flag)) || 0)) return;
-  await clearLocalVideoData();
+  await clearLocalVideoData(clearedAt);
   localStorage.setItem(flag, String(clearedAt));
 }
 
