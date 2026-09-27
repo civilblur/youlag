@@ -968,13 +968,23 @@ async function saveChapterSkip(youtubeId, skippedSeconds) {
   return dbSetIfChanged("chapterSkip", youtubeId, skippedSeconds, previous, 0);
 }
 
-async function loadPlaybackPositions() {
+async function loadPlaybackPositions(dropMissing = false) {
   // Loads saved positions into memory, so opening a video resumes without waiting on IndexedDB.
-  const entries = await dbGetAllEntries("playback").catch(() => []);
-  for (const [videoId, record] of entries) {
-    if (record?.value?.seconds > 0) {
-      app.state.sync.playbackPositions.set(videoId, record.value);
+  // Run again when the tab is shown, since other tabs save to the same database, and can clear it.
+  const entries = await dbGetAllEntries("playback").catch(() => null);
+  if (!entries) return;
+  const saved = new Map(
+    entries
+      .filter(([, record]) => record?.value?.seconds > 0)
+      .map(([videoId, record]) => [videoId, record.value]),
+  );
+  if (dropMissing) {
+    for (const videoId of [...app.state.sync.playbackPositions.keys()]) {
+      if (!saved.has(videoId)) app.state.sync.playbackPositions.delete(videoId);
     }
+  }
+  for (const [videoId, position] of saved) {
+    app.state.sync.playbackPositions.set(videoId, position);
   }
 }
 

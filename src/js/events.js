@@ -75,6 +75,8 @@ function setupVisibilityEventListeners() {
     if (document.visibilityState === "visible") {
       restoreModalEventListeners();
       setupSwipeSidebar();
+      // Another tab may have saved or cleared positions meanwhile.
+      loadPlaybackPositions(true).then(() => renderWatchProgress());
     }
   });
 }

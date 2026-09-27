@@ -178,8 +178,8 @@ function syncIsEmptyList(storeName, record) {
 async function syncMigrateLegacy() {
   // Moves data from before databases were per user into this user's database, once per browser, and queues it,
   // since it was saved before syncing existed. The released layout had no owner, so the first user who loads
-  // Youlag here adopts it.
-  if (localStorage.getItem("ylLegacyMigrated") === "true") return;
+  // Youlag here adopts it. A logged-out page isn't a user, so the data waits for one to log in.
+  if (!syncEnabled() || localStorage.getItem("ylLegacyMigrated") === "true") return;
   const user = getSetting("yl_user");
   const sources = [
     ...app.db.legacyStores.map((storeName) => [`youlag-cache-${storeName}`, storeName]),

@@ -821,6 +821,8 @@ async function handleFeedDearrowFeatures() {
 
   await app.state.sync.positionsLoaded;
   renderWatchProgress();
+  // Fresh DeArrow data doesn't wait for the pull, so positions from other devices can land after the bars.
+  syncPulled.then(() => renderWatchProgress());
 }
 
 function setupSwipeSidebar() {
