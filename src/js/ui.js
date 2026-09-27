@@ -1341,6 +1341,7 @@ function showNotification({
   dismissRef,
   zIndex,
   timeout = 2000,
+  newTab = true,
 }) {
   // Show a simple notification in the feed, e.g. when a new Youlag version is available, or any other custom message.
 
@@ -1355,7 +1356,7 @@ function showNotification({
       ${message ? `<div class="yl-notification-message">${message}</div>` : ""}
     </div>
 
-    ${link ? `<a href="${link}" class="yl-notification-action" target="_blank" rel="noopener noreferrer">${action || "View"}</a>` : ""}
+    ${link ? `<a href="${link}" class="yl-notification-action"${newTab ? ' target="_blank" rel="noopener noreferrer"' : ""}>${action || "View"}</a>` : ""}
 
     <div class="yl-notification-close" id="yl_update_notification_close">×</div>
   `;

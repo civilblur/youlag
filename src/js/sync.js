@@ -185,10 +185,18 @@ async function syncMigrateLegacy() {
     ...app.db.legacyStores.map((storeName) => [`youlag-cache-${storeName}`, storeName]),
     ...app.db.branchStores.map((storeName) => [`youlag-cache-${user}-${storeName}`, storeName]),
   ];
+  let complete = true;
   for (const [legacyName, storeName] of sources) {
-    const entries = (await dbReadLegacy(legacyName, storeName)).filter(
-      ([, record]) => storeName !== "chapterSkip" || record?.value?.length > 0,
-    );
+    let entries;
+    try {
+      entries = (await dbReadLegacy(legacyName, storeName)).filter(
+        ([, record]) => storeName !== "chapterSkip" || record?.value?.length > 0,
+      );
+    } catch (e) {
+      // Kept for the next visit, which reads it again.
+      complete = false;
+      continue;
+    }
     if (entries.length) {
       await dbPutMany(storeName, entries);
       const now = Date.now();
@@ -199,6 +207,7 @@ async function syncMigrateLegacy() {
     }
     indexedDB.deleteDatabase(legacyName);
   }
+  if (!complete) return;
   localStorage.setItem("ylLegacyMigrated", "true");
   localStorage.removeItem("ylChapterSkipAdopted");
 }
@@ -244,7 +253,7 @@ function syncWithin(promise, message) {
   let timer;
   const timedOut = new Promise((resolve) => {
     timer = setTimeout(() => {
-      if (typeof openNotification === "function") openNotification(message, "bad");
+      showNotification({ message, timeout: 6000 });
       resolve();
     }, app.sync.waitMs);
   });
@@ -272,11 +281,9 @@ async function syncPullBatches(pending) {
         keys: pending.slice(i, i + app.sync.batchSize),
       });
       for (const row of rows) {
-        const local = await dbGetRecord(row.store, row.key).catch(() => undefined);
-        if (local && local.timestamp >= row.updatedAt) continue;
         const value = JSON.parse(row.value);
-        await dbPutRecord(row.store, row.key, { value, timestamp: row.updatedAt, ttlMs: row.ttlMs });
-        if (row.store === "playback") app.state.sync.playbackPositions.set(row.key, value);
+        const written = await dbPutIfNewer(row.store, row.key, { value, timestamp: row.updatedAt, ttlMs: row.ttlMs });
+        if (written && row.store === "playback") app.state.sync.playbackPositions.set(row.key, value);
       }
     } catch (e) {
       console.error("Youlag (sync): Pull failed:", e);

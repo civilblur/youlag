@@ -518,8 +518,8 @@ function removeVideoParamUrl(element = null) {
  ****************************************/
 
 function getSetting(name) {
-  // User settings passed from `extension.php` via FreshRSS `js_vars` hook.
-  return context?.extensions?.youlag?.[name];
+  // User settings passed from `extension.php` via FreshRSS `js_vars` hook. The login page has no `context`.
+  return typeof context === "undefined" ? undefined : context.extensions?.youlag?.[name];
 }
 
 function isMobile() {

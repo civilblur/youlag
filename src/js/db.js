@@ -30,10 +30,11 @@ function dbOpen(dbName) {
     };
     request.onsuccess = () => {
       const db = request.result;
-      // Lets another tab upgrade the database. The next use reopens it.
-      db.onversionchange = () => {
+      // Lets another tab upgrade the database. The next use reopens it, unless the upgrade came from a newer Youlag.
+      db.onversionchange = (event) => {
         db.close();
         delete dbConnections[dbName];
+        if (event.newVersion > app.db.version) dbMarkOutdated();
       };
       db.onclose = () => delete dbConnections[dbName];
       dbConnections[dbName] = db;
@@ -43,9 +44,25 @@ function dbOpen(dbName) {
       console.warn(`Youlag (DB): '${dbName}' upgrade waits for other tabs to close it.`);
     };
     request.onerror = () => {
+      // A newer Youlag in another tab already upgraded the database.
+      if (request.error?.name === "VersionError") dbMarkOutdated();
       console.error(`Youlag (DB): Failed to open IndexedDB '${dbName}':`, request.error);
       reject(request.error);
     };
+  });
+}
+
+function dbMarkOutdated() {
+  // This tab runs an older Youlag than the database, so it can't save until reloaded. Asks once.
+  if (app.state.sync.dbOutdated) return;
+  app.state.sync.dbOutdated = true;
+  showNotification({
+    title: "Youlag was updated",
+    message: "Reload the page to keep saving your data.",
+    action: "Reload",
+    link: window.location.href,
+    newTab: false,
+    timeout: 0,
   });
 }
 
@@ -101,6 +118,10 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
       };
     });
   } catch (error) {
+    if (app.state.sync.dbOutdated) {
+      // Kept in memory, so the page-hide send still delivers it.
+      syncMarkDirty(storeName, key, { value, timestamp: syncNow(), ttlMs: ttlWeeks * DB_WEEK_MS });
+    }
     console.error(`Youlag (DB): dbSet error:`, error);
     throw error;
   }
@@ -166,6 +187,25 @@ function dbPutMany(storeName, entries) {
     let req = null;
     for (const [key, record] of entries) req = store.put(record, key);
     return req || store.count();
+  });
+}
+
+async function dbPutIfNewer(storeName, key, record) {
+  // Writes the record unless the stored one is as new. Checked and written in one transaction, so a change saved
+  // meanwhile is never replaced by an older one. Resolves whether it was written.
+  const db = await dbGetConnection();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, "readwrite");
+    const store = tx.objectStore(storeName);
+    let written = false;
+    const req = store.get(key);
+    req.onsuccess = () => {
+      if ((req.result?.timestamp || 0) >= record.timestamp) return;
+      store.put(record, key);
+      written = true;
+    };
+    tx.oncomplete = () => resolve(written);
+    tx.onerror = () => reject(tx.error);
   });
 }
 
@@ -261,14 +301,38 @@ async function dbPruneUnqueued(storeName, before) {
 }
 
 async function dbDropQueuedMissing(storeNames) {
-  // Drops queued keys of these stores whose record is gone, and their unsent copies.
-  const queueKeys = await dbGetAllKeys(app.sync.queueStore).catch(() => []);
-  for (const queueKey of queueKeys) {
-    const separator = queueKey.indexOf(":");
-    const storeName = queueKey.slice(0, separator);
-    if (!storeNames.includes(storeName)) continue;
-    if ((await dbGetRecord(storeName, queueKey.slice(separator + 1)).catch(() => undefined)) === undefined) {
-      await dbDelete(app.sync.queueStore, queueKey).catch(() => {});
+  // Drops queued keys of these stores whose record is gone, and their unsent copies. Checked and dropped in one
+  // transaction, so a record saved again meanwhile keeps its queue entry.
+  const unsentBefore = new Map(app.state.sync.unsent);
+  const dropped = await dbGetConnection()
+    .then(
+      (db) =>
+        new Promise((resolve, reject) => {
+          const tx = db.transaction([...storeNames, app.sync.queueStore], "readwrite");
+          const queue = tx.objectStore(app.sync.queueStore);
+          const keys = [];
+          const keysReq = queue.getAllKeys();
+          keysReq.onsuccess = () => {
+            for (const queueKey of keysReq.result) {
+              const separator = queueKey.indexOf(":");
+              const storeName = queueKey.slice(0, separator);
+              if (!storeNames.includes(storeName)) continue;
+              const recordReq = tx.objectStore(storeName).getKey(queueKey.slice(separator + 1));
+              recordReq.onsuccess = () => {
+                if (recordReq.result !== undefined) return;
+                queue.delete(queueKey);
+                keys.push(queueKey);
+              };
+            }
+          };
+          tx.oncomplete = () => resolve(keys);
+          tx.onerror = () => reject(tx.error);
+        }),
+    )
+    .catch(() => []);
+  for (const queueKey of dropped) {
+    // A change saved since the check replaced the unsent copy, and stays.
+    if (app.state.sync.unsent.get(queueKey) === unsentBefore.get(queueKey)) {
       app.state.sync.unsent.delete(queueKey);
     }
   }
@@ -287,10 +351,15 @@ function dbDeleteIfUnchanged(storeName, key, expected) {
 
 function dbReadLegacy(dbName, storeName) {
   // Reads a database from before databases were per user. Resolves empty, without creating it, when it doesn't exist.
-  return new Promise((resolve) => {
+  // Rejects when it can't be read, so the migration keeps it for the next visit.
+  return new Promise((resolve, reject) => {
+    let missing = false;
     const request = indexedDB.open(dbName);
-    request.onupgradeneeded = () => request.transaction.abort();
-    request.onerror = () => resolve([]);
+    request.onupgradeneeded = () => {
+      missing = true;
+      request.transaction.abort();
+    };
+    request.onerror = () => (missing ? resolve([]) : reject(request.error));
     request.onsuccess = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains(storeName)) {
@@ -311,10 +380,12 @@ function dbReadLegacy(dbName, storeName) {
         db.close();
         resolve(entries);
       };
-      tx.onerror = () => {
+      const fail = () => {
         db.close();
-        resolve([]);
+        reject(tx.error || new Error(`Youlag (DB): Couldn't read '${dbName}'.`));
       };
+      tx.onerror = fail;
+      tx.onabort = fail;
     };
   });
 }

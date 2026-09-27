@@ -70,6 +70,7 @@ app.state = {
     migrated: null, // Promise of the one-time move of data from the old databases.
     pruned: null, // Promise of the daily prune of old local records, see syncPruneLocal().
     cleared: null, // Promise of the clears made on other devices, applied to this browser at init.
+    dbOutdated: false, // Whether another tab upgraded the database to a newer Youlag, see dbMarkOutdated().
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
     pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.
