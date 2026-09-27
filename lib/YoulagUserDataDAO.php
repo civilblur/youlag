@@ -33,18 +33,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
             $conf = FreshRSS_Context::userConf();
             $version = $conf->attributeInt("yl_data_schema") ?? 0;
             if ($version < self::SCHEMA_VERSION) {
-                if (!FreshRSS_Auth::hasAccess()) {
-                    return null;
-                }
-                // Saves the flag before dropping, so a config that can't be saved never loses the table.
-                $conf->_attribute("yl_data_schema", self::SCHEMA_VERSION);
-                if (!$conf->save()) {
-                    return null;
-                }
-                // Starts clean when a table is left over from a deleted user with the same name.
-                if (($version === 0 && !$dao->dropTable()) || !$dao->createSchema()) {
-                    $conf->_attribute("yl_data_schema", null);
-                    $conf->save();
+                if (!FreshRSS_Auth::hasAccess() || !$dao->setUp($conf)) {
                     return null;
                 }
             }
@@ -52,6 +41,69 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         } catch (Exception $e) {
             Minz_Log::error("Youlag: " . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Creates the table on the user's first use, one request at a time.
+     */
+    private function setUp(FreshRSS_UserConfiguration $conf): bool
+    {
+        if (!$this->lock()) {
+            return false;
+        }
+        try {
+            // Read again from disk, since another request may have set up the table after this one loaded the config.
+            $saved = Minz_Configuration::load(join_path(USERS_PATH, Minz_User::name() ?? "", "config.php"));
+            $version = is_int($saved["yl_data_schema"] ?? null) ? $saved["yl_data_schema"] : 0;
+            if ($version >= self::SCHEMA_VERSION) {
+                $conf->_attribute("yl_data_schema", $version);
+                return true;
+            }
+            // Saves the flag before dropping, so a config that can't be saved never loses the table.
+            $conf->_attribute("yl_data_schema", self::SCHEMA_VERSION);
+            if (!$conf->save()) {
+                return false;
+            }
+            // Starts clean when a table is left over from a deleted user with the same name. SQLite keeps each
+            // user's tables in their own file, deleted with the user.
+            $leftoverPossible = $version === 0 && $this->pdo->dbType() !== "sqlite";
+            if (($leftoverPossible && !$this->dropTable()) || !$this->createSchema()) {
+                $conf->_attribute("yl_data_schema", null);
+                $conf->save();
+                return false;
+            }
+            return true;
+        } finally {
+            $this->unlock();
+        }
+    }
+
+    private function lockName(): string
+    {
+        return "yl_data_" . md5($this->pdo->prefix() . Minz_User::name());
+    }
+
+    private function lock(): bool
+    {
+        return match ($this->pdo->dbType()) {
+            // Gives up after 10 s rather than hold the request.
+            "mysql" => (int) ($this->fetchColumn("SELECT GET_LOCK(?, 10)", 0, self::positional([$this->lockName()]))[0] ?? 0) === 1,
+            "pgsql" => $this->execute("SELECT pg_advisory_lock(hashtext(?))", [$this->lockName()]),
+            // SQLite has one writer at a time already, and its setup has no drop to race.
+            default => true,
+        };
+    }
+
+    private function unlock(): void
+    {
+        $sql = match ($this->pdo->dbType()) {
+            "mysql" => "SELECT RELEASE_LOCK(?)",
+            "pgsql" => "SELECT pg_advisory_unlock(hashtext(?))",
+            default => null,
+        };
+        if ($sql !== null) {
+            $this->execute($sql, [$this->lockName()]);
         }
     }
 
@@ -99,13 +151,16 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         if ($rows === []) {
             return 0;
         }
-        $sql = $this->pdo->dbType() === "mysql"
+        $mysql = $this->pdo->dbType() === "mysql";
+        // MySQL binds the new values again: VALUES() is deprecated there, and MariaDB lacks its replacement.
+        // `updated_at` is set last, so the conditions before it compare with the stored time.
+        $sql = $mysql
             ? <<<'SQL'
                 INSERT INTO `_yl_data` (`store`, `item_key`, `value`, `updated_at`, `ttl_ms`) VALUES (?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
-                	`value` = IF(VALUES(`updated_at`) >= `updated_at`, VALUES(`value`), `value`),
-                	`ttl_ms` = IF(VALUES(`updated_at`) >= `updated_at`, VALUES(`ttl_ms`), `ttl_ms`),
-                	`updated_at` = GREATEST(`updated_at`, VALUES(`updated_at`))
+                	`value` = IF(? >= `updated_at`, ?, `value`),
+                	`ttl_ms` = IF(? >= `updated_at`, ?, `ttl_ms`),
+                	`updated_at` = IF(? >= `updated_at`, ?, `updated_at`)
                 SQL
             : <<<'SQL'
                 INSERT INTO `_yl_data` (`store`, `item_key`, `value`, `updated_at`, `ttl_ms`) VALUES (?, ?, ?, ?, ?)
@@ -119,7 +174,11 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         }
         $this->pdo->beginTransaction();
         foreach ($rows as $row) {
-            if (!$stm->execute([$row["store"], $row["key"], $row["value"], $row["updatedAt"], $row["ttlMs"]])) {
+            $values = [$row["store"], $row["key"], $row["value"], $row["updatedAt"], $row["ttlMs"]];
+            if ($mysql) {
+                array_push($values, $row["updatedAt"], $row["value"], $row["updatedAt"], $row["ttlMs"], $row["updatedAt"], $row["updatedAt"]);
+            }
+            if (!$stm->execute($values)) {
                 $this->pdo->rollBack();
                 return null;
             }
