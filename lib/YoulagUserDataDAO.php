@@ -55,14 +55,14 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
 
     private function dropTable(): bool
     {
-        return $this->pdo->exec("DROP TABLE IF EXISTS `_youlag_data`") !== false;
+        return $this->pdo->exec("DROP TABLE IF EXISTS `_yl_data`") !== false;
     }
 
     private function createSchema(): bool
     {
         $sql = match ($this->pdo->dbType()) {
             "mysql" => <<<'SQL'
-                CREATE TABLE IF NOT EXISTS `_youlag_data` (
+                CREATE TABLE IF NOT EXISTS `_yl_data` (
                 	`store` VARCHAR(32) NOT NULL,
                 	`item_key` VARCHAR(64) NOT NULL,
                 	`value` TEXT NOT NULL,
@@ -74,7 +74,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
                 ENGINE = INNODB;
                 SQL,
             default => <<<'SQL'
-                CREATE TABLE IF NOT EXISTS `_youlag_data` (
+                CREATE TABLE IF NOT EXISTS `_yl_data` (
                 	`store` VARCHAR(32) NOT NULL,
                 	`item_key` VARCHAR(64) NOT NULL,
                 	`value` TEXT NOT NULL,
@@ -82,7 +82,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
                 	`ttl_ms` BIGINT NOT NULL DEFAULT 0,
                 	PRIMARY KEY (`store`, `item_key`)
                 );
-                CREATE INDEX IF NOT EXISTS `_youlag_data_store_updated_index` ON `_youlag_data` (`store`, `updated_at`);
+                CREATE INDEX IF NOT EXISTS `_yl_data_store_updated_index` ON `_yl_data` (`store`, `updated_at`);
                 SQL,
         };
         return $this->pdo->exec($sql) !== false;
@@ -99,17 +99,17 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         }
         $sql = $this->pdo->dbType() === "mysql"
             ? <<<'SQL'
-                INSERT INTO `_youlag_data` (`store`, `item_key`, `value`, `updated_at`, `ttl_ms`) VALUES (?, ?, ?, ?, ?)
+                INSERT INTO `_yl_data` (`store`, `item_key`, `value`, `updated_at`, `ttl_ms`) VALUES (?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                 	`value` = IF(VALUES(`updated_at`) >= `updated_at`, VALUES(`value`), `value`),
                 	`ttl_ms` = IF(VALUES(`updated_at`) >= `updated_at`, VALUES(`ttl_ms`), `ttl_ms`),
                 	`updated_at` = GREATEST(`updated_at`, VALUES(`updated_at`))
                 SQL
             : <<<'SQL'
-                INSERT INTO `_youlag_data` (`store`, `item_key`, `value`, `updated_at`, `ttl_ms`) VALUES (?, ?, ?, ?, ?)
+                INSERT INTO `_yl_data` (`store`, `item_key`, `value`, `updated_at`, `ttl_ms`) VALUES (?, ?, ?, ?, ?)
                 ON CONFLICT (`store`, `item_key`) DO UPDATE SET
                 	`value` = excluded.`value`, `updated_at` = excluded.`updated_at`, `ttl_ms` = excluded.`ttl_ms`
-                WHERE excluded.`updated_at` >= `_youlag_data`.`updated_at`
+                WHERE excluded.`updated_at` >= `_yl_data`.`updated_at`
                 SQL;
         $stm = $this->pdo->prepare($sql);
         if ($stm === false) {
@@ -143,7 +143,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         if ($stores === [] || $keys === []) {
             return [];
         }
-        $sql = "SELECT `store`, `item_key`, `value`, `updated_at`, `ttl_ms` FROM `_youlag_data`"
+        $sql = "SELECT `store`, `item_key`, `value`, `updated_at`, `ttl_ms` FROM `_yl_data`"
             . " WHERE `store` IN (" . implode(",", array_fill(0, count($stores), "?")) . ")"
             . " AND `item_key` IN (" . implode(",", array_fill(0, count($keys), "?")) . ")";
         return $this->fetchAssoc($sql, self::positional([...$stores, ...$keys])) ?? [];
@@ -152,7 +152,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
     public function findValue(string $store, string $key): ?string
     {
         $rows = $this->fetchColumn(
-            "SELECT `value` FROM `_youlag_data` WHERE `store` = ? AND `item_key` = ?",
+            "SELECT `value` FROM `_yl_data` WHERE `store` = ? AND `item_key` = ?",
             0,
             self::positional([$store, $key]),
         );
@@ -165,7 +165,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
     public function watchHistoryEntryIds(int $limit): array
     {
         $rows = $this->fetchColumn(
-            "SELECT `item_key` FROM `_youlag_data` WHERE `store` = ? ORDER BY `updated_at` DESC LIMIT " . max(1, $limit),
+            "SELECT `item_key` FROM `_yl_data` WHERE `store` = ? ORDER BY `updated_at` DESC LIMIT " . max(1, $limit),
             0,
             self::positional(["watchHistory"]),
         );
@@ -180,14 +180,14 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         if ($keys === []) {
             return true;
         }
-        $sql = "DELETE FROM `_youlag_data` WHERE `store` = ? AND `item_key` IN ("
+        $sql = "DELETE FROM `_yl_data` WHERE `store` = ? AND `item_key` IN ("
             . implode(",", array_fill(0, count($keys), "?")) . ")";
         return $this->execute($sql, [$store, ...$keys]);
     }
 
     public function deleteStore(string $store): bool
     {
-        return $this->execute("DELETE FROM `_youlag_data` WHERE `store` = ?", [$store]);
+        return $this->execute("DELETE FROM `_yl_data` WHERE `store` = ?", [$store]);
     }
 
     /**
@@ -200,7 +200,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         foreach ($limits as $store => $limit) {
             // Finds the cutoff row first, since MySQL can't limit rows inside a subquery.
             $cutoff = $this->fetchColumn(
-                "SELECT `updated_at` FROM `_youlag_data` WHERE `store` = ? ORDER BY `updated_at` DESC LIMIT 1 OFFSET " . max(0, $limit),
+                "SELECT `updated_at` FROM `_yl_data` WHERE `store` = ? ORDER BY `updated_at` DESC LIMIT 1 OFFSET " . max(0, $limit),
                 0,
                 self::positional([$store]),
             );
@@ -208,7 +208,7 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
                 continue;
             }
             $ok = $this->execute(
-                "DELETE FROM `_youlag_data` WHERE `store` = ? AND `updated_at` <= ?",
+                "DELETE FROM `_yl_data` WHERE `store` = ? AND `updated_at` <= ?",
                 [$store, (int) $cutoff[0]],
             ) && $ok;
         }

@@ -4,7 +4,7 @@
  * Youlag's local data: DeArrow data, video durations, SponsorBlock segments, skipped chapters,
  * playback positions, watch history and the sync queue.
  *
- * - One database per FreshRSS user, 'youlag-<user>', with one store for each kind of data.
+ * - One database per FreshRSS user, 'yl-<user>', with one store for each kind of data.
  *   Users sharing a browser never see each other's data.
  * - Records are { value, timestamp, ttlMs, checkedAt? }. The TTL marks when data is due to be
  *   checked again, it never hides stored data (see dbIsFresh).

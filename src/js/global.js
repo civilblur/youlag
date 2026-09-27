@@ -11,7 +11,7 @@ app.metadata = {
 };
 
 app.db = {
-  prefix: "youlag", // Database name prefix, followed by the FreshRSS user.
+  prefix: "yl", // Database name prefix, followed by the FreshRSS user.
   version: 1, // Bump when adding a store.
   stores: ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback", "watchHistory", "syncQueue"],
   legacyStores: ["dearrow", "duration", "sponsorblock", "chapterSkip"], // Released as one database per store, 'youlag-cache-<store>'.
