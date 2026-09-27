@@ -125,6 +125,8 @@ class YoulagExtension extends Minz_Extension
      */
     public $yl_sponsorblock_auto_skip_enabled = true;
 
+    private const WATCH_HISTORY_LIMIT = 100;
+
     /**
      * Source of truth for user settings.
      * Key = setting name, property name, configure.phtml field name, and JS key.
@@ -206,6 +208,7 @@ class YoulagExtension extends Minz_Extension
             $this,
             "blockYoutubeShorts",
         ]);
+        $this->registerHook("freshrss_user_maintenance", [$this, "pruneUserData"]);
     }
 
     /**
@@ -287,6 +290,10 @@ class YoulagExtension extends Minz_Extension
         $youlag["yl_invidious_instance"] = $this->instance;
         $youlag["yl_user"] = Minz_User::name() ?? "";
 
+        if (Minz_Request::paramString("yl_watch_history") === "1") {
+            $youlag["yl_watch_history_order"] =
+                YoulagUserDataDAO::open()?->watchHistoryEntryIds(self::WATCH_HISTORY_LIMIT) ?? [];
+        }
         $vars["youlag"] = $youlag;
 
         return $vars;
@@ -519,6 +526,14 @@ class YoulagExtension extends Minz_Extension
     }
 
     /**
+     * Keeps each store within its row limit, oldest rows pruned first.
+     */
+    public function pruneUserData(): void
+    {
+        YoulagUserDataDAO::open()?->pruneToLimits(YoulagUserDataDAO::ROW_LIMITS);
+    }
+
+    /**
      * Matches the video ID in YouTube, Invidious and Piped links, like getVideoIdFromUrl() in the frontend.
      */
     private static function getVideoIdFromUrl(string $url): string
@@ -738,9 +753,12 @@ class YoulagExtension extends Minz_Extension
         $getParam = Minz_Request::paramString("get", "");
         //$categories = $this->getUserCategories();
 
+        if (Minz_Request::paramString("yl_watch_history") === "1") {
+            $categoryTitle = "Watch history";
+        }
         // Category page `c_{n}`
         // Prefer FreshRSS_Context::$category?->name() for accuracy, fallback to getCategoryNameById() if unavailable.
-        if (
+        elseif (
             preg_match(pattern: '/^c_(\d+)$/', subject: $getParam, matches: $m)
         ) {
             $catId = $m[1];

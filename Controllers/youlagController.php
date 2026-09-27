@@ -9,6 +9,7 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     private const MAX_ITEMS = 500;
     private const MAX_VALUE_BYTES = 16384;
     private const KEY_PATTERN = '/^[A-Za-z0-9_-]{1,64}$/';
+    private const WATCH_HISTORY_LIMIT = 100;
 
     #[\Override]
     public function firstAction(): void
@@ -61,6 +62,45 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
             $dao->fetchByKeys($stores, $keys),
         );
         $this->respond(["rows" => $rows]);
+    }
+
+    /**
+     * Shows the watch history as a normal stream of the viewed entries, so every entry control works.
+     */
+    public function watchHistoryAction(): void
+    {
+        if (!YoulagExtension::isWatchHistoryEnabled()) {
+            Minz_Request::forward(["c" => "index", "a" => "index"], redirect: true);
+        }
+        $ids = YoulagUserDataDAO::open()?->watchHistoryEntryIds(self::WATCH_HISTORY_LIMIT) ?? [];
+        Minz_Request::forward([
+            "c" => "index",
+            "a" => "normal",
+            "params" => [
+                "search" => "e:" . ($ids === [] ? "0" : implode(",", $ids)),
+                "state" => (string) FreshRSS_Entry::STATE_ALL,
+                "nb" => (string) self::WATCH_HISTORY_LIMIT,
+                "yl_watch_history" => "1",
+            ],
+        ]);
+    }
+
+    /**
+     * Removes entries from the watch history, or clears it when asked for all.
+     */
+    public function watchHistoryRemoveAction(): void
+    {
+        $dao = $this->requirePostAndStore();
+        if (Minz_Request::paramBoolean("all")) {
+            $ok = $dao->deleteStore("watchHistory");
+        } else {
+            $ids = array_values(array_filter(
+                Minz_Request::paramArrayString("ids", plaintext: true),
+                "ctype_digit",
+            ));
+            $ok = $dao->deleteKeys("watchHistory", $ids);
+        }
+        $this->respond(["ok" => $ok], $ok ? 200 : 500);
     }
 
     /**

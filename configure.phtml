@@ -86,6 +86,16 @@ declare(strict_types=1)
               Search results
             </label>
             <label>
+              <input type="checkbox" name="yl_category_whitelist[]" value="watch_history"
+                 <?php echo in_array(
+                     needle: "watch_history",
+                     haystack: $whitelist,
+                 )
+                     ? ' checked="checked"'
+                     : ""; ?>>
+              Watch history
+            </label>
+            <label>
             <?php foreach ($categories as $cat): ?>
               <?php $catId = (string) $cat->id(); ?>
               <label>
@@ -523,6 +533,26 @@ declare(strict_types=1)
     <section class="yl-form-section">
       <h3>Youlag</h3>
 
+      <h4 class="mb-0">
+        Watch history
+
+        <div class="yl-form-group-help">
+          Recently opened videos and articles, listed in the sidebar.
+        </div>
+      </h4>
+      <label for="yl_watch_history_enabled" class="flex">
+          <input type="checkbox" id="yl_watch_history_enabled" name="yl_watch_history_enabled" value="1" class="mb-auto"
+          <?php echo $this->yl_watch_history_enabled
+              ? ' checked="checked"'
+              : ""; ?>>
+        <div class="inline-block">
+          Save watch history
+          <div class="yl-form-group-help">
+            Turning this off stops saving opened entries. Existing history is kept until cleared.
+          </div>
+        </div>
+      </label>
+      <button type="button" id="yl_watch_history_clear_settings" class="btn">Clear watch history</button>
       <h4 class="mb-0">
         Updates
       </h4>
