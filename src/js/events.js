@@ -11,6 +11,7 @@ function init() {
   clearPathHash();
   setFreshRssUrlPrefix();
   setBodyClass();
+  setupSync();
   if (isFeedPage()) {
     setupClickListener();
     setupSwipeSidebar();

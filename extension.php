@@ -278,6 +278,7 @@ class YoulagExtension extends Minz_Extension
             $youlag[$name] = $this->{$name};
         }
         $youlag["yl_invidious_instance"] = $this->instance;
+        $youlag["yl_user"] = Minz_User::name() ?? "";
 
         $vars["youlag"] = $youlag;
 

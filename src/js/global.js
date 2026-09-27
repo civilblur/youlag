@@ -12,6 +12,20 @@ app.metadata = {
 
 app.db = {
   name: "youlag-cache", // IndexedDB database name
+  userStores: ["playback", "chapterSkip", "watchHistory", "syncQueue"], // Stores kept apart per FreshRSS user.
+};
+
+app.sync = {
+  stores: ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback", "watchHistory"], // IndexedDB stores synced to the Youlag endpoint.
+  videoStores: ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback"], // Stores keyed by video ID, pulled for the videos on the page.
+  emptyListStores: ["chapterSkip", "sponsorblock"], // An empty list here is only synced when it replaces a real one.
+  queueStore: "syncQueue",
+  flushDelayMs: 10000,
+  batchSize: 200,
+  batchMaxBytes: 512 * 1024, // FreshRSS reads at most 1 MB of a JSON body.
+  valueMaxBytes: 16384, // Same limit as the endpoint.
+  hideMaxBytes: 60 * 1024, // Keepalive requests share one 64 KB budget.
+  playbackSaveIntervalSeconds: 10,
 };
 
 app.state = {
@@ -24,6 +38,15 @@ app.state = {
     sliderListeners: null, // Store slider event listener.
     categoryFilterEntryCount: {}, // Type: `categoryFilterEntryCountType`. Number of entries for each category filter on the Watch later filter menu.
     experimentalFeatureEnabled: false, // Whether experimental features are enabled.
+  },
+  sync: {
+    flushTimer: null,
+    flushing: false,
+    hideSent: false, // Whether the page-hide send ran since the page was last visible.
+    adopted: null, // Promise of the one-time adoption of skipped chapters saved before databases were per user.
+    unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
+    pulled: new Set(), // Video IDs already pulled from the server on this page.
+    playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.
   },
   modal: {
     active: false, // Whether an article/video is currently active. Miniplayer does not count as active.

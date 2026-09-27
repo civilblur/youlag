@@ -21,6 +21,15 @@
 
 const dbConnections = {};
 
+function dbGetName(storeName) {
+  // Personal stores and the sync queue get one database per FreshRSS user, so users sharing a browser stay apart.
+  const base = app?.db?.name || "youlag-cache";
+  const user = getSetting("yl_user");
+  return user && app.db.userStores.includes(storeName)
+    ? `${base}-${user}-${storeName}`
+    : `${base}-${storeName}`;
+}
+
 function dbOpen(dbName, storeName) {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(dbName, 1);
@@ -55,7 +64,7 @@ async function dbGetConnection(dbName, storeName) {
 
 async function dbSet(storeName, key, value, ttlWeeks = 4) {
   try {
-    const dbName = `${app?.db?.name || "youlag-cache"}-${storeName}`;
+    const dbName = dbGetName(storeName);
     const db = await dbGetConnection(dbName, storeName);
 
     return new Promise((resolve, reject) => {
@@ -79,7 +88,10 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
         reject(e.target.error);
       };
 
-      tx.oncomplete = () => resolve();
+      tx.oncomplete = () => {
+        syncMarkDirty(storeName, key, dataWithMetadata);
+        resolve();
+      };
       tx.onerror = () => {
         console.error(
           `Youlag (DB): Transaction error in dbSet for key '${key}':`,
@@ -96,7 +108,7 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
 
 async function dbGet(storeName, key) {
   try {
-    const dbName = `${app?.db?.name || "youlag-cache"}-${storeName}`;
+    const dbName = dbGetName(storeName);
     const db = await dbGetConnection(dbName, storeName);
 
     return new Promise((resolve, reject) => {
@@ -140,4 +152,63 @@ async function dbGet(storeName, key) {
     console.error(`Youlag (DB): dbGet error:`, error);
     throw error;
   }
+}
+
+// Runs one request in its own transaction and resolves with its result once the transaction completes.
+async function dbRun(storeName, mode, makeRequest, dbName = dbGetName(storeName)) {
+  const db = await dbGetConnection(dbName, storeName);
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, mode);
+    const req = makeRequest(tx.objectStore(storeName));
+    tx.oncomplete = () => resolve(req.result);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function dbGetRecord(storeName, key) {
+  return dbRun(storeName, "readonly", (store) => store.get(key));
+}
+
+function dbPutRecord(storeName, key, record) {
+  return dbRun(storeName, "readwrite", (store) => store.put(record, key));
+}
+
+function dbPutMany(storeName, entries) {
+  return dbRun(storeName, "readwrite", (store) => {
+    let req = null;
+    for (const [key, record] of entries) req = store.put(record, key);
+    return req || store.count();
+  });
+}
+
+function dbDelete(storeName, key) {
+  return dbRun(storeName, "readwrite", (store) => store.delete(key));
+}
+
+function dbClear(storeName) {
+  return dbRun(storeName, "readwrite", (store) => store.clear());
+}
+
+function dbGetAllKeys(storeName) {
+  return dbRun(storeName, "readonly", (store) => store.getAllKeys());
+}
+
+async function dbGetAllEntries(storeName, dbName = dbGetName(storeName)) {
+  const entries = [];
+  await dbRun(
+    storeName,
+    "readonly",
+    (store) => {
+      const req = store.openCursor();
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (!cursor) return;
+        entries.push([cursor.key, cursor.value]);
+        cursor.continue();
+      };
+      return req;
+    },
+    dbName,
+  );
+  return entries;
 }
