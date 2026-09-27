@@ -396,10 +396,15 @@ async function saveVideoDuration(youtubeId, seconds) {
   return dbSet("duration", youtubeId, duration, 0);
 }
 
-async function getDearrowData(youtubeId) {
+async function getDearrowData(youtubeId, syncPulled = null) {
   if (!youtubeId) return null;
   // Check if data is cached in indexdb before making API call.
-  const cached = await dbGetRecord("dearrow", youtubeId).catch(() => undefined);
+  let cached = await dbGetRecord("dearrow", youtubeId).catch(() => undefined);
+  if (!dbIsFresh(cached) && syncPulled) {
+    // Another device may have fetched it already.
+    await syncPulled;
+    cached = await dbGetRecord("dearrow", youtubeId).catch(() => undefined);
+  }
   if (dbIsFresh(cached)) return withStoredDuration(youtubeId, cached.value);
 
   const data = await fetchDearrowData(youtubeId);

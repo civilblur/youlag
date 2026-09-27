@@ -186,3 +186,26 @@ function setupSync() {
   });
   window.addEventListener("pagehide", syncSendOnHide);
 }
+
+async function syncPull(videoIds) {
+  // Merges the server's rows for these videos into IndexedDB, keeping whichever is newer.
+  const pending = videoIds.filter((id) => !app.state.sync.pulled.has(id));
+  pending.forEach((id) => app.state.sync.pulled.add(id));
+  for (let i = 0; i < pending.length; i += app.sync.batchSize) {
+    try {
+      const { rows } = await syncPost("fetch", {
+        stores: app.sync.videoStores,
+        keys: pending.slice(i, i + app.sync.batchSize),
+      });
+      for (const row of rows) {
+        const local = await dbGetRecord(row.store, row.key).catch(() => undefined);
+        if (local && local.timestamp >= row.updatedAt) continue;
+        const value = JSON.parse(row.value);
+        await dbPutRecord(row.store, row.key, { value, timestamp: row.updatedAt, ttlMs: row.ttlMs });
+        if (row.store === "playback") app.state.sync.playbackPositions.set(row.key, value);
+      }
+    } catch (e) {
+      console.error("Youlag (sync): Pull failed:", e);
+    }
+  }
+}

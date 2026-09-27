@@ -758,8 +758,9 @@ async function handleFeedDearrowFeatures() {
 
   // Batch fetch DeArrow data for all unique videoIds
   const videoIdList = Array.from(videoIdSet);
+  const syncPulled = syncPull(videoIdList);
   const dearrowResults = await Promise.all(
-    videoIdList.map((videoId) => getDearrowData(videoId)),
+    videoIdList.map((videoId) => getDearrowData(videoId, syncPulled)),
   );
   const dearrowDataMap = {};
   for (let i = 0; i < videoIdList.length; i++) {

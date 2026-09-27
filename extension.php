@@ -67,6 +67,12 @@ class YoulagExtension extends Minz_Extension
      * @var string
      */
     protected $instance = "";
+
+    /**
+     * The user's synced data, opened on first use.
+     * @var YoulagUserDataDAO|null|false
+     */
+    private $userDataDAO = false;
     /**
      * Show "New" badge for unwatched videos
      * @var bool
@@ -165,6 +171,7 @@ class YoulagExtension extends Minz_Extension
             $this,
             "handleArticleYoutubeIframe",
         ]);
+        $this->registerHook("entry_before_display", [$this, "applyStoredDearrow"]);
         $this->registerHook("nav_entries", [$this, "createFreshRssLogo"], 6);
         $this->registerHook("nav_entries", [$this, "createCategoryTitle"], 7);
         $this->registerHook("nav_entries", [$this, "setBaseUrl"], 25);
@@ -478,6 +485,62 @@ class YoulagExtension extends Minz_Extension
         }
 
         return $entry;
+    }
+
+    /**
+     * Renders stored DeArrow titles and thumbnails server-side, so they show without a flash.
+     */
+    public function applyStoredDearrow(FreshRSS_Entry $entry): FreshRSS_Entry
+    {
+        $this->loadConfigValues();
+        if (!$this->yl_custom_thumbnail_title_enabled) {
+            return $entry;
+        }
+        $videoId = self::getVideoIdFromUrl($entry->link(raw: true));
+        if ($videoId === "") {
+            return $entry;
+        }
+        if ($this->userDataDAO === false) {
+            $this->userDataDAO = YoulagUserDataDAO::open();
+        }
+        $dearrow = json_decode($this->userDataDAO?->findValue("dearrow", $videoId) ?? "", true);
+        if (!is_array($dearrow)) {
+            return $entry;
+        }
+        $title = $dearrow["titles"][0]["title"] ?? null;
+        if (is_string($title) && $title !== "") {
+            $entry->_title(htmlspecialchars($title, ENT_COMPAT, "UTF-8"));
+        }
+        $thumbnail = $dearrow["thumbnails"][0]["url"] ?? null;
+        if (is_string($thumbnail) && preg_match("#^https://#i", $thumbnail)) {
+            $entry->_attribute("thumbnail", ["url" => htmlspecialchars($thumbnail, ENT_COMPAT, "UTF-8")]);
+        }
+        return $entry;
+    }
+
+    /**
+     * Matches the video ID in YouTube, Invidious and Piped links, like getVideoIdFromUrl() in the frontend.
+     */
+    private static function getVideoIdFromUrl(string $url): string
+    {
+        $parts = parse_url($url);
+        if (!is_array($parts)) {
+            return "";
+        }
+        parse_str($parts["query"] ?? "", $query);
+        $candidate = $query["v"] ?? $query["id"] ?? "";
+        if (is_string($candidate) && preg_match('/^[a-zA-Z0-9_-]{11}$/', $candidate)) {
+            return $candidate;
+        }
+        $path = $parts["path"] ?? "";
+        if (preg_match('#/(?:shorts|embed|e|v|vi)/([a-zA-Z0-9_-]{11})(?:/|$)#', $path, $matches)) {
+            return $matches[1];
+        }
+        $segments = array_values(array_filter(explode("/", $path)));
+        if (count($segments) === 1 && preg_match('/^[a-zA-Z0-9_-]{11}$/', $segments[0])) {
+            return $segments[0];
+        }
+        return "";
     }
 
     /**
