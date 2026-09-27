@@ -29,6 +29,7 @@ function handleActiveVideo(eventOrVideoObject, isVideoObject = false) {
 
     videoObject = extractFeedItemData(feedItem);
     videoObject.feedItemEl = feedItem;
+    recordWatchHistory(feedItem);
     applySavedPlayback(videoObject);
     videoObject.autoplay = 1;
     setVideoQueue(videoObject);
@@ -1172,6 +1173,7 @@ async function handleVideoDirectLink() {
     const entryElement = doc.querySelector(`[data-entry="${ylvideoEntryId}"]`);
     if (entryElement) {
       const videoObject = extractFeedItemData(entryElement);
+      recordWatchHistory(entryElement);
       // A direct link isn't in the feed, so its saved data is pulled first. No click is waiting here.
       await syncPull([videoObject.youtubeId].filter(Boolean));
       applySavedPlayback(videoObject);
@@ -1196,8 +1198,9 @@ async function handleVideoDirectLink() {
   }
 }
 
-function handleActiveArticle() {
+function handleActiveArticle(event) {
   pushHistoryState("articleOpen", true);
+  recordWatchHistory(event?.target?.closest(app.frss.el.entry));
 }
 
 function closeArticle(event) {

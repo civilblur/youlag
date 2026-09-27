@@ -2529,3 +2529,25 @@ body.yl-mode-video:not(.reader) {
 /*****************************************
  * END "CATEGORY FILTER"
  ****************************************/
+
+/*****************************************
+ * BEGIN "WATCH HISTORY"
+ * Remove and clear controls on the watch history page.
+ ****************************************/
+
+/* Day separators don't match the last viewed order. */
+body.yl-page-watch_history #stream > .transition {
+  display: none;
+}
+
+div.flux .flux_header li.item.yl-watch-history-remove img {
+  filter: var(--yl-filter-icon-card-action);
+}
+
+#yl_watch_history_clear {
+  @include yl-button-menu;
+}
+
+/*****************************************
+ * END "WATCH HISTORY"
+ ****************************************/

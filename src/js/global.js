@@ -28,6 +28,14 @@ app.sync = {
   playbackSaveIntervalSeconds: 10,
 };
 
+app.watchHistory = {
+  url: "./?c=youlag&a=watchHistory",
+  linkId: "yl_watch_history_link",
+  clearId: "yl_watch_history_clear",
+  settingsClearId: "yl_watch_history_clear_settings",
+  removeClass: "yl-watch-history-remove",
+};
+
 app.state = {
   youlag: {
     init: false, // Whether the Youlag script has initialized.

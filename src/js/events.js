@@ -36,6 +36,9 @@ function init() {
     isUpdateCheckEnabled() && checkForUpdates();
   }
   updateSidenavLinks();
+  renderWatchHistoryLink();
+  setupWatchHistoryPage();
+  setupWatchHistorySettings();
   settingsPageEventListeners();
   setVideoLabelsTitle("playlists", "Playlists");
   setVideoLabelsTitle("watch_later", "Watch later");

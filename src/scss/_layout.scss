@@ -577,6 +577,30 @@ a.signout img.icon {
       }
     }
 
+    /* Watch history button */
+    :is(#mark-read-aside, .mark-read-aside)
+      ul#sidebar
+      .tree-folder.category.yl-watch-history {
+      .tree-folder-title .title {
+        /* Leaves room for the icon, like the favorites label. */
+        margin-left: calc(
+          var(--yl-sidenav-icon-size) + var(--yl-sidenav-icon-label-gap)
+        );
+      }
+
+      .tree-folder-title:before {
+        /* Clock icon */
+        content: "";
+        width: var(--yl-sidenav-icon-size);
+        height: var(--yl-sidenav-icon-size);
+        position: absolute;
+        filter: var(--yl-filter-icon-sidenav-category);
+        pointer-events: none;
+        background-repeat: no-repeat;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTMgMTJhOSA5IDAgMSAwIDIuNjQtNi4zNkwzIDguM00zIDN2NS4zaDUuM00xMiA3djVsMy41IDIiLz48L3N2Zz4=);
+      }
+    }
+
     /**
      * Side navigation button label font adjustment:
      * - Manage feed ("Subscriptions management")
@@ -590,6 +614,7 @@ a.signout img.icon {
     .tree-folder.category.all .tree-folder-title .title:before,
     .tree-folder.category.important .tree-folder-title .title:before,
     .tree-folder.category.favorites .tree-folder-title .title:before,
+    .tree-folder.category.yl-watch-history .tree-folder-title .title:before,
     #tags .tree-folder-title .title:before,
     .tree-folder.category .tree-folder-title .title {
       font-size: var(--yl-sidenav-label-font-size);

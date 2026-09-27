@@ -536,6 +536,7 @@ function isPageWhitelisted(whitelist, currentPageClass) {
     "watch_later",
     "playlists",
     "search_results",
+    "watch_history",
   ];
   for (const pt of pageTypes) {
     const className = `yl-page-${pt}`;

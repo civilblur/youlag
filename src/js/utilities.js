@@ -596,6 +596,15 @@ function getCurrentPage() {
   const routes = [
     {
       path: app.frss.urlPrefix + "/i/",
+      match: () =>
+        urlParams.get("c") === "youlag" &&
+        urlParams.get("a") === "watchHistory",
+      className: "watch_history",
+      name: "watch_history",
+      id: null,
+    },
+    {
+      path: app.frss.urlPrefix + "/i/",
       match: () => urlParams.get("a") === "normal" && urlParams.has("search"),
       className: "search_results",
       name: "search_results",
@@ -709,6 +718,7 @@ function isFeedPage() {
     "playlists",
     "category",
     "search_results",
+    "watch_history",
   ]);
   const page = getCurrentPage();
   return feedPageNames.has(page.name);
