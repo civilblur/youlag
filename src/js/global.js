@@ -24,6 +24,8 @@ app.sync = {
   emptyListStores: ["chapterSkip", "sponsorblock"], // An empty list here is only synced when it replaces a real one.
   queueStore: "syncQueue",
   flushDelayMs: 10000,
+  localMaxAgeMs: 90 * 24 * 60 * 60 * 1000, // Local records untouched this long are pruned, since the server keeps them.
+  pruneIntervalMs: 24 * 60 * 60 * 1000,
   batchSize: 200,
   batchMaxBytes: 512 * 1024, // FreshRSS reads at most 1 MB of a JSON body.
   valueMaxBytes: 16384, // Same limit as the endpoint.
@@ -65,6 +67,7 @@ app.state = {
     flushAgain: false, // Whether a flush was asked for during the running one.
     hideSent: false, // Whether the page-hide send ran since the page was last visible.
     migrated: null, // Promise of the one-time move of data from the old databases.
+    pruned: null, // Promise of the daily prune of old local records, see syncPruneLocal().
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
     pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.

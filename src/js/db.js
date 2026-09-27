@@ -233,6 +233,31 @@ function dbDeleteOlderThan(storeName, before) {
   });
 }
 
+async function dbPruneUnqueued(storeName, before) {
+  // Deletes records last changed or confirmed before the given time, unless they wait in the sync queue.
+  // One transaction over both stores, so a record written or queued meanwhile is never deleted.
+  const db = await dbGetConnection();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([storeName, app.sync.queueStore], "readwrite");
+    const queueReq = tx.objectStore(app.sync.queueStore).getAllKeys();
+    queueReq.onsuccess = () => {
+      const queued = new Set(queueReq.result);
+      const cursorReq = tx.objectStore(storeName).openCursor();
+      cursorReq.onsuccess = () => {
+        const cursor = cursorReq.result;
+        if (!cursor) return;
+        const record = cursor.value;
+        if ((record?.checkedAt || record?.timestamp || 0) < before && !queued.has(`${storeName}:${cursor.key}`)) {
+          cursor.delete();
+        }
+        cursor.continue();
+      };
+    };
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
 async function dbDropQueuedMissing(storeNames) {
   // Drops queued keys of these stores whose record is gone, and their unsent copies.
   const queueKeys = await dbGetAllKeys(app.sync.queueStore).catch(() => []);

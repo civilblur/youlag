@@ -203,9 +203,25 @@ async function syncMigrateLegacy() {
   localStorage.removeItem("ylChapterSkipAdopted");
 }
 
+async function syncPruneLocal() {
+  // Keeps this browser's stores small: once a day, drops records untouched for the age limit that the server
+  // already has. They come back through the page pull when their video shows again.
+  // Without a login nothing reaches the server, so nothing is pruned.
+  if (!syncEnabled()) return;
+  const flag = `ylPrunedAt:${getSetting("yl_user")}`;
+  const now = syncNow();
+  if (now - (Number(localStorage.getItem(flag)) || 0) < app.sync.pruneIntervalMs) return;
+  for (const storeName of app.sync.stores) {
+    await dbPruneUnqueued(storeName, now - app.sync.localMaxAgeMs);
+  }
+  localStorage.setItem(flag, String(now));
+}
+
 function setupSync() {
   app.state.sync.positionsLoaded = loadPlaybackPositions();
   app.state.sync.migrated = syncMigrateLegacy().catch(() => {});
+  // After the migration, which writes old records before it queues them.
+  app.state.sync.pruned = app.state.sync.migrated.then(syncPruneLocal).catch(() => {});
   if (!syncEnabled()) return;
   // Applies clears made on another device first, also to the data just moved from the old databases,
   // so the flush doesn't send the cleared data back.
@@ -235,6 +251,8 @@ async function syncPull(videoIds) {
 }
 
 async function syncPullBatches(pending) {
+  // Pulled rows can be older than the age limit, so they're written after the prune, not deleted by it.
+  await app.state.sync.pruned;
   for (let i = 0; i < pending.length; i += app.sync.batchSize) {
     try {
       const { rows } = await syncPost("fetch", {
