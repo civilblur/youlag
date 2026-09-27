@@ -176,8 +176,9 @@ function syncIsEmptyList(storeName, record) {
 }
 
 async function syncMigrateLegacy() {
-  // Moves data from before databases were per user into this user's database, once per browser.
-  // The released layout had no owner, so the first user who loads Youlag here adopts it.
+  // Moves data from before databases were per user into this user's database, once per browser, and queues it,
+  // since it was saved before syncing existed. The released layout had no owner, so the first user who loads
+  // Youlag here adopts it.
   if (localStorage.getItem("ylLegacyMigrated") === "true") return;
   const user = getSetting("yl_user");
   const sources = [
@@ -188,41 +189,30 @@ async function syncMigrateLegacy() {
     const entries = (await dbReadLegacy(legacyName, storeName)).filter(
       ([, record]) => storeName !== "chapterSkip" || record?.value?.length > 0,
     );
-    if (entries.length) await dbPutMany(storeName, entries);
+    if (entries.length) {
+      await dbPutMany(storeName, entries);
+      const now = Date.now();
+      const queue = entries
+        .filter(([, record]) => app.sync.stores.includes(storeName) && !syncIsEmptyList(storeName, record))
+        .map(([key]) => [`${storeName}:${key}`, now]);
+      if (queue.length) await dbPutMany(app.sync.queueStore, queue);
+    }
     indexedDB.deleteDatabase(legacyName);
   }
   localStorage.setItem("ylLegacyMigrated", "true");
   localStorage.removeItem("ylChapterSkipAdopted");
 }
 
-async function syncBackfill() {
-  // Queues the data saved before syncing existed, once per user and browser.
-  const flag = `ylSyncBackfilled:${getSetting("yl_user")}`;
-  if (localStorage.getItem(flag) === "true") return;
-  await app.state.sync.migrated;
-  const now = Date.now();
-  for (const storeName of app.sync.stores) {
-    const entries = await dbGetAllEntries(storeName).catch(() => []);
-    const queue = entries
-      .filter(([, record]) => !syncIsEmptyList(storeName, record))
-      .map(([key]) => [`${storeName}:${key}`, now]);
-    if (queue.length) await dbPutMany(app.sync.queueStore, queue);
-  }
-  localStorage.setItem(flag, "true");
-  syncScheduleFlush();
-}
-
 function setupSync() {
   app.state.sync.positionsLoaded = loadPlaybackPositions();
   app.state.sync.migrated = syncMigrateLegacy().catch(() => {});
   if (!syncEnabled()) return;
-  // Applies clears made on another device first, so the flush doesn't send the cleared data back.
-  Promise.all([applyVideoDataClear(), applyWatchHistoryClear()])
+  // Applies clears made on another device first, also to the data just moved from the old databases,
+  // so the flush doesn't send the cleared data back.
+  app.state.sync.migrated
+    .then(() => Promise.all([applyVideoDataClear(), applyWatchHistoryClear()]))
     .catch(() => {})
-    .finally(() => {
-      syncBackfill().catch((e) => console.error("Youlag (sync): Backfill failed:", e));
-      syncFlush(); // Sends what the last visit left unsent.
-    });
+    .finally(() => syncFlush()); // Sends what the last visit left unsent, and the moved data.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
       syncSendOnHide();
