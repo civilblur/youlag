@@ -263,8 +263,9 @@ class YoulagExtension extends Minz_Extension
             $this->yl_category_whitelist = ["all"];
         }
 
-        if (FreshRSS_Context::$user_conf->yl_invidious_url_1 != "") {
-            $instance = trim(string: FreshRSS_Context::$user_conf->yl_invidious_url_1);
+        $invidiousUrl = $conf->attributeString("yl_invidious_url_1") ?? "";
+        if ($invidiousUrl !== "") {
+            $instance = trim(string: $invidiousUrl);
             if (!preg_match(pattern: "#^https?://#i", subject: $instance)) {
                 $instance = "https://{$instance}";
             }
@@ -730,7 +731,7 @@ class YoulagExtension extends Minz_Extension
         if (is_object(value: $entry) === true) {
             // Only block if user setting is enabled
             $blockShorts =
-                FreshRSS_Context::$user_conf->yl_block_youtube_shorts ?? false;
+                FreshRSS_Context::userConf()->attributeBool("yl_block_youtube_shorts") ?? false;
             if ($blockShorts) {
                 $link = $entry->link();
                 // Match links that start with e.g. https://www.youtube.com/shorts/
