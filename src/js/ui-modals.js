@@ -1175,7 +1175,10 @@ async function handleVideoDirectLink() {
       const videoObject = extractFeedItemData(entryElement);
       recordWatchHistory(entryElement);
       // A direct link isn't in the feed, so its saved data is pulled first. No click is waiting here.
-      await syncPull([videoObject.youtubeId].filter(Boolean));
+      await syncWithin(
+        syncPull([videoObject.youtubeId].filter(Boolean)),
+        "Youlag couldn't load this video's saved position.",
+      );
       applySavedPlayback(videoObject);
       videoObject.autoplay = 1;
       // Set the direct link entry as active in video queue.

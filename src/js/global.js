@@ -26,6 +26,7 @@ app.sync = {
   flushDelayMs: 10000,
   localMaxAgeMs: 90 * 24 * 60 * 60 * 1000, // Local records untouched this long are pruned, since the server keeps them.
   pruneIntervalMs: 24 * 60 * 60 * 1000,
+  waitMs: 5000, // Longest a click waits on the network before going on, see syncWithin().
   batchSize: 200,
   batchMaxBytes: 512 * 1024, // FreshRSS reads at most 1 MB of a JSON body.
   valueMaxBytes: 16384, // Same limit as the endpoint.
@@ -68,6 +69,7 @@ app.state = {
     hideSent: false, // Whether the page-hide send ran since the page was last visible.
     migrated: null, // Promise of the one-time move of data from the old databases.
     pruned: null, // Promise of the daily prune of old local records, see syncPruneLocal().
+    cleared: null, // Promise of the clears made on other devices, applied to this browser at init.
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
     pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.

@@ -399,6 +399,8 @@ async function saveVideoDuration(youtubeId, seconds) {
 
 async function getDearrowData(youtubeId, syncPulled = null) {
   if (!youtubeId) return null;
+  // A clear made on another device is applied first, so data from before it never shows.
+  await app.state.sync.cleared;
   // Check if data is cached in indexdb before making API call.
   let cached = await dbGetRecord("dearrow", youtubeId).catch(() => undefined);
   if (!dbIsFresh(cached) && syncPulled) {

@@ -15,7 +15,7 @@ const dbConnections = {};
 
 function dbGetName() {
   // One database per FreshRSS user, so users sharing a browser keep their data apart.
-  return `${app.db.prefix}-${getSetting("yl_user") || "default"}`;
+  return `${app.db.prefix}-${getSetting("yl_user")}`;
 }
 
 function dbOpen(dbName) {
@@ -50,6 +50,8 @@ function dbOpen(dbName) {
 }
 
 async function dbGetConnection() {
+  // Without a user, like on the login page, there's no data to keep, so no database is created.
+  if (!getSetting("yl_user")) throw new Error("Youlag (DB): No user to open a database for.");
   const dbName = dbGetName();
   return dbConnections[dbName] || dbOpen(dbName);
 }

@@ -65,7 +65,8 @@ function renderWatchHistoryLink() {
   const link = item.querySelector("a");
   link.addEventListener("click", async (event) => {
     event.preventDefault();
-    await syncFlush(); // Includes the entries opened in the last few seconds.
+    // Includes the entries opened in the last few seconds.
+    await syncWithin(syncFlush(), "Youlag couldn't sync your latest views. The history may miss them for now.");
     window.location.href = link.href;
   });
   favorites.after(item);

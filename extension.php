@@ -293,7 +293,9 @@ class YoulagExtension extends Minz_Extension
             $youlag[$name] = $this->{$name};
         }
         $youlag["yl_invidious_instance"] = $this->instance;
-        $youlag["yl_user"] = Minz_User::name() ?? "";
+        $user = Minz_User::name();
+        // The login page runs as FreshRSS's internal user, who has no Youlag data.
+        $youlag["yl_user"] = $user === null || $user === Minz_User::INTERNAL_USER ? "" : $user;
         $youlag["yl_video_data_cleared_at"] =
             FreshRSS_Context::userConf()->attributeInt("yl_video_data_cleared_at") ?? 0;
         $youlag["yl_watch_history_cleared_at"] =

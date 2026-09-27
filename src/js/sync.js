@@ -225,10 +225,10 @@ function setupSync() {
   if (!syncEnabled()) return;
   // Applies clears made on another device first, also to the data just moved from the old databases,
   // so the flush doesn't send the cleared data back.
-  app.state.sync.migrated
+  app.state.sync.cleared = app.state.sync.migrated
     .then(() => Promise.all([applyVideoDataClear(), applyWatchHistoryClear()]))
-    .catch(() => {})
-    .finally(() => syncFlush()); // Sends what the last visit left unsent, and the moved data.
+    .catch(() => {});
+  app.state.sync.cleared.finally(() => syncFlush()); // Sends what the last visit left unsent, and the moved data.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
       syncSendOnHide();
@@ -237,6 +237,18 @@ function setupSync() {
     }
   });
   window.addEventListener("pagehide", syncSendOnHide);
+}
+
+function syncWithin(promise, message) {
+  // Waits at most a few seconds, so a slow network never holds a click. The queue keeps what isn't sent.
+  let timer;
+  const timedOut = new Promise((resolve) => {
+    timer = setTimeout(() => {
+      if (typeof openNotification === "function") openNotification(message, "bad");
+      resolve();
+    }, app.sync.waitMs);
+  });
+  return Promise.race([Promise.resolve(promise).catch(() => {}), timedOut]).finally(() => clearTimeout(timer));
 }
 
 async function syncPull(videoIds) {
