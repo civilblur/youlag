@@ -9,7 +9,6 @@
     "dotenv": "^18.0.4"
   },
   "devDependencies": {
-    "chokidar-cli": "^3.0.0",
     "sass": "^1.105.0",
     "terser": "^5.51.2"
   },
