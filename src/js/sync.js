@@ -40,7 +40,10 @@ async function syncPost(action, body, keepalive = false) {
     keepalive,
   });
   if (!response.ok) {
-    throw new Error(`Youlag (sync): ${action} failed with ${response.status}`);
+    const error = new Error(`Youlag (sync): ${action} failed with ${response.status}`);
+    error.status = response.status;
+    error.retryAfterMs = (Number(response.headers.get("Retry-After")) || 0) * 1000;
+    throw error;
   }
   const data = await response.json();
   syncSetClockOffset(data.serverTime, sentAt, Date.now());
@@ -66,17 +69,17 @@ function syncMarkDirty(storeName, key, record) {
   const queueKey = `${storeName}:${key}`;
   if (record) app.state.sync.unsent.set(queueKey, syncItem(storeName, key, record));
   dbPutRecord(app.sync.queueStore, queueKey, Date.now())
-    .then(syncScheduleFlush)
+    .then(() => syncScheduleFlush())
     .catch(() => {});
 }
 
-function syncScheduleFlush() {
+function syncScheduleFlush(delayMs = app.sync.flushDelayMs) {
   // Batches every change made within the delay into one request.
   if (app.state.sync.flushTimer) return;
   app.state.sync.flushTimer = setTimeout(() => {
     app.state.sync.flushTimer = null;
     syncFlush();
-  }, app.sync.flushDelayMs);
+  }, delayMs);
 }
 
 function syncFlush() {
@@ -141,7 +144,14 @@ async function syncFlushQueue() {
     }
     await send();
   } catch (e) {
-    console.error("Youlag (sync): Flush failed:", e);
+    // Too many requests in a short burst: the rest stays queued and goes once the endpoint says to try again.
+    if (e.status === 429) {
+      clearTimeout(app.state.sync.flushTimer);
+      app.state.sync.flushTimer = null;
+      syncScheduleFlush(e.retryAfterMs || app.sync.flushDelayMs);
+    } else {
+      console.error("Youlag (sync): Flush failed:", e);
+    }
   }
 }
 
@@ -165,6 +175,14 @@ function syncSendOnHide() {
   // The queue keeps these, so a failed request is sent again on the next visit.
   syncPost("sync", { items }, true).catch(() => {});
   return items.length;
+}
+
+function syncSendIfHidden(storeName, key, value) {
+  // Sends a change made after the page was hidden right away, in a keepalive request: the page-hide send already ran,
+  // and the browser may freeze the page before IndexedDB answers. The queue still sends it later too.
+  if (!syncEnabled() || document.visibilityState !== "hidden") return;
+  const item = { store: storeName, key: String(key), value: JSON.stringify(value), updatedAt: syncNow(), ttlMs: 0 };
+  syncPost("sync", { items: [item] }, true).catch(() => {});
 }
 
 function syncIsEmptyList(storeName, record) {

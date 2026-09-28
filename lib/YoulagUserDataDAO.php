@@ -89,10 +89,26 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         return match ($this->pdo->dbType()) {
             // Gives up after 10 s rather than hold the request.
             "mysql" => (int) ($this->fetchColumn("SELECT GET_LOCK(?, 10)", 0, self::positional([$this->lockName()]))[0] ?? 0) === 1,
-            "pgsql" => $this->execute("SELECT pg_advisory_lock(hashtext(?))", [$this->lockName()]),
+            "pgsql" => $this->pgLock(),
             // SQLite has one writer at a time already, and its setup has no drop to race.
             default => true,
         };
+    }
+
+    /**
+     * Gives up after 10 s like MySQL's GET_LOCK, since pg_advisory_lock would wait for as long as the other holds it.
+     */
+    private function pgLock(): bool
+    {
+        $deadline = microtime(true) + 10;
+        do {
+            $got = $this->fetchColumn("SELECT pg_try_advisory_lock(hashtext(?))", 0, self::positional([$this->lockName()]))[0] ?? false;
+            if ($got === true || $got === 1 || $got === "1" || $got === "t") {
+                return true;
+            }
+            usleep(100000);
+        } while (microtime(true) < $deadline);
+        return false;
     }
 
     private function unlock(): void

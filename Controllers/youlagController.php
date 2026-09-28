@@ -11,6 +11,9 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     private const KEY_PATTERN = '/^[A-Za-z0-9_-]{1,64}$/';
     /** How far past the server's clock a change may be stamped, for device clocks before their first response. */
     private const MAX_AHEAD_MS = 86400000;
+    /** Requests one session may send within the window, so a runaway page can't flood the server. */
+    private const BURST_MAX_REQUESTS = 120;
+    private const BURST_WINDOW_SECONDS = 10;
     private const VIDEO_DATA_STORES = ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback"];
 
     #[\Override]
@@ -19,6 +22,26 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
         if (!FreshRSS_Auth::hasAccess()) {
             Minz_Error::error(403);
         }
+        $retryAfter = $this->burstRetryAfter();
+        if ($retryAfter > 0) {
+            header("Retry-After: " . $retryAfter);
+            $this->respond(["error" => "Too many requests"], 429);
+        }
+    }
+
+    /**
+     * Counts this session's requests in a fixed window. Returns the seconds to wait once over the limit, else 0.
+     * Requests racing on one session can undercount, which only loosens the limit.
+     */
+    private function burstRetryAfter(): int
+    {
+        $now = time();
+        [$start, $count] = array_map("intval", explode(":", Minz_Session::paramString("yl_burst")) + [0, 0]);
+        if ($now - $start >= self::BURST_WINDOW_SECONDS) {
+            [$start, $count] = [$now, 0];
+        }
+        Minz_Session::_param("yl_burst", $start . ":" . ($count + 1));
+        return $count >= self::BURST_MAX_REQUESTS ? max(1, self::BURST_WINDOW_SECONDS - ($now - $start)) : 0;
     }
 
     /**
@@ -64,14 +87,15 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     public function fetchAction(): void
     {
         $dao = $this->requirePostAndStore();
-        $stores = array_values(array_intersect(
+        // Every list is deduplicated and capped, so one request stays small (FreshRSS also reads at most 1 MB of it).
+        $stores = array_values(array_unique(array_intersect(
             Minz_Request::paramArrayString("stores", plaintext: true),
             YoulagUserDataDAO::STORES,
-        ));
-        $keys = array_values(array_filter(
-            array_slice(Minz_Request::paramArrayString("keys", plaintext: true), 0, self::MAX_ITEMS),
+        )));
+        $keys = array_slice(array_values(array_unique(array_filter(
+            Minz_Request::paramArrayString("keys", plaintext: true),
             fn(string $key): bool => preg_match(self::KEY_PATTERN, $key) === 1,
-        ));
+        ))), 0, self::MAX_ITEMS);
         $rows = array_map(
             fn(array $row): array => [
                 "store" => (string) $row["store"],
@@ -123,10 +147,10 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
             $conf->_attribute("yl_watch_history_cleared_at", $clearedAt);
             $ok = $conf->save() && $ok;
         } else {
-            $ids = array_values(array_filter(
+            $ids = array_slice(array_values(array_unique(array_filter(
                 Minz_Request::paramArrayString("ids", plaintext: true),
                 "ctype_digit",
-            ));
+            ))), 0, self::MAX_ITEMS);
             $ok = $dao->deleteKeys("watchHistory", $ids);
         }
         $this->respond(["ok" => $ok, "clearedAt" => $clearedAt], $ok ? 200 : 500);

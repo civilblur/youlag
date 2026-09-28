@@ -14,8 +14,9 @@
 const dbConnections = {};
 
 function dbGetName() {
-  // One database per FreshRSS user, so users sharing a browser keep their data apart.
-  return `${app.db.prefix}-${getSetting("yl_user")}`;
+  // One database per FreshRSS user, so users sharing a browser keep their data apart. Anonymous reading shows the
+  // default user's feeds but isn't that user, so it gets its own ("-anonymous" can't be a FreshRSS username).
+  return `${app.db.prefix}-${syncEnabled() ? getSetting("yl_user") : "-anonymous"}`;
 }
 
 function dbOpen(dbName) {

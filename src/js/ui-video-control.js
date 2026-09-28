@@ -437,11 +437,13 @@ function setupModalVideoControlEventListeners(videoObject) {
             app.sync.playbackSaveIntervalSeconds)
       ) {
         lastSavedPlaybackSecond = playbackSecond;
-        savePlaybackPosition(
+        const position = savePlaybackPosition(
           youtubeId,
           playerState === 0 ? Math.floor(videoDuration || playbackSecond) : playbackSecond,
           Math.floor(videoDuration || 0),
         );
+        // A pause or end in a hidden page, e.g. a phone pausing the video on tab switch.
+        if (playerState === 0 || playerState === 2) syncSendIfHidden("playback", youtubeId, position);
       }
     },
   );
@@ -1015,4 +1017,5 @@ function savePlaybackPosition(youtubeId, seconds, duration) {
   app.state.sync.playbackPositions.set(youtubeId, position);
   updateFeedWatchProgress(youtubeId);
   dbSet("playback", youtubeId, position, 0).catch(() => {});
+  return position;
 }
