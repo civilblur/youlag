@@ -211,6 +211,22 @@ async function dbPutIfNewer(storeName, key, record) {
   });
 }
 
+async function dbPutIfUnchanged(storeName, key, record, expectedTimestamp) {
+  // Writes the record only if the stored one still has the timestamp read earlier (none stored: none expected), so
+  // a newer record saved or pulled meanwhile is kept. Checked and written in one transaction.
+  const db = await dbGetConnection();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, "readwrite");
+    const store = tx.objectStore(storeName);
+    const req = store.get(key);
+    req.onsuccess = () => {
+      if ((req.result?.timestamp || 0) === (expectedTimestamp || 0)) store.put(record, key);
+    };
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
 async function dbPutManyIfNewer(storeName, entries) {
   // Like dbPutIfNewer() for many records in one transaction. Resolves the keys it wrote.
   const db = await dbGetConnection();
@@ -274,11 +290,8 @@ function dbIsFresh(record) {
 async function dbSetIfChanged(storeName, key, value, previous, ttlWeeks) {
   // Saves and syncs only a changed value. An unchanged value is marked as confirmed locally.
   if (previous && JSON.stringify(previous.value) === JSON.stringify(value)) {
-    return dbPutRecord(storeName, key, {
-      ...previous,
-      ttlMs: ttlWeeks * DB_WEEK_MS,
-      checkedAt: syncNow(),
-    });
+    const confirmed = { ...previous, ttlMs: ttlWeeks * DB_WEEK_MS, checkedAt: syncNow() };
+    return dbPutIfUnchanged(storeName, key, confirmed, previous.timestamp);
   }
   return dbSet(storeName, key, value, ttlWeeks);
 }

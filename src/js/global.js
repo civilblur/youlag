@@ -16,6 +16,8 @@ app.db = {
   stores: ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback", "watchHistory", "syncQueue"],
   legacyStores: ["dearrow", "duration", "sponsorblock", "chapterSkip"], // Released as one database per store, 'youlag-cache-<store>'.
   branchStores: ["playback", "chapterSkip", "watchHistory", "syncQueue"], // Unreleased per-user layout, 'youlag-cache-<user>-<store>'.
+  legacyCheckIntervalMs: 24 * 60 * 60 * 1000, // After the move, the old databases are read again this often,
+  legacyGraceMs: 7 * 24 * 60 * 60 * 1000, // for this long, since old tabs may still write to them. Then deleted.
 };
 
 app.sync = {
@@ -27,6 +29,7 @@ app.sync = {
   localMaxAgeMs: 90 * 24 * 60 * 60 * 1000, // Local records untouched this long are pruned, since the server keeps them.
   pruneIntervalMs: 24 * 60 * 60 * 1000,
   waitMs: 5000, // Longest a click waits on the network before going on, see syncWithin().
+  pullSeekWindowSeconds: 10, // A video opened during the page pull jumps to the pulled position until this far in.
   maxAheadMs: 24 * 60 * 60 * 1000, // How far past the server's clock a change may be stamped. The endpoint refuses more.
   batchSize: 200,
   batchMaxBytes: 512 * 1024, // FreshRSS reads at most 1 MB of a JSON body.

@@ -474,12 +474,13 @@ async function getSponsorSegments(youtubeId, dateIso) {
   const ttlWeeks = ttlHours / (24 * 7);
   if (segments.length === 0 && !lastGood?.length) {
     // "No segments" is kept locally, and only synced when it replaces segments the video had before.
-    dbPutRecord("sponsorblock", youtubeId, {
+    const noSegments = {
       value: [],
       timestamp: cached?.timestamp || syncNow(),
       ttlMs: ttlWeeks * DB_WEEK_MS,
       checkedAt: syncNow(),
-    }).catch(() => {});
+    };
+    dbPutIfUnchanged("sponsorblock", youtubeId, noSegments, cached?.timestamp).catch(() => {});
   } else {
     dbSetIfChanged("sponsorblock", youtubeId, segments, cached, ttlWeeks).catch(() => {});
   }

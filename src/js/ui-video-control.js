@@ -323,6 +323,21 @@ function setupModalVideoControlEventListeners(videoObject) {
   let unfavoriteWatchedFrom = null;
   let lastSavedPlaybackSecond = -1;
 
+  // A video opened during the page pull starts before another device's position arrives. Nothing is saved until the
+  // pull lands, so the early position never replaces that one, and the video jumps to it while still near the start.
+  // The click itself doesn't wait, since autoplay needs the click's user gesture.
+  const startPosition = youtubeId ? getSavedPlayback(youtubeId) : null;
+  const pagePull = youtubeId ? app.state.sync.pulled.get(youtubeId) : null;
+  let pullPending = Boolean(pagePull);
+  pagePull?.then(() => {
+    pullPending = false;
+    const pulled = getSavedPlayback(youtubeId);
+    if (!pulled || pulled === startPosition || pulled.finished || app.state.modal.youtubeId !== youtubeId) return;
+    if ((modal._ylPlayer?.time || 0) < app.sync.pullSeekWindowSeconds) {
+      videoControlCommand("seekTo", [pulled.seconds, true]);
+    }
+  });
+
   setupVideoPlaybackPosition(
     modal,
     (currentTime, videoDuration, playerState) => {
@@ -413,6 +428,7 @@ function setupModalVideoControlEventListeners(videoObject) {
       const playbackSecond = Math.floor(currentTime);
       if (
         youtubeId &&
+        !pullPending &&
         playbackSecond > 0 &&
         playbackSecond !== lastSavedPlaybackSecond &&
         (playerState === 0 ||

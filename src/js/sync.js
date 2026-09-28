@@ -175,11 +175,27 @@ function syncIsEmptyList(storeName, record) {
   );
 }
 
+function syncClearedAt(storeName) {
+  // The last clear of this store's data, from the server or applied in this browser.
+  const [setting, flag] =
+    storeName === "watchHistory"
+      ? ["yl_watch_history_cleared_at", "ylWatchHistoryClearedAt"]
+      : ["yl_video_data_cleared_at", "ylVideoDataClearedAt"];
+  return Math.max(Number(getSetting(setting)) || 0, Number(localStorage.getItem(`${flag}:${getSetting("yl_user")}`)) || 0);
+}
+
 async function syncMigrateLegacy() {
-  // Moves data from before databases were per user into this user's database, once per browser, and queues it,
-  // since it was saved before syncing existed. The released layout had no owner, so the first user who loads
-  // Youlag here adopts it. A logged-out page isn't a user, so the data waits for one to log in.
+  // Moves data from before databases were per user into this user's database and queues it, since it was saved
+  // before syncing existed. The released layout had no owner, so the first user who loads Youlag here adopts it.
+  // A logged-out page isn't a user, so the data waits for one to log in.
+  // Tabs still running the released Youlag keep writing to the old databases, so they're read again once a day for
+  // a week, taking only what changed since the move, and deleted after that.
   if (!syncEnabled() || localStorage.getItem("ylLegacyMigrated") === "true") return;
+  // Device time, like the stamps the released Youlag wrote.
+  const movedAt = Number(localStorage.getItem("ylLegacyMigratedAt")) || 0;
+  const checkedAt = Number(localStorage.getItem("ylLegacyCheckedAt")) || 0;
+  if (movedAt && Date.now() - checkedAt < app.db.legacyCheckIntervalMs) return;
+  const lastPass = movedAt && Date.now() - movedAt >= app.db.legacyGraceMs;
   const user = getSetting("yl_user");
   const sources = [
     ...app.db.legacyStores.map((storeName) => [`youlag-cache-${storeName}`, storeName]),
@@ -197,23 +213,34 @@ async function syncMigrateLegacy() {
       complete = false;
       continue;
     }
-    if (entries.length) {
-      // Newest wins, since another tab may have saved newer values already. Old stamps came from the device's clock,
-      // so one ahead of the server's is capped.
+    if (storeName === app.sync.queueStore) {
+      if (entries.length) await dbPutMany(storeName, entries);
+    } else {
+      // Newest wins, since another tab may have saved newer values already. Old stamps came from the device's
+      // clock, so one ahead of the server's is capped. Records from before a clear stay cleared.
       const now = syncNow();
+      const clearedAt = syncClearedAt(storeName);
       const records = new Map(
-        entries.map(([key, record]) => [key, { ...record, timestamp: Math.min(record?.timestamp || 0, now) }]),
+        entries
+          .filter(([, record]) => (record?.timestamp || 0) >= Math.max(movedAt, clearedAt))
+          .map(([key, record]) => [key, { ...record, timestamp: Math.min(record?.timestamp || 0, now) }]),
       );
-      const written = await dbPutManyIfNewer(storeName, [...records]);
+      const written = records.size ? await dbPutManyIfNewer(storeName, [...records]) : [];
       const queue = written
         .filter((key) => app.sync.stores.includes(storeName) && !syncIsEmptyList(storeName, records.get(key)))
         .map((key) => [`${storeName}:${key}`, Date.now()]);
       if (queue.length) await dbPutMany(app.sync.queueStore, queue);
     }
-    indexedDB.deleteDatabase(legacyName);
+    if (lastPass) indexedDB.deleteDatabase(legacyName);
   }
   if (!complete) return;
-  localStorage.setItem("ylLegacyMigrated", "true");
+  if (!movedAt) localStorage.setItem("ylLegacyMigratedAt", String(Date.now()));
+  localStorage.setItem("ylLegacyCheckedAt", String(Date.now()));
+  if (lastPass) {
+    localStorage.setItem("ylLegacyMigrated", "true");
+    localStorage.removeItem("ylLegacyMigratedAt");
+    localStorage.removeItem("ylLegacyCheckedAt");
+  }
   localStorage.removeItem("ylChapterSkipAdopted");
 }
 
