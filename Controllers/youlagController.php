@@ -9,6 +9,8 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
     private const MAX_ITEMS = 500;
     private const MAX_VALUE_BYTES = 16384;
     private const KEY_PATTERN = '/^[A-Za-z0-9_-]{1,64}$/';
+    /** How far past the server's clock a change may be stamped, for device clocks before their first response. */
+    private const MAX_AHEAD_MS = 86400000;
     private const VIDEO_DATA_STORES = ["dearrow", "duration", "sponsorblock", "chapterSkip", "playback"];
 
     #[\Override]
@@ -28,11 +30,14 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
         $historyEnabled = YoulagExtension::isWatchHistoryEnabled();
         $clearedAt = FreshRSS_Context::userConf()->attributeInt("yl_video_data_cleared_at") ?? 0;
         $historyClearedAt = FreshRSS_Context::userConf()->attributeInt("yl_watch_history_cleared_at") ?? 0;
+        // A row stamped far ahead would beat every later change, and a clear, until that date.
+        $maxUpdatedAt = (int) floor(microtime(true) * 1000) + self::MAX_AHEAD_MS;
         $rows = [];
         foreach (array_slice(Minz_Request::paramArray("items", plaintext: true), 0, self::MAX_ITEMS) as $item) {
             $row = $this->parseItem($item);
             if (
                 $row === null ||
+                $row["updatedAt"] > $maxUpdatedAt ||
                 ($row["store"] === "watchHistory" && (!$historyEnabled || $row["updatedAt"] < $historyClearedAt)) ||
                 // Changes made before the last clear would bring cleared data back.
                 (in_array($row["store"], self::VIDEO_DATA_STORES, true) && $row["updatedAt"] < $clearedAt)

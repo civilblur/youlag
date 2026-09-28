@@ -90,9 +90,11 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
 
       const previous = store.get(key);
       previous.onsuccess = () => {
-        // Newer than the value it replaces, so the server keeps it even after the clock offset changes.
+        // Newer than the value it replaces, so the server keeps it even after the clock offset changes. Not after a
+        // value stamped far ahead by a wrong clock, which the endpoint refuses.
         const previousTimestamp = previous.result?.timestamp || 0;
-        if (previousTimestamp >= dataWithMetadata.timestamp) {
+        const aheadMs = previousTimestamp - dataWithMetadata.timestamp;
+        if (aheadMs >= 0 && aheadMs < app.sync.maxAheadMs) {
           dataWithMetadata.timestamp = previousTimestamp + 1;
         }
         const req = store.put(dataWithMetadata, key);
@@ -204,6 +206,26 @@ async function dbPutIfNewer(storeName, key, record) {
       store.put(record, key);
       written = true;
     };
+    tx.oncomplete = () => resolve(written);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function dbPutManyIfNewer(storeName, entries) {
+  // Like dbPutIfNewer() for many records in one transaction. Resolves the keys it wrote.
+  const db = await dbGetConnection();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(storeName, "readwrite");
+    const store = tx.objectStore(storeName);
+    const written = [];
+    for (const [key, record] of entries) {
+      const req = store.get(key);
+      req.onsuccess = () => {
+        if ((req.result?.timestamp || 0) >= record.timestamp) return;
+        store.put(record, key);
+        written.push(key);
+      };
+    }
     tx.oncomplete = () => resolve(written);
     tx.onerror = () => reject(tx.error);
   });

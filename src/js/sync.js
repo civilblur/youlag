@@ -198,11 +198,16 @@ async function syncMigrateLegacy() {
       continue;
     }
     if (entries.length) {
-      await dbPutMany(storeName, entries);
-      const now = Date.now();
-      const queue = entries
-        .filter(([, record]) => app.sync.stores.includes(storeName) && !syncIsEmptyList(storeName, record))
-        .map(([key]) => [`${storeName}:${key}`, now]);
+      // Newest wins, since another tab may have saved newer values already. Old stamps came from the device's clock,
+      // so one ahead of the server's is capped.
+      const now = syncNow();
+      const records = new Map(
+        entries.map(([key, record]) => [key, { ...record, timestamp: Math.min(record?.timestamp || 0, now) }]),
+      );
+      const written = await dbPutManyIfNewer(storeName, [...records]);
+      const queue = written
+        .filter((key) => app.sync.stores.includes(storeName) && !syncIsEmptyList(storeName, records.get(key)))
+        .map((key) => [`${storeName}:${key}`, Date.now()]);
       if (queue.length) await dbPutMany(app.sync.queueStore, queue);
     }
     indexedDB.deleteDatabase(legacyName);
@@ -218,12 +223,17 @@ async function syncPruneLocal() {
   // Without a login nothing reaches the server, so nothing is pruned.
   if (!syncEnabled()) return;
   const flag = `ylPrunedAt:${getSetting("yl_user")}`;
-  const now = syncNow();
-  if (now - (Number(localStorage.getItem(flag)) || 0) < app.sync.pruneIntervalMs) return;
-  for (const storeName of app.sync.stores) {
-    await dbPruneUnqueued(storeName, now - app.sync.localMaxAgeMs);
-  }
-  localStorage.setItem(flag, String(now));
+  const prune = async () => {
+    const now = syncNow();
+    if (now - (Number(localStorage.getItem(flag)) || 0) < app.sync.pruneIntervalMs) return;
+    for (const storeName of app.sync.stores) {
+      await dbPruneUnqueued(storeName, now - app.sync.localMaxAgeMs);
+    }
+    localStorage.setItem(flag, String(now));
+  };
+  // One tab at a time, with the flag read inside the lock, so tabs loading together prune once and never delete
+  // rows another tab pulled after its own prune.
+  return navigator.locks ? navigator.locks.request(`yl-prune-${getSetting("yl_user")}`, prune) : prune();
 }
 
 function setupSync() {
@@ -237,7 +247,10 @@ function setupSync() {
   app.state.sync.cleared = app.state.sync.migrated
     .then(() => Promise.all([applyVideoDataClear(), applyWatchHistoryClear()]))
     .catch(() => {});
-  app.state.sync.cleared.finally(() => syncFlush()); // Sends what the last visit left unsent, and the moved data.
+  app.state.sync.cleared.finally(() => {
+    app.state.sync.videoDataClearSeen = getVideoDataClearFlag();
+    syncFlush(); // Sends what the last visit left unsent, and the moved data.
+  });
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") {
       syncSendOnHide();

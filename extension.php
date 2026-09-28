@@ -301,7 +301,8 @@ class YoulagExtension extends Minz_Extension
         $youlag["yl_watch_history_cleared_at"] =
             FreshRSS_Context::userConf()->attributeInt("yl_watch_history_cleared_at") ?? 0;
 
-        if (Minz_Request::paramString("yl_watch_history") === "1") {
+        // Only for the logged-in owner: anonymous reading and shared user queries render as the user too.
+        if (Minz_Request::paramString("yl_watch_history") === "1" && FreshRSS_Auth::hasAccess()) {
             $youlag["yl_watch_history_order"] =
                 YoulagUserDataDAO::open()?->watchHistoryEntryIds(YoulagUserDataDAO::WATCH_HISTORY_PAGE_SIZE) ?? [];
         }
@@ -764,7 +765,8 @@ class YoulagExtension extends Minz_Extension
         $getParam = Minz_Request::paramString("get", "");
         //$categories = $this->getUserCategories();
 
-        if (Minz_Request::paramString("yl_watch_history") === "1") {
+        // Only for the logged-in owner: anonymous reading and shared user queries render as the user too.
+        if (Minz_Request::paramString("yl_watch_history") === "1" && FreshRSS_Auth::hasAccess()) {
             $categoryTitle = "Watch history";
         }
         // Category page `c_{n}`

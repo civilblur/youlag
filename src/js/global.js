@@ -27,6 +27,7 @@ app.sync = {
   localMaxAgeMs: 90 * 24 * 60 * 60 * 1000, // Local records untouched this long are pruned, since the server keeps them.
   pruneIntervalMs: 24 * 60 * 60 * 1000,
   waitMs: 5000, // Longest a click waits on the network before going on, see syncWithin().
+  maxAheadMs: 24 * 60 * 60 * 1000, // How far past the server's clock a change may be stamped. The endpoint refuses more.
   batchSize: 200,
   batchMaxBytes: 512 * 1024, // FreshRSS reads at most 1 MB of a JSON body.
   valueMaxBytes: 16384, // Same limit as the endpoint.
@@ -71,6 +72,7 @@ app.state = {
     pruned: null, // Promise of the daily prune of old local records, see syncPruneLocal().
     cleared: null, // Promise of the clears made on other devices, applied to this browser at init.
     dbOutdated: false, // Whether another tab upgraded the database to a newer Youlag, see dbMarkOutdated().
+    videoDataClearSeen: undefined, // The last video data clear this tab applied, to tell another tab's clear from a prune.
     unsent: new Map(), // Changes made on this page and not yet sent, by queue key. Sent on page hide without IndexedDB reads.
     pulled: new Map(), // Pull promises by video ID, for videos already pulled from the server on this page.
     playbackPositions: new Map(), // Type: `{ seconds, duration, finished? }` by video ID.

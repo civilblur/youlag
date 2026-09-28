@@ -115,6 +115,10 @@ async function clearSavedVideoData() {
   localStorage.setItem(`ylVideoDataClearedAt:${getSetting("yl_user")}`, String(clearedAt));
 }
 
+function getVideoDataClearFlag() {
+  return localStorage.getItem(`ylVideoDataClearedAt:${getSetting("yl_user")}`);
+}
+
 async function applyVideoDataClear() {
   // Clears this browser's video data when it was cleared on another device since the last visit.
   const clearedAt = Number(getSetting("yl_video_data_cleared_at")) || 0;

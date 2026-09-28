@@ -75,8 +75,12 @@ function setupVisibilityEventListeners() {
     if (document.visibilityState === "visible") {
       restoreModalEventListeners();
       setupSwipeSidebar();
-      // Another tab may have saved or cleared positions meanwhile.
-      loadPlaybackPositions(true).then(() => renderWatchProgress());
+      // Another tab may have saved positions meanwhile. A position missing from the database is only dropped
+      // after a clear: another tab's prune also deletes old records, which the server still has.
+      const clearFlag = getVideoDataClearFlag();
+      const cleared = app.state.sync.videoDataClearSeen !== undefined && clearFlag !== app.state.sync.videoDataClearSeen;
+      app.state.sync.videoDataClearSeen = clearFlag;
+      loadPlaybackPositions(cleared).then(() => renderWatchProgress());
     }
   });
 }
