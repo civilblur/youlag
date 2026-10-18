@@ -402,10 +402,7 @@ function setupModalVideoControlEventListeners(videoObject) {
       if (!isPastUnfavorite) {
         unfavoriteWatchedFrom = null;
       } else if (playerState === 1) {
-        const isScrub =
-          currentTime < previousPlayingTime ||
-          currentTime - previousPlayingTime >= 3;
-        if (unfavoriteWatchedFrom === null || isScrub) {
+        if (unfavoriteWatchedFrom === null || !playedThrough) {
           unfavoriteWatchedFrom = currentTime;
         }
       }
