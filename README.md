@@ -82,6 +82,7 @@ These shortcuts control the video in video mode. Clicking on the video hands the
 - `←` `→`: seek 5s
 - `Ctrl`/`Option` + `←` `→`: previous/next chapter
   - `Ctrl` on Windows and Linux, `Option` on macOS.
+- `0`-`9`: jump to 0–90% of the video
 - `M`: mute
 - `I`: miniplayer
 - `Esc`: close video or article

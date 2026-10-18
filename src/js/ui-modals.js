@@ -630,6 +630,23 @@ function setupModalVideoKeyListener(modal) {
         player.muted = !player.muted;
         break;
       }
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9": {
+        // Jumps to that tenth of the video, 0 is the start, 5 the middle.
+        if (event.repeat || !player.duration) return;
+        const seekTime = (player.duration * Number(key)) / 10;
+        videoControlCommand("seekTo", [seekTime, true]);
+        player.time = seekTime;
+        break;
+      }
       default:
         return;
     }
