@@ -112,13 +112,14 @@ async function dbSet(storeName, key, value, ttlWeeks = 4) {
         syncMarkDirty(storeName, key, dataWithMetadata);
         resolve();
       };
-      tx.onerror = () => {
+      tx.onerror = (e) => {
         console.error(
           `Youlag (DB): Transaction error in dbSet for key '${key}':`,
-          tx.error,
+          e.target.error,
         );
-        reject(tx.error);
+        reject(e.target.error);
       };
+      tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
     });
   } catch (error) {
     if (app.state.sync.dbOutdated) {
@@ -152,13 +153,14 @@ async function dbGet(storeName, key) {
         reject(e.target.error);
       };
 
-      tx.onerror = () => {
+      tx.onerror = (e) => {
         console.error(
           `Youlag (DB): Transaction error in dbGet for key '${key}':`,
-          tx.error,
+          e.target.error,
         );
-        reject(tx.error);
+        reject(e.target.error);
       };
+      tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
     });
   } catch (error) {
     console.error(`Youlag (DB): dbGet error:`, error);
@@ -173,7 +175,8 @@ async function dbRun(storeName, mode, makeRequest) {
     const tx = db.transaction(storeName, mode);
     const req = makeRequest(tx.objectStore(storeName));
     tx.oncomplete = () => resolve(req.result);
-    tx.onerror = () => reject(tx.error);
+    tx.onerror = (e) => reject(e.target.error);
+    tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
   });
 }
 
@@ -208,7 +211,8 @@ async function dbPutIfNewer(storeName, key, record) {
       written = true;
     };
     tx.oncomplete = () => resolve(written);
-    tx.onerror = () => reject(tx.error);
+    tx.onerror = (e) => reject(e.target.error);
+    tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
   });
 }
 
@@ -224,7 +228,8 @@ async function dbPutIfUnchanged(storeName, key, record, expectedTimestamp) {
       if ((req.result?.timestamp || 0) === (expectedTimestamp || 0)) store.put(record, key);
     };
     tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
+    tx.onerror = (e) => reject(e.target.error);
+    tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
   });
 }
 
@@ -244,7 +249,8 @@ async function dbPutManyIfNewer(storeName, entries) {
       };
     }
     tx.oncomplete = () => resolve(written);
-    tx.onerror = () => reject(tx.error);
+    tx.onerror = (e) => reject(e.target.error);
+    tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
   });
 }
 
@@ -332,7 +338,8 @@ async function dbPruneUnqueued(storeName, before) {
       };
     };
     tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
+    tx.onerror = (e) => reject(e.target.error);
+    tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
   });
 }
 
@@ -362,7 +369,8 @@ async function dbDropQueuedMissing(storeNames) {
             }
           };
           tx.oncomplete = () => resolve(keys);
-          tx.onerror = () => reject(tx.error);
+          tx.onerror = (e) => reject(e.target.error);
+          tx.onabort = () => reject(tx.error || new Error("Youlag (DB): Transaction aborted."));
         }),
     )
     .catch(() => []);
@@ -416,9 +424,9 @@ function dbReadLegacy(dbName, storeName) {
         db.close();
         resolve(entries);
       };
-      const fail = () => {
+      const fail = (e) => {
         db.close();
-        reject(tx.error || new Error(`Youlag (DB): Couldn't read '${dbName}'.`));
+        reject(e.target.error || tx.error || new Error(`Youlag (DB): Couldn't read '${dbName}'.`));
       };
       tx.onerror = fail;
       tx.onabort = fail;
