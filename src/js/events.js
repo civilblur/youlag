@@ -5,7 +5,16 @@
  */
 
 function init() {
-  if (app.state.youlag.init) return;
+  // Gatekeeps init until it's safe to set up Youlag's features:
+  // - `app.state.youlag.init`: already set up, so it never runs twice.
+  // - `document.readyState === "loading"`: DOM not ready.
+  // - `isFreshRssContextPending()`: FreshRSS hasn't loaded `context` yet, which holds Youlag's user settings.
+  if (
+    app.state.youlag.init ||
+    document.readyState === "loading" ||
+    isFreshRssContextPending()
+  )
+    return;
 
   applyTheme(); // Experimental light theme
   clearPathHash();
@@ -58,9 +67,11 @@ function init() {
     renderDebugButtons();
     autoOpenDebugPanels();
   }
+
+  initVideoState();
 }
 
-async function initialVideoState() {
+async function initVideoState() {
   if (hasQueryParam("ylvideo")) {
     await handleVideoDirectLink();
   } else {
@@ -78,7 +89,9 @@ function setupVisibilityEventListeners() {
       // Another tab may have saved positions meanwhile. A position missing from the database is only dropped
       // after a clear: another tab's prune also deletes old records, which the server still has.
       const clearFlag = getVideoDataClearFlag();
-      const cleared = app.state.sync.videoDataClearSeen !== undefined && clearFlag !== app.state.sync.videoDataClearSeen;
+      const cleared =
+        app.state.sync.videoDataClearSeen !== undefined &&
+        clearFlag !== app.state.sync.videoDataClearSeen;
       app.state.sync.videoDataClearSeen = clearFlag;
       loadPlaybackPositions(cleared).then(() => renderWatchProgress());
     }
@@ -107,30 +120,20 @@ function removeYoulagLoadingState() {
   document.body.classList.add("yl-loaded");
 }
 
-function initFallback() {
-  // NOTE: Using FreshRSS' `freshrss:globalContextLoaded` event hasn't been reliable, hence this fallback method.
-  if (
-    document.readyState === "complete" ||
-    document.readyState === "interactive" ||
-    app.state.youlag.init === true
-  ) {
-    init();
-  } else {
-    document.addEventListener("DOMContentLoaded", init);
-    window.addEventListener("load", init);
-  }
+function isFreshRssContextPending() {
+  // Whether FreshRSS has yet to read `#jsonVars` into `context`, which holds Youlag's user settings.
+  return (
+    typeof context === "undefined" &&
+    document.getElementById("jsonVars") !== null
+  );
 }
 
-// Fallback interval check
-const checkInitInterval = setInterval(() => {
-  if (document.readyState === "complete" || app.state.youlag.init === true) {
-    init();
-    clearInterval(checkInitInterval);
-  }
-}, 1000);
+function initFallback() {
+  // Tries init now, and falls back to these events if the DOM or `context` isn't ready yet.
+  document.addEventListener("freshrss:globalContextLoaded", init);
+  document.addEventListener("DOMContentLoaded", init);
+  window.addEventListener("load", init);
+  init();
+}
 
-// Ensure init runs
 initFallback();
-(async () => {
-  await initialVideoState();
-})();

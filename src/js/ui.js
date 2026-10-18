@@ -606,29 +606,9 @@ function setCategoryWhitelistClass() {
 }
 
 function setVideoLabelsClass() {
-  /* Adds css class 'yl-video-labels' to body if video labels setting is enabled.
-   * The setting is stored in localStorage for faster access.
-   * When active, labels like "My Labels" changes to "Playlists", and "Favorites" to "Watch Later".
-   */
-  const localStorageSetting =
-    localStorage.getItem("youlagVideoLabels") === "true";
-  const userSetting = getSetting("yl_video_labels_enabled") === true;
-
-  if (userSetting) {
-    document.body.classList.add("yl-video-labels");
-    localStorage.setItem("youlagVideoLabels", "true");
-    return true;
-  } else if (userSetting === false) {
-    document.body.classList.remove("yl-video-labels");
-    localStorage.setItem("youlagVideoLabels", "false");
-    return false;
-  } else if (localStorageSetting) {
-    document.body.classList.add("yl-video-labels");
-    return true;
-  } else {
-    document.body.classList.remove("yl-video-labels");
-    return false;
-  }
+  // Adds css class 'yl-video-labels' to body if video labels setting is enabled.
+  // When active, labels like "My Labels" changes to "Playlists", and "Favorites" to "Watch Later".
+  document.body.classList.toggle("yl-video-labels", isVideoLabelsEnabled());
 }
 
 function setUnreadBadgeClass() {
@@ -1540,7 +1520,12 @@ function toggleFavorite(url, container) {
 
   fetchWithCsrf(
     toggleUrl.toString(),
-    { headers: { "Content-Type": "application/json", Accept: "application/json" } },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    },
     { ajax: true },
   )
     .then((response) => {

@@ -383,7 +383,9 @@ async function buildDearrowData(youtubeId, data) {
 async function withStoredDuration(youtubeId, dearrowData) {
   // DeArrow often has no duration. The permanent duration store has it once the video played.
   if (dearrowData.videoDuration) return dearrowData;
-  const stored = await dbGetRecord("duration", youtubeId).catch(() => undefined);
+  const stored = await dbGetRecord("duration", youtubeId).catch(
+    () => undefined,
+  );
   return { ...dearrowData, videoDuration: stored?.value || null };
 }
 
@@ -391,7 +393,9 @@ async function saveVideoDuration(youtubeId, seconds) {
   // Duration is permanent, and saved only when it changes.
   const duration = Math.floor(seconds);
   if (!youtubeId || !duration) return;
-  const previous = await dbGetRecord("duration", youtubeId).catch(() => undefined);
+  const previous = await dbGetRecord("duration", youtubeId).catch(
+    () => undefined,
+  );
   if (previous?.value === duration && !previous.ttlMs) return;
   return dbSet("duration", youtubeId, duration, 0);
 }
@@ -416,9 +420,13 @@ async function getDearrowData(youtubeId, syncPulled = null) {
   }
   const resultObj = await buildDearrowData(youtubeId, data || {});
   if (data) {
-    await dbSetIfChanged("dearrow", youtubeId, resultObj, cached, 4).catch(() => {});
+    await dbSetIfChanged("dearrow", youtubeId, resultObj, cached, 4).catch(
+      () => {},
+    );
     if (resultObj.videoDuration) {
-      await saveVideoDuration(youtubeId, resultObj.videoDuration).catch(() => {});
+      await saveVideoDuration(youtubeId, resultObj.videoDuration).catch(
+        () => {},
+      );
     }
   }
   return withStoredDuration(youtubeId, resultObj);
@@ -426,7 +434,9 @@ async function getDearrowData(youtubeId, syncPulled = null) {
 
 async function getSponsorSegments(youtubeId, dateIso) {
   if (!youtubeId) return [];
-  const cached = await dbGetRecord("sponsorblock", youtubeId).catch(() => undefined);
+  const cached = await dbGetRecord("sponsorblock", youtubeId).catch(
+    () => undefined,
+  );
   const lastGood = Array.isArray(cached?.value) ? cached.value : null;
   if (lastGood && dbIsFresh(cached)) return lastGood;
 
@@ -479,9 +489,16 @@ async function getSponsorSegments(youtubeId, dateIso) {
       ttlMs: ttlWeeks * DB_WEEK_MS,
       checkedAt: syncNow(),
     };
-    dbPutIfUnchanged("sponsorblock", youtubeId, noSegments, cached?.timestamp).catch(() => {});
+    dbPutIfUnchanged(
+      "sponsorblock",
+      youtubeId,
+      noSegments,
+      cached?.timestamp,
+    ).catch(() => {});
   } else {
-    dbSetIfChanged("sponsorblock", youtubeId, segments, cached, ttlWeeks).catch(() => {});
+    dbSetIfChanged("sponsorblock", youtubeId, segments, cached, ttlWeeks).catch(
+      () => {},
+    );
   }
   return segments;
 }
@@ -593,10 +610,4 @@ function getFreshRssUrlPrefix() {
 function setFreshRssUrlPrefix() {
   let prefix = getFreshRssUrlPrefix();
   prefix ? (app.frss.urlPrefix = prefix) : (app.frss.urlPrefix = "");
-}
-
-function isVideoLabelsEnabled() {
-  // Check if video platform label setting is enabled.
-  // TODO: Refactor this once `Minz_HookType::JsVars` is implemented.
-  return document.body.classList.contains("yl-video-labels");
 }

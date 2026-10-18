@@ -39,10 +39,8 @@ function settingsPageEventListeners() {
         : false;
       if (videoLabelIsChecked) {
         document.body.classList.add("yl-video-labels");
-        localStorage.setItem("youlagVideoLabels", "true");
       } else {
         document.body.classList.remove("yl-video-labels");
-        localStorage.setItem("youlagVideoLabels", "false");
       }
     }
   }
