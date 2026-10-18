@@ -162,7 +162,7 @@
   --yl-color-text-readonly: var(--yl-color-text-lowest);
   --yl-color-text-link: var(--yl-color-text-medium);
   --yl-color-text-underline: var(--yl-color-text-highest);
-  --yl-color-text-on-accent: hsl(240 10% 88.2%);
+  --yl-color-text-on-accent: hsl(240 10% 97%);
   --yl-filter-icon-on-accent: brightness(0) invert(1);
   --main-font-color: var(
     --yl-color-text-medium
@@ -240,7 +240,7 @@
       hover
     )};
   --yl-filter-icon-control: var(--yl-filter-icon-low);
-  --yl-filter-icon-control-active: var(--yl-filter-icon-highest);
+  --yl-filter-icon-control-active: var(--yl-filter-icon-on-accent);
   --yl-color-gradient-input-disabled-stripes: repeating-linear-gradient(
     45deg,
     hsl(230 6% 20%),

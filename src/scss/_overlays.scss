@@ -600,6 +600,11 @@ html {
   border-radius: var(--yl-radius-lg);
   margin: var(--yl-space-xs);
   max-width: calc(100% - var(--yl-space-xs) * 2);
+  color: var(--yl-color-text-on-accent);
+
+  .title {
+    color: inherit;
+  }
 
   &.good {
     @include yl-gradient-bg(success);
@@ -620,6 +625,11 @@ html {
 }
 
 .alert {
+  .alert-head {
+    color: inherit;
+    font-weight: normal;
+  }
+
   &.alert-error {
     /* FreshRSS error container: https://example.com/i/?c=error */
     @include yl-gradient-bg(error, false);
