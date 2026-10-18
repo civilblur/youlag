@@ -625,21 +625,17 @@ function updateActiveChapterDisplay() {
         if (targetSeconds) videoControlSeekTo(targetSeconds, true);
       }
     }
-    if (activeIndex !== lastChapterIndex) {
+    const chapterChanged = activeIndex !== lastChapterIndex;
+    if (chapterChanged) {
       chapterActiveLabel.textContent = chapters[activeIndex].label;
       lastChapterIndex = activeIndex;
     }
-    chapterItems.forEach((item, index) => {
-      if (index === activeIndex) {
-        item.classList.add("is-active");
-      } else {
-        item.classList.remove("is-active");
-      }
-    });
-
-    // Update skip button states as playback progresses
-    updateChapterActionButtons();
-    updateChapterCounter();
+    // Updates the chapter list only when the active chapter changes, or a click marked another one before its seek landed.
+    if (chapterChanged || !chapterItems[activeIndex].classList.contains("is-active")) {
+      chapterItems.forEach((item, index) => item.classList.toggle("is-active", index === activeIndex));
+      updateChapterActionButtons();
+      updateChapterCounter();
+    }
 
     // Update chapter progress bar
     const isVideoChapterProgressEnabled =
