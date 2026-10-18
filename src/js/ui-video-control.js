@@ -54,12 +54,16 @@ async function renderModalVideoChapters(videoChapters, youtubeId) {
 
   // Restore the chapters the user chose to skip for this video.
   if (!youtubeId) return;
-  const record = await dbGetRecord("chapterSkip", youtubeId).catch(() => undefined);
+  const record = await dbGetRecord("chapterSkip", youtubeId).catch(
+    () => undefined,
+  );
   const savedSeconds = Array.isArray(record?.value) ? record.value : [];
   if (!savedSeconds.length) return;
   // Drops skips whose chapter no longer exists, in case the video's chapters changed.
   const chapterSeconds = videoChapters.map((chapter) => chapter.seconds);
-  const skippedSeconds = savedSeconds.filter((seconds) => chapterSeconds.includes(seconds));
+  const skippedSeconds = savedSeconds.filter((seconds) =>
+    chapterSeconds.includes(seconds),
+  );
   if (skippedSeconds.length !== savedSeconds.length) {
     saveChapterSkip(youtubeId, skippedSeconds).catch(() => {});
   }
@@ -173,7 +177,9 @@ function setupModalVideoControlEventListeners(videoObject) {
           const skippedSeconds = Array.from(chapterItems)
             .filter((i) => i.classList.contains("is-skipped"))
             .map((i) => parseInt(i.getAttribute("data-seconds"), 10));
-          saveChapterSkip(videoObject.youtubeId, skippedSeconds).catch(() => {});
+          saveChapterSkip(videoObject.youtubeId, skippedSeconds).catch(
+            () => {},
+          );
         }
         return;
       }
@@ -322,6 +328,7 @@ function setupModalVideoControlEventListeners(videoObject) {
   let lastVideoDuration = null;
   let unfavoriteWatchedFrom = null;
   let lastSavedPlaybackSecond = -1;
+  let lastQueueSnapshot = null;
 
   // A video opened during the page pull starts before another device's position arrives. Nothing is saved until the
   // pull lands, so the early position never replaces that one, and the video jumps to it while still near the start.
@@ -332,7 +339,13 @@ function setupModalVideoControlEventListeners(videoObject) {
   pagePull?.then(() => {
     pullPending = false;
     const pulled = getSavedPlayback(youtubeId);
-    if (!pulled || pulled === startPosition || pulled.finished || app.state.modal.youtubeId !== youtubeId) return;
+    if (
+      !pulled ||
+      pulled === startPosition ||
+      pulled.finished ||
+      app.state.modal.youtubeId !== youtubeId
+    )
+      return;
     if ((modal._ylPlayer?.time || 0) < app.sync.pullSeekWindowSeconds) {
       videoControlCommand("seekTo", [pulled.seconds, true]);
     }
@@ -397,7 +410,9 @@ function setupModalVideoControlEventListeners(videoObject) {
       }
 
       // Store current playback time and state to resume miniplayer from the same position.
-      if (entryId) {
+      const queueSnapshot = `${Math.floor(currentTime)}|${Math.floor(videoDuration || 0)}|${playerState}`;
+      if (entryId && queueSnapshot !== lastQueueSnapshot) {
+        lastQueueSnapshot = queueSnapshot;
         try {
           const stored = JSON.parse(
             localStorage.getItem(app.modal.queue.localStorageKey),
@@ -439,11 +454,14 @@ function setupModalVideoControlEventListeners(videoObject) {
         lastSavedPlaybackSecond = playbackSecond;
         const position = savePlaybackPosition(
           youtubeId,
-          playerState === 0 ? Math.floor(videoDuration || playbackSecond) : playbackSecond,
+          playerState === 0
+            ? Math.floor(videoDuration || playbackSecond)
+            : playbackSecond,
           Math.floor(videoDuration || 0),
         );
         // A pause or end in a hidden page, e.g. a phone pausing the video on tab switch.
-        if (playerState === 0 || playerState === 2) syncSendIfHidden("playback", youtubeId, position);
+        if (playerState === 0 || playerState === 2)
+          syncSendIfHidden("playback", youtubeId, position);
       }
     },
   );
@@ -631,8 +649,13 @@ function updateActiveChapterDisplay() {
       lastChapterIndex = activeIndex;
     }
     // Updates the chapter list only when the active chapter changes, or a click marked another one before its seek landed.
-    if (chapterChanged || !chapterItems[activeIndex].classList.contains("is-active")) {
-      chapterItems.forEach((item, index) => item.classList.toggle("is-active", index === activeIndex));
+    if (
+      chapterChanged ||
+      !chapterItems[activeIndex].classList.contains("is-active")
+    ) {
+      chapterItems.forEach((item, index) =>
+        item.classList.toggle("is-active", index === activeIndex),
+      );
       updateChapterActionButtons();
       updateChapterCounter();
     }
@@ -976,7 +999,9 @@ function updateFeedEntryDuration(youtubeId, videoDuration) {
 
 async function saveChapterSkip(youtubeId, skippedSeconds) {
   // Saves only videos with skipped chapters. Clearing all skips saves one empty list, so other devices drop the old skips.
-  const previous = await dbGetRecord("chapterSkip", youtubeId).catch(() => undefined);
+  const previous = await dbGetRecord("chapterSkip", youtubeId).catch(
+    () => undefined,
+  );
   const hadSkips = Array.isArray(previous?.value) && previous.value.length > 0;
   if (!skippedSeconds.length && !hadSkips) return;
   return dbSetIfChanged("chapterSkip", youtubeId, skippedSeconds, previous, 0);
@@ -1009,7 +1034,9 @@ function getSavedPlayback(youtubeId) {
 function savePlaybackPosition(youtubeId, seconds, duration) {
   // From 95% the video counts as finished: its progress bar shows full and it starts over next time.
   const finished = duration > 0 && seconds >= duration * 0.95;
-  const position = finished ? { seconds, duration, finished } : { seconds, duration };
+  const position = finished
+    ? { seconds, duration, finished }
+    : { seconds, duration };
   app.state.sync.playbackPositions.set(youtubeId, position);
   updateFeedWatchProgress(youtubeId);
   dbSet("playback", youtubeId, position, 0).catch(() => {});
