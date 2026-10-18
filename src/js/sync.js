@@ -33,12 +33,11 @@ function syncSetClockOffset(serverTime, sentAt, receivedAt) {
 
 async function syncPost(action, body, keepalive = false) {
   const sentAt = Date.now();
-  const response = await fetch(`./?c=youlag&a=${action}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json; charset=UTF-8" },
-    body: JSON.stringify({ _csrf: context.csrf, ...body }),
-    keepalive,
-  });
+  const response = await fetchWithCsrf(
+    `./?c=youlag&a=${action}`,
+    { headers: { "Content-Type": "application/json; charset=UTF-8" }, keepalive },
+    body,
+  );
   if (!response.ok) {
     const error = new Error(`Youlag (sync): ${action} failed with ${response.status}`);
     error.status = response.status;

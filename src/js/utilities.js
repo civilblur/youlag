@@ -518,8 +518,55 @@ function removeVideoParamUrl(element = null) {
  ****************************************/
 
 function getSetting(name) {
-  // User settings passed from `extension.php` via FreshRSS `js_vars` hook. The login page has no `context`.
-  return typeof context === "undefined" ? undefined : context.extensions?.youlag?.[name];
+  // User settings passed from `extension.php` via FreshRSS `js_vars` hook.
+  return typeof context === "undefined"
+    ? undefined
+    : context.extensions?.youlag?.[name];
+}
+
+function refreshCsrfToken() {
+  // FreshRSS sessions expire after a while, which breaks forms and actions like "auto-unfavorite" in a tab left open.
+  // Before retrying an action, this loads a page in the background to get a new token.
+  if (!app.state.youlag.csrfRefresh) {
+    app.state.youlag.csrfRefresh = fetch("./?c=index&a=about")
+      .then((response) => response.text())
+      .then((html) => {
+        const token = new DOMParser()
+          .parseFromString(html, "text/html")
+          .querySelector('input[name="_csrf"]')
+          ?.getAttribute("value");
+        if (!token || token === context.csrf) return false;
+        // FreshRSS's own requests read the same token.
+        context.csrf = token;
+        document
+          .querySelectorAll('input[name="_csrf"]')
+          .forEach((input) => input.setAttribute("value", token));
+        return true;
+      })
+      .catch(() => false)
+      .finally(() => {
+        app.state.youlag.csrfRefresh = null;
+      });
+  }
+  return app.state.youlag.csrfRefresh;
+}
+
+async function fetchWithCsrf(url, options, body) {
+  // Sends the request, and if the token has expired, gets a new one and tries once more.
+  const send = () =>
+    fetch(url, {
+      ...options,
+      method: "POST",
+      body: JSON.stringify({ ...body, _csrf: context.csrf }),
+    });
+  const response = await send();
+  // An expired token sends FreshRSS to its error page, usually as 403, but as 404 when two fail at once.
+  const refused =
+    response.status === 403 ||
+    (response.redirected &&
+      new URL(response.url).searchParams.get("c") === "error");
+  if (!refused || !(await refreshCsrfToken())) return response;
+  return send();
 }
 
 function isMobile() {

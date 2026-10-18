@@ -1538,17 +1538,11 @@ function toggleFavorite(url, container) {
   toggleUrl.searchParams.delete("is_favorite");
   if (isFavorited) toggleUrl.searchParams.set("is_favorite", "0");
 
-  const csrfToken =
-    document
-      .querySelector(
-        '#stream-footer input[name="_csrf"], .stream-footer input[name="_csrf"]',
-      )
-      ?.getAttribute("value") || "";
-  fetch(toggleUrl.toString(), {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ ajax: true, _csrf: csrfToken }),
-  })
+  fetchWithCsrf(
+    toggleUrl.toString(),
+    { headers: { "Content-Type": "application/json", Accept: "application/json" } },
+    { ajax: true },
+  )
     .then((response) => {
       // Remove loading spinner
       favoriteButtonIcon.removeAttribute("style");

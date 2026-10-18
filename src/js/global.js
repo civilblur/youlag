@@ -63,6 +63,7 @@ app.state = {
     clickListenerInit: false,
     restoreVideoInit: false, // If miniplayer was restored after page refresh.
     sliderListeners: null, // Store slider event listener.
+    csrfRefresh: null, // Promise of the running CSRF token refresh, see refreshCsrfToken().
     categoryFilterEntryCount: {}, // Type: `categoryFilterEntryCountType`. Number of entries for each category filter on the Watch later filter menu.
     experimentalFeatureEnabled: false, // Whether experimental features are enabled.
   },

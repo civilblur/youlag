@@ -30,10 +30,7 @@ async function getItemTags(itemId) {
 async function setItemTag(entryId, tag) {
   // Add or remove a feed item from a tag (playlists).
 
-  const csrfToken =
-    document.querySelector('input[name="_csrf"]')?.getAttribute("value") || "";
   const payload = {
-    _csrf: csrfToken,
     id_tag: tag.id,
     name_tag: "",
     id_entry: entryId,
@@ -41,14 +38,16 @@ async function setItemTag(entryId, tag) {
     ajax: 1,
   };
   try {
-    const response = await fetch("./?c=tag&a=tagEntry&ajax=1", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+    const response = await fetchWithCsrf(
+      "./?c=tag&a=tagEntry&ajax=1",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       },
-      body: JSON.stringify(payload),
-    });
+      payload,
+    );
     if (response.ok) {
       const text = await response.text();
       if (text && text.trim().length > 0) {
