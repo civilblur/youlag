@@ -521,6 +521,15 @@ function setupVideoPlaybackPosition(modal, onTimeUpdate) {
         "*",
       );
     }, 1000);
+
+    // Stops the thumbnail's loading pulse, which keeps repainting under the video. The iframe's load event fires
+    // before the video has rendered, so it waits 5s more.
+    const thumbnailContainer = modal.querySelector(".yl-thumbnail-container");
+    clearTimeout(modal._thumbnailPulseTimer);
+    modal._thumbnailPulseTimer = setTimeout(
+      () => thumbnailContainer?.classList.add("is-loaded"),
+      5000,
+    );
   };
   iframe.addEventListener("load", onIframeLoad);
   if (iframe.readyState === "complete" || iframe.readyState === "interactive") {
@@ -704,7 +713,7 @@ function updateActiveChapterDisplay() {
           ((currentTime - chapterStart) / (videoDuration - chapterStart)) * 100;
       }
       percent = Math.max(0, Math.min(100, percent));
-      chapterCurrentProgress.style.width = percent + "%";
+      chapterCurrentProgress.style.transform = `translateX(${percent - 100}%)`;
     }
     return skipTarget;
   }

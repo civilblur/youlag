@@ -211,7 +211,9 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
 
       <div id="${app.modal.id.chapterContainer}" class="${Array.isArray(videoObject?.video_chapters) && videoObject?.video_chapters.length > 0 ? "" : "display-none"}">
         <div id="${app.modal.id.chapterCurrent}" class="yl-video-chapter-current">
-          <div id="${app.modal.id.chapterCurrentProgress}"></div>
+          <div class="yl-video-chapter-current__progress-track">
+            <div id="${app.modal.id.chapterCurrentProgress}"></div>
+          </div>
 
           <div id="${app.modal.id.chapterPanel}">
             <div id="ylVideoChapterToggle">
