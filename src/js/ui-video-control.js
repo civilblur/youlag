@@ -325,6 +325,7 @@ function setupModalVideoControlEventListeners(videoObject) {
   let cachedVideoDuration = null;
   // Previous playing position, to tell playback reaching a segment from scrubbing into it.
   let lastPlayingTime = -1; // -1 so a segment at 0s is reached on play start.
+  let lastUpdateAt = performance.now();
   let lastVideoDuration = null;
   let unfavoriteWatchedFrom = null;
   let lastSavedPlaybackSecond = -1;
@@ -354,16 +355,31 @@ function setupModalVideoControlEventListeners(videoObject) {
   setupVideoPlaybackPosition(
     modal,
     (currentTime, videoDuration, playerState) => {
-      setActiveChapter(currentTime, videoDuration, playerState);
-      lastVideoDuration = videoDuration;
-      const previousPlayingTime = lastPlayingTime;
-      updateSponsorBlockAction(
+      // Tracks the real time between player updates and compares it with how far the video moved.
+      // If the video moved about as much as the real time, it's playback and auto-skip applies, otherwise it's a seek.
+      // This is needed due to YouTube iframe sending updates at irregular intervals.
+      const now = performance.now();
+      const elapsedSeconds = (now - lastUpdateAt) / 1000;
+      lastUpdateAt = now;
+      const step = currentTime - lastPlayingTime;
+      const playedThrough = step >= 0 && step <= elapsedSeconds * 2 + 1;
+      const chapterSkipTarget = setActiveChapter(
         currentTime,
         videoDuration,
         playerState,
-        previousPlayingTime,
+        playedThrough,
       );
-      if (playerState === 1) lastPlayingTime = currentTime;
+      lastVideoDuration = videoDuration;
+      const sponsorSkipTarget = updateSponsorBlockAction(
+        currentTime,
+        videoDuration,
+        playerState,
+        lastPlayingTime,
+        playedThrough,
+      );
+      // After an auto-skip, playback continues from the skip target, so a segment right after it counts as reached.
+      if (playerState === 1)
+        lastPlayingTime = chapterSkipTarget ?? sponsorSkipTarget ?? currentTime;
 
       // Persist duration to its own store when first received from the YouTube iframe API.
       // Stored separately from dearrow so it survives dearrow cache expiry (video duration never changes).
@@ -613,10 +629,17 @@ function updateActiveChapterDisplay() {
     }
   }
 
-  function setActiveChapter(currentTime, videoDuration, playerState) {
+  function setActiveChapter(
+    currentTime,
+    videoDuration,
+    playerState,
+    playedThrough,
+  ) {
+    // Returns the chapter skip target (or null), so a sponsor segment right after it still counts as playback.
     if (!chapterActiveTime || !chapterActiveLabel || chapters.length === 0) {
-      return;
+      return null;
     }
+    let skipTarget = null;
     let activeIndex = chapters.length - 1;
     for (let i = 0; i < chapters.length; i++) {
       if (currentTime < chapters[i].seconds) {
@@ -630,7 +653,7 @@ function updateActiveChapterDisplay() {
       // Scrubbing into one simply plays it and does not skip.
       const isNaturalReach =
         (activeIndex === lastPlayingChapterIndex + 1 || activeIndex === 0) &&
-        currentTime - chapters[activeIndex].seconds < 2; // Poll is about 1s, to allow for tick jitter.
+        playedThrough;
       lastPlayingChapterIndex = activeIndex;
       if (
         isNaturalReach &&
@@ -641,6 +664,7 @@ function updateActiveChapterDisplay() {
           videoDuration,
         );
         if (targetSeconds) videoControlSeekTo(targetSeconds, true);
+        skipTarget = targetSeconds || null;
       }
     }
     const chapterChanged = activeIndex !== lastChapterIndex;
@@ -685,6 +709,7 @@ function updateActiveChapterDisplay() {
       percent = Math.max(0, Math.min(100, percent));
       chapterCurrentProgress.style.width = percent + "%";
     }
+    return skipTarget;
   }
 
   return { setActiveChapter };
@@ -799,18 +824,17 @@ function updateSponsorBlockAction(
   videoDuration,
   playerState,
   previousTime,
+  playedThrough,
 ) {
   // Auto-skips a segment playback runs into, and shows the countdown or skip button around segments.
+  // Returns the skip target (or null), so a sponsor segment right after the skip is still auto-skipped, not treated as a seek.
   const modal = getModalVideo();
   const button = modal?.querySelector(`#${app.modal.id.sponsorBlockAction}`);
-  if (!button) return;
+  if (!button) return null;
   const autoSkip = getSetting("yl_sponsorblock_auto_skip_enabled") === true;
   const segments = modal._sponsorSegments || [];
   // Cancel lasts until the user scrubs.
-  if (
-    playerState === 1 &&
-    (currentTime < previousTime || currentTime - previousTime >= 3)
-  ) {
+  if (playerState === 1 && !playedThrough) {
     segments.forEach((s) => (s.cancelled = false));
   }
   const current = segments.find(
@@ -828,13 +852,12 @@ function updateSponsorBlockAction(
     !current.cancelled &&
     playerState === 1 &&
     previousTime < current.start &&
-    currentTime - previousTime < 3 &&
-    currentTime - current.start < 2
+    playedThrough
   ) {
     const target = getSkipTargetTime(current.end, videoDuration);
     if (target) videoControlSeekTo(target, true);
     button.classList.add("display-none");
-    return;
+    return target || null;
   }
 
   // Countdown first, so a segment right after the current one never auto-skips unannounced.
@@ -851,6 +874,7 @@ function updateSponsorBlockAction(
   } else {
     renderSponsorBlockAction(button, null, null);
   }
+  return null;
 }
 
 function renderSponsorBlockAction(button, segment, mode, countdownSeconds) {
