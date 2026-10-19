@@ -40,15 +40,13 @@ Subscribe to creators via RSS without a Google account, stay free of algorithms,
   - Auto-skip sponsored segments and chapters you choose
   - Replace clickbait titles, and thumbnails with screencaps
   - Miniplayer: keep video in corner while reading articles
-  - Modern article reading experience
+  - Browse and view articles side by side
+  - [Keyboard shortcuts & gestures](#keyboard-shortcuts--gestures)
 - ⚙️ **Customization**
   - Block YouTube shorts
   - Video mode for chosen categories
   - Play via YouTube or [Invidious](https://invidious.io/)
   - Hide sponsored links in video description intros
-- 🖥️ **Desktop & Mobile**
-  - Browse and view articles side by side
-  - [Keyboard shortcuts & gestures](#keyboard-shortcuts--gestures)
 - 📰 **FreshRSS features**
   - Subscribe to YouTube creators without an account
   - Manage article and video RSS feeds
