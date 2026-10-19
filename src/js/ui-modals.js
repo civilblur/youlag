@@ -665,15 +665,18 @@ function setupModalVideoKeyListener(modal) {
   });
 }
 
-function restoreModalEventListeners() {
-  // Restore modal event listeners after tab suspension.
-  // Primarily to address how mobile devices handles tab suspension.
-
+function renderPendingRelatedVideos() {
+  // Related videos may not render when a direct link is opened in a background tab, so retry once the tab is shown.
   const modal = getModalVideo();
-  if (!modal) return;
+  const relatedContainer = modal?.querySelector(
+    `#${app.modal.id.relatedContainer}`,
+  );
+  if (
+    !relatedContainer?.classList.contains("display-none") ||
+    getRelatedVideosSetting() === "none"
+  )
+    return;
 
-  // Validate state before touching any listeners — guards must pass before removal,
-  // otherwise the modal is left with no handlers if any guard fails mid-function.
   let videoQueue; // Localstorage: youlagVideoQueue
   try {
     videoQueue = JSON.parse(
@@ -683,49 +686,11 @@ function restoreModalEventListeners() {
     videoQueue = null;
   }
   if (!videoQueue || !Array.isArray(videoQueue.queue)) return;
-
   const entryId =
     modal.getAttribute("data-entry") ||
     videoQueue.queue[videoQueue.queue_active_index]?.entryId;
-  if (!entryId) return;
-
   const videoObject = videoQueue.queue.find((v) => v.entryId === entryId);
-  if (!videoObject) return;
-
-  // Remove all existing modal event listeners before reattaching new ones, to prevent stacking.
-  if (modal._videoModalListeners && Array.isArray(modal._videoModalListeners)) {
-    for (const { el, type, handler } of modal._videoModalListeners) {
-      if (el && type && handler) {
-        el.removeEventListener(type, handler);
-      }
-    }
-    modal._videoModalListeners.length = 0;
-  }
-
-  // Disconnect observers from previous setup runs
-  if (modal._videoModalObservers && Array.isArray(modal._videoModalObservers)) {
-    for (const observer of modal._videoModalObservers) {
-      observer.disconnect();
-    }
-    modal._videoModalObservers.length = 0;
-  }
-
-  setupModalVideoEventListeners(videoObject);
-  setupModalVideoControlEventListeners(videoObject);
-
-  const relatedContainer = modal.querySelector(
-    `#${app.modal.id.relatedContainer}`,
-  );
-  if (getRelatedVideosSetting() !== "none" && relatedContainer) {
-    if (relatedContainer.classList.contains("display-none")) {
-      // If the element is still hidden, related videos haven't loaded yet.
-      // TODO: In some cases when opening up a direct link in a new tab, the related video may not render.
-      renderRelatedVideos(videoObject);
-    } else {
-      // Related videos are already visible — only re-register the click handler (no refetch needed).
-      setupRelatedVideosClickListener();
-    }
-  }
+  if (videoObject) renderRelatedVideos(videoObject);
 }
 
 function forceFrssEntryToCollapse(target) {

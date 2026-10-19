@@ -23,7 +23,7 @@ function init() {
   if (isFeedPage()) {
     setupClickListener();
     setupSwipeSidebar();
-    setupVisibilityEventListeners(); // Restore event listeners after page inactvity, e.g. when switching tabs.
+    setupVisibilityEventListeners(); // Refresh related videos, swipe, and playback positions when returning to the tab.
     setupTagsDropdownOverride();
     setupShareDropdownOverride();
     setupFeedEntryFavoriteObserver();
@@ -78,11 +78,9 @@ async function initVideoState() {
 }
 
 function setupVisibilityEventListeners() {
-  // Restore event listeners when the page becomes visible, primarily for the video modal.
-  // E.g. when the user switches tabs and returns, reset and reattach event listeners to improve reliability.
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible") {
-      restoreModalEventListeners();
+      renderPendingRelatedVideos();
       setupSwipeSidebar();
       // Another tab may have saved positions meanwhile. A position missing from the database is only dropped
       // after a clear: another tab's prune also deletes old records, which the server still has.
