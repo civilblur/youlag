@@ -654,6 +654,18 @@ function setMobileLayoutGrid() {
   return userSetting;
 }
 
+function setupWatchLaterCountObserver() {
+  // Hide the watch later count "Watch later (%s)" in the sidenav.
+  // Prevent it from being added back when user favorites/unfavorites a feed entry.
+  if (!isVideoLabelsEnabled()) return;
+  const title = document.querySelector("#aside_feed .favorites .title");
+  if (!title) return;
+  new MutationObserver(() => {
+    const text = title.textContent.replace(/\s*\([\s\d.,]+\)\s*$/, "");
+    if (text !== title.textContent) title.textContent = text;
+  }).observe(title, { childList: true, characterData: true, subtree: true });
+}
+
 function setSidenavState() {
   // Update body classes based on sidenav state (expanded/collapsed)
   const sidenav = document.getElementById("aside_feed");

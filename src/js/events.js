@@ -44,6 +44,7 @@ function init() {
     isUpdateCheckEnabled() && checkForUpdates();
   }
   updateSidenavLinks();
+  setupWatchLaterCountObserver();
   renderWatchHistoryLink();
   setupWatchHistoryPage();
   setupWatchHistorySettings();

@@ -7,7 +7,8 @@ return [
         "title_fav" => "Watch later",
     ],
     "menu" => [
-        "favorites" => "Watch later (%s)",
+        // No count, see `setupWatchLaterCountObserver()`.
+        "favorites" => "Watch later",
         "mylabels" => "Playlists",
     ],
 ];
