@@ -101,6 +101,12 @@ class YoulagExtension extends Minz_Extension
     public $yl_watch_later_auto_remove = "off";
 
     /**
+     * Color theme: "dark" or "light".
+     * @var string
+     */
+    public $yl_theme = "dark";
+
+    /**
      * Enable Youlag update check
      * @var bool
      */
@@ -154,6 +160,7 @@ class YoulagExtension extends Minz_Extension
         "yl_video_sort_modified_enabled" => ["type" => "bool", "default" => false],
         "yl_watch_history_enabled" => ["type" => "bool", "default" => true],
         "yl_watch_later_auto_remove" => ["type" => "string", "default" => "off"],
+        "yl_theme" => ["type" => "string", "default" => "dark"],
         "yl_update_check_enabled" => ["type" => "bool", "default" => true],
         "yl_invidious_enabled" => ["type" => "bool", "default" => false],
         "yl_block_youtube_shorts" => ["type" => "bool", "default" => false],
@@ -193,6 +200,10 @@ class YoulagExtension extends Minz_Extension
         // Add Youlag theme and script to all extension pages
         Minz_View::appendStyle($this->getFileUrl("theme.min.css"));
         Minz_View::appendScript($this->getFileUrl("script.min.js"));
+        if (FreshRSS_Context::userConf()->attributeString("yl_theme") === "light") {
+            // Loaded with the page instead of switched by the script, so it never paints dark first.
+            Minz_View::appendStyle($this->getFileUrl("theme-light.min.css"));
+        }
 
         // Required user settings to properly render Youlag styling
         // See FreshRSS `config-user.php` and the html form fields with `for="{setting_name}"` in settings for reference. This is not in the official documentation.

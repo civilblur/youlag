@@ -545,6 +545,17 @@ declare(strict_types=1)
     <section class="yl-form-section">
       <h3>Youlag</h3>
 
+      <label for="yl_theme">
+        <div class="inline-block">
+          Theme
+        </div>
+        <div>
+          <select id="yl_theme" name="yl_theme">
+            <option value="dark"<?= $this->yl_theme !== "light" ? ' selected="selected"' : "" ?>>Dark</option>
+            <option value="light"<?= $this->yl_theme === "light" ? ' selected="selected"' : "" ?>>Light</option>
+          </select>
+        </div>
+      </label>
       <h4 class="mb-0">
         Watch history
 

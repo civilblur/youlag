@@ -71,6 +71,7 @@ async function minifyAndInjectVersion() {
 const extensionFiles = [
   { src: path.relative(__dirname, scriptTempDest), dest: 'static/script.min.js' },
   { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
+  { src: '../static/theme-light.min.css', dest: 'static/theme-light.min.css' },
   { src: '../extension.php', dest: 'extension.php' },
   { src: '../configure.phtml', dest: 'configure.phtml' },
   { src: '../metadata.json', dest: 'metadata.json' },
@@ -138,8 +139,11 @@ if (require.main === module) {
       configureWatcher.on('change', (file) => onConfigureOrExtensionChange(file));
       extensionWatcher.on('change', (file) => onConfigureOrExtensionChange(file));
 
-      // Watch `static/theme.min.css` for changes and sync
-      const cssWatcher = chokidar.watch(path.resolve(__dirname, '../static/theme.min.css'), { ignoreInitial: true });
+      // Watch the compiled stylesheets for changes and sync
+      const cssWatcher = chokidar.watch(
+        ['../static/theme.min.css', '../static/theme-light.min.css'].map((p) => path.resolve(__dirname, p)),
+        { ignoreInitial: true },
+      );
       cssWatcher.on('change', () => {
         syncFiles();
         console.log('\x1b[32m%s\x1b[0m', 'CSS synced to dev folder.');

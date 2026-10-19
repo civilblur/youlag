@@ -51,7 +51,7 @@ const minifyAndInjectVersion = async () => {
 const preprocessScss = async () => {
   const { execSync } = require('child_process');
   try {
-    execSync('npx sass src/scss/theme.scss static/theme.min.css --no-source-map --style=compressed', { stdio: 'inherit', cwd: path.resolve(__dirname, '..') });
+    execSync('npx sass src/scss/theme.scss:static/theme.min.css src/scss/theme-light.scss:static/theme-light.min.css --no-source-map --style=compressed', { stdio: 'inherit', cwd: path.resolve(__dirname, '..') });
     return true;
   } catch (err) {
     console.error('SCSS preprocessing error:', err);
@@ -71,6 +71,7 @@ const preprocessScss = async () => {
   const extensionFiles = [
     { src: path.relative(__dirname, scriptTempDest), dest: 'static/script.min.js' },
     { src: '../static/theme.min.css', dest: 'static/theme.min.css' },
+    { src: '../static/theme-light.min.css', dest: 'static/theme-light.min.css' },
     { src: '../extension.php', dest: 'extension.php' },
     { src: '../configure.phtml', dest: 'configure.phtml' },
     { src: '../Controllers/youlagController.php', dest: 'Controllers/youlagController.php' },

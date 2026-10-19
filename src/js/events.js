@@ -16,7 +16,6 @@ function init() {
   )
     return;
 
-  applyTheme(); // Experimental light theme
   clearPathHash();
   setFreshRssUrlPrefix();
   setBodyClass();
