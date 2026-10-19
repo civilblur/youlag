@@ -204,6 +204,13 @@ class YoulagExtension extends Minz_Extension
             // Loaded with the page instead of switched by the script, so it never paints dark first.
             Minz_View::appendStyle($this->getFileUrl("theme-light.min.css"));
         }
+        if (
+            FreshRSS_Context::userConf()->attributeBool("yl_video_labels_enabled")
+            ?? self::SETTINGS["yl_video_labels_enabled"]["default"]
+        ) {
+            // Overrides FreshRSS' own labels, e.g. "Favorites" → "Watch later". See `i18n/en/`.
+            $this->registerTranslates();
+        }
 
         // Required user settings to properly render Youlag styling
         // See FreshRSS `config-user.php` and the html form fields with `for="{setting_name}"` in settings for reference. This is not in the official documentation.
@@ -329,15 +336,6 @@ class YoulagExtension extends Minz_Extension
     public function getCategoryWhitelist(): array
     {
         return $this->yl_category_whitelist;
-    }
-
-    /**
-     * Returns whether video platform labels is enabled or not.
-     * @return bool
-     */
-    public function isVideoLabelsEnabled(): bool
-    {
-        return $this->yl_video_labels_enabled;
     }
 
     /**
@@ -829,17 +827,11 @@ class YoulagExtension extends Minz_Extension
         }
         // Specific top level category pages.
         elseif ($getParam === "T") {
-            // 'My labels' page. Use 'Playlists' if video labels are enabled.
-            $categoryTitle = $this->isVideoLabelsEnabled()
-                ? "Playlists"
-                : "My labels";
+            $categoryTitle = _t("index.menu.mylabels");
         } elseif ($getParam === "i") {
             $categoryTitle = "Important";
         } elseif ($getParam === "s") {
-            // 'Favorites' page. Use 'Watch later' if video labels are enabled.
-            $categoryTitle = $this->isVideoLabelsEnabled()
-                ? "Watch later"
-                : "Favorites";
+            $categoryTitle = _t("index.feed.title_fav");
         } elseif ($getParam === "") {
             $categoryTitle = "Subscriptions";
         } else {
@@ -976,6 +968,13 @@ class YoulagExtension extends Minz_Extension
 
             $this->loadConfigValues();
             $_SESSION["ext_categories"] = $this->getUserCategories();
+
+            // Reload, since `init()` registered the video platform labels before this save.
+            Minz_Request::good(_t("feedback.conf.updated"), [
+                "c" => "extension",
+                "a" => "configure",
+                "params" => ["e" => $this->getName()],
+            ]);
         } else {
             $_SESSION["ext_categories"] = $this->getUserCategories();
         }

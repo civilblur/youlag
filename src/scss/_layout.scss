@@ -1043,37 +1043,14 @@ body:not(.normal) {
  * Replace FreshRSS' labels to video platform terms.
  ****************************************/
 
-.yl-form-category__video-label {
-  /* Extension category list label, for users who enabled 'Video platform labels'. Hide by default. */
-  display: none;
-}
-
 .yl-video-labels {
   /* Change the labels and references to "Favorite" and "My Labels/Tags" based on user settings. */
-
-  .yl-form-category {
-    /* Extension settings: display both labels in the DOM, show label according to `body.yl-video-labels` */
-
-    &__video-label {
-      display: inline-block;
-    }
-
-    &__original-label {
-      display: none;
-    }
-  }
 
   nav.aside.aside_feed {
     /* Playlists ("My labels") button */
     :is(#mark-read-aside, .mark-read-aside) ul#sidebar #tags {
       /* Always display Playlist ("My Labels") button */
       display: list-item;
-
-      .tree-folder-title .title {
-        @include yl-replace-text("Playlists") {
-          line-height: var(--yl-line-height-xs);
-        }
-      }
 
       button.dropdown-toggle .icon {
         /* Hide playlist ("My Labels") dropdown toggle icon while keeping its functionality */
@@ -1094,45 +1071,6 @@ body:not(.normal) {
         filter: var(--yl-filter-icon-sidenav-category);
         background-repeat: no-repeat;
         background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA4MDAgODAwIj48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMCA5MC41QTM3LjUgMzcuNSAwIDAgMSAzNy41IDUzaDcyNUEzNy40OTcgMzcuNDk3IDAgMCAxIDgwMCA5MC41YTM3LjUgMzcuNSAwIDAgMS0zNy41IDM3LjVoLTcyNUEzNy40OTggMzcuNDk4IDAgMCAxIDAgOTAuNVpNMzcuNSAzMjhoNzI1YTM3LjQ5NiAzNy40OTYgMCAwIDAgMjYuNTE2LTEwLjk4NCAzNy40OTYgMzcuNDk2IDAgMCAwIDAtNTMuMDMzQTM3LjUgMzcuNSAwIDAgMCA3NjIuNSAyNTNoLTcyNUEzNy41MDIgMzcuNTAyIDAgMCAwIDAgMjkwLjUgMzcuNDk3IDM3LjQ5NyAwIDAgMCAzNy41IDMyOFptMjQ0IDEyNWgtMjQ0QTM3LjUwMiAzNy41MDIgMCAwIDAgMCA0OTAuNSAzNy40OTcgMzcuNDk3IDAgMCAwIDM3LjUgNTI4aDI0NGEzNy41IDM3LjUgMCAwIDAgMC03NVpNMzcuNSA2NTNoMjQ0YTM3LjUgMzcuNSAwIDAgMSAwIDc1aC0yNDRhMzcuNDk5IDM3LjQ5OSAwIDAgMSAwLTc1WiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSI2NSIgZD0iTTYzNi44MzMgNDY5Ljg4YzgwLjExOCA0Ni4zNTggMTIwLjE4MSA2OS41MzQgMTI2LjA2MiAxMDIuOTc0YTcyLjkzNyA3Mi45MzcgMCAwIDEgMCAyNS4yOTNjLTUuODgxIDMzLjQzOS00NS45NDQgNTYuNjE1LTEyNi4wNjIgMTAyLjk3My04MC4xMTcgNDYuMzUzLTEyMC4xODEgNjkuNTI5LTE1Mi4wMTggNTcuOTE2YTcyLjU2NiA3Mi41NjYgMCAwIDEtMjEuODU4LTEyLjY0NkM0MzcgNzI0LjU2MyA0MzcgNjc4LjIxIDQzNyA1ODUuNWMwLTkyLjcxIDAtMTM5LjA2MyAyNS45NTctMTYwLjg5YTcyLjY3IDcyLjY3IDAgMCAxIDIxLjg1OC0xMi42NDZjMzEuODM3LTExLjYxMyA3MS45MDEgMTEuNTY0IDE1Mi4wMTggNTcuOTE2WiIvPjwvc3ZnPg==);
-      }
-    }
-
-    /* Watch later ("Favorites") button */
-    :is(#mark-read-aside, .mark-read-aside)
-      ul#sidebar
-      .tree-folder.category.favorites {
-      .tree-folder-title .title {
-        @include yl-replace-text("Watch later") {
-          line-height: var(--yl-line-height-xs);
-        }
-      }
-    }
-  }
-
-  /* Settings page buttons */
-  #aside_feed .item.nav-section a[href="./?c=tag"] {
-    transition: background-color var(--yl-duration-button);
-    @include yl-replace-text(
-      "Playlist management",
-      var(--yl-sidenav-label-font-size)
-    );
-  }
-
-  /* Change text in settings page containing "Label" to "Playlist" */
-  main.post:has(#add_tag) {
-    > h1:first-of-type {
-      @include yl-replace-text("Playlist management", var(--yl-text-lg));
-    }
-
-    > h2:first-of-type {
-      @include yl-replace-text("Create a playlist", var(--yl-text-md));
-    }
-  }
-
-  main#stream .flux {
-    article.flux_content footer li.labels {
-      .dropdown-toggle .dropdown-label {
-        @include yl-replace-text("Save to playlist", var(--yl-text-xs));
       }
     }
   }

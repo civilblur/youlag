@@ -26,23 +26,6 @@ function settingsPageEventListeners() {
       youtubeRadio.addEventListener("change", updateRequired);
       updateRequired();
     }
-
-    const videoLabelCheckbox = document.getElementById(
-      "yl_video_labels_enabled",
-    );
-    if (videoLabelCheckbox) {
-      // Do an initial check whether video label setting is enabled or not, as the
-      // DOM injected `data-yl-video-labels` is not available on the settings page.
-      // TODO: Refactor this once `Minz_HookType::JsVars` is implemented.
-      const videoLabelIsChecked = videoLabelCheckbox
-        ? videoLabelCheckbox.checked
-        : false;
-      if (videoLabelIsChecked) {
-        document.body.classList.add("yl-video-labels");
-      } else {
-        document.body.classList.remove("yl-video-labels");
-      }
-    }
   }
 
   formValidation(); // Run immediately, needed for direct link to the Youlag settings page.

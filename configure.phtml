@@ -64,16 +64,14 @@ declare(strict_types=1)
                  )
                      ? ' checked="checked"'
                      : ""; ?>>
-                <span class="yl-form-category__original-label">Favorites</span>
-                <span class="yl-form-category__video-label">Watch later</span>
+                <?= _t("index.feed.title_fav") ?>
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="playlists"
                  <?php echo in_array(needle: "playlists", haystack: $whitelist)
                      ? ' checked="checked"'
                      : ""; ?>>
-                <span class="yl-form-category__original-label">My Labels</span>
-                <span class="yl-form-category__video-label">Playlists</span>
+                <?= _t("index.menu.mylabels") ?>
             </label>
             <label>
               <input type="checkbox" name="yl_category_whitelist[]" value="search_results"
@@ -360,8 +358,7 @@ declare(strict_types=1)
                 : ""; ?>>
           <div class="inline-block">
             Random from
-            <span class="yl-form-category__original-label">Favorites</span>
-            <span class="yl-form-category__video-label">Watch later</span>
+            <?= _t("index.feed.title_fav") ?>
           </div>
         </label>
         <label for="yl_related_videos_subscriptions" class="flex">
@@ -445,14 +442,14 @@ declare(strict_types=1)
       </div>
     </section>
     <section class="yl-form-section">
-      <h3><span class="yl-form-category__original-label">Favorites</span><span class="yl-form-category__video-label">Watch later</span></h3>
+      <h3><?= _t("index.feed.title_fav") ?></h3>
 
       <label for="yl_watch_later_auto_remove">
         <div class="inline-block">
           Auto-remove after watching
           <div class="yl-form-group-help">
             Remove from
-            <span class="yl-form-category__original-label">"Favorites"</span><span class="yl-form-category__video-label">"Watch later"</span>
+            "<?= _t("index.feed.title_fav") ?>"
             once you watch past this point in the video.
           </div>
         </div>
@@ -471,14 +468,12 @@ declare(strict_types=1)
                 : ""; ?>>
         <div class="inline-block">
           Enable category filter in the
-          <span class="yl-form-category__original-label">Favorites</span>
-          <span class="yl-form-category__video-label">Watch later</span>
+          <?= _t("index.feed.title_fav") ?>
           page
           <div class="yl-badge yl-badge--warning pointer-events-none">Experimental</div>
           <div class="yl-form-group-help">
             Ability to filter the feed entries by their category in the
-            <span class="yl-form-category__original-label">Favorites</span>
-            <span class="yl-form-category__video-label">Watch later</span>
+            <?= _t("index.feed.title_fav") ?>
             page.
           </div>
         </div>
@@ -490,7 +485,7 @@ declare(strict_types=1)
                 : ""; ?>>
         <div class="inline-block">
           Sort
-          <span class="yl-form-category__original-label">"Favorite"</span><span class="yl-form-category__video-label">"Watch later"</span>
+          "<?= _t("index.feed.title_fav") ?>"
           by recently modified
           <div class="yl-form-group-help">
             Entries will be sorted by the time they were added or read, rather than by received date.

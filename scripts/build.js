@@ -76,6 +76,8 @@ const preprocessScss = async () => {
     { src: '../configure.phtml', dest: 'configure.phtml' },
     { src: '../Controllers/youlagController.php', dest: 'Controllers/youlagController.php' },
     { src: '../lib/YoulagUserDataDAO.php', dest: 'lib/YoulagUserDataDAO.php' },
+    { src: '../i18n/en/index.php', dest: 'i18n/en/index.php' },
+    { src: '../i18n/en/sub.php', dest: 'i18n/en/sub.php' },
     { src: '../metadata.json', dest: 'metadata.json' }
   ];
 

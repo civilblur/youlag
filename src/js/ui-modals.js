@@ -308,8 +308,7 @@ function templateModalVideo(videoObject, elementToReturn = "modal") {
           </div>
           <div id="${app.modal.id.relatedContainer}" class="yl-video-related-container display-none">
             <h3 class="yl-video-related-title">
-              <span class="yl-form-category__original-label">More from favorites</span>
-              <span class="yl-form-category__video-label">Watch more</span>
+              ${isVideoLabelsEnabled() ? "Watch more" : "More from favorites"}
             </h3>
           </div>
         </div>

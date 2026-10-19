@@ -50,8 +50,6 @@ function init() {
   renderContinueWatchingToggle();
   setupVideoDataSettings();
   settingsPageEventListeners();
-  setVideoLabelsTitle("playlists", "Playlists");
-  setVideoLabelsTitle("watch_later", "Watch later");
   updateAddFeedLink();
   setAddFeedCategoryValue();
   setMissingLogo();

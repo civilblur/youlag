@@ -654,23 +654,6 @@ function setMobileLayoutGrid() {
   return userSetting;
 }
 
-function setVideoLabelsTitle(pageName, newTitle) {
-  const page = getCurrentPage();
-
-  if (page.name !== pageName || !isVideoLabelsEnabled()) return;
-
-  // Replace the middle text of the tab title, e.g. "(3) Some Text · FreshRSS" to "(3) ${newTitle} · FreshRSS"
-  // Primarily for 'Playlists' and 'Watch Later' pages.
-  const titleMatch = document.title.match(
-    /^\s*(\((\d+)\)\s*)?(.+?)\s*·\s*(.+?)\s*$/,
-  );
-  if (titleMatch) {
-    const countPart = titleMatch[1] ? titleMatch[1] : "";
-    const customSuffix = titleMatch[4] ? titleMatch[4] : ""; // In case the user has rename their FreshRSS instance.
-    document.title = `${countPart}${newTitle} · ${customSuffix}`;
-  }
-}
-
 function setSidenavState() {
   // Update body classes based on sidenav state (expanded/collapsed)
   const sidenav = document.getElementById("aside_feed");
