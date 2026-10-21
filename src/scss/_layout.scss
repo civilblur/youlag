@@ -162,9 +162,18 @@ body {
 
 .header {
   --sid-bg: transparent; /* Header background color */
+  background: var(--sid-bg); /* Same as Mapco, for pages with other FreshRSS styling, e.g. login */
   height: var(--yl-topnav-height);
   box-sizing: border-box;
   z-index: var(--yl-z-nav);
+
+  :root.darkMode_auto & {
+    background: var(--sid-bg); /* Beats FreshRSS styling's dark header */
+  }
+
+  > .item {
+    box-shadow: none; /* FreshRSS styling's item divider */
+  }
 
   @include yl-media-down(md) {
     /* Mobile: header gradient background, adjust to accommodate colors for the header content on mobile */
@@ -292,6 +301,19 @@ body {
 
       .icon {
         filter: var(--yl-filter-icon-header-button);
+      }
+    }
+
+    /* Login link, shown when logged out. Mapco sets white text, other FreshRSS styling its link blue. */
+    .signin {
+      color: var(--yl-color-text-header-signin);
+
+      &:hover {
+        color: var(--yl-color-text-header-signin-hover);
+      }
+
+      .icon {
+        filter: var(--yl-filter-icon-header-signin);
       }
     }
   }

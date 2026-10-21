@@ -204,6 +204,9 @@
       hover
     )};
   --yl-filter-icon-header-button: var(--yl-filter-icon-highest);
+  --yl-color-text-header-signin: var(--yl-color-text-high);
+  --yl-color-text-header-signin-hover: var(--yl-color-text-highest);
+  --yl-filter-icon-header-signin: var(--yl-filter-icon-high);
   --yl-filter-icon-search: var(--yl-filter-icon-highest);
   --yl-color-border-search: var(--yl-color-overlay-md);
   --yl-color-bg-search-hover: #{yl-fn-state-layer(hover)};

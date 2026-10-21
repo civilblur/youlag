@@ -142,7 +142,54 @@ html {
     .btn.active,
     .btn-important {
       @include yl-gradient-btn-bg(active);
+      color: var(--yl-color-text-on-accent);
+
+      .icon {
+        filter: var(--yl-filter-icon-on-accent);
+      }
     }
+  }
+
+  /* Password show/hide button. FreshRSS styling paints a gradient image, dark under darkMode_auto. */
+  input + .btn.toggle-password {
+    background-image: none;
+    background-color: var(--yl-color-bg-control);
+    border-color: var(--yl-color-bg-control);
+
+    &:hover {
+      background-color: var(--yl-color-bg-control-hover);
+    }
+
+    &:active {
+      box-shadow: none;
+    }
+
+    .icon {
+      filter: var(--yl-filter-icon-control);
+    }
+
+    &.active {
+      /* Password shown */
+      box-shadow: none;
+      @include yl-gradient-btn-bg(active);
+
+      .icon {
+        filter: var(--yl-filter-icon-control-active);
+      }
+    }
+  }
+
+  /* FreshRSS styling's inset focus shadow */
+  input:focus,
+  select:focus,
+  textarea:focus,
+  input[type="password"]:focus + .toggle-password {
+    box-shadow: none;
+  }
+
+  input[type="password"]:focus + .toggle-password {
+    border-color: var(--yl-color-bg-control);
+    color: var(--yl-color-text-medium);
   }
 
   .dropdown-menu,
