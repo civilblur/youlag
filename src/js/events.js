@@ -43,7 +43,6 @@ function init() {
     onNewFeedItems();
     isUpdateCheckEnabled() && checkForUpdates();
   }
-  updateSidenavLinks();
   setupWatchLaterCountObserver();
   renderWatchHistoryLink();
   setupWatchHistoryPage();

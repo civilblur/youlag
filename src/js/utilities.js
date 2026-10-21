@@ -155,25 +155,6 @@ function updateAnchorLink(newUrl, anchorElement) {
   }
 }
 
-function updateSidenavLinks() {
-  // Update sidenav links for custom links.
-
-  // Sort 'Watch later' by 'User modified 9→1': most recently added/modified feed items first.
-  // TODO: refactor hardcoded classList.contains to use global `app` references.
-  isWatchLaterSortModified = document.body.classList.contains(
-    "yl-sort-watch_later--user-modified",
-  );
-
-  if (!isWatchLaterSortModified) return;
-
-  if (isWatchLaterSortModified) {
-    updateAnchorLink(
-      `${app.frss.urlPrefix}/i/?a=normal&get=s&sort=lastUserModified&order=DESC`,
-      document.querySelector("#aside_feed #sidebar .category.favorites > a"),
-    );
-  }
-}
-
 function updateAddFeedLink() {
   // Add a custom query param to the 'Add new feed' with the current category id,
   // allowing auto-selection of the category in the 'add new feed' dropdown.

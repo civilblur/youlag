@@ -225,6 +225,17 @@ class YoulagExtension extends Minz_Extension
         FreshRSS_Context::userConf()->show_author_date = "h";
         FreshRSS_Context::userConf()->show_tags = "f";
 
+        if (
+            Minz_Request::paramString("get") === "s"
+            && Minz_Request::paramString("sort") === ""
+            && (FreshRSS_Context::userConf()->attributeBool("yl_video_sort_modified_enabled")
+                ?? self::SETTINGS["yl_video_sort_modified_enabled"]["default"])
+        ) {
+            // Sort Watch later by last modified date, descending, if the user has enabled it in settings.
+            FreshRSS_Context::userConf()->sort = "lastUserModified";
+            FreshRSS_Context::userConf()->sort_order = "DESC";
+        }
+
         // Register hook to block incoming YouTube shorts
         $this->registerHook("entry_before_insert", [
             $this,

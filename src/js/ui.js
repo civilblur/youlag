@@ -549,7 +549,6 @@ function setBodyClass() {
   setVideoLabelsClass();
   setCategoryWhitelistClass();
   setUnreadBadgeClass();
-  setPageSortingClass();
   setArticleThumbnailPlacementClass();
   document.body.setAttribute("data-yl-version", app.metadata.version);
   shouldCustomThumbnailTitle() &&
@@ -621,14 +620,6 @@ function setUnreadBadgeClass() {
   } else {
     document.body.classList.remove("yl-video-unread-badge");
     return false;
-  }
-}
-
-function setPageSortingClass() {
-  // Adds css class e.g. `yl-sort-watch_later--user-modified`.
-  // Used as a reference for determining the user settings, and run functions based on that.
-  if (getSetting("yl_video_sort_modified_enabled") === true) {
-    document.body.classList.add("yl-sort-watch_later--user-modified");
   }
 }
 
