@@ -15,8 +15,8 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
         "playback" => 10000,
         "watchHistory" => 10000,
     ];
-    /** Entries shown on the watch history page, most recent first. */
-    public const WATCH_HISTORY_PAGE_SIZE = 100;
+    /** Most entries per watch history page. Its "load more" link carries the page's entry IDs, about 20 characters each. */
+    public const WATCH_HISTORY_MAX_PAGE_SIZE = 200;
     private const SCHEMA_VERSION = 1;
 
     /**
@@ -237,16 +237,58 @@ final class YoulagUserDataDAO extends Minz_ModelPdo
     }
 
     /**
-     * @return list<string> Entry IDs, most recently viewed first.
+     * The next watch history entries viewed before the cursor, most recently viewed first.
+     * Entries the stream can't show are skipped, so a full page means more history may follow.
+     * @param string $cursor `{updated_at}_{item_key}` of the last entry returned before, or "" for the start.
+     * @return array{ids:list<string>,cursor:string} The cursor of the last entry returned.
      */
-    public function watchHistoryEntryIds(int $limit): array
+    public function watchHistoryPage(string $cursor, int $limit): array
     {
+        $ids = [];
+        [$beforeTime, $beforeKey] = preg_match('/^(\d+)_(\d+)$/', $cursor, $m) ? [(int) $m[1], $m[2]] : [null, ""];
+        while (count($ids) < $limit) {
+            // Keyset paging, so entries viewed after the page loaded don't shift the next page.
+            $sql = "SELECT `item_key`, `updated_at` FROM `_yl_data` WHERE `store` = ?"
+                . ($beforeTime === null ? "" : " AND (`updated_at` < ? OR (`updated_at` = ? AND `item_key` < ?))")
+                . " ORDER BY `updated_at` DESC, `item_key` DESC LIMIT " . max(1, $limit * 2);
+            $values = $beforeTime === null ? ["watchHistory"] : ["watchHistory", $beforeTime, $beforeTime, $beforeKey];
+            $rows = $this->fetchAssoc($sql, self::positional($values)) ?? [];
+            if ($rows === []) {
+                break;
+            }
+            $shown = $this->shownEntryIds(array_map(static fn ($row) => (string) $row["item_key"], $rows));
+            foreach ($rows as $row) {
+                $beforeTime = (int) $row["updated_at"];
+                $beforeKey = (string) $row["item_key"];
+                if (isset($shown[$beforeKey])) {
+                    $ids[] = $beforeKey;
+                    if (count($ids) >= $limit) {
+                        break;
+                    }
+                }
+            }
+        }
+        return ["ids" => $ids, "cursor" => $beforeTime === null ? "" : $beforeTime . "_" . $beforeKey];
+    }
+
+    /**
+     * Entries that still exist in a feed the watch history stream shows, as `get=A` does.
+     * @param list<string> $ids
+     * @return array<string,true>
+     */
+    private function shownEntryIds(array $ids): array
+    {
+        $ids = array_values(array_filter($ids, "ctype_digit"));
+        if ($ids === []) {
+            return [];
+        }
         $rows = $this->fetchColumn(
-            "SELECT `item_key` FROM `_yl_data` WHERE `store` = ? ORDER BY `updated_at` DESC LIMIT " . max(1, $limit),
+            "SELECT e.id FROM `_entry` e INNER JOIN `_feed` f ON f.id = e.id_feed WHERE f.priority >= ? AND e.id IN ("
+                . implode(",", array_fill(0, count($ids), "?")) . ")",
             0,
-            self::positional(["watchHistory"]),
-        );
-        return array_values(array_filter(array_map("strval", $rows ?? []), "ctype_digit"));
+            self::positional([FreshRSS_Feed::PRIORITY_CATEGORY, ...array_map("intval", $ids)]),
+        ) ?? [];
+        return array_fill_keys(array_map("strval", $rows), true);
     }
 
     /**

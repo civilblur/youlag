@@ -74,6 +74,11 @@ class YoulagExtension extends Minz_Extension
      */
     private $userDataDAO = false;
     /**
+     * Entry IDs on the current watch history page, most recently viewed first.
+     * @var list<string>
+     */
+    private static array $watchHistoryPageIds = [];
+    /**
      * Show "New" badge for unwatched videos
      * @var bool
      */
@@ -236,6 +241,18 @@ class YoulagExtension extends Minz_Extension
             FreshRSS_Context::userConf()->sort_order = "DESC";
         }
 
+        if (
+            Minz_Request::paramString("yl_watch_history") === "1"
+            && Minz_Request::paramString("c") !== "youlag"
+            && FreshRSS_Auth::hasAccess()
+            && self::isWatchHistoryEnabled()
+        ) {
+            // Watch history requests FreshRSS sends to its own stream, like "load more".
+            foreach (self::watchHistoryRequestParams() as $key => $value) {
+                Minz_Request::_param($key, $value);
+            }
+        }
+
         // Register hook to block incoming YouTube shorts
         $this->registerHook("entry_before_insert", [
             $this,
@@ -258,6 +275,43 @@ class YoulagExtension extends Minz_Extension
     {
         return FreshRSS_Context::userConf()->attributeBool("yl_watch_history_enabled")
             ?? self::SETTINGS["yl_watch_history_enabled"]["default"];
+    }
+
+    /**
+     * Request params that show the next watch history entries as an entry search, so FreshRSS renders and pages
+     * the stream itself. Its "load more" request repeats them with `yl_before` and its continuation `cid`.
+     * @return array<string,string|null> null removes the param.
+     */
+    public static function watchHistoryRequestParams(): array
+    {
+        // The user's "Number of articles per page", capped so the "load more" link stays well under common 8 KB URL limits.
+        $perPage = FreshRSS_Context::userConf()->posts_per_page;
+        $pageSize = min($perPage > 0 ? $perPage : 100, YoulagUserDataDAO::WATCH_HISTORY_MAX_PAGE_SIZE);
+        $dao = YoulagUserDataDAO::open();
+        // Only "load more" continues from the cursor. Other links FreshRSS builds from the request carry it too,
+        // and a full page starts from the most recent entry.
+        $loadMore = Minz_Request::paramBoolean("ajax");
+        // `cid` is the entry FreshRSS held back from the previous page. It's shown on this page instead, and removed,
+        // since FreshRSS pages by entry ID, which the viewed order doesn't follow.
+        $carryId = $loadMore ? Minz_Request::paramString("cid") : "";
+        $carry = ctype_digit($carryId) && $dao?->findValue("watchHistory", $carryId) !== null ? [$carryId] : [];
+        // One more than a page, so FreshRSS holds one back and shows "load more" while history remains.
+        $page = $dao?->watchHistoryPage(
+            $loadMore ? Minz_Request::paramString("yl_before") : "",
+            $pageSize + 1 - count($carry),
+        ) ?? ["ids" => [], "cursor" => ""];
+        $ids = array_values(array_unique([...$carry, ...$page["ids"]]));
+        self::$watchHistoryPageIds = $ids;
+        return [
+            // All feeds but hidden ones, so entries from feeds kept out of the main stream show too.
+            "get" => "A",
+            "search" => "e:" . ($ids === [] ? "0" : implode(",", $ids)),
+            "state" => (string) FreshRSS_Entry::STATE_ALL,
+            "nb" => (string) $pageSize,
+            "yl_watch_history" => "1",
+            "yl_before" => $page["cursor"],
+            "cid" => null,
+        ];
     }
 
     /**
@@ -332,8 +386,7 @@ class YoulagExtension extends Minz_Extension
 
         // Only for the logged-in owner: anonymous reading and shared user queries render as the user too.
         if (Minz_Request::paramString("yl_watch_history") === "1" && FreshRSS_Auth::hasAccess()) {
-            $youlag["yl_watch_history_order"] =
-                YoulagUserDataDAO::open()?->watchHistoryEntryIds(YoulagUserDataDAO::WATCH_HISTORY_PAGE_SIZE) ?? [];
+            $youlag["yl_watch_history_order"] = self::$watchHistoryPageIds;
         }
         $vars["youlag"] = $youlag;
 

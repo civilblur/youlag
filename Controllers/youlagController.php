@@ -117,18 +117,10 @@ final class FreshExtension_youlag_Controller extends FreshRSS_ActionController
         if (!YoulagExtension::isWatchHistoryEnabled()) {
             Minz_Request::forward(["c" => "index", "a" => "index"], redirect: true);
         }
-        $ids = YoulagUserDataDAO::open()?->watchHistoryEntryIds(YoulagUserDataDAO::WATCH_HISTORY_PAGE_SIZE) ?? [];
         Minz_Request::forward([
             "c" => "index",
             "a" => "normal",
-            "params" => [
-                // All feeds but hidden ones, so entries from feeds kept out of the main stream show too.
-                "get" => "A",
-                "search" => "e:" . ($ids === [] ? "0" : implode(",", $ids)),
-                "state" => (string) FreshRSS_Entry::STATE_ALL,
-                "nb" => (string) YoulagUserDataDAO::WATCH_HISTORY_PAGE_SIZE,
-                "yl_watch_history" => "1",
-            ],
+            "params" => array_filter(YoulagExtension::watchHistoryRequestParams(), static fn ($value) => $value !== null),
         ]);
     }
 

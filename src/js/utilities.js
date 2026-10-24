@@ -625,8 +625,8 @@ function getCurrentPage() {
     {
       path: app.frss.urlPrefix + "/i/",
       match: () =>
-        urlParams.get("c") === "youlag" &&
-        urlParams.get("a") === "watchHistory",
+        (urlParams.get("c") === "youlag" && urlParams.get("a") === "watchHistory") ||
+        urlParams.get("yl_watch_history") === "1",
       className: "watch_history",
       name: "watch_history",
       id: null,
