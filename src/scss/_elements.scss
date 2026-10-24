@@ -27,6 +27,12 @@ html {
     color: var(--yl-color-text-medium);
   }
 
+  /* Mapco paints the login and register pages with its dark sidebar color */
+  body.formLogin,
+  body.register {
+    background-color: var(--yl-color-body-background);
+  }
+
   figure {
     margin-left: 0;
     margin-right: 0;
