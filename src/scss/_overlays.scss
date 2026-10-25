@@ -226,6 +226,10 @@
       img {
         filter: var(--yl-filter-icon-search);
       }
+
+      &.active img {
+        filter: var(--yl-filter-icon-control-active);
+      }
     }
   }
 
