@@ -541,7 +541,7 @@ function setupModalVideoEventListeners(videoObject) {
 function setupModalVideoKeyListener(modal) {
   // Keyboard shortcuts for the video modal
   // Provides ability to control YouTube videos even when iframe is not focused.
-  const seekStep = 5;
+  const seekStep = 10;
 
   const keyHandler = (event) => {
     if (event.key === "Escape") {
@@ -567,16 +567,21 @@ function setupModalVideoKeyListener(modal) {
       return;
     if (event.isComposing || event.key === "Process") return;
 
+    const key = event.key.toLowerCase();
+
+    if (document.body.classList.contains(app.modal.class.tagsModalOpen)) {
+      if (key !== "p" || event.repeat || !isModeFullscreen()) return;
+      event.stopPropagation();
+      event.preventDefault();
+      document.getElementById(app.modal.id.tagsClose)?.click();
+      return;
+    }
+
     const target = event.target;
     if (target.isContentEditable || target.closest("input, textarea, select"))
       return;
-    if (
-      document.body.classList.contains(app.modal.class.tagsModalOpen) ||
-      document.body.classList.contains(app.modal.class.shareModalOpen)
-    )
+    if (document.body.classList.contains(app.modal.class.shareModalOpen))
       return;
-
-    const key = event.key.toLowerCase();
 
     if (key === "i") {
       if (event.repeat) return;
@@ -588,6 +593,15 @@ function setupModalVideoKeyListener(modal) {
 
     if (!isModeFullscreen()) return;
 
+    if (key === "w" || key === "p") {
+      if (event.repeat) return;
+      event.stopPropagation();
+      event.preventDefault();
+      const buttonId = key === "w" ? app.modal.id.favorite : app.modal.id.tags;
+      modal.querySelector(`#${buttonId}`)?.click();
+      return;
+    }
+
     const iframe = modal.querySelector(`#${app.modal.id.videoIframe}`);
     // Invidious embeds don't accept YouTube player commands.
     if (iframe?.getAttribute("data-yl-is-video") !== "youtube") return;
@@ -595,10 +609,12 @@ function setupModalVideoKeyListener(modal) {
     const player = modal._ylPlayer || {};
 
     switch (key) {
-      case " ": {
+      case " ":
+      case "k": {
         if (event.repeat) return;
         // Put focus on video modal
         if (
+          key === " " &&
           modal.contains(target) &&
           target.closest('button, a, summary, [role="button"]') &&
           target.matches(":focus-visible")
@@ -610,14 +626,17 @@ function setupModalVideoKeyListener(modal) {
         break;
       }
       case "arrowleft":
-      case "arrowright": {
+      case "arrowright":
+      case "j":
+      case "l": {
         if (isChapterSkip) {
           if (event.repeat) return;
           if (!videoControlChapterSkip(key === "arrowleft" ? -1 : 1)) return;
           break;
         }
         if (typeof player.time !== "number") return;
-        const offset = key === "arrowleft" ? -seekStep : seekStep;
+        const offset =
+          key === "arrowleft" || key === "j" ? -seekStep : seekStep;
         let seekTime = Math.max(0, player.time + offset);
         if (player.duration) seekTime = Math.min(seekTime, player.duration);
         videoControlCommand("seekTo", [seekTime, true]);

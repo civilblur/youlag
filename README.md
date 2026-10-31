@@ -76,12 +76,14 @@ Youlag is an extension for [FreshRSS](https://github.com/FreshRSS/FreshRSS) and 
 
 These shortcuts control the video in video mode. Clicking on the video hands the keyboard over to YouTube's player, so click anywhere outside the video to use these shortcuts again.
 
-- `Space`: play/pause
-- `←` `→`: seek 5s
+- `Space` or `K`: play/pause
+- `←` `→` or `J` `L`: seek 10s
 - `Ctrl`/`Option` + `←` `→`: previous/next chapter
   - `Ctrl` on Windows and Linux, `Option` on macOS.
 - `0`-`9`: jump to 0–90% of the video
 - `M`: mute
+- `W`: add to or remove from watch later
+- `P`: open/close save to playlist
 - `I`: miniplayer
 - `Esc`: close video or article
   - The browser's `Back` navigation works too.
