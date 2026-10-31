@@ -608,18 +608,32 @@ function setupModalVideoKeyListener(modal) {
 
     const player = modal._ylPlayer || {};
 
+    // Put focus on video modal
+    if (
+      (key === " " || key === "enter") &&
+      modal.contains(target) &&
+      target.closest('button, a, summary, [role="button"]') &&
+      target.matches(":focus-visible")
+    )
+      return;
+
     switch (key) {
+      case "enter": {
+        if (event.repeat) return;
+        const sponsorBlockAction = modal.querySelector(
+          `#${app.modal.id.sponsorBlockAction}`,
+        );
+        if (
+          !sponsorBlockAction ||
+          sponsorBlockAction.classList.contains("display-none")
+        )
+          return;
+        sponsorBlockAction.click();
+        break;
+      }
       case " ":
       case "k": {
         if (event.repeat) return;
-        // Put focus on video modal
-        if (
-          key === " " &&
-          modal.contains(target) &&
-          target.closest('button, a, summary, [role="button"]') &&
-          target.matches(":focus-visible")
-        )
-          return;
         const isPlaying = player.state === 1 || player.state === 3;
         videoControlCommand(isPlaying ? "pauseVideo" : "playVideo");
         player.state = isPlaying ? 2 : 1;
